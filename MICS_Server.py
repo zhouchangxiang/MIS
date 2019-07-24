@@ -49,7 +49,6 @@ app.register_blueprint(batch)
 @login_required
 def index():
     return render_template("./main/index.html")
-app = Flask(__name__)
 api = Api(app)
 
 TODOS = {
