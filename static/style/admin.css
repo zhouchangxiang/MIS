@@ -1,0 +1,22 @@
+*{padding:0;margin:0;}
+div,dl,dt,dd,form,h1,h2,h3,h4,h5,h6,img,ol,ul,li,table,th,td,p,span,a{border:0;}
+img,input{border:none;vertical-align:middle;}
+body{
+    width: 100%;
+	height: 100%;
+    background-color: #ecf0f5;
+    font-family: 'Open Sans','Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-size: 13px;
+    line-height: 1.42857143;
+    font-weight: normal;
+    font-variant: normal;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased !important;
+}
+html{
+    width: 100%;
+	height: 100%;
+	overflow-x:hidden;
+	overflow-y:auto;
+}
+ul,ol{list-style-type:none;}
