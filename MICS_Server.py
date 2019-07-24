@@ -46,7 +46,7 @@ app.register_blueprint(systemlog)
 app.register_blueprint(batch)
 
 @app.route('/')
-@login_required
+# @login_required
 def index():
     return render_template("./main/index.html")
 api = Api(app)
