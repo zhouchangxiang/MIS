@@ -4,8 +4,7 @@ img,input{border:none;vertical-align:middle;}
 body{
     width: 100%;
 	height: 100%;
-    background-color: #ecf0f5;
-    font-family: 'Open Sans','Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-family: "PingFang SC";
     font-size: 13px;
     line-height: 1.42857143;
     font-weight: normal;
@@ -20,3 +19,366 @@ html{
 	overflow-y:auto;
 }
 ul,ol{list-style-type:none;}
+a:hover{text-decoration: none}
+.vertical-middle{
+    vertical-align: middle;
+}
+.allheight{
+    position: relative;
+    height: 100%;
+}
+
+.contentWrap{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+}
+#contentWrap.contentBg{
+    background: #15161A;
+    color: #ffffff;
+}
+.contentLeft{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 20%;
+    height: 100%;
+    box-shadow: none;
+    overflow: hidden;
+    z-index: 100;
+}
+.contentRight{
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 20%;
+    width: 80%;
+    height: 100%;
+    margin-left: 0;
+    box-shadow: none;
+    overflow: hidden;
+    z-index: 100;
+}
+.contentRightB{
+    width: 100%;
+}
+.sidehead{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 17px;
+    height: 72px;
+    background: #1D2025;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.35);
+    z-index: 101;
+}
+.sideheadListBtn{
+    line-height: 38px;
+    cursor: pointer;
+}
+.sidebar{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 72px;
+    z-index: 100;
+}
+.mainmenu{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 17%;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    z-index: 100;
+}
+#contentWrap .mainmenuBg{
+    background: #1D2025;
+    box-shadow: 2px 0 5px 0 rgba(0,0,0,0.35);
+    color: #ffffff;
+}
+#contentWrap .mainmenuBg a{
+    color: #ffffff;
+}
+#contentWrap .cardBg{
+    background: #1D2025;
+    color: #ffffff;
+}
+#contentWrap .cardBg a{
+    color: #ffffff;
+}
+.mainnav{
+    width: 100%;
+}
+.mainnav li{
+    position: relative;
+}
+.mainnav li a{
+    display: block;
+    width: 100%;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    font-size: 22px;
+    border-left: 3px solid transparent;
+}
+.mainnav li a:hover{
+    border-left: 3px solid #ffffff;
+}
+.mainnav li a.rootMenu{
+    border-left: 3px solid #ffffff;
+}
+.submenu{
+    position: absolute;
+    left: 17%;
+    top: 0;
+    width: 83%;
+    height: 100%;
+    margin-left: 0;
+    z-index: 99;
+}
+.subnav{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+.subnav ul {
+    width: 100%;
+}
+.subnav ul li a{
+    display: block;
+    line-height: 17px;
+    font-size: 16px;
+    background: none;
+    color: #ffffff;
+    opacity: 0.4;
+    border-right: 3px solid transparent;
+    padding: 15px 25px;
+}
+.subnav ul li a:hover{
+    border-right: 3px solid #ffffff;
+}
+.menuMessage{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 25px;
+}
+.menuMessageTitle{
+    font-size: 16px;
+}
+.menuMessageData{
+    font-size: 36px;
+    text-align: right;
+    padding-top: 30px;
+}
+/* 选项卡样式 */
+.nth-tabs .page-tabs {
+    width: 70%;
+    height: 72px;
+    line-height: 40px;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+.tab-content{
+    width: 100%;
+    position: absolute;
+    top: 72px;
+}
+
+.nth-tabs .content-tabs {
+    width: 100%;
+    position: relative;
+    height: 72px;
+    line-height: 40px;
+    overflow: hidden;
+}
+
+.nth-tabs .content-tabs-container {
+    width: 100000px;
+    margin-left: 40px;
+    overflow: hidden;
+    height: 72px;
+    transition: margin-left 1s;
+    -moz-transition: margin-left 1s;
+ /* Firefox 4 */
+    -webkit-transition: margin-left 1s;
+ /* Safari and Chrome */
+    -o-transition: margin-left 1s;
+ /* Opera */
+}
+
+.nth-tabs .nav-tabs{
+    border: none;
+}
+/*选项卡操作相关*/
+.nth-tabs .roll-nav {
+    position: absolute;
+    width: 40px;
+    height: 72px;
+    text-align: center;
+    color: #999;
+    z-index: 2;
+    top: 0;
+}
+.page-tabs a{
+    line-height: 72px;
+}
+.page-tabs .content-tabs-container [data-toggle=tab]{
+    height: 72px;
+    line-height: 72px;
+    padding: 0 20px;
+    background: none;
+    border-top: 2px solid transparent;
+    border-left: none;
+    border-bottom: none;
+    border-right: none;
+    border-radius: 0;
+    color: #ffffff;
+    opacity: 0.4;
+}
+.page-tabs .content-tabs-container .active [data-toggle=tab]{
+    border-top: 2px solid #0086DF;
+    opacity: 1;
+}
+.page-tabs .content-tabs-container [data-toggle=tab]:hover{
+    border-top: 2px solid #0086DF;
+    background: none;
+    border-left: none;
+    border-bottom: none;
+    border-right: none;
+    color: #ffffff;
+    opacity: 1;
+    cursor: pointer;
+}
+.page-tabs .content-tabs-container .active [data-toggle=tab]:focus{
+    border-top: 2px solid #0086DF;
+    background: none;
+    border-left: none;
+    border-bottom: none;
+    border-right: none;
+    color: #ffffff;
+    opacity: 1;
+    cursor: pointer;
+}
+.nth-tabs a.roll-nav:hover {
+    color: #797979 !important;
+}
+.nth-tabs .roll-nav-left {
+    left: 0;
+    color: #15161a;
+}
+.nth-tabs .roll-nav-left:hover {
+    color: #999;
+}
+.nth-tabs .roll-nav-right {
+    right: 40px;
+    color: #15161a;
+}
+.nth-tabs .roll-nav-right:hover {
+    color: #999;
+}
+.nth-tabs .tab-close {
+    margin-right: -5px;
+    margin-left: 3px;
+    width: 18px;
+    height: 18px;
+    text-align: center;
+    line-height: 18px;
+    color: #95A0AA;
+}
+/*tab list*/
+.nth-tabs .right-nav-list {
+    right: 0;
+}
+.nth-tabs .right-nav-list a {
+    color: #999;
+}
+.nth-tabs .right-nav-list a:hover {
+    color: #797979;
+    text-decoration: none;
+}
+.tab-list-scrollbar {
+    max-height: 250px;
+    max-width: 180px;
+}
+.dropdown-menu ul {
+    list-style: none;
+    margin: 0px;
+    text-align: left;
+    padding: 0px;
+}
+
+.dropdown-menu ul li {
+    line-height: 30px;
+    padding: 0px 20px;
+    white-space: nowrap;
+}
+.scrollbar-outer {
+    overflow: hidden;
+}
+/*重写tab*/
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+    -webkit-transition-property: background-color,border-bottom;
+    -webkit-transition-duration: 0.2s;
+    -webkit-transition-timing-function: ease;
+    -moz-transition-property: background-color,border-bottom;
+    -moz-transition-duration: 0.2s;
+    -moz-transition-timing-function: ease;
+    -o-transition-property: background-color,border-bottom;
+    -o-transition-duration: 0.2s;
+    -o-transition-timing-function: ease;
+}
+
+/*右上角信息*/
+.navRight{
+    width: 30%;
+    height: 72px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0 15px;
+}
+.navUser{
+    position: relative;
+    height: 72px;
+    line-height: 72px;
+    float: right;
+    cursor: pointer;
+}
+.navUser .glyphicon{
+    color: #ffffff;
+    font-size: 12px;
+}
+.navUserName{
+    display: inline-block;
+    color: #ffffff;
+    font-size: 14px;
+}
+.navUserPanel{
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 72px;
+    background: #1d2025;
+    z-index: 101;
+}
+.navUserPanel ul li {
+    line-height: 20px;
+}
+.navUserPanel ul li a{
+    color: #fff;
+    opacity: 0.4;
+}
+.navUserPanel ul li a:hover{
+    opacity: 1;
+    background: none;
+}
