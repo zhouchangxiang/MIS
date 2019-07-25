@@ -13,6 +13,7 @@ from handlers.ProductionManagement.producebatch_model import produce
 from handlers.SystemManagement.systemlog import systemlog
 from flask_bootstrap import Bootstrap
 from handlers.batchmanager.batch_manager import batch
+from tools.common import insert,delete,update,select
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
@@ -108,6 +109,45 @@ class TodoList(Resource):
 
 api.add_resource(TodoList, '/todos')
 api.add_resource(Todo, '/todos/<todo_id>')
+
+#----------------------------------------------------------------------------------------------------------------------%%%%%%%%%%%
+
+CUIDS = {
+    'todo1': {'task': 'build an API'},
+    'todo2': {'task': '哈哈哈'},
+    'todo3': {'task': 'profit!'},
+}
+parser = reqparse.RequestParser()
+parser.add_argument('task')
+class CUID(Resource):
+    def get(self, cuid_id):
+        abort_if_todo_doesnt_exist(cuid_id)
+        return CUIDS[cuid_id]
+
+    def delete(self, cuid_id):
+        abort_if_todo_doesnt_exist(cuid_id)
+        del CUIDS[cuid_id]
+        return '', 204
+
+    def put(self, cuid_id):
+        args = parser.parse_args()
+        task = {'task': args['task']}
+        CUIDS[cuid_id] = task
+        return task, 201
+class CUIDList(Resource):
+    def get(self):
+        return select(request.values)
+
+    def post(self):
+        return insert(request.values)
+
+    def put(self):
+        return update(request.values)
+
+    def delete(self):
+        return delete(request.values)
+api.add_resource(CUIDList, '/CUID')
+api.add_resource(CUID, '/CUID/<cuid_id>')
 
 if __name__ == '__main__':
     app.run(debug=True)

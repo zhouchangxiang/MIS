@@ -2,15 +2,22 @@ import json
 from sqlalchemy import create_engine, and_
 from sqlalchemy.orm import sessionmaker
 from flask_login import current_user
-from dbset.database.db_operate import db_session
+import re
+from models.SystemManagement.system import Equipment,Role_Menu,SysLog,Menu,Role,User,Organization,Equipment,AuditTrace,QualityControlTree,BatchInfo,BatchInfoDetail,EletronicBatchDataStore,BatchType,BrandFlag,FlowConfirm
 from dbset.database.db_operate import GLOBAL_DATABASE_CONNECT_STRING
-from dbset.log.BK2TLogger import logger
 from dbset.main.BSFramwork import AlchemyEncoder
 from models.SystemManagement.system import SysLog
 from tools.MESLogger import MESLogger
 import socket
 import datetime
-import re
+
+engine = create_engine(GLOBAL_DATABASE_CONNECT_STRING, deprecate_large_types=True)
+Session = sessionmaker(bind=engine)
+db_session = Session()
+
+from sqlalchemy import MetaData, create_engine
+metadata = MetaData()
+from sqlalchemy import Table
 
 logger = MESLogger('../logs', 'log')
 #插入日志OperationType OperationContent OperationDate UserName ComputerName IP
@@ -32,21 +39,21 @@ def insertSyslog(operationType, operationContent, userName):
             print(e)
             logger.error(e)
 
-def insert(tablename, data):
+def insert(data):
     '''
     :param tablename: 要进行插入数据的model
     :param insert_dict: 要进行插入的数据，数据类型为dict，key为model的字段属性，value为要插入的值
     :return: 返回json信息，包含status，message
     '''
+    tablename = str(data.get("tableName"))
+    insert_data = str(data.get("insert_data"))
     if hasattr(tablename, '__tablename__'):
         oclass = tablename()
-        if isinstance(data, dict) and len(data) > 0:
+        if isinstance(insert_data, dict) and len(insert_data) > 0:
             try:
-                # if "ID" in data.keys():
-                #     popdata = data.pop("ID")
-                for key in data:
+                for key in insert_data:
                     if key != "ID":
-                        setattr(oclass, key, data[key])
+                        setattr(oclass, key, insert_data[key])
                 db_session.add(oclass)
                 db_session.commit()
                 return 'OK'
@@ -57,21 +64,24 @@ def insert(tablename, data):
                 insertSyslog("error", "%s数据添加报错："%tablename + str(e), current_user.Name)
                 return json.dumps('数据添加失败！')
 
-def delete(tablename, delete_data):
+def delete(data):
     '''
     :param tablename: 要进行删除信息的model
     :param recv_data: 要进行更新的数据，数据类型为list，list中的每个元素为需要删除的每条记录的ID
     :return: 返回json信息，包含status，message
     '''
+    tablename = str(data.get("tableName"))
+    delete_data = str(data.get("delete_data"))
     if hasattr(tablename, '__tablename__'):
         try:
             jsonstr = json.dumps(delete_data.to_dict())
+            newTable = Table(tablename, metadata, autoload=True, autoload_with=engine)
             if len(jsonstr) > 10:
                 jsonnumber = re.findall(r"\d+\.?\d*", jsonstr)
                 for key in jsonnumber:
                     id = int(key)
                     try:
-                        oclass = db_session.query(tablename).filter_by(ID=id).first()
+                        oclass = db_session.query(newTable).filter_by(ID=id).first()
                         db_session.delete(oclass)
                         db_session.commit()
                     except Exception as ee:
@@ -85,16 +95,19 @@ def delete(tablename, delete_data):
             insertSyslog("error", "%s数据删除报错："%tablename + str(e), current_user.Name)
             return json.dumps('数据删除失败！')
 
-def update(tablename, new_data):
+def update(data):
     '''
     :param tablename:要进行更新的model
     :param new_data: 要进行更新的数据，数据类型为dict，key为model的字段属性，value为要更新的值
     :return: 返回json信息，包含status，message
     '''
+    tablename = str(data.get("tableName"))
+    new_data = str(data.get("new_data"))
     if hasattr(tablename, '__tablename__'):
         if isinstance(new_data, dict) and len(new_data) > 0:
             try:
-                oclass = db_session.query(tablename).filter(tablename.ID==new_data['ID']).first()
+                newTable = Table(tablename, metadata, autoload=True, autoload_with=engine)
+                oclass = db_session.query(newTable).filter(newTable.ID==new_data['ID']).first()
                 if oclass:
                     for key in new_data:
                         if hasattr(oclass, key) and key != 'ID':
@@ -110,7 +123,7 @@ def update(tablename, new_data):
                 insertSyslog("error", "%s数据更新报错："%tablename + str(e), current_user.Name)
                 return json.dumps('数据更新失败！', cls=AlchemyEncoder, ensure_ascii=False)
 
-def select(table, page, rows, fieid, param):
+def select(data):#table, page, rows, fieid, param
     '''
     :param tablename: 查询表
     :param pages: 页数
@@ -120,22 +133,22 @@ def select(table, page, rows, fieid, param):
     :return: 
     '''
     try:
-        inipage = (page - 1) * rows + 0
-        endpage = (page - 1) * rows + rows
+        print(data)
+        pages = int(data.get("offset"))
+        rowsnumber = int(data.get("limit"))
+        param = data.get("field")
+        tableName = str(data.get("tableName"))
+        paramvalue = data.get("fieldvalue")
+        inipage = (pages - 1) * rowsnumber + 0  # 起始页
+        endpage = (pages - 1) * rowsnumber + rowsnumber  # 截止页
+        newTable = Table(tableName, metadata, autoload=True, autoload_with=engine)
         if (param == "" or param == None):
-            total = db_session.query(table).count()
-            oclass = db_session.query(table).all()[inipage:endpage]
+            total = db_session.query(newTable).count()
+            oclass = db_session.query(newTable).all()[inipage:endpage]
         else:
-            # sql = "select * from "+tableName+" t where t."+fieid+" like "+"'%"+param+"%'"
-            # oclass = db_session.execute(sql).fetchall()
-            # total = len(oclass)
-            # db_session.close()
-            print(fieid)
-            print(param)
-            print(table)
-            # obj.__tablename__ = table
-            total = db_session.query(table).filter_by(fieid==param).count()
-            oclass = db_session.query(table).filter_by(fieid=param).all()[inipage:endpage]
+            total = db_session.query(newTable).filter(newTable.columns._data[param].like("%"+paramvalue+"%")).count()
+            oclass = db_session.query(newTable).filter(newTable.columns._data[param].like("%"+paramvalue+"%")).all()[
+                     inipage:endpage]
         jsonoclass = json.dumps(oclass, cls=AlchemyEncoder, ensure_ascii=False)
         jsonoclass = '{"total"' + ":" + str(total) + ',"rows"' + ":\n" + jsonoclass + "}"
         return jsonoclass

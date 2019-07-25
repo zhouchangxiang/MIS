@@ -512,6 +512,44 @@ class FlowConfirm(Base):
     # key:
     key = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
 
+# 页面路由配置
+class PageRoute(Base):
+    __tablename__ = 'PageRoute'
+    # id:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 页面路由配置:
+    PageRoute = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 页面路径名（XX.html）:
+    PageRouteName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 路由:
+    Route = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+# 左菜单配置
+class LeftMenus(Base):
+    __tablename__ = 'LeftMenus'
+    # id:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 大菜单名字:
+    BigMenuName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 小菜单名字:
+    SmallMenuName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 小菜单跳转的路由:
+    SmallMenuRoute = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 大菜单上的图标:
+    BigMenuLogo = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 小菜单的权限（是否显示出来）:
+    SmallMenuPermi = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+
+
 
 # 生成表单的执行语句
 Base.metadata.create_all(engine)
