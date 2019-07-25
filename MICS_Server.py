@@ -49,6 +49,12 @@ app.register_blueprint(batch)
 # @login_required
 def index():
     return render_template("./main/index.html")
+
+@app.route('/home')
+# @login_required
+def home():
+    return render_template("./main/home.html")
+
 api = Api(app)
 
 TODOS = {
@@ -100,9 +106,6 @@ class TodoList(Resource):
         return TODOS[todo_id], 201
 
 
-##
-## Actually setup the Api resource routing here
-##
 api.add_resource(TodoList, '/todos')
 api.add_resource(Todo, '/todos/<todo_id>')
 
