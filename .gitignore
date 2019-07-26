@@ -1,3 +1,5 @@
 .idea/
 __pycache__/
 venv/
+dbset/database/db_operate.py
+logs/

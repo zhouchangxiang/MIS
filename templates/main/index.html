@@ -4,19 +4,73 @@
     <meta charset="UTF-8">
     <title>MICS</title>
     <link rel="stylesheet" href="../../static/style/bootstrap.min.css">
+    <link rel="stylesheet" href="../../static/style/font-awesome.min.css">
+    <link rel="stylesheet" href="../../static/style/jquery.scrollbar.min.css">
+    <link rel="stylesheet" href="../../static/style/admin.css">
     <link rel="stylesheet" href="../../static/style/base.css">
     <script src="../../static/script/jquery-3.3.1.min.js"></script>
     <script src="../../static/script/bootstrap.min.js"></script>
     <script src="../../static/script/bootbox.min.js"></script>
+    <script src="../../static/script/jquery.scrollbar.min.js"></script>
     <script src="../../static/script/base.js"></script>
+    <script src="../../static/script/admin.js"></script>
 </head>
 <body>
-    <div class="sidebar">
-        <div class="sidehead">
-            Manufacturing Intelligent Control System
+    <div class="contentWrap contentBg" id="contentWrap">
+        <div class="contentLeft">
+            <div class="sidehead">
+                <img src="../../static/images/logo.png" alt="" class="allheight">
+                <span class="glyphicon glyphicon-th-list pull-right sideheadListBtn"></span>
+            </div>
+            <div class="sidebar">
+                <div class="mainmenu mainmenuBg pull-left">
+                    <ul class="mainnav">
+                        <li>
+                            <a href="javascript:;">
+                                <span class="glyphicon glyphicon-edit"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:;">
+                                <span class="glyphicon glyphicon-cog"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="submenu cardBg pull-left">
+                    <div class="menuMessage">
+                        <p class="menuMessageTitle">计划任务详情</p>
+                        <p class="menuMessageData">64%</p>
+                    </div>
+                    <div class="subnav">
+                        <ul>
+                            <li>
+                                <a href="javascript:;" class="addTabLink">制药计划管理</a>
+                            </li>
+                            <li>
+                                <a href="javascript:;" class="addTabLink">计划明细</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="sidemenu">
-
+        <div class="contentRight">
+            <div class="contentRightB">
+                <div class="nth-tabs" id="editor-tabs"></div>
+                <div class="navRight">
+                    <div class="navUser">
+                        <div class="navUserName">系统管理员</div>
+                        <i class="glyphicon glyphicon-triangle-bottom"></i>
+                        <div class="navUserPanel">
+                            <ul class="nav nav-pills nav-stacked">
+                                <li><a href="javascript:;" id="seeUserMessage">用户信息</a></li>
+                                <li><a href="/account/logout">退出</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>
