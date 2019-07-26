@@ -56,6 +56,11 @@ def index():
 def home():
     return render_template("./main/home.html")
 
+@app.route('/config')
+# @login_required
+def config():
+    return render_template("./main/config.html")
+
 api = Api(app)
 
 TODOS = {

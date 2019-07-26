@@ -548,6 +548,69 @@ class LeftMenus(Base):
     # 小菜单的权限（是否显示出来）:
     SmallMenuPermi = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+# 数据库建表配置
+class CreateTableSet(Base):
+    __tablename__ = 'CreateTableSet'
+    # id:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 表名:
+    TableName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 表的描述:
+    TableDescrip = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 表类型（分页表/下拉框数据表）:
+    TableType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 是否在第一列显示多选框（checkbox）:
+    BigMenuLogo = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 是否实现单选，设为true则复选框只能选择一行:
+    IsCheckbox = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 是否显示添加按钮:
+    IsAdd = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 是否显示修改按钮:
+    IsUpdate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 是否显示删除按钮:
+    IsDelete = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # ID字段:
+    TableID = Column(Unicode(32), default="ID", primary_key=False, autoincrement=False, nullable=True)
+
+# 4.表字段配置：选择一个表，将此表的数据（字段）显示出来（新表只有ID）
+#字段表表头
+class FieldSet(Base):
+    __tablename__ = 'CreateTableSet'
+    # id:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # title字段名称（名字）:
+    TitleName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # field字段名（name）:
+    FieldName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # isedit是否做添加修改操作（默认否）:
+    Isedit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # edittype输入类型，输入框/下拉框/时间选择框（满足上一条可做编辑操作，默认输入框）:
+    Edittype = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # downtable下拉框的数据表（满足上一条选择下拉框，选择一个表）:
+    Downtable = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # sortable该列是否排序,表头显示双箭头(默认false):
+    Sortable = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # order该列排序方式，满足上条可排序，默认asc( asc/desc):
+    Order = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # visible该列是否可见(默认true):
+    Visible = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 
 
