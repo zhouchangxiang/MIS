@@ -584,7 +584,7 @@ class CreateTableSet(Base):
 # 4.表字段配置：选择一个表，将此表的数据（字段）显示出来（新表只有ID）
 #字段表表头
 class FieldSet(Base):
-    __tablename__ = 'CreateTableSet'
+    __tablename__ = 'FieldSet'
     # id:
     ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
 
