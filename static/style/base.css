@@ -1,0 +1,113 @@
+*{padding:0;margin:0;}
+div,dl,dt,dd,form,h1,h2,h3,h4,h5,h6,img,ol,ul,li,table,th,td,p,span,a{border:0;}
+img,input{border:none;vertical-align:middle;}
+body{
+    width: 100%;
+	height: 100%;
+    font-family: "PingFang SC";
+    font-size: 13px;
+    line-height: 1.42857143;
+    font-weight: normal;
+    font-variant: normal;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased !important;
+}
+html{
+    width: 100%;
+	height: 100%;
+	overflow-x:hidden;
+	overflow-y:auto;
+}
+ul,ol{list-style-type:none;}
+a:hover{text-decoration: none}
+.vertical-middle{
+    vertical-align: middle;
+}
+.allheight{
+    position: relative;
+    height: 100%;
+}
+
+/*登录*/
+.loginContent{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: url("../images/loginBg.jpg") no-repeat;
+    background-size: cover;
+}
+.loginContainer{
+    position: relative;
+    width: 1206px;
+    height: 100%;
+    margin: 0 auto;
+}
+.enterInfo{
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+}
+.enterInfo img{
+    height: 100%;
+}
+.loginInfo{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 424px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+#loginForm{
+    width: 100%;
+    color: #fff;
+    font-size: 14px;
+}
+#loginForm .form-group{
+    margin-bottom: 33px;
+}
+#loginForm .form-group .prepend{
+    position: relative;
+    top: 0;
+    left: 0;
+    display: inline-block;
+    vertical-align: top;
+    width: 100%;
+    font-size: 14px;
+    border: none;
+    color: #000000;
+}
+#loginForm .form-group .form-control{
+    padding-left: 60px;
+    height: 61px;
+    background: #fff;
+    opacity: 0.5;
+    box-shadow: none;
+    border-radius: 8px;
+}
+#loginForm .form-group .prepend .prependField{
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: inherit;
+    z-index: 4;
+}
+#loginForm .form-group .form-control:focus{
+    opacity: 1;
+    box-shadow: none;
+}
+#submitBtn{
+    background: #0859AF;
+    color: #ffffff;
+    border: none;
+    height: 61px;
+    outline:none;
+}
+#submitBtn:hover{
+    background: #0B76EA;
+}
+#submitBtn:focus{
+    background: #0B76EA;
+}

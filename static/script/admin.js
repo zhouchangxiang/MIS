@@ -12,11 +12,6 @@
             '<a href="#" class="roll-nav roll-nav-left">' +
                 '<span class="fa fa-backward"></span>' +
             '</a>' +
-            '<div class="content-tabs">' +
-                '<div class="content-tabs-container">' +
-                    '<ul class="nav nav-tabs"></ul>' +
-                '</div>' +
-            '</div>' +
             '<a href="#" class="roll-nav roll-nav-right">' +
                 '<span class="fa fa-forward"></span>' +
             '</a>' +
@@ -37,7 +32,13 @@
                         '</div>' +
                     '</li>' +
                 '</ul>' +
-            '</div></div>' +
+            '</div>' +
+            '<div class="content-tabs">' +
+                '<div class="content-tabs-container">' +
+                    '<ul class="nav nav-tabs"></ul>' +
+                '</div>' +
+            '</div>' +
+			'</div>' +
             '<div class="tab-content"></div>';
 		//各种api
 		var methods = {
@@ -111,7 +112,7 @@
 				var contentTab = navTabA.parent().parent().parent();
 				//情况1：之前同级选项卡宽度之和小于选项卡可视区域的70%则不做任何margin处理
 				if(width<=settings.rollWidth*0.7){
-					margin_left_total = 40;
+					margin_left_total = 80;
 				}
 				//情况2：之前同级选项卡宽度之和大于选项卡可视区域的70%且小于等于选项卡可视区域的则margin为可视区域的一半,使其更显眼
 				else if(width<=settings.rollWidth){
@@ -221,7 +222,7 @@
 					var contentTab = $(this).parent().find('.content-tabs-container');
 					var margin_left_origin = contentTab.css('marginLeft').replace('px','');
 					var margin_left_total = parseFloat(margin_left_origin) + methods.getMarginStep()+40;
-					contentTab.css("margin-left",margin_left_total>40 ? 40 : margin_left_total);
+					contentTab.css("margin-left",margin_left_total>80 ? 80 : margin_left_total);
 				});
 				return event;
 			},
@@ -317,7 +318,7 @@ $(function () {
 
 	//装选项卡内容的高度设置
 	$(window).resize(function () {
-		$(".tab-content").css("height",$(document).innerHeight() - 75)
+		$(".tab-content").css("height",$(document).innerHeight() - 72)
         $(".mainmenu,.subnav").css("height",$(document).innerHeight() - 72)
 	}).resize();
 
