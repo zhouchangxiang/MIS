@@ -34,7 +34,7 @@
                                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                                         ×
                                     </button>
-                                    <h4 class="modal-title" id="myModalLabel">
+                                    <h4 class="modal-title">
                                         配置信息
                                     </h4>
                                 </div>
@@ -90,7 +90,73 @@
                     <table id="pageTab"></table>
                 </div>
                 <div role="tabpanel" class="tab-pane" id="navconfig">
-
+                    <div id="navModal" class="modal fade">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        ×
+                                    </button>
+                                    <h4 class="modal-title">
+                                        配置信息
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="form-horizontal" action="">
+                                        <div class="form-group">
+                                            <label for="pageID" class="col-sm-2 control-label">ID</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" id="navID" placeholder="" disabled="disabled">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="BigMenuName" class="col-sm-2 control-label">大菜单名字</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" id="BigMenuName" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="SmallMenuName" class="col-sm-2 control-label">小菜单名字</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" id="SmallMenuName" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="SmallMenuRoute" class="col-sm-2 control-label">小菜单跳转的路由</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" id="SmallMenuRoute" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="BigMenuLogo" class="col-sm-2 control-label">大菜单的图标</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" id="BigMenuLogo" placeholder="">
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- dialog buttons -->
+                                <div class="modal-footer"><button type="button" class="btn btn-primary" onclick="navtoolbar.Save()">保存</button></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="navToolbar">
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <p>
+                                    <div class="input-group">
+                                        <label class="input-group-addon">名称</label>
+                                        <input type="text" class="form-control" id="pageSearchVal">
+                                    </div>
+                                    <button type="button" class="btn btn-primary" onclick="navtoolbar.Search()">查询</button>
+                                    <button type="button" class="btn btn-info" onclick="navtoolbar.Add()">添加</button>
+                                    <button type="button" class="btn btn-warning" onclick="navtoolbar.Updata()">编辑</button>
+                                    <button type="button" class="btn btn-danger" onclick="navtoolbar.Delete()">删除</button>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                    <table id="navTab"></table>
                 </div>
             <div role="tabpanel" class="tab-pane" id="databaseconfig">
 
@@ -119,6 +185,8 @@
 	            pageSize: 10,
 	            pageList: [10, 20, 30, 40, 50],
                 sidePagination: "server",
+                cardView:true,
+                detailView:true,
                 paginationLoop:false,
                 singleSelect:false,
                 clickToSelect:true,
@@ -250,6 +318,170 @@
                                     }, 2000);
                                 });
                                 $('#pageTab').bootstrapTable('refresh');
+                            } else {
+                                bootbox.alert(data)
+                            }
+                        },
+                        error: function(data){
+                           console.log(data.responseText)
+                           bootbox.alert('请求失败')
+                        },
+                    })
+                }
+            }
+            $("#navTab").bootstrapTable({
+                url: 'http://127.0.0.1:5000/CUID',
+                method: 'get',
+                queryParams:function(params){
+                    return {
+                        tableName:"LeftMenus",
+                        limit : params.limit,
+                        offset : parseInt(params.offset/params.limit)
+                    };
+                },
+	            pagination: true,
+                toolbar:"#navToolbar",
+                pageNumber:1,
+	            pageSize: 10,
+	            pageList: [10, 20, 30, 40, 50],
+                sidePagination: "server",
+                paginationLoop:false,
+                singleSelect:false,
+                clickToSelect:true,
+	            locale: "zh-CN",
+	            striped: true,
+                columns: [{
+                    checkbox: true
+                },{
+                    field: 'BigMenuName',
+                    title: '大菜单名字'
+                },{
+                    field: 'SmallMenuName',
+                    title: '小菜单名字'
+                },{
+                    field: 'SmallMenuRoute',
+                    title: '小菜单跳转的路由'
+                },{
+                    field: 'BigMenuLogo',
+                    title: '大菜单图标'
+                }]
+            })
+            navtoolbar= {
+                Search:function(){
+                    $('#navTab').bootstrapTable('refresh',{
+                        query:{
+                            field: "PageRoute",
+                            fieldvalue: $("#pageSearchVal").val()
+                        }
+                    });
+                },
+                Add:function(){
+                    $("#navModal").modal('show')
+                    $('#navID').val("");
+                    $('#BigMenuName').val("");
+                    $('#SmallMenuName').val("");
+                    $('#SmallMenuRoute').val("");
+                    $('#BigMenuLogo').val("");
+                },
+                Updata:function () {
+                    var rows = $("#navTab").bootstrapTable('getAllSelections');
+                    if(rows.length == 1){
+                        if(rows){
+                            $("#navModal").modal('show')
+                            $('#navID').val(rows[0].ID);
+                            $('#BigMenuName').val(rows[0].BigMenuName);
+                            $('#SmallMenuName').val(rows[0].SmallMenuName);
+                            $('#SmallMenuRoute').val(rows[0].SmallMenuRoute);
+                            $('#BigMenuLogo').val(rows[0].BigMenuLogo);
+                        }
+                    } else {
+                        bootbox.alert('请单选一条数据进行编辑！');
+                    }
+                },
+                Delete:function(){
+                    var rows = $("#navTab").bootstrapTable('getAllSelections');
+                    if (rows.length > 0) {
+                        var jsonarray=[];
+                        bootbox.confirm({
+                            message: "您确认要删除所选的记录吗？",
+                            buttons: {
+                                confirm: {
+                                    label: '删除',
+                                    className: 'btn-success'
+                                },
+                                cancel: {
+                                    label: '返回',
+                                    className: 'btn-danger'
+                                }
+                            },
+                            callback: function (result) {
+                                if(result){
+                                    for (var i = 0; i < rows.length; i++) {
+                                        var obj=createKeyIDObj(parseInt(rows[i].ID));
+                                        jsonarray.push(obj);
+                                    }
+                                    var a = JSON.stringify(jsonarray);
+                                    $.ajax({
+                                        url: 'http://127.0.0.1:5000/CUID',
+                                        method: 'DELETE',
+                                        data: {
+                                            tableName:"LeftMenus",
+                                            delete_data:a
+                                        },
+                                        success: function (data) {
+                                            if(data == "OK"){
+                                                var dialog = bootbox.dialog({
+                                                    message: '<p class="text-center mb-0"><i class="fa fa-spin fa-cog"></i>操作成功！</p>',
+                                                    closeButton: false
+                                                });
+                                                dialog.init(function(){
+                                                    setTimeout(function(){
+                                                        dialog.modal('hide');
+                                                    }, 2000);
+                                                });
+                                                $("#navTab").bootstrapTable('refresh');
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    } else {
+                        bootbox.alert('请选择要删除的记录')
+                    }
+                },
+                Save:function(){
+                    var idVal = $('#navID').val();
+                    var requestType = ""
+                    if (idVal.length >= 1){
+                        requestType = "put"
+                    }else {
+                        requestType = "post"
+                    }
+                    $.ajax({
+                        url:"http://127.0.0.1:5000/CUID",
+                        type:requestType,
+                        data:{
+                            tableName:"LeftMenus",
+                            ID:$('#navID').val(),
+                            BigMenuName:$('#BigMenuName').val(),
+                            SmallMenuName:$('#SmallMenuName').val(),
+                            SmallMenuRoute:$('#SmallMenuRoute').val(),
+                            BigMenuLogo:$('#BigMenuLogo').val()
+                        },
+                        success:function(data){
+                            if(data == "OK"){
+                                $("#navModal").modal('hide')
+                                var dialog = bootbox.dialog({
+                                    message: '<p class="text-center mb-0"><i class="fa fa-spin fa-cog"></i>操作成功！</p>',
+                                    closeButton: false
+                                });
+                                dialog.init(function(){
+                                    setTimeout(function(){
+                                        dialog.modal('hide');
+                                    }, 2000);
+                                });
+                                $('#navTab').bootstrapTable('refresh');
                             } else {
                                 bootbox.alert(data)
                             }
