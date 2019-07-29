@@ -46,24 +46,24 @@ def insert(data):
     :param insert_dict: 要进行插入的数据，数据类型为dict，key为model的字段属性，value为要插入的值
     :return: 返回json信息，包含status，message
     '''
-    print(data)
-    tablename = str(data.get("tableName"))
-    if hasattr(tablename, '__tablename__'):
-        oclass = tablename()
-        if isinstance(data, dict) and len(data) > 0:
-            try:
-                for key in data:
-                    if key != "ID" and key != "tableName":
-                        setattr(oclass, key, data[key])
-                db_session.add(oclass)
-                db_session.commit()
-                return 'OK'
-            except Exception as e:
-                print(e)
-                db_session.rollback()
-                logger.error(e)
-                insertSyslog("error", "%s数据添加报错："%tablename + str(e), current_user.Name)
-                return json.dumps('数据添加失败！')
+    if isinstance(data, dict) and len(data) > 0:
+        print(data)
+        tableName = str(data.get("tableName"))
+        print(tableName)
+        oclass = Table(tableName, metadata, autoload=True, autoload_with=engine)
+        try:
+            for key in data:
+                if key != "ID" and key != "tableName":
+                    setattr(oclass, key, data[key])
+            db_session.add(oclass)
+            db_session.commit()
+            return 'OK'
+        except Exception as e:
+            print(e)
+            db_session.rollback()
+            logger.error(e)
+            insertSyslog("error", "%s数据添加报错："%tableName + str(e), current_user.Name)
+            return json.dumps('数据添加失败！')
 
 def delete(data):
     '''
