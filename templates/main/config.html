@@ -221,29 +221,22 @@
                 },
                 Save:function(){
                     var idVal = $('#pageID').val();
-                    var dataStr = {}
+                    var requestType = ""
                     if (idVal.length >= 1){
-                        dataStr.tableName = "PageRoute"
-                        var update_data = {}
-                        update_data.ID = $('#pageID').val()
-                        update_data.PageRoute = $('#PageRoute').val()
-                        update_data.PageRouteName = $('#PageRouteName').val()
-                        update_data.Route = $('#Route').val()
-                        dataStr.update_data = update_data
+                        requestType = "put"
                     }else {
-                        dataStr.tableName = "PageRoute"
-                        var insert_data = {}
-                        insert_data.ID = $('#pageID').val()
-                        insert_data.PageRoute = $('#PageRoute').val()
-                        insert_data.PageRouteName = $('#PageRouteName').val()
-                        insert_data.Route = $('#Route').val()
-                        dataStr.insert_data = insert_data
+                        requestType = "post"
                     }
-                    console.log(dataStr)
                     $.ajax({
                         url:"http://127.0.0.1:5000/CUID",
-                        type:"post",
-                        data:dataStr,
+                        type:requestType,
+                        data:{
+                            tableName:"PageRoute",
+                            ID:$('#pageID').val(),
+                            PageRoute:$('#PageRoute').val(),
+                            PageRouteName:$('#PageRouteName').val(),
+                            Route:$('#Route').val(),
+                        },
                         success:function(data){
                             if(data == "OK"){
                                 $("#pageModal").modal('hide')
