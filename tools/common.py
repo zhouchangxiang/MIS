@@ -103,7 +103,7 @@ def update(data):
     :return: 返回json信息，包含status，message
     '''
     tablename = str(data.get("tableName"))
-    new_data = str(data.get("new_data"))
+    new_data = str(data.get("update_data"))
     if hasattr(tablename, '__tablename__'):
         if isinstance(new_data, dict) and len(new_data) > 0:
             try:
