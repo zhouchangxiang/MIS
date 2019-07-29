@@ -3,8 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <title>系统配置</title>
+    <link rel="stylesheet" href="../../static/style/bootstrap.min.css">
+    <link rel="stylesheet" href="../../static/style/base.css">
+    <script src="../../static/script/jquery-3.3.1.min.js"></script>
+    <script src="../../static/script/bootstrap.min.js"></script>
+    <script src="../../static/script/bootbox.min.js"></script>
+    <script src="../../static/script/base.js"></script>
 </head>
 <body>
+    <div class="configHeader">
+        <a href="javascript:;" class="pull-right"><i class="glyphicon glyphicon-home"></i>返回主页</a>
+    </div>
+    <div class="container">
+        <div>
+            <ul class="nav nav-pills" role="tablist">
+                <li role="presentation" class="active"><a href="#pageconfig" aria-controls="pageconfig" role="tab" data-toggle="tab">页面路由配置</a></li>
+                <li role="presentation"><a href="#navconfig" aria-controls="navconfig" role="tab" data-toggle="tab">左侧导航菜单配置</a></li>
+                <li role="presentation"><a href="#databaseconfig" aria-controls="databaseconfig" role="tab" data-toggle="tab">数据库建表</a></li>
+                <li role="presentation"><a href="#fieldconfig" aria-controls="fieldconfig" role="tab" data-toggle="tab">表字段配置</a></li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="pageconfig">
+                    <div id="pageModal" class="modal fade">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        ×
+                                    </button>
+                                    <h4 class="modal-title" id="myModalLabel">
+                                        配置信息
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="form-horizontal" action="">
+                                        <div class="form-group">
+                                            <label for="ID" class="col-sm-2 control-label">id</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" id="ID" placeholder="" disabled="disabled">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="RoleName" class="col-sm-2 control-label">页面描述</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" id="RoleName" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="ParentNode" class="col-sm-2 control-label">页面名（xxx.html）</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" id="RoleName" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="Description" class="col-sm-2 control-label">页面路由</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" id="Description" placeholder="">
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- dialog buttons -->
+                                <div class="modal-footer"><button type="button" class="btn btn-primary" onclick="toolbar.Save()">保存</button></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="Toolbar">
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <p>
+                                    <div class="input-group">
+                                        <label class="input-group-addon">名称</label>
+                                        <input type="text" class="form-control" id="SearchVal">
+                                    </div>
+                                    <button type="button" class="btn btn-primary" onclick="toolbar.Search()">查询</button>
+                                    <button type="button" class="btn btn-info" onclick="toolbar.Add()">添加</button>
+                                    <button type="button" class="btn btn-warning" onclick="toolbar.Updata()">编辑</button>
+                                    <button type="button" class="btn btn-danger" onclick="toolbar.Delete()">删除</button>
+                                    <button type="button" class="btn btn-default" onclick="toolbar.reload()">刷新</button>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                    <table id="pageTab"></table>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="navconfig">
 
+                </div>
+            <div role="tabpanel" class="tab-pane" id="databaseconfig">
+
+            </div>
+            <div role="tabpanel" class="tab-pane" id="fieldconfig">
+
+            </div>
+          </div>
+        </div>
+    </div>
+    <script>
+        $(function(){
+            $("#pageTab").bootstrapTable({
+                url:"",
+            })
+        })
+    </script>
 </body>
 </html>

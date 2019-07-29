@@ -8,38 +8,7 @@
 			rollWidth:nthTabs.width()-120, //可滚动的区域宽度，120即3个操作按钮的宽度
 		};
 		var settings = $.extend({},defaults,options);
-		var template = '<div class="page-tabs">' +
-            '<a href="#" class="roll-nav roll-nav-left">' +
-                '<span class="fa fa-backward"></span>' +
-            '</a>' +
-            '<a href="#" class="roll-nav roll-nav-right">' +
-                '<span class="fa fa-forward"></span>' +
-            '</a>' +
-            '<div class="dropdown roll-nav right-nav-list">' +
-                '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">' +
-                    '<span class="fa fa-chevron-down"></span>' +
-                '</a>' +
-                '<ul class="dropdown-menu">' +
-                    '<li><a href="#" class="tab-location">定位当前选项卡</a></li>' +
-                    '<li><a href="#" class="tab-close-current">关闭当前选项卡</a></li>' +
-                    '<li role="separator" class="divider"></li>' +
-                    '<li><a href="#" class="tab-close-other">关闭其他选项卡</a></li>' +
-                    '<li><a href="#" class="tab-close-all">关闭全部选项卡</a></li>' +
-                    '<li role="separator" class="divider"></li>' +
-                    '<li class="scrollbar-outer tab-list-scrollbar">' +
-                        '<div class="tab-list-container">' +
-                            '<ul class="tab-list"></ul>' +
-                        '</div>' +
-                    '</li>' +
-                '</ul>' +
-            '</div>' +
-            '<div class="content-tabs">' +
-                '<div class="content-tabs-container">' +
-                    '<ul class="nav nav-tabs"></ul>' +
-                '</div>' +
-            '</div>' +
-			'</div>' +
-            '<div class="tab-content"></div>';
+		var template = '<div class="page-tabs"><a href="#" class="roll-nav roll-nav-left"><span class="fa fa-backward"></span></a><div class="content-tabs"><div class="content-tabs-container"><ul class="nav nav-tabs"></ul></div></div><a href="#" class="roll-nav roll-nav-right"><span class="fa fa-forward"></span></a><div class="dropdown roll-nav right-nav-list"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="fa fa-chevron-down"></span></a><ul class="dropdown-menu"><li><a href="#" class="tab-location">定位当前选项卡</a></li><li><a href="#" class="tab-close-current">关闭当前选项卡</a></li><li role="separator" class="divider"></li><li><a href="#" class="tab-close-other">关闭其他选项卡</a></li><li><a href="#" class="tab-close-all">关闭全部选项卡</a></li><li role="separator" class="divider"></li><li class="scrollbar-outer tab-list-scrollbar"><div class="tab-list-container"><ul class="tab-list"></ul></div></li></ul></div></div><div class="tab-content"></div>';
 		//各种api
 		var methods = {
 			//初始化
@@ -112,7 +81,7 @@
 				var contentTab = navTabA.parent().parent().parent();
 				//情况1：之前同级选项卡宽度之和小于选项卡可视区域的70%则不做任何margin处理
 				if(width<=settings.rollWidth*0.7){
-					margin_left_total = 80;
+					margin_left_total = 40;
 				}
 				//情况2：之前同级选项卡宽度之和大于选项卡可视区域的70%且小于等于选项卡可视区域的则margin为可视区域的一半,使其更显眼
 				else if(width<=settings.rollWidth){
@@ -222,7 +191,7 @@
 					var contentTab = $(this).parent().find('.content-tabs-container');
 					var margin_left_origin = contentTab.css('marginLeft').replace('px','');
 					var margin_left_total = parseFloat(margin_left_origin) + methods.getMarginStep()+40;
-					contentTab.css("margin-left",margin_left_total>80 ? 80 : margin_left_total);
+					contentTab.css("margin-left",margin_left_total>40 ? 40 : margin_left_total);
 				});
 				return event;
 			},
@@ -318,8 +287,7 @@ $(function () {
 
 	//装选项卡内容的高度设置
 	$(window).resize(function () {
-		$(".tab-content").css("height",$(document).innerHeight() - 72)
-        $(".mainmenu,.subnav").css("height",$(document).innerHeight() - 72)
+		$(".tab-content").css("height",$(document).innerHeight() - 108)
 	}).resize();
 
 	//增加到选项卡
@@ -336,11 +304,9 @@ $(function () {
 	//左右折叠导航
 	$(".sideheadListBtn").on('click',function(){
 		if($(".submenu").css("marginLeft") == "0px"){
-            $(".sidehead").animate({width:"17%"}).find("img").css("display","none")
 			$(".submenu").animate({marginLeft:"-83%"})
             $(".contentRight").animate({marginLeft:"-16.6%",width:"96.6%"})
 		}else{
-            $(".sidehead").animate({width:"100%"}).find("img").css("display","inline-block")
             $(".submenu").animate({marginLeft:"0"})
             $(".contentRight").animate({marginLeft:"0",width:"80%"})
 		}
