@@ -118,4 +118,6 @@ a:hover{text-decoration: none}
     background: #d8d8d8;
     position: relative;
     padding: 20px;
+    clear: both;
+    overflow: hidden;
 }

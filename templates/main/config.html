@@ -41,49 +41,48 @@
                                 <div class="modal-body">
                                     <form class="form-horizontal" action="">
                                         <div class="form-group">
-                                            <label for="ID" class="col-sm-2 control-label">id</label>
+                                            <label for="pageID" class="col-sm-2 control-label">ID</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control" id="ID" placeholder="" disabled="disabled">
+                                                <input type="text" class="form-control" id="pageID" placeholder="" disabled="disabled">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="RoleName" class="col-sm-2 control-label">页面描述</label>
+                                            <label for="PageRoute" class="col-sm-2 control-label">页面描述</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control" id="RoleName" placeholder="">
+                                                <input type="text" class="form-control" id="PageRoute" placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="ParentNode" class="col-sm-2 control-label">页面名（xxx.html）</label>
+                                            <label for="PageRouteName" class="col-sm-2 control-label">页面名（xxx.html）</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control" id="RoleName" placeholder="">
+                                                <input type="text" class="form-control" id="PageRouteName" placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="Description" class="col-sm-2 control-label">页面路由</label>
+                                            <label for="Route" class="col-sm-2 control-label">页面路由</label>
                                             <div class="col-sm-10">
-                                                <input type="text" class="form-control" id="Description" placeholder="">
+                                                <input type="text" class="form-control" id="Route" placeholder="">
                                             </div>
                                         </div>
                                     </form>
                                 </div>
                                 <!-- dialog buttons -->
-                                <div class="modal-footer"><button type="button" class="btn btn-primary" onclick="toolbar.Save()">保存</button></div>
+                                <div class="modal-footer"><button type="button" class="btn btn-primary" onclick="toolbar.pageSave()">保存</button></div>
                             </div>
                         </div>
                     </div>
-                    <div id="Toolbar">
+                    <div id="pageToolbar">
                         <form class="form-inline">
                             <div class="form-group">
                                 <p>
                                     <div class="input-group">
                                         <label class="input-group-addon">名称</label>
-                                        <input type="text" class="form-control" id="SearchVal">
+                                        <input type="text" class="form-control" id="pageSearchVal">
                                     </div>
-                                    <button type="button" class="btn btn-primary" onclick="toolbar.Search()">查询</button>
-                                    <button type="button" class="btn btn-info" onclick="toolbar.Add()">添加</button>
-                                    <button type="button" class="btn btn-warning" onclick="toolbar.Updata()">编辑</button>
-                                    <button type="button" class="btn btn-danger" onclick="toolbar.Delete()">删除</button>
-                                    <button type="button" class="btn btn-default" onclick="toolbar.reload()">刷新</button>
+                                    <button type="button" class="btn btn-primary" onclick="toolbar.pageSearch()">查询</button>
+                                    <button type="button" class="btn btn-info" onclick="toolbar.pageAdd()">添加</button>
+                                    <button type="button" class="btn btn-warning" onclick="toolbar.pageUpdata()">编辑</button>
+                                    <button type="button" class="btn btn-danger" onclick="toolbar.pageDelete()">删除</button>
                                 </p>
                             </div>
                         </form>
@@ -105,17 +104,17 @@
     <script>
         $(function(){
             $("#pageTab").bootstrapTable({
-                url: '/allroles/Find',
+                url: 'http://127.0.0.1:5000/CUID',
                 method: 'get',
                 queryParams:function(params){
                     return {
-                        RoleName: '',
+                        tableName:"PageRoute",
                         limit : params.limit,
                         offset : parseInt(params.offset/params.limit)
                     };
                 },
 	            pagination: true,
-                toolbar:"#Toolbar",
+                toolbar:"#pageToolbar",
                 pageNumber:1,
 	            pageSize: 10,
 	            pageList: [10, 20, 30, 40, 50],
@@ -138,6 +137,137 @@
                     title: '路由'
                 }]
             })
+            toolbar = {
+                pageSearch:function(){
+                    $('#pageTab').bootstrapTable('refresh',{
+                        query:{
+                            field: "PageRoute",
+                            fieldvalue: $("#pageSearchVal").val()
+                        }
+                    });
+                },
+                pageAdd:function(){
+                    $("#pageModal").modal('show')
+                    $('#pageID').val("");
+                    $('#PageRoute').val("");
+                    $('#PageRouteName').val("");
+                    $('#Route').val("");
+                },
+                pageUpdata:function () {
+                    var rows = $("#pageTab").bootstrapTable('getAllSelections');
+                    if(rows.length == 1){
+                        if(rows){
+                            $("#pageModal").modal('show')
+                            $('#pageID').val(rows[0].ID);
+                            $('#PageRoute').val(rows[0].PageRoute);
+                            $('#PageRouteName').val(rows[0].PageRouteName);
+                            $('#Route').val(rows[0].Route);
+                        }
+                    } else {
+                        bootbox.alert('请单选一条数据进行编辑！');
+                    }
+                },
+                pageDelete:function(){
+                    var rows = $("#pageTab").bootstrapTable('getAllSelections');
+                    if (rows.length > 0) {
+                        var jsonarray=[];
+                        bootbox.confirm({
+                            message: "您确认要删除所选的记录吗？",
+                            buttons: {
+                                confirm: {
+                                    label: '删除',
+                                    className: 'btn-success'
+                                },
+                                cancel: {
+                                    label: '返回',
+                                    className: 'btn-danger'
+                                }
+                            },
+                            callback: function (result) {
+                                if(result){
+                                    for (var i = 0; i < rows.length; i++) {
+                                        var obj=createKeyIDObj(parseInt(rows[i].ID));
+                                        jsonarray.push(obj);
+                                    }
+                                    var a = JSON.stringify(jsonarray);
+                                    $.ajax({
+                                        url: 'http://127.0.0.1:5000/CUID',
+                                        method: 'DELETE',
+                                        data: {
+                                            tableName:"PageRoute",
+                                            delete_data:a
+                                        },
+                                        success: function (data) {
+                                            if(data == "OK"){
+                                                var dialog = bootbox.dialog({
+                                                    message: '<p class="text-center mb-0"><i class="fa fa-spin fa-cog"></i>操作成功！</p>',
+                                                    closeButton: false
+                                                });
+                                                dialog.init(function(){
+                                                    setTimeout(function(){
+                                                        dialog.modal('hide');
+                                                    }, 2000);
+                                                });
+                                                $("#pageTab").bootstrapTable('refresh');
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    } else {
+                        bootbox.alert('请选择要删除的记录')
+                    }
+                },
+                pageSave:function(){
+                    var idVal = $('#pageID').val();
+                    var dataStr = {}
+                    if (idVal.length >= 1){
+                        dataStr.tableName = "PageRoute"
+                        var update_data = {}
+                        update_data.ID = $('#pageID').val()
+                        update_data.PageRoute = $('#PageRoute').val()
+                        update_data.PageRouteName = $('#PageRouteName').val()
+                        update_data.Route = $('#Route').val()
+                        dataStr.update_data = update_data
+                    }else {
+                        dataStr.tableName = "PageRoute"
+                        var insert_data = {}
+                        insert_data.ID = $('#pageID').val()
+                        insert_data.PageRoute = $('#PageRoute').val()
+                        insert_data.PageRouteName = $('#PageRouteName').val()
+                        insert_data.Route = $('#Route').val()
+                        dataStr.insert_data = insert_data
+                    }
+                    console.log(dataStr)
+                    $.ajax({
+                        url:"http://127.0.0.1:5000/CUID",
+                        type:"post",
+                        data:dataStr,
+                        success:function(data){
+                            if(data == "OK"){
+                                $("#pageModal").modal('hide')
+                                var dialog = bootbox.dialog({
+                                    message: '<p class="text-center mb-0"><i class="fa fa-spin fa-cog"></i>操作成功！</p>',
+                                    closeButton: false
+                                });
+                                dialog.init(function(){
+                                    setTimeout(function(){
+                                        dialog.modal('hide');
+                                    }, 2000);
+                                });
+                                $('#pageTab').bootstrapTable('refresh');
+                            } else {
+                                bootbox.alert(data)
+                            }
+                        },
+                        error: function(data){
+                           console.log(data.responseText)
+                           bootbox.alert('请求失败')
+                        },
+                    })
+                }
+            }
         })
     </script>
 </body>
