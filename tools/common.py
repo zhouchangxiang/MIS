@@ -134,11 +134,10 @@ def select(data):#table, page, rows, fieid, param
     :return: 
     '''
     try:
-        print(data)
         pages = int(data.get("offset"))
         rowsnumber = int(data.get("limit"))
         param = data.get("field")
-        tableName = str(data.get("tableName"))
+        tableName = data.get("tableName")
         paramvalue = data.get("fieldvalue")
         inipage = (pages - 1) * rowsnumber + 0  # 起始页
         endpage = (pages - 1) * rowsnumber + rowsnumber  # 截止页
