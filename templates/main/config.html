@@ -4,9 +4,12 @@
     <meta charset="UTF-8">
     <title>系统配置</title>
     <link rel="stylesheet" href="../../static/style/bootstrap.min.css">
+    <link rel="stylesheet" href="../../static/style/bootstrap-table.min.css">
     <link rel="stylesheet" href="../../static/style/base.css">
     <script src="../../static/script/jquery-3.3.1.min.js"></script>
     <script src="../../static/script/bootstrap.min.js"></script>
+    <script src="../../static/script/bootstrap-table.min.js"></script>
+    <script src="../../static/script/bootstrap-table-zh-CN.min.js"></script>
     <script src="../../static/script/bootbox.min.js"></script>
     <script src="../../static/script/base.js"></script>
 </head>
@@ -102,7 +105,38 @@
     <script>
         $(function(){
             $("#pageTab").bootstrapTable({
-                url:"",
+                url: '/allroles/Find',
+                method: 'get',
+                queryParams:function(params){
+                    return {
+                        RoleName: '',
+                        limit : params.limit,
+                        offset : parseInt(params.offset/params.limit)
+                    };
+                },
+	            pagination: true,
+                toolbar:"#Toolbar",
+                pageNumber:1,
+	            pageSize: 10,
+	            pageList: [10, 20, 30, 40, 50],
+                sidePagination: "server",
+                paginationLoop:false,
+                singleSelect:false,
+                clickToSelect:true,
+	            locale: "zh-CN",
+	            striped: true,
+                columns: [{
+                    checkbox: true
+                },{
+                    field: 'PageRoute',
+                    title: '页面描述'
+                },{
+                    field: 'PageRouteName',
+                    title: '页面名（XX.html）'
+                },{
+                    field: 'Route',
+                    title: '路由'
+                }]
             })
         })
     </script>
