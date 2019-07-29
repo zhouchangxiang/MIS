@@ -46,15 +46,15 @@ def insert(data):
     :param insert_dict: 要进行插入的数据，数据类型为dict，key为model的字段属性，value为要插入的值
     :return: 返回json信息，包含status，message
     '''
+    print(data)
     tablename = str(data.get("tableName"))
-    insert_data = str(data.get("insert_data"))
     if hasattr(tablename, '__tablename__'):
         oclass = tablename()
-        if isinstance(insert_data, dict) and len(insert_data) > 0:
+        if isinstance(data, dict) and len(data) > 0:
             try:
-                for key in insert_data:
-                    if key != "ID":
-                        setattr(oclass, key, insert_data[key])
+                for key in data:
+                    if key != "ID" and key != "tableName":
+                        setattr(oclass, key, data[key])
                 db_session.add(oclass)
                 db_session.commit()
                 return 'OK'
