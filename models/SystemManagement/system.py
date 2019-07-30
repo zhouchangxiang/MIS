@@ -545,8 +545,8 @@ class LeftMenus(Base):
     # 大菜单上的图标:
     BigMenuLogo = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 小菜单的权限（是否显示出来）:
-    SmallMenuPermi = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # # 小菜单的权限（是否显示出来）:
+    # SmallMenuPermi = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 # 数据库建表配置
 class CreateTableSet(Base):
@@ -560,14 +560,14 @@ class CreateTableSet(Base):
     # 表的描述:
     TableDescrip = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 表类型（分页表/下拉框数据表）:
-    TableType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # # 表类型（分页表/下拉框数据表）:
+    # TableType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 是否在第一列显示多选框（checkbox）:
-    BigMenuLogo = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    ISFirstCheckBox = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 是否实现单选，设为true则复选框只能选择一行:
-    IsCheckbox = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    SingleSelect = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 是否显示添加按钮:
     IsAdd = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)

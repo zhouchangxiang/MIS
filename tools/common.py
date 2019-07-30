@@ -50,12 +50,13 @@ def insert(data):
         print(data)
         tableName = str(data.get("tableName"))
         print(tableName)
-        oclass = Table(tableName, metadata, autoload=True, autoload_with=engine)
+        newTable = Table(tableName, metadata, autoload=True, autoload_with=engine)
         try:
             for key in data:
                 if key != "ID" and key != "tableName":
-                    setattr(oclass, key, data[key])
-            db_session.add(oclass)
+                    setattr(newTable, key, data[key])
+            print(newTable.columns)
+            db_session.add(newTable)
             db_session.commit()
             return 'OK'
         except Exception as e:
@@ -149,7 +150,16 @@ def select(data):#table, page, rows, fieid, param
             total = db_session.query(newTable).filter(newTable.columns._data[param].like("%"+paramvalue+"%")).count()
             oclass = db_session.query(newTable).filter(newTable.columns._data[param].like("%"+paramvalue+"%")).all()[
                      inipage:endpage]
-        jsonoclass = json.dumps(oclass, cls=AlchemyEncoder, ensure_ascii=False)
+        dir = []
+        div = {}
+        for i in oclass:
+            a = 0
+            for j in newTable.columns._data:
+                div[str(j)] = str(i[a])
+                a = a + 1
+            dir.append(div)
+        print(dir)
+        jsonoclass = json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         jsonoclass = '{"total"' + ":" + str(total) + ',"rows"' + ":\n" + jsonoclass + "}"
         return jsonoclass
     except Exception as e:
