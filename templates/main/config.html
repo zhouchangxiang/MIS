@@ -284,8 +284,6 @@
 	            pageSize: 10,
 	            pageList: [10, 20, 30, 40, 50],
                 sidePagination: "server",
-                cardView:true,
-                detailView:true,
                 paginationLoop:false,
                 singleSelect:false,
                 clickToSelect:true,
@@ -302,7 +300,11 @@
                 },{
                     field: 'Route',
                     title: '路由'
-                }]
+                }],
+                responseHandler: function(res) {
+                    res = JSON.parse(res)
+                    return res
+                }
             })
             pagetoolbar = {
                 Search:function(){
