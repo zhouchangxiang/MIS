@@ -145,8 +145,8 @@
                             <div class="form-group">
                                 <p>
                                     <div class="input-group">
-                                        <label class="input-group-addon">名称</label>
-                                        <input type="text" class="form-control" id="pageSearchVal">
+                                        <label class="input-group-addon">小菜单名称</label>
+                                        <input type="text" class="form-control" id="navSearchVal">
                                     </div>
                                     <button type="button" class="btn btn-primary" onclick="navtoolbar.Search()">查询</button>
                                     <button type="button" class="btn btn-info" onclick="navtoolbar.Add()">添加</button>
@@ -158,13 +158,112 @@
                     </div>
                     <table id="navTab"></table>
                 </div>
-            <div role="tabpanel" class="tab-pane" id="databaseconfig">
+                <div role="tabpanel" class="tab-pane" id="databaseconfig">
+                    <div id="databaseModal" class="modal fade">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        ×
+                                    </button>
+                                    <h4 class="modal-title">
+                                        配置信息
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="form-horizontal" action="">
+                                        <div class="form-group">
+                                            <label for="databaseID" class="col-sm-2 control-label">ID</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" id="databaseID" placeholder="" disabled="disabled">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="TableName" class="col-sm-2 control-label">表名</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" id="TableName" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="TableDescrip" class="col-sm-2 control-label">表的描述</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" id="TableDescrip" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="ISFirstCheckBox" class="col-sm-2 control-label">是否在第一列显示多选框</label>
+                                            <div class="col-sm-10">
+                                                <select id="ISFirstCheckBox" type="text" class="form-control">
+                                                    <option value="1">是</option>
+                                                    <option value="0">否</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="SingleSelect" class="col-sm-2 control-label">是否实现单选</label>
+                                            <div class="col-sm-10">
+                                                <select id="SingleSelect" type="text" class="form-control">
+                                                    <option value="0">否</option>
+                                                    <option value="1">是</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="IsAdd" class="col-sm-2 control-label">是否显示添加按钮</label>
+                                            <div class="col-sm-10">
+                                                <select id="IsAdd" type="text" class="form-control">
+                                                    <option value="1">是</option>
+                                                    <option value="0">否</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="IsUpdate" class="col-sm-2 control-label">是否显示修改按钮</label>
+                                            <div class="col-sm-10">
+                                                <select id="IsUpdate" type="text" class="form-control">
+                                                    <option value="1">是</option>
+                                                    <option value="0">否</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="IsDelete" class="col-sm-2 control-label">是否显示删除按钮</label>
+                                            <div class="col-sm-10">
+                                                <select id="IsDelete" type="text" class="form-control">
+                                                    <option value="1">是</option>
+                                                    <option value="0">否</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- dialog buttons -->
+                                <div class="modal-footer"><button type="button" class="btn btn-primary" onclick="databasetoolbar.Save()">保存</button></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="databaseToolbar">
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <p>
+                                    <div class="input-group">
+                                        <label class="input-group-addon">表描述</label>
+                                        <input type="text" class="form-control" id="databaseSearchVal">
+                                    </div>
+                                    <button type="button" class="btn btn-primary" onclick="databasetoolbar.Search()">查询</button>
+                                    <button type="button" class="btn btn-info" onclick="databasetoolbar.Add()">添加</button>
+                                    <button type="button" class="btn btn-warning" onclick="databasetoolbar.Updata()">编辑</button>
+                                    <button type="button" class="btn btn-danger" onclick="databasetoolbar.Delete()">删除</button>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                    <table id="databaseTab"></table>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="fieldconfig">
 
+                </div>
             </div>
-            <div role="tabpanel" class="tab-pane" id="fieldconfig">
-
-            </div>
-          </div>
         </div>
     </div>
     <script>
@@ -370,8 +469,8 @@
                 Search:function(){
                     $('#navTab').bootstrapTable('refresh',{
                         query:{
-                            field: "PageRoute",
-                            fieldvalue: $("#pageSearchVal").val()
+                            field: "SmallMenuName",
+                            fieldvalue: $("#navSearchVal").val()
                         }
                     });
                 },
@@ -482,6 +581,188 @@
                                     }, 2000);
                                 });
                                 $('#navTab').bootstrapTable('refresh');
+                            } else {
+                                bootbox.alert(data)
+                            }
+                        },
+                        error: function(data){
+                           console.log(data.responseText)
+                           bootbox.alert('请求失败')
+                        },
+                    })
+                }
+            }
+            $("#databaseTab").bootstrapTable({
+                url: 'http://127.0.0.1:5000/CUID',
+                method: 'get',
+                queryParams:function(params){
+                    return {
+                        tableName:"CreateTableSet",
+                        limit : params.limit,
+                        offset : parseInt(params.offset/params.limit)
+                    };
+                },
+	            pagination: true,
+                toolbar:"#databaseToolbar",
+                pageNumber:1,
+	            pageSize: 10,
+	            pageList: [10, 20, 30, 40, 50],
+                sidePagination: "server",
+                paginationLoop:false,
+                singleSelect:false,
+                clickToSelect:true,
+	            locale: "zh-CN",
+	            striped: true,
+                columns: [{
+                    checkbox: true
+                },{
+                    field: 'TableName',
+                    title: '表名'
+                },{
+                    field: 'TableDescrip',
+                    title: '表的描述'
+                },{
+                    field: 'ISFirstCheckBox',
+                    title: '是否在第一列显示多选'
+                },{
+                    field: 'SingleSelect',
+                    title: '是否实现单选'
+                },{
+                    field: 'IsAdd',
+                    title: '是否显示添加按钮'
+                },{
+                    field: 'IsUpdate',
+                    title: '是否显示修改按钮'
+                },{
+                    field: 'IsDelete',
+                    title: '是否显示删除按钮'
+                }]
+            })
+            databasetoolbar = {
+                Search:function(){
+                    $('#databaseTab').bootstrapTable('refresh',{
+                        query:{
+                            field: "TableDescrip",
+                            fieldvalue: $("#databaseSearchVal").val()
+                        }
+                    });
+                },
+                Add:function(){
+                    $("#databaseModal").modal('show')
+                    $('#databaseID').val("");
+                    $('#TableName').val("");
+                    $('#TableDescrip').val("");
+                    $('#ISFirstCheckBox').val("");
+                    $('#SingleSelect').val("");
+                    $('#IsAdd').val("");
+                    $('#IsUpdate').val("");
+                    $('#IsDelete').val("");
+                },
+                Updata:function () {
+                    var rows = $("#databaseTab").bootstrapTable('getAllSelections');
+                    if(rows.length == 1){
+                        if(rows){
+                            $("#databaseModal").modal('show')
+                            $('#databaseID').val(rows[0].ID);
+                            $('#TableName').val(rows[0].TableName);
+                            $('#TableDescrip').val(rows[0].TableDescrip);
+                            $('#ISFirstCheckBox').val(rows[0].ISFirstCheckBox);
+                            $('#SingleSelect').val(rows[0].SingleSelect);
+                            $('#IsAdd').val(rows[0].IsAdd);
+                            $('#IsUpdate').val(rows[0].IsUpdate);
+                            $('#IsDelete').val(rows[0].IsDelete);
+                        }
+                    } else {
+                        bootbox.alert('请单选一条数据进行编辑！');
+                    }
+                },
+                Delete:function(){
+                    var rows = $("#databaseTab").bootstrapTable('getAllSelections');
+                    if (rows.length > 0) {
+                        var jsonarray=[];
+                        bootbox.confirm({
+                            message: "您确认要删除所选的记录吗？",
+                            buttons: {
+                                confirm: {
+                                    label: '删除',
+                                    className: 'btn-success'
+                                },
+                                cancel: {
+                                    label: '返回',
+                                    className: 'btn-danger'
+                                }
+                            },
+                            callback: function (result) {
+                                if(result){
+                                    for (var i = 0; i < rows.length; i++) {
+                                        var obj=createKeyIDObj(parseInt(rows[i].ID));
+                                        jsonarray.push(obj);
+                                    }
+                                    var a = JSON.stringify(jsonarray);
+                                    $.ajax({
+                                        url: 'http://127.0.0.1:5000/CUID',
+                                        method: 'DELETE',
+                                        data: {
+                                            tableName:"CreateTableSet",
+                                            delete_data:a
+                                        },
+                                        success: function (data) {
+                                            if(data == "OK"){
+                                                var dialog = bootbox.dialog({
+                                                    message: '<p class="text-center mb-0"><i class="fa fa-spin fa-cog"></i>操作成功！</p>',
+                                                    closeButton: false
+                                                });
+                                                dialog.init(function(){
+                                                    setTimeout(function(){
+                                                        dialog.modal('hide');
+                                                    }, 2000);
+                                                });
+                                                $("#databaseTab").bootstrapTable('refresh');
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    } else {
+                        bootbox.alert('请选择要删除的记录')
+                    }
+                },
+                Save:function(){
+                    var idVal = $('#databaseID').val();
+                    var requestType = ""
+                    if (idVal.length >= 1){
+                        requestType = "put"
+                    }else {
+                        requestType = "post"
+                    }
+                    $.ajax({
+                        url:"http://127.0.0.1:5000/CUID",
+                        type:requestType,
+                        data:{
+                            tableName:"CreateTableSet",
+                            ID:$('#databaseID').val(),
+                            TableName:$('#TableName').val(),
+                            TableDescrip:$('#TableDescrip').val(),
+                            ISFirstCheckBox:$('#ISFirstCheckBox').val(),
+                            SingleSelect:$('#SingleSelect').val(),
+                            IsAdd:$('#IsAdd').val(),
+                            IsUpdate:$('#IsUpdate').val(),
+                            IsDelete:$('#IsDelete').val()
+                        },
+                        success:function(data){
+                            if(data == "OK"){
+                                $("#databaseModal").modal('hide')
+                                var dialog = bootbox.dialog({
+                                    message: '<p class="text-center mb-0"><i class="fa fa-spin fa-cog"></i>操作成功！</p>',
+                                    closeButton: false
+                                });
+                                dialog.init(function(){
+                                    setTimeout(function(){
+                                        dialog.modal('hide');
+                                    }, 2000);
+                                });
+                                $('#databaseTab').bootstrapTable('refresh');
                             } else {
                                 bootbox.alert(data)
                             }
