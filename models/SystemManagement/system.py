@@ -519,7 +519,7 @@ class PageRoute(Base):
     ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
 
     # 页面路由配置:
-    PageRoute = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    SetRoute = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 页面路径名（XX.html）:
     PageRouteName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)

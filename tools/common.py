@@ -1,5 +1,6 @@
 import json
 from sqlalchemy import create_engine, and_
+from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import sessionmaker
 from flask_login import current_user
 import re
@@ -19,6 +20,8 @@ db_session = Session()
 from sqlalchemy import MetaData, create_engine
 metadata = MetaData()
 from sqlalchemy import Table
+Base = automap_base()
+Base.prepare(engine, reflect=True)
 
 logger = MESLogger('../logs', 'log')
 #插入日志OperationType OperationContent OperationDate UserName ComputerName IP
@@ -47,16 +50,21 @@ def insert(data):
     :return: 返回json信息，包含status，message
     '''
     if isinstance(data, dict) and len(data) > 0:
-        print(data)
-        tableName = str(data.get("tableName"))
-        print(tableName)
-        newTable = Table(tableName, metadata, autoload=True, autoload_with=engine)
         try:
+            tableName = str(data.get("tableName"))
+            obj = Base.classes.get(tableName)
+            ss = obj()
             for key in data:
                 if key != "ID" and key != "tableName":
-                    setattr(newTable, key, data[key])
-            print(newTable.columns)
-            db_session.add(newTable)
+                    setattr(ss, key, data[key])
+            db_session.add(ss)
+            aud = AuditTrace()
+            aud.Operation = "用户：" + current_user.Name + " 对表" + tableName + "添加一条数据！"
+            aud.DeitalMSG = "用户：" + current_user.Name + " 对表" + tableName + "添加一条数据！" + " 添加时间：" + datetime.datetime.now().strftime(
+                '%Y-%m-%d %H:%M:%S')
+            aud.ReviseDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            aud.User = current_user.Name
+            db_session.add(aud)
             db_session.commit()
             return 'OK'
         except Exception as e:
@@ -72,30 +80,33 @@ def delete(data):
     :param recv_data: 要进行更新的数据，数据类型为list，list中的每个元素为需要删除的每条记录的ID
     :return: 返回json信息，包含status，message
     '''
-    tablename = str(data.get("tableName"))
-    delete_data = str(data.get("delete_data"))
-    if hasattr(tablename, '__tablename__'):
-        try:
-            jsonstr = json.dumps(delete_data.to_dict())
-            newTable = Table(tablename, metadata, autoload=True, autoload_with=engine)
-            if len(jsonstr) > 10:
-                jsonnumber = re.findall(r"\d+\.?\d*", jsonstr)
-                for key in jsonnumber:
-                    id = int(key)
-                    try:
-                        oclass = db_session.query(newTable).filter_by(ID=id).first()
-                        db_session.delete(oclass)
-                        db_session.commit()
-                    except Exception as ee:
-                        db_session.rollback()
-                        insertSyslog("error", "删除户ID为"+str(id)+"报错Error：" + str(ee), current_user.Name)
-                        return json.dumps("删除用户报错", cls=AlchemyEncoder,ensure_ascii=False)
-                return 'OK'
-        except Exception as e:
-            db_session.rollback()
-            logger.error(e)
-            insertSyslog("error", "%s数据删除报错："%tablename + str(e), current_user.Name)
-            return json.dumps('数据删除失败！')
+    try:
+        tableName = str(data.get("tableName"))
+        jsonstr = json.dumps(data.to_dict())
+        if len(jsonstr) > 10:
+            jsonnumber = re.findall(r"\d+\.?\d*", jsonstr)
+            for key in jsonnumber:
+                try:
+                    sql = "delete from "+"[BK].[dbo].["+tableName+"] where ID = '"+key+"'"
+                    db_session.execute(sql)
+                    aud = AuditTrace()
+                    aud.Operation = "用户：" + current_user.Name + " 对表" + tableName + "中的ID为"+key+"的数据做了删除操作！"
+                    aud.DeitalMSG = "用户：" + current_user.Name + " 对表" + tableName + "中的ID为"+key+"的数据做了删除操作！" + " 删除时间：" + datetime.datetime.now().strftime(
+                        '%Y-%m-%d %H:%M:%S')
+                    aud.ReviseDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    aud.User = current_user.Name
+                    db_session.add(aud)
+                    db_session.commit()
+                except Exception as ee:
+                    db_session.rollback()
+                    insertSyslog("error", "删除户ID为"+str(id)+"报错Error：" + str(ee), current_user.Name)
+                    return json.dumps("删除用户报错", cls=AlchemyEncoder,ensure_ascii=False)
+            return 'OK'
+    except Exception as e:
+        db_session.rollback()
+        logger.error(e)
+        insertSyslog("error", "%s数据删除报错："%tableName + str(e), current_user.Name)
+        return json.dumps('数据删除失败！')
 
 def update(data):
     '''
@@ -103,27 +114,32 @@ def update(data):
     :param new_data: 要进行更新的数据，数据类型为dict，key为model的字段属性，value为要更新的值
     :return: 返回json信息，包含status，message
     '''
-    tablename = str(data.get("tableName"))
-    new_data = str(data.get("update_data"))
-    if hasattr(tablename, '__tablename__'):
-        if isinstance(new_data, dict) and len(new_data) > 0:
-            try:
-                newTable = Table(tablename, metadata, autoload=True, autoload_with=engine)
-                oclass = db_session.query(newTable).filter(newTable.ID==new_data['ID']).first()
-                if oclass:
-                    for key in new_data:
-                        if hasattr(oclass, key) and key != 'ID':
-                            setattr(oclass, key, new_data[key])
-                    db_session.add(oclass)
-                    db_session.commit()
-                    return 'OK'
-                else:
-                    return json.dumps('当前记录不存在！', cls=AlchemyEncoder, ensure_ascii=False)
-            except Exception as e:
-                db_session.rollback()
-                logger.error(e)
-                insertSyslog("error", "%s数据更新报错："%tablename + str(e), current_user.Name)
-                return json.dumps('数据更新失败！', cls=AlchemyEncoder, ensure_ascii=False)
+    if isinstance(data, dict) and len(data) > 0:
+        try:
+            tableName = str(data.get("tableName"))
+            obj = Base.classes.get(tableName)
+            ss = obj()
+            oclass = db_session.query(obj).filter_by(ID=int(data.get('ID'))).first()
+            if oclass:
+                for key in data:
+                    if hasattr(oclass, key) and key != 'ID' and key != 'tableName':
+                        setattr(oclass, key, data[key])
+                db_session.add(oclass)
+                aud = AuditTrace()
+                aud.Operation = "用户："+current_user.Name+" 对表"+tableName+"做了更新操作！"
+                aud.DeitalMSG = "用户："+current_user.Name+" 对表"+tableName+"做了更新操作！"+" 更新时间："+datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                aud.ReviseDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                aud.User = current_user.Name
+                db_session.add(aud)
+                db_session.commit()
+                return 'OK'
+            else:
+                return json.dumps('当前记录不存在！', cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            db_session.rollback()
+            logger.error(e)
+            insertSyslog("error", "%s数据更新报错："%tableName + str(e), current_user.Name)
+            return json.dumps('数据更新失败！', cls=AlchemyEncoder, ensure_ascii=False)
 
 def select(data):#table, page, rows, fieid, param
     '''
@@ -146,19 +162,19 @@ def select(data):#table, page, rows, fieid, param
         if (param == "" or param == None):
             total = db_session.query(newTable).count()
             oclass = db_session.query(newTable).all()[inipage:endpage]
+            print(oclass)
         else:
             total = db_session.query(newTable).filter(newTable.columns._data[param].like("%"+paramvalue+"%")).count()
             oclass = db_session.query(newTable).filter(newTable.columns._data[param].like("%"+paramvalue+"%")).all()[
                      inipage:endpage]
         dir = []
-        div = {}
         for i in oclass:
             a = 0
+            divi = {}
             for j in newTable.columns._data:
-                div[str(j)] = str(i[a])
+                divi[str(j)] = str(i[a])
                 a = a + 1
-            dir.append(div)
-        print(dir)
+            dir.append(divi)
         jsonoclass = json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         jsonoclass = '{"total"' + ":" + str(total) + ',"rows"' + ":\n" + jsonoclass + "}"
         return jsonoclass
