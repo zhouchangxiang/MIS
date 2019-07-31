@@ -159,7 +159,6 @@ def select(data):#table, page, rows, fieid, param
         if (param == "" or param == None):
             total = db_session.query(newTable).count()
             oclass = db_session.query(newTable).all()[inipage:endpage]
-            print(oclass)
         else:
             total = db_session.query(newTable).filter(newTable.columns._data[param].like("%"+paramvalue+"%")).count()
             oclass = db_session.query(newTable).filter(newTable.columns._data[param].like("%"+paramvalue+"%")).all()[
