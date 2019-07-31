@@ -2,14 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>系统配置</title>
+    <title>表配置</title>
     <link rel="stylesheet" href="../../static/style/bootstrap.min.css">
     <link rel="stylesheet" href="../../static/style/bootstrap-table.min.css">
+    <link rel="stylesheet" href="../../static/style/bootstrap-select.min.css">
     <link rel="stylesheet" href="../../static/style/base.css">
     <script src="../../static/script/jquery-3.3.1.min.js"></script>
     <script src="../../static/script/bootstrap.min.js"></script>
     <script src="../../static/script/bootstrap-table.min.js"></script>
     <script src="../../static/script/bootstrap-table-zh-CN.min.js"></script>
+    <script src="../../static/script/bootstrap-select.min.js"></script>
     <script src="../../static/script/bootbox.min.js"></script>
     <script src="../../static/script/base.js"></script>
 </head>
@@ -41,49 +43,47 @@
                                 <div class="modal-body">
                                     <form class="form-horizontal" action="">
                                         <div class="form-group">
-                                            <label for="pageID" class="col-sm-2 control-label">ID</label>
-                                            <div class="col-sm-10">
+                                            <label for="pageID" class="col-sm-3 control-label">ID</label>
+                                            <div class="col-sm-9">
                                                 <input type="text" class="form-control" id="pageID" placeholder="" disabled="disabled">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="PageRoute" class="col-sm-2 control-label">页面描述</label>
-                                            <div class="col-sm-10">
-                                                <input type="text" class="form-control" id="PageRoute" placeholder="">
+                                            <label for="SetRoute" class="col-sm-3 control-label">页面描述</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" id="SetRoute" placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="PageRouteName" class="col-sm-2 control-label">页面名（xxx.html）</label>
-                                            <div class="col-sm-10">
+                                            <label for="PageRouteName" class="col-sm-3 control-label">页面名（xxx.html）</label>
+                                            <div class="col-sm-9">
                                                 <input type="text" class="form-control" id="PageRouteName" placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="Route" class="col-sm-2 control-label">页面路由</label>
-                                            <div class="col-sm-10">
+                                            <label for="Route" class="col-sm-3 control-label">页面路由</label>
+                                            <div class="col-sm-9">
                                                 <input type="text" class="form-control" id="Route" placeholder="">
                                             </div>
                                         </div>
                                     </form>
                                 </div>
                                 <!-- dialog buttons -->
-                                <div class="modal-footer"><button type="button" class="btn btn-primary" onclick="pagetoolbar.Save()">保存</button></div>
+                                <div class="modal-footer"><button type="button" class="btn btn-primary saveForm" onclick="pagetoolbar.Save()" data-loading-text="正在处理..." >保存</button></div>
                             </div>
                         </div>
                     </div>
                     <div id="pageToolbar">
                         <form class="form-inline">
                             <div class="form-group">
-                                <p>
-                                    <div class="input-group">
-                                        <label class="input-group-addon">名称</label>
-                                        <input type="text" class="form-control" id="pageSearchVal">
-                                    </div>
-                                    <button type="button" class="btn btn-primary" onclick="pagetoolbar.Search()">查询</button>
-                                    <button type="button" class="btn btn-info" onclick="pagetoolbar.Add()">添加</button>
-                                    <button type="button" class="btn btn-warning" onclick="pagetoolbar.Updata()">编辑</button>
-                                    <button type="button" class="btn btn-danger" onclick="pagetoolbar.Delete()">删除</button>
-                                </p>
+                                <div class="input-group">
+                                    <label class="input-group-addon">名称</label>
+                                    <input type="text" class="form-control" id="pageSearchVal">
+                                </div>
+                                <button type="button" class="btn btn-primary" onclick="pagetoolbar.Search()">查询</button>
+                                <button type="button" class="btn btn-info" onclick="pagetoolbar.Add()">添加</button>
+                                <button type="button" class="btn btn-warning" onclick="pagetoolbar.Updata()">编辑</button>
+                                <button type="button" class="btn btn-danger" onclick="pagetoolbar.Delete()">删除</button>
                             </div>
                         </form>
                     </div>
@@ -104,32 +104,32 @@
                                 <div class="modal-body">
                                     <form class="form-horizontal" action="">
                                         <div class="form-group">
-                                            <label for="pageID" class="col-sm-2 control-label">ID</label>
-                                            <div class="col-sm-10">
+                                            <label for="pageID" class="col-sm-3 control-label">ID</label>
+                                            <div class="col-sm-9">
                                                 <input type="text" class="form-control" id="navID" placeholder="" disabled="disabled">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="BigMenuName" class="col-sm-2 control-label">大菜单名字</label>
-                                            <div class="col-sm-10">
+                                            <label for="BigMenuName" class="col-sm-3 control-label">大菜单名字</label>
+                                            <div class="col-sm-9">
                                                 <input type="text" class="form-control" id="BigMenuName" placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="SmallMenuName" class="col-sm-2 control-label">小菜单名字</label>
-                                            <div class="col-sm-10">
+                                            <label for="SmallMenuName" class="col-sm-3 control-label">小菜单名字</label>
+                                            <div class="col-sm-9">
                                                 <input type="text" class="form-control" id="SmallMenuName" placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="SmallMenuRoute" class="col-sm-2 control-label">小菜单跳转的路由</label>
-                                            <div class="col-sm-10">
-                                                <input type="text" class="form-control" id="SmallMenuRoute" placeholder="">
+                                            <label for="SmallMenuRoute" class="col-sm-3 control-label">小菜单跳转的路由</label>
+                                            <div class="col-sm-9">
+                                                <select id="SmallMenuRoute" class="selectpicker" data-live-search="true"></select>
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="BigMenuLogo" class="col-sm-2 control-label">大菜单的图标</label>
-                                            <div class="col-sm-10">
+                                            <label for="BigMenuLogo" class="col-sm-3 control-label">大菜单的图标</label>
+                                            <div class="col-sm-9">
                                                 <input type="text" class="form-control" id="BigMenuLogo" placeholder="">
                                             </div>
                                         </div>
@@ -143,16 +143,14 @@
                     <div id="navToolbar">
                         <form class="form-inline">
                             <div class="form-group">
-                                <p>
-                                    <div class="input-group">
-                                        <label class="input-group-addon">小菜单名称</label>
-                                        <input type="text" class="form-control" id="navSearchVal">
-                                    </div>
-                                    <button type="button" class="btn btn-primary" onclick="navtoolbar.Search()">查询</button>
-                                    <button type="button" class="btn btn-info" onclick="navtoolbar.Add()">添加</button>
-                                    <button type="button" class="btn btn-warning" onclick="navtoolbar.Updata()">编辑</button>
-                                    <button type="button" class="btn btn-danger" onclick="navtoolbar.Delete()">删除</button>
-                                </p>
+                                <div class="input-group">
+                                    <label class="input-group-addon">小菜单名称</label>
+                                    <input type="text" class="form-control" id="navSearchVal">
+                                </div>
+                                <button type="button" class="btn btn-primary" onclick="navtoolbar.Search()">查询</button>
+                                <button type="button" class="btn btn-info" onclick="navtoolbar.Add()">添加</button>
+                                <button type="button" class="btn btn-warning" onclick="navtoolbar.Updata()">编辑</button>
+                                <button type="button" class="btn btn-danger" onclick="navtoolbar.Delete()">删除</button>
                             </div>
                         </form>
                     </div>
@@ -173,63 +171,63 @@
                                 <div class="modal-body">
                                     <form class="form-horizontal" action="">
                                         <div class="form-group">
-                                            <label for="databaseID" class="col-sm-2 control-label">ID</label>
-                                            <div class="col-sm-10">
+                                            <label for="databaseID" class="col-sm-3 control-label">ID</label>
+                                            <div class="col-sm-9">
                                                 <input type="text" class="form-control" id="databaseID" placeholder="" disabled="disabled">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="TableName" class="col-sm-2 control-label">表名</label>
-                                            <div class="col-sm-10">
+                                            <label for="TableName" class="col-sm-3 control-label">表名</label>
+                                            <div class="col-sm-9">
                                                 <input type="text" class="form-control" id="TableName" placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="TableDescrip" class="col-sm-2 control-label">表的描述</label>
-                                            <div class="col-sm-10">
+                                            <label for="TableDescrip" class="col-sm-3 control-label">表的描述</label>
+                                            <div class="col-sm-9">
                                                 <input type="text" class="form-control" id="TableDescrip" placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="ISFirstCheckBox" class="col-sm-2 control-label">是否在第一列显示多选框</label>
-                                            <div class="col-sm-10">
-                                                <select id="ISFirstCheckBox" type="text" class="form-control">
+                                            <label for="ISFirstCheckBox" class="col-sm-3 control-label">是否在第一列显示多选框</label>
+                                            <div class="col-sm-9">
+                                                <select id="ISFirstCheckBox" class="selectpicker">
                                                     <option value="1">是</option>
                                                     <option value="0">否</option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="SingleSelect" class="col-sm-2 control-label">是否实现单选</label>
-                                            <div class="col-sm-10">
-                                                <select id="SingleSelect" type="text" class="form-control">
+                                            <label for="SingleSelect" class="col-sm-3 control-label">是否实现单选</label>
+                                            <div class="col-sm-9">
+                                                <select id="SingleSelect" class="selectpicker">
                                                     <option value="0">否</option>
                                                     <option value="1">是</option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="IsAdd" class="col-sm-2 control-label">是否显示添加按钮</label>
-                                            <div class="col-sm-10">
-                                                <select id="IsAdd" type="text" class="form-control">
+                                            <label for="IsAdd" class="col-sm-3 control-label">是否显示添加按钮</label>
+                                            <div class="col-sm-9">
+                                                <select id="IsAdd" class="selectpicker">
                                                     <option value="1">是</option>
                                                     <option value="0">否</option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="IsUpdate" class="col-sm-2 control-label">是否显示修改按钮</label>
-                                            <div class="col-sm-10">
-                                                <select id="IsUpdate" type="text" class="form-control">
+                                            <label for="IsUpdate" class="col-sm-3 control-label">是否显示修改按钮</label>
+                                            <div class="col-sm-9">
+                                                <select id="IsUpdate" class="selectpicker">
                                                     <option value="1">是</option>
                                                     <option value="0">否</option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="IsDelete" class="col-sm-2 control-label">是否显示删除按钮</label>
-                                            <div class="col-sm-10">
-                                                <select id="IsDelete" type="text" class="form-control">
+                                            <label for="IsDelete" class="col-sm-3 control-label">是否显示删除按钮</label>
+                                            <div class="col-sm-9">
+                                                <select id="IsDelete" class="selectpicker">
                                                     <option value="1">是</option>
                                                     <option value="0">否</option>
                                                 </select>
@@ -245,16 +243,14 @@
                     <div id="databaseToolbar">
                         <form class="form-inline">
                             <div class="form-group">
-                                <p>
-                                    <div class="input-group">
-                                        <label class="input-group-addon">表描述</label>
-                                        <input type="text" class="form-control" id="databaseSearchVal">
-                                    </div>
-                                    <button type="button" class="btn btn-primary" onclick="databasetoolbar.Search()">查询</button>
-                                    <button type="button" class="btn btn-info" onclick="databasetoolbar.Add()">添加</button>
-                                    <button type="button" class="btn btn-warning" onclick="databasetoolbar.Updata()">编辑</button>
-                                    <button type="button" class="btn btn-danger" onclick="databasetoolbar.Delete()">删除</button>
-                                </p>
+                                <div class="input-group">
+                                    <label class="input-group-addon">表描述</label>
+                                    <input type="text" class="form-control" id="databaseSearchVal">
+                                </div>
+                                <button type="button" class="btn btn-primary" onclick="databasetoolbar.Search()">查询</button>
+                                <button type="button" class="btn btn-info" onclick="databasetoolbar.Add()">添加</button>
+                                <button type="button" class="btn btn-warning" onclick="databasetoolbar.Updata()">编辑</button>
+                                <button type="button" class="btn btn-danger" onclick="databasetoolbar.Delete()">删除</button>
                             </div>
                         </form>
                     </div>
@@ -289,10 +285,11 @@
                 clickToSelect:true,
 	            locale: "zh-CN",
 	            striped: true,
+                showRefresh:true,
                 columns: [{
                     checkbox: true
                 },{
-                    field: 'PageRoute',
+                    field: 'SetRoute',
                     title: '页面描述'
                 },{
                     field: 'PageRouteName',
@@ -300,17 +297,13 @@
                 },{
                     field: 'Route',
                     title: '路由'
-                }],
-                responseHandler: function(res) {
-                    res = JSON.parse(res)
-                    return res
-                }
+                }]
             })
             pagetoolbar = {
                 Search:function(){
                     $('#pageTab').bootstrapTable('refresh',{
                         query:{
-                            field: "PageRoute",
+                            field: "SetRoute",
                             fieldvalue: $("#pageSearchVal").val()
                         }
                     });
@@ -318,7 +311,7 @@
                 Add:function(){
                     $("#pageModal").modal('show')
                     $('#pageID').val("");
-                    $('#PageRoute').val("");
+                    $('#SetRoute').val("");
                     $('#PageRouteName').val("");
                     $('#Route').val("");
                 },
@@ -328,7 +321,7 @@
                         if(rows){
                             $("#pageModal").modal('show')
                             $('#pageID').val(rows[0].ID);
-                            $('#PageRoute').val(rows[0].PageRoute);
+                            $('#SetRoute').val(rows[0].PageRoute);
                             $('#PageRouteName').val(rows[0].PageRouteName);
                             $('#Route').val(rows[0].Route);
                         }
@@ -402,7 +395,7 @@
                         data:{
                             tableName:"PageRoute",
                             ID:$('#pageID').val(),
-                            PageRoute:$('#PageRoute').val(),
+                            SetRoute:$('#SetRoute').val(),
                             PageRouteName:$('#PageRouteName').val(),
                             Route:$('#Route').val(),
                         },
@@ -451,6 +444,7 @@
                 clickToSelect:true,
 	            locale: "zh-CN",
 	            striped: true,
+                showRefresh:true,
                 columns: [{
                     checkbox: true
                 },{
@@ -483,6 +477,28 @@
                     $('#SmallMenuName').val("");
                     $('#SmallMenuRoute').val("");
                     $('#BigMenuLogo').val("");
+
+                    //给下拉框动态添加数据
+                    $("#SmallMenuRoute").html("")
+                    $.ajax({
+                        url:"http://127.0.0.1:5000/CUID",
+                        type:"get",
+                        data:{
+                            tableName:"PageRoute",
+                            limit : 100000000,
+                            offset : 0
+                        },
+                        success:function(data){
+                            data = JSON.parse(data)
+                            var options="";
+                            $.each(data.rows,function(i,value){
+                                options += "<option value='"+data.rows[i].ID+"'>"+data.rows[i].Route+"</option>";
+                            })
+                            $("#SmallMenuRoute").append(options);
+                            $('#SmallMenuRoute').selectpicker('refresh');
+                            $('#SmallMenuRoute').selectpicker('render');
+                        }
+                    })
                 },
                 Updata:function () {
                     var rows = $("#navTab").bootstrapTable('getAllSelections');
@@ -615,6 +631,7 @@
                 clickToSelect:true,
 	            locale: "zh-CN",
 	            striped: true,
+                showRefresh:true,
                 columns: [{
                     checkbox: true
                 },{
