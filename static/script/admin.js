@@ -287,7 +287,7 @@ $(function () {
 
 	//装选项卡内容的高度设置
 	$(window).resize(function () {
-		$(".tab-content").css("height",$(document).innerHeight() - 108)
+		$("#tabsBox").css("height",$(document).innerHeight() - 68)
 	}).resize();
 
 	//增加到选项卡
