@@ -297,7 +297,11 @@
                 },{
                     field: 'Route',
                     title: '路由'
-                }]
+                }],
+                responseHandler:function(res){
+                    res = JSON.parse(res)
+                    return res
+                }
             })
             pagetoolbar = {
                 Search:function(){
