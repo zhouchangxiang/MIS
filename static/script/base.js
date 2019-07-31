@@ -73,6 +73,12 @@
       e[b]);
    }
 })(jQuery, this);
+$(function(){
+    //保存按钮点击后禁用并显示loadding
+    $(".saveForm").on("click",function () {
+        $(this).button("loading")
+    })
+})
 //封装id
 function createKeyIDObj(keyID){
     return {
