@@ -45,9 +45,8 @@ def insertSyslog(operationType, operationContent, userName):
 
 def insert(data):
     '''
-    :param tablename: 要进行插入数据的model
-    :param insert_dict: 要进行插入的数据，数据类型为dict，key为model的字段属性，value为要插入的值
-    :return: 返回json信息，包含status，message
+    :param data: 需要添加的数据
+    :return:
     '''
     if isinstance(data, dict) and len(data) > 0:
         try:
@@ -76,9 +75,8 @@ def insert(data):
 
 def delete(data):
     '''
-    :param tablename: 要进行删除信息的model
-    :param recv_data: 要进行更新的数据，数据类型为list，list中的每个元素为需要删除的每条记录的ID
-    :return: 返回json信息，包含status，message
+    :param data: 要删除的数据
+    :return:
     '''
     try:
         tableName = str(data.get("tableName"))
@@ -110,9 +108,8 @@ def delete(data):
 
 def update(data):
     '''
-    :param tablename:要进行更新的model
-    :param new_data: 要进行更新的数据，数据类型为dict，key为model的字段属性，value为要更新的值
-    :return: 返回json信息，包含status，message
+    :param data: 更新数据
+    :return:
     '''
     if isinstance(data, dict) and len(data) > 0:
         try:
