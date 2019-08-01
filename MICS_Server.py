@@ -61,6 +61,17 @@ def home():
 def config():
     return render_template("./main/config.html")
 
+@app.route('/test1')
+# @login_required
+def test1():
+    return render_template("./test1.html")
+@app.route('/test2')
+# @login_required
+def test2():
+    return render_template("./test2.html")
+
+
+
 api = Api(app)
 
 TODOS = {
