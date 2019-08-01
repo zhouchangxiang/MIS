@@ -6,17 +6,28 @@
     <link rel="stylesheet" href="../../static/style/bootstrap.min.css">
     <link rel="stylesheet" href="../../static/style/font-awesome.min.css">
     <link rel="stylesheet" href="../../static/style/jquery.scrollbar.min.css">
-    <link rel="stylesheet" href="../../static/layui/css/layui.css">
-    <link rel="stylesheet" href="../../static/layui/admin.css">
+    <link rel="stylesheet" href="../../static/layuiadmin/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../static/layuiadmin/style/admin.css" media="all">
     <link rel="stylesheet" href="../../static/style/admin.css">
     <link rel="stylesheet" href="../../static/style/base.css">
     <script src="../../static/script/jquery-3.3.1.min.js"></script>
     <script src="../../static/script/bootstrap.min.js"></script>
     <script src="../../static/script/bootbox.min.js"></script>
     <script src="../../static/script/jquery.scrollbar.min.js"></script>
-    <script src="../../static/layui/layui.js"></script>
     <script src="../../static/script/base.js"></script>
     <script src="../../static/script/admin.js"></script>
+    <style>
+        .layadmin-pagetabs{
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 100;
+        }
+        #LAY_app_body {
+            top: 40px;
+            left: 0;
+        }
+    </style>
 </head>
 <body>
     <div class="contentWrap contentBg" id="contentWrap">
@@ -60,41 +71,46 @@
                     </div>
                 </div>
 {#                <div class="nth-tabs" id="editor-tabs"></div>#}
-                <div id="tabsBox" style="position: relative;">
+                <div id="tabsBox" style="position: relative">
                     <!-- 页面标签 -->
-                    <div class="layadmin-pagetabs" id="LAY_app_tabs">
+                      <div class="layadmin-pagetabs" id="LAY_app_tabs">
                         <div class="layui-icon layadmin-tabs-control layui-icon-prev" layadmin-event="leftPage"></div>
                         <div class="layui-icon layadmin-tabs-control layui-icon-next" layadmin-event="rightPage"></div>
                         <div class="layui-icon layadmin-tabs-control layui-icon-down">
-                            <ul class="layui-nav layadmin-tabs-select" lay-filter="layadmin-pagetabs-nav">
-                                <li class="layui-nav-item" lay-unselect>
-                                <a href="javascript:;"></a>
-                                <dl class="layui-nav-child layui-anim-fadein">
-                                    <dd layadmin-event="closeThisTabs"><a href="javascript:;">关闭当前标签页</a></dd>
-                                    <dd layadmin-event="closeOtherTabs"><a href="javascript:;">关闭其它标签页</a></dd>
-                                    <dd layadmin-event="closeAllTabs"><a href="javascript:;">关闭全部标签页</a></dd>
-                                </dl>
-                                </li>
-                            </ul>
+                          <ul class="layui-nav layadmin-tabs-select" lay-filter="layadmin-pagetabs-nav">
+                            <li class="layui-nav-item" lay-unselect>
+                              <a href="javascript:;"></a>
+                              <dl class="layui-nav-child layui-anim-fadein">
+                                <dd layadmin-event="closeThisTabs"><a href="javascript:;">关闭当前标签页</a></dd>
+                                <dd layadmin-event="closeOtherTabs"><a href="javascript:;">关闭其它标签页</a></dd>
+                                <dd layadmin-event="closeAllTabs"><a href="javascript:;">关闭全部标签页</a></dd>
+                              </dl>
+                            </li>
+                          </ul>
                         </div>
                         <div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
-                            <ul class="layui-tab-title" id="LAY_app_tabsheader">
-                                <li lay-id="/home" lay-attr="/home" class="layui-this"><i class="layui-icon layui-icon-home"></i></li>
-                            </ul>
+                          <ul class="layui-tab-title" id="LAY_app_tabsheader">
+                            <li lay-id="/home" lay-attr="/home" class="layui-this"><i class="layui-icon layui-icon-home"></i></li>
+                          </ul>
                         </div>
-                    </div>
-                    <!-- 主体内容 -->
-                    <div class="layui-body" id="LAY_app_body" style="left: 0;top: 40px;">
+                      </div>
+
+
+                      <!-- 主体内容 -->
+                      <div class="layui-body" id="LAY_app_body">
                         <div class="layadmin-tabsbody-item layui-show">
-                            <iframe src="/home" frameborder="0" class="layadmin-iframe"></iframe>
+                          <iframe src="/home" frameborder="0" class="layadmin-iframe"></iframe>
                         </div>
-                    </div>
+                      </div>
                 </div>
             </div>
         </div>
     </div>
+    <script src="../../static/layuiadmin/layui/layui.js"></script>
     <script>
-
+      layui.config({
+        base: '../../static/layuiadmin/' //静态资源所在路径
+      })
     </script>
 </body>
 </html>
