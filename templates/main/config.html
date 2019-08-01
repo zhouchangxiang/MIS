@@ -404,6 +404,7 @@
                             Route:$('#Route').val(),
                         },
                         success:function(data){
+                            $(".saveForm").button("reset")
                             if(data == "OK"){
                                 $("#pageModal").modal('hide')
                                 var dialog = bootbox.dialog({
@@ -422,6 +423,7 @@
                         },
                         error: function(data){
                            console.log(data.responseText)
+                            $(".saveForm").button("reset")
                            bootbox.alert('请求失败')
                         },
                     })
@@ -463,7 +465,11 @@
                 },{
                     field: 'BigMenuLogo',
                     title: '大菜单图标'
-                }]
+                }],
+                responseHandler:function(res){
+                    res = JSON.parse(res)
+                    return res
+                }
             })
             navtoolbar= {
                 Search:function(){
@@ -659,7 +665,11 @@
                 },{
                     field: 'IsDelete',
                     title: '是否显示删除按钮'
-                }]
+                }],
+                responseHandler:function(res){
+                    res = JSON.parse(res)
+                    return res
+                }
             })
             databasetoolbar = {
                 Search:function(){
