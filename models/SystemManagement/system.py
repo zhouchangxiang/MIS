@@ -612,6 +612,17 @@ class FieldSet(Base):
     # visible该列是否可见(默认true):
     Visible = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+#是否
+class ISFlag(Base):
+    __tablename__ = 'ISFlag'
+    # id:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 标识:
+    Flag = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 描述:
+    Description = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 
 # 生成表单的执行语句

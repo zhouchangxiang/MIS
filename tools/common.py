@@ -12,6 +12,7 @@ from models.SystemManagement.system import SysLog
 from tools.MESLogger import MESLogger
 import socket
 import datetime
+from models.SystemManagement.system import *
 
 engine = create_engine(GLOBAL_DATABASE_CONNECT_STRING, deprecate_large_types=True)
 Session = sessionmaker(bind=engine)
