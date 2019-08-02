@@ -624,6 +624,18 @@ class ISFlag(Base):
     # 描述:
     Description = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+#是否
+class InputTypeTable(Base):
+    __tablename__ = 'InputTypeTable'
+    # id:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 类型:
+    Type = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 名称:
+    Title = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 
 # 生成表单的执行语句
 Base.metadata.create_all(engine)
