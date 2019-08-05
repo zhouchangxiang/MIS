@@ -4,7 +4,7 @@
             tableName: '', //表名
             toolbar: '', //操作栏dom
             columns:[], //字段
-            refreshField: '', //搜索的字段
+            refreshDom:"", //搜索字段的dom
             fieldvalue: '', //搜索输入值
             Modal: '', //弹框dom
             ModalFieldStr: [], //弹框内录入的字段对象，field字段名，type字段输入类型，selectTableName下拉框数据表，selectField显示下拉框数据表的字段
@@ -42,37 +42,26 @@
                 return res
             }
         })
-        //判断是否有下拉搜索
-        if(options.selectSearchTableName != ""){
-            var selectField = options.selectSearchTableField
-            $.ajax({
-                url:"http://127.0.0.1:5000/CUID",
-                type:"get",
-                data:{
-                    tableName:options.selectSearchTableName,
-                    limit: 100000000,
-                    offset:0
-                },
-                success:function(res){
-                    res = JSON.parse(res)
-                    var selectOptions = ""
-                    $(options.toolbar).find("[data-select-search]").html("")
-                    $.each(res.rows,function(i,value){
-                        selectOptions += "<option value=''>请选择</option><option value='"+ res.rows[i][selectField] +"'>" + res.rows[i][selectField] + "</option>";
-                    })
-                    $(options.toolbar).find("[data-select-search]").append(selectOptions)
-                    $(options.toolbar).find("[data-select-search]").selectpicker("refresh")
-                    $(options.toolbar).find("[data-select-search]").selectpicker("render")
-                    $(options.toolbar).find("[data-select-search]").siblings("button").attr("title","");
-                }
-            })
-        }
+        //搜索字段框渲染
+        var columns = options.columns
+        var resfreshFieldSelectOptions = ""
+        $(options.toolbar).find(options.refreshDom).html("")
+        $.each(columns,function(i,value){
+            if(columns[i].field){
+                resfreshFieldSelectOptions += "<option value='"+ columns[i].field +"'>" + columns[i].title + "</option>";
+            }
+        })
+        $(options.toolbar).find(options.refreshDom).append(resfreshFieldSelectOptions)
+        $(options.toolbar).find(options.refreshDom).selectpicker("refresh")
+        $(options.toolbar).find(options.refreshDom).selectpicker("render")
+        $(options.toolbar).find(options.refreshDom).selectpicker("val", columns[0].title); //赋默认值
+
         //搜索按钮
         $(options.toolbar).on("click","[data-search-btn]",function(){
             $this.bootstrapTable('refresh',{
                 query:{
-                    field: options.refreshField,
-                    fieldvalue: options.fieldvalue
+                    field: $(options.toolbar).find(options.refreshDom).selectpicker("val"),
+                    fieldvalue: $(options.toolbar).find(options.fieldvalue).val()
                 }
             });
         })
@@ -104,7 +93,7 @@
                             $(options.Modal).find("#"+ fieldstr.field +"").append(selectOptions)
                             $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("refresh")
                             $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("render")
-                            $(options.Modal).find("#"+ fieldstr.field +"").siblings("button").attr("title","");
+                            $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("val",res.rows[0][fieldstr.field]); //赋默认值
                         }
                     })
                 }
@@ -140,7 +129,7 @@
                                     $(options.Modal).find("#"+ fieldstr.field +"").append(selectOptions)
                                     $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("refresh")
                                     $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("render")
-                                    $(options.Modal).find("#"+ fieldstr.field +"").selectpicker('val',rows[0][fieldstr.field])
+                                    $(options.Modal).find("#"+ fieldstr.field +"").selectpicker('val',res.rows[0][fieldstr.field])
                                 }
                             })
                         }
@@ -219,7 +208,7 @@
                 if(fieldstr.type == "text"){
                     requestData[fieldstr.field] = $(options.Modal).find("input[name="+ fieldstr.field +"]").val();
                 }else if(fieldstr.type == "select"){
-                    requestData[fieldstr.field] = $(options.Modal).find("#"+ fieldstr.field +"").siblings("button").attr("title");
+                    requestData[fieldstr.field] = $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("val");
                 }
             })
             $.ajax({
@@ -249,13 +238,45 @@
                 },
             })
         })
-        //下拉搜索
-        $(options.Modal).on("changed.bs.select","[data-select-search]",function(){
-            $this.bootstrapTable('refresh',{
-                query:{
-
+        //判断是否有下拉搜索
+        if(options.selectSearchTableName != ""){
+            var selectField = options.selectSearchTableField
+            $.ajax({
+                url:"http://127.0.0.1:5000/CUID",
+                type:"get",
+                data:{
+                    tableName:options.selectSearchTableName,
+                    limit: 100000000,
+                    offset:0
+                },
+                success:function(res){
+                    res = JSON.parse(res)
+                    var selectOptions = ""
+                    $(options.toolbar).find("[data-select-search]").html("")
+                    $.each(res.rows,function(i,value){
+                        selectOptions += "<option value='"+ res.rows[i][selectField] +"'>" + res.rows[i][selectField] + "</option>";
+                    })
+                    $(options.toolbar).find("[data-select-search]").append(selectOptions)
+                    $(options.toolbar).find("[data-select-search]").selectpicker("refresh")
+                    $(options.toolbar).find("[data-select-search]").selectpicker("render")
+                    $(options.toolbar).find("[data-select-search]").selectpicker("val",res.rows[0][selectField])
+                    $this.bootstrapTable('refresh', {
+                        query: {
+                            [options.selectSearchTableField]: $(options.toolbar).find("[data-select-search]").selectpicker("val")
+                        }
+                    });
                 }
-            });
+            })
+        }
+        //下拉搜索
+        $(options.toolbar).on("change","#FieldSetSelectSearch",function(){
+            if(options.selectSearchTableName != "") {
+                $this.bootstrapTable('refresh', {
+                    query: {
+                        [options.selectSearchTableField]: $(options.toolbar).find("[data-select-search]").selectpicker("val")
+                    }
+                });
+            }
         })
     }
 })(jQuery)
