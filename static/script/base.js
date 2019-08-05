@@ -74,17 +74,10 @@
    }
 })(jQuery, this);
 $(function(){
-    //保存按钮点击后禁用并显示loadding
-    $(".saveForm").on("click",function () {
-        $(this).button("loading")
+    $(".selectpicker").selectpicker({
+        noneSelectedText: '' //默认显示内容
     })
 })
-//封装id
-function createKeyIDObj(keyID){
-    return {
-        id:keyID
-    }
-}
 //根据key匹配id  加入数据
 function adddata(ids,res){
     $("#" + ids).html(res)

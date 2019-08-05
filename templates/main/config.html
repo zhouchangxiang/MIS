@@ -13,6 +13,7 @@
     <script src="../../static/script/bootstrap-table-zh-CN.min.js"></script>
     <script src="../../static/script/bootstrap-select.min.js"></script>
     <script src="../../static/script/bootbox.min.js"></script>
+    <script src="../../static/script/config.js"></script>
     <script src="../../static/script/base.js"></script>
 </head>
 <body>
@@ -24,6 +25,8 @@
             <ul class="nav nav-pills" role="tablist">
                 <li role="presentation" class="active"><a href="#pageconfig" aria-controls="pageconfig" role="tab" data-toggle="tab">页面路由配置</a></li>
                 <li role="presentation"><a href="#navconfig" aria-controls="navconfig" role="tab" data-toggle="tab">左侧导航菜单配置</a></li>
+                <li role="presentation"><a href="#ISFlagconfig" aria-controls="ISFlagconfig" role="tab" data-toggle="tab">基本判断配置</a></li>
+                <li role="presentation"><a href="#InputTypeconfig" aria-controls="InputTypeconfig" role="tab" data-toggle="tab">字段输入类型配置</a></li>
                 <li role="presentation"><a href="#databaseconfig" aria-controls="databaseconfig" role="tab" data-toggle="tab">数据库建表</a></li>
                 <li role="presentation"><a href="#fieldconfig" aria-controls="fieldconfig" role="tab" data-toggle="tab">表字段配置</a></li>
             </ul>
@@ -43,33 +46,33 @@
                                 <div class="modal-body">
                                     <form class="form-horizontal" action="">
                                         <div class="form-group">
-                                            <label for="pageID" class="col-sm-3 control-label">ID</label>
+                                            <label for="ID" class="col-sm-3 control-label">ID</label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control" id="pageID" placeholder="" disabled="disabled">
+                                                <input type="text" class="form-control" name="ID" placeholder="" disabled="disabled">
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="SetRoute" class="col-sm-3 control-label">页面描述</label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control" id="SetRoute" placeholder="">
+                                                <input type="text" class="form-control" name="SetRoute" placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="PageRouteName" class="col-sm-3 control-label">页面名（xxx.html）</label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control" id="PageRouteName" placeholder="">
+                                                <input type="text" class="form-control" name="PageRouteName" placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="Route" class="col-sm-3 control-label">页面路由</label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control" id="Route" placeholder="">
+                                                <input type="text" class="form-control" name="Route" placeholder="">
                                             </div>
                                         </div>
                                     </form>
                                 </div>
                                 <!-- dialog buttons -->
-                                <div class="modal-footer"><button type="button" class="btn btn-primary saveForm" onclick="pagetoolbar.Save()" data-loading-text="正在处理..." >保存</button></div>
+                                <div class="modal-footer"><button type="button" class="btn btn-primary saveForm" data-save-btn>保存</button></div>
                             </div>
                         </div>
                     </div>
@@ -80,10 +83,10 @@
                                     <label class="input-group-addon">名称</label>
                                     <input type="text" class="form-control" id="pageSearchVal">
                                 </div>
-                                <button type="button" class="btn btn-primary" onclick="pagetoolbar.Search()">查询</button>
-                                <button type="button" class="btn btn-info" onclick="pagetoolbar.Add()">添加</button>
-                                <button type="button" class="btn btn-warning" onclick="pagetoolbar.Updata()">编辑</button>
-                                <button type="button" class="btn btn-danger" onclick="pagetoolbar.Delete()">删除</button>
+                                <button type="button" class="btn btn-primary" data-search-btn>查询</button>
+                                <button type="button" class="btn btn-info" data-add-btn>添加</button>
+                                <button type="button" class="btn btn-warning" data-updata-btn>编辑</button>
+                                <button type="button" class="btn btn-danger" data-delete-btn>删除</button>
                             </div>
                         </form>
                     </div>
@@ -104,21 +107,21 @@
                                 <div class="modal-body">
                                     <form class="form-horizontal" action="">
                                         <div class="form-group">
-                                            <label for="pageID" class="col-sm-3 control-label">ID</label>
+                                            <label for="ID" class="col-sm-3 control-label">ID</label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control" id="navID" placeholder="" disabled="disabled">
+                                                <input type="text" class="form-control" name="ID" placeholder="" disabled="disabled">
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="BigMenuName" class="col-sm-3 control-label">大菜单名字</label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control" id="BigMenuName" placeholder="">
+                                                <input type="text" class="form-control" name="BigMenuName" placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="SmallMenuName" class="col-sm-3 control-label">小菜单名字</label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control" id="SmallMenuName" placeholder="">
+                                                <input type="text" class="form-control" name="SmallMenuName" placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -130,13 +133,13 @@
                                         <div class="form-group">
                                             <label for="BigMenuLogo" class="col-sm-3 control-label">大菜单的图标</label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control" id="BigMenuLogo" placeholder="">
+                                                <input type="text" class="form-control" name="BigMenuLogo" placeholder="">
                                             </div>
                                         </div>
                                     </form>
                                 </div>
                                 <!-- dialog buttons -->
-                                <div class="modal-footer"><button type="button" class="btn btn-primary" onclick="navtoolbar.Save()">保存</button></div>
+                                <div class="modal-footer"><button type="button" class="btn btn-primary" data-save-btn>保存</button></div>
                             </div>
                         </div>
                     </div>
@@ -147,14 +150,119 @@
                                     <label class="input-group-addon">小菜单名称</label>
                                     <input type="text" class="form-control" id="navSearchVal">
                                 </div>
-                                <button type="button" class="btn btn-primary" onclick="navtoolbar.Search()">查询</button>
-                                <button type="button" class="btn btn-info" onclick="navtoolbar.Add()">添加</button>
-                                <button type="button" class="btn btn-warning" onclick="navtoolbar.Updata()">编辑</button>
-                                <button type="button" class="btn btn-danger" onclick="navtoolbar.Delete()">删除</button>
+                                <button type="button" class="btn btn-primary" data-search-btn>查询</button>
+                                <button type="button" class="btn btn-info" data-add-btn>添加</button>
+                                <button type="button" class="btn btn-warning" data-updata-btn>编辑</button>
+                                <button type="button" class="btn btn-danger" data-delete-btn>删除</button>
                             </div>
                         </form>
                     </div>
                     <table id="navTab"></table>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="ISFlagconfig">
+                    <div id="ISFlagModal" class="modal fade">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        ×
+                                    </button>
+                                    <h4 class="modal-title">
+                                        配置信息
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="form-horizontal" action="">
+                                        <div class="form-group">
+                                            <label for="ID" class="col-sm-3 control-label">ID</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="ID" placeholder="" disabled="disabled">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="Flag" class="col-sm-3 control-label">标识</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="Flag" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="Description" class="col-sm-3 control-label">描述</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="Description" placeholder="">
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- dialog buttons -->
+                                <div class="modal-footer"><button type="button" class="btn btn-primary" data-save-btn>保存</button></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="ISFlagToolbar">
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <button type="button" class="btn btn-info" data-add-btn>添加</button>
+                                <button type="button" class="btn btn-warning" data-updata-btn>编辑</button>
+                                <button type="button" class="btn btn-danger" data-delete-btn>删除</button>
+                            </div>
+                        </form>
+                    </div>
+                    <table id="ISFlagTab"></table>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="InputTypeconfig">
+                    <div id="InputTypeModal" class="modal fade">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        ×
+                                    </button>
+                                    <h4 class="modal-title">
+                                        配置信息
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="form-horizontal" action="">
+                                        <div class="form-group">
+                                            <label for="ID" class="col-sm-3 control-label">ID</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="ID" placeholder="" disabled="disabled">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="Type" class="col-sm-3 control-label">类型</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="Type" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="Title" class="col-sm-3 control-label">名称</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="Title" placeholder="">
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- dialog buttons -->
+                                <div class="modal-footer"><button type="button" class="btn btn-primary" data-save-btn>保存</button></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="InputTypeToolbar">
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <label class="input-group-addon">名称</label>
+                                    <input type="text" class="form-control" id="InputTypeSearchVal">
+                                </div>
+                                <button type="button" class="btn btn-primary" data-search-btn>查询</button>
+                                <button type="button" class="btn btn-info" data-add-btn>添加</button>
+                                <button type="button" class="btn btn-warning" data-updata-btn>编辑</button>
+                                <button type="button" class="btn btn-danger" data-delete-btn>删除</button>
+                            </div>
+                        </form>
+                    </div>
+                    <table id="InputTypeTab"></table>
                 </div>
                 <div role="tabpanel" class="tab-pane" id="databaseconfig">
                     <div id="databaseModal" class="modal fade">
@@ -171,72 +279,57 @@
                                 <div class="modal-body">
                                     <form class="form-horizontal" action="">
                                         <div class="form-group">
-                                            <label for="databaseID" class="col-sm-3 control-label">ID</label>
+                                            <label for="ID" class="col-sm-3 control-label">ID</label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control" id="databaseID" placeholder="" disabled="disabled">
+                                                <input type="text" class="form-control" name="ID" placeholder="" disabled="disabled">
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="TableName" class="col-sm-3 control-label">表名</label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control" id="TableName" placeholder="">
+                                                <input type="text" class="form-control" name="TableName" placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="TableDescrip" class="col-sm-3 control-label">表的描述</label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control" id="TableDescrip" placeholder="">
+                                                <input type="text" class="form-control" name="TableDescrip" placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="ISFirstCheckBox" class="col-sm-3 control-label">是否在第一列显示多选框</label>
                                             <div class="col-sm-9">
-                                                <select id="ISFirstCheckBox" class="selectpicker">
-                                                    <option value="1">是</option>
-                                                    <option value="0">否</option>
-                                                </select>
+                                                <select id="ISFirstCheckBox" class="selectpicker"></select>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="SingleSelect" class="col-sm-3 control-label">是否实现单选</label>
                                             <div class="col-sm-9">
-                                                <select id="SingleSelect" class="selectpicker">
-                                                    <option value="0">否</option>
-                                                    <option value="1">是</option>
-                                                </select>
+                                                <select id="SingleSelect" class="selectpicker"></select>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="IsAdd" class="col-sm-3 control-label">是否显示添加按钮</label>
                                             <div class="col-sm-9">
-                                                <select id="IsAdd" class="selectpicker">
-                                                    <option value="1">是</option>
-                                                    <option value="0">否</option>
-                                                </select>
+                                                <select id="IsAdd" class="selectpicker"></select>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="IsUpdate" class="col-sm-3 control-label">是否显示修改按钮</label>
                                             <div class="col-sm-9">
-                                                <select id="IsUpdate" class="selectpicker">
-                                                    <option value="1">是</option>
-                                                    <option value="0">否</option>
-                                                </select>
+                                                <select id="IsUpdate" class="selectpicker"></select>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="IsDelete" class="col-sm-3 control-label">是否显示删除按钮</label>
                                             <div class="col-sm-9">
-                                                <select id="IsDelete" class="selectpicker">
-                                                    <option value="1">是</option>
-                                                    <option value="0">否</option>
-                                                </select>
+                                                <select id="IsDelete" class="selectpicker"></select>
                                             </div>
                                         </div>
                                     </form>
                                 </div>
                                 <!-- dialog buttons -->
-                                <div class="modal-footer"><button type="button" class="btn btn-primary" onclick="databasetoolbar.Save()">保存</button></div>
+                                <div class="modal-footer"><button type="button" class="btn btn-primary" data-save-btn>保存</button></div>
                             </div>
                         </div>
                     </div>
@@ -244,48 +337,112 @@
                         <form class="form-inline">
                             <div class="form-group">
                                 <div class="input-group">
-                                    <label class="input-group-addon">表描述</label>
+                                    <label class="input-group-addon">表的描述</label>
                                     <input type="text" class="form-control" id="databaseSearchVal">
                                 </div>
-                                <button type="button" class="btn btn-primary" onclick="databasetoolbar.Search()">查询</button>
-                                <button type="button" class="btn btn-info" onclick="databasetoolbar.Add()">添加</button>
-                                <button type="button" class="btn btn-warning" onclick="databasetoolbar.Updata()">编辑</button>
-                                <button type="button" class="btn btn-danger" onclick="databasetoolbar.Delete()">删除</button>
+                                <button type="button" class="btn btn-primary" data-search-btn>查询</button>
+                                <button type="button" class="btn btn-info" data-add-btn>添加</button>
+                                <button type="button" class="btn btn-warning" data-updata-btn>编辑</button>
+                                <button type="button" class="btn btn-danger" data-delete-btn>删除</button>
                             </div>
                         </form>
                     </div>
                     <table id="databaseTab"></table>
                 </div>
                 <div role="tabpanel" class="tab-pane" id="fieldconfig">
-
+                    <div id="FieldSetModal" class="modal fade">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        ×
+                                    </button>
+                                    <h4 class="modal-title">
+                                        配置信息
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="form-horizontal" action="">
+                                        <div class="form-group">
+                                            <label for="ID" class="col-sm-3 control-label">ID</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="ID" placeholder="" disabled="disabled">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="title" class="col-sm-3 control-label">字段名称</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="title" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="field" class="col-sm-3 control-label">字段名</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="field" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="isedit" class="col-sm-3 control-label">是否做添加修改操作</label>
+                                            <div class="col-sm-9">
+                                                <select id="isedit" class="selectpicker"></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="edittype" class="col-sm-3 control-label">输入类型</label>
+                                            <div class="col-sm-9">
+                                                <select id="edittype" class="selectpicker"></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="downtable" class="col-sm-3 control-label">下拉框的数据表</label>
+                                            <div class="col-sm-9">
+                                                <select id="downtable" class="selectpicker"></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="sortable" class="col-sm-3 control-label">该列是否排序</label>
+                                            <div class="col-sm-9">
+                                                <select id="sortable" class="selectpicker"></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="visible" class="col-sm-3 control-label">该列是否可见</label>
+                                            <div class="col-sm-9">
+                                                <select id="visible" class="selectpicker"></select>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- dialog buttons -->
+                                <div class="modal-footer"><button type="button" class="btn btn-primary" data-save-btn>保存</button></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="FieldSetToolbar">
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <label class="input-group-addon">字段名</label>
+                                    <input type="text" class="form-control" id="FieldSetSearchVal">
+                                </div>
+                                <button type="button" class="btn btn-primary" data-search-btn>查询</button>
+                                <button type="button" class="btn btn-info" data-add-btn>添加</button>
+                                <button type="button" class="btn btn-warning" data-updata-btn>编辑</button>
+                                <button type="button" class="btn btn-danger" data-delete-btn>删除</button>
+                                <select class="selectpicker" data-select-search  data-live-search="true"></select>
+                            </div>
+                        </form>
+                    </div>
+                    <table id="FieldSetTab"></table>
                 </div>
             </div>
         </div>
     </div>
     <script>
         $(function(){
-            $("#pageTab").bootstrapTable({
-                url: 'http://127.0.0.1:5000/CUID',
-                method: 'get',
-                queryParams:function(params){
-                    return {
-                        tableName:"PageRoute",
-                        limit : params.limit,
-                        offset : parseInt(params.offset/params.limit)
-                    };
-                },
-	            pagination: true,
-                toolbar:"#pageToolbar",
-                pageNumber:1,
-	            pageSize: 10,
-	            pageList: [10, 20, 30, 40, 50],
-                sidePagination: "server",
-                paginationLoop:false,
-                singleSelect:false,
-                clickToSelect:true,
-	            locale: "zh-CN",
-	            striped: true,
-                showRefresh:true,
+            $("#pageTab").tableRender({
+                tableName: 'PageRoute',
+                toolbar: '#pageToolbar',
                 columns: [{
                     checkbox: true
                 },{
@@ -298,159 +455,26 @@
                     field: 'Route',
                     title: '路由'
                 }],
-                responseHandler:function(res){
-                    res = JSON.parse(res)
-                    return res
-                }
+                refreshField: 'SetRoute',
+                fieldvalue: $("#pageSearchVal").val(),
+                Modal: '#pageModal',
+                ModalFieldStr: [{
+                    field:"ID",
+                    type:"text"
+                }, {
+                    field: "SetRoute",
+                    type: "text"
+                },{
+                    field:"PageRouteName",
+                    type: "text"
+                },{
+                    field:"Route",
+                    type: "text"
+                }]
             })
-            pagetoolbar = {
-                Search:function(){
-                    $('#pageTab').bootstrapTable('refresh',{
-                        query:{
-                            field: "SetRoute",
-                            fieldvalue: $("#pageSearchVal").val()
-                        }
-                    });
-                },
-                Add:function(){
-                    $("#pageModal").modal('show')
-                    $('#pageID').val("");
-                    $('#SetRoute').val("");
-                    $('#PageRouteName').val("");
-                    $('#Route').val("");
-                },
-                Updata:function () {
-                    var rows = $("#pageTab").bootstrapTable('getAllSelections');
-                    if(rows.length == 1){
-                        if(rows){
-                            $("#pageModal").modal('show')
-                            $('#pageID').val(rows[0].ID);
-                            $('#SetRoute').val(rows[0].PageRoute);
-                            $('#PageRouteName').val(rows[0].PageRouteName);
-                            $('#Route').val(rows[0].Route);
-                        }
-                    } else {
-                        bootbox.alert('请单选一条数据进行编辑！');
-                    }
-                },
-                Delete:function(){
-                    var rows = $("#pageTab").bootstrapTable('getAllSelections');
-                    if (rows.length > 0) {
-                        var jsonarray=[];
-                        bootbox.confirm({
-                            message: "您确认要删除所选的记录吗？",
-                            buttons: {
-                                confirm: {
-                                    label: '删除',
-                                    className: 'btn-success'
-                                },
-                                cancel: {
-                                    label: '返回',
-                                    className: 'btn-danger'
-                                }
-                            },
-                            callback: function (result) {
-                                if(result){
-                                    for (var i = 0; i < rows.length; i++) {
-                                        var obj=createKeyIDObj(parseInt(rows[i].ID));
-                                        jsonarray.push(obj);
-                                    }
-                                    var a = JSON.stringify(jsonarray);
-                                    $.ajax({
-                                        url: 'http://127.0.0.1:5000/CUID',
-                                        method: 'DELETE',
-                                        data: {
-                                            tableName:"PageRoute",
-                                            delete_data:a
-                                        },
-                                        success: function (data) {
-                                            if(data == "OK"){
-                                                var dialog = bootbox.dialog({
-                                                    message: '<p class="text-center mb-0"><i class="fa fa-spin fa-cog"></i>操作成功！</p>',
-                                                    closeButton: false
-                                                });
-                                                dialog.init(function(){
-                                                    setTimeout(function(){
-                                                        dialog.modal('hide');
-                                                    }, 2000);
-                                                });
-                                                $("#pageTab").bootstrapTable('refresh');
-                                            }
-                                        }
-                                    });
-                                }
-                            }
-                        });
-                    } else {
-                        bootbox.alert('请选择要删除的记录')
-                    }
-                },
-                Save:function(){
-                    var idVal = $('#pageID').val();
-                    var requestType = ""
-                    if (idVal.length >= 1){
-                        requestType = "put"
-                    }else {
-                        requestType = "post"
-                    }
-                    $.ajax({
-                        url:"http://127.0.0.1:5000/CUID",
-                        type:requestType,
-                        data:{
-                            tableName:"PageRoute",
-                            ID:$('#pageID').val(),
-                            SetRoute:$('#SetRoute').val(),
-                            PageRouteName:$('#PageRouteName').val(),
-                            Route:$('#Route').val(),
-                        },
-                        success:function(data){
-                            $(".saveForm").button("reset")
-                            if(data == "OK"){
-                                $("#pageModal").modal('hide')
-                                var dialog = bootbox.dialog({
-                                    message: '<p class="text-center mb-0"><i class="fa fa-spin fa-cog"></i>操作成功！</p>',
-                                    closeButton: false
-                                });
-                                dialog.init(function(){
-                                    setTimeout(function(){
-                                        dialog.modal('hide');
-                                    }, 2000);
-                                });
-                                $('#pageTab').bootstrapTable('refresh');
-                            } else {
-                                bootbox.alert(data)
-                            }
-                        },
-                        error: function(data){
-                           console.log(data.responseText)
-                            $(".saveForm").button("reset")
-                           bootbox.alert('请求失败')
-                        },
-                    })
-                }
-            }
-            $("#navTab").bootstrapTable({
-                url: 'http://127.0.0.1:5000/CUID',
-                method: 'get',
-                queryParams:function(params){
-                    return {
-                        tableName:"LeftMenus",
-                        limit : params.limit,
-                        offset : parseInt(params.offset/params.limit)
-                    };
-                },
-	            pagination: true,
-                toolbar:"#navToolbar",
-                pageNumber:1,
-	            pageSize: 10,
-	            pageList: [10, 20, 30, 40, 50],
-                sidePagination: "server",
-                paginationLoop:false,
-                singleSelect:false,
-                clickToSelect:true,
-	            locale: "zh-CN",
-	            striped: true,
-                showRefresh:true,
+            $("#navTab").tableRender({
+                tableName: 'LeftMenus',
+                toolbar: '#navToolbar',
                 columns: [{
                     checkbox: true
                 },{
@@ -466,182 +490,81 @@
                     field: 'BigMenuLogo',
                     title: '大菜单图标'
                 }],
-                responseHandler:function(res){
-                    res = JSON.parse(res)
-                    return res
-                }
+                refreshField: 'SmallMenuName',
+                fieldvalue: $("#navSearchVal").val(),
+                Modal: '#navModal',
+                ModalFieldStr: [{
+                    field:"ID",
+                    type:"text"
+                }, {
+                    field: "BigMenuName",
+                    type: "text"
+                },{
+                    field:"SmallMenuName",
+                    type: "text"
+                },{
+                    field:"SmallMenuRoute",
+                    type: "select",
+                    selectTableName:"PageRoute",
+                    selectField:"Route"
+                },{
+                    field:"BigMenuLogo",
+                    type: "text"
+                }]
             })
-            navtoolbar= {
-                Search:function(){
-                    $('#navTab').bootstrapTable('refresh',{
-                        query:{
-                            field: "SmallMenuName",
-                            fieldvalue: $("#navSearchVal").val()
-                        }
-                    });
-                },
-                Add:function(){
-                    $("#navModal").modal('show')
-                    $('#navID').val("");
-                    $('#BigMenuName').val("");
-                    $('#SmallMenuName').val("");
-                    $('#SmallMenuRoute').val("");
-                    $('#BigMenuLogo').val("");
-
-                    //给下拉框动态添加数据
-                    $("#SmallMenuRoute").html("")
-                    $.ajax({
-                        url:"http://127.0.0.1:5000/CUID",
-                        type:"get",
-                        data:{
-                            tableName:"PageRoute",
-                            limit : 100000000,
-                            offset : 0
-                        },
-                        success:function(data){
-                            data = JSON.parse(data)
-                            var options="";
-                            $.each(data.rows,function(i,value){
-                                options += "<option value='"+data.rows[i].ID+"'>"+data.rows[i].Route+"</option>";
-                            })
-                            $("#SmallMenuRoute").append(options);
-                            $('#SmallMenuRoute').selectpicker('refresh');
-                            $('#SmallMenuRoute').selectpicker('render');
-                        }
-                    })
-                },
-                Updata:function () {
-                    var rows = $("#navTab").bootstrapTable('getAllSelections');
-                    if(rows.length == 1){
-                        if(rows){
-                            $("#navModal").modal('show')
-                            $('#navID').val(rows[0].ID);
-                            $('#BigMenuName').val(rows[0].BigMenuName);
-                            $('#SmallMenuName').val(rows[0].SmallMenuName);
-                            $('#SmallMenuRoute').val(rows[0].SmallMenuRoute);
-                            $('#BigMenuLogo').val(rows[0].BigMenuLogo);
-                        }
-                    } else {
-                        bootbox.alert('请单选一条数据进行编辑！');
-                    }
-                },
-                Delete:function(){
-                    var rows = $("#navTab").bootstrapTable('getAllSelections');
-                    if (rows.length > 0) {
-                        var jsonarray=[];
-                        bootbox.confirm({
-                            message: "您确认要删除所选的记录吗？",
-                            buttons: {
-                                confirm: {
-                                    label: '删除',
-                                    className: 'btn-success'
-                                },
-                                cancel: {
-                                    label: '返回',
-                                    className: 'btn-danger'
-                                }
-                            },
-                            callback: function (result) {
-                                if(result){
-                                    for (var i = 0; i < rows.length; i++) {
-                                        var obj=createKeyIDObj(parseInt(rows[i].ID));
-                                        jsonarray.push(obj);
-                                    }
-                                    var a = JSON.stringify(jsonarray);
-                                    $.ajax({
-                                        url: 'http://127.0.0.1:5000/CUID',
-                                        method: 'DELETE',
-                                        data: {
-                                            tableName:"LeftMenus",
-                                            delete_data:a
-                                        },
-                                        success: function (data) {
-                                            if(data == "OK"){
-                                                var dialog = bootbox.dialog({
-                                                    message: '<p class="text-center mb-0"><i class="fa fa-spin fa-cog"></i>操作成功！</p>',
-                                                    closeButton: false
-                                                });
-                                                dialog.init(function(){
-                                                    setTimeout(function(){
-                                                        dialog.modal('hide');
-                                                    }, 2000);
-                                                });
-                                                $("#navTab").bootstrapTable('refresh');
-                                            }
-                                        }
-                                    });
-                                }
-                            }
-                        });
-                    } else {
-                        bootbox.alert('请选择要删除的记录')
-                    }
-                },
-                Save:function(){
-                    var idVal = $('#navID').val();
-                    var requestType = ""
-                    if (idVal.length >= 1){
-                        requestType = "put"
-                    }else {
-                        requestType = "post"
-                    }
-                    $.ajax({
-                        url:"http://127.0.0.1:5000/CUID",
-                        type:requestType,
-                        data:{
-                            tableName:"LeftMenus",
-                            ID:$('#navID').val(),
-                            BigMenuName:$('#BigMenuName').val(),
-                            SmallMenuName:$('#SmallMenuName').val(),
-                            SmallMenuRoute:$('#SmallMenuRoute').val(),
-                            BigMenuLogo:$('#BigMenuLogo').val()
-                        },
-                        success:function(data){
-                            if(data == "OK"){
-                                $("#navModal").modal('hide')
-                                var dialog = bootbox.dialog({
-                                    message: '<p class="text-center mb-0"><i class="fa fa-spin fa-cog"></i>操作成功！</p>',
-                                    closeButton: false
-                                });
-                                dialog.init(function(){
-                                    setTimeout(function(){
-                                        dialog.modal('hide');
-                                    }, 2000);
-                                });
-                                $('#navTab').bootstrapTable('refresh');
-                            } else {
-                                bootbox.alert(data)
-                            }
-                        },
-                        error: function(data){
-                           console.log(data.responseText)
-                           bootbox.alert('请求失败')
-                        },
-                    })
-                }
-            }
-            $("#databaseTab").bootstrapTable({
-                url: 'http://127.0.0.1:5000/CUID',
-                method: 'get',
-                queryParams:function(params){
-                    return {
-                        tableName:"CreateTableSet",
-                        limit : params.limit,
-                        offset : parseInt(params.offset/params.limit)
-                    };
-                },
-	            pagination: true,
-                toolbar:"#databaseToolbar",
-                pageNumber:1,
-	            pageSize: 10,
-	            pageList: [10, 20, 30, 40, 50],
-                sidePagination: "server",
-                paginationLoop:false,
-                singleSelect:false,
-                clickToSelect:true,
-	            locale: "zh-CN",
-	            striped: true,
-                showRefresh:true,
+            $("#ISFlagTab").tableRender({
+                tableName: 'ISFlag',
+                toolbar: '#ISFlagToolbar',
+                columns: [{
+                    checkbox: true
+                },{
+                    field: 'Flag',
+                    title: '标识'
+                },{
+                    field: 'Description',
+                    title: '描述'
+                }],
+                Modal: '#ISFlagModal',
+                ModalFieldStr: [{
+                    field:"ID",
+                    type:"text"
+                }, {
+                    field: "Flag",
+                    type: "text"
+                },{
+                    field:"Description",
+                    type: "text"
+                }]
+            })
+            $("#InputTypeTab").tableRender({
+                tableName: 'InputTypeTable',
+                toolbar: '#InputTypeToolbar',
+                columns: [{
+                    checkbox: true
+                },{
+                    field: 'Type',
+                    title: '类型'
+                },{
+                    field: 'Title',
+                    title: '名称'
+                }],
+                refreshField: 'Title',
+                fieldvalue: $("#InputTypeSearchVal").val(),
+                Modal: '#InputTypeModal',
+                ModalFieldStr: [{
+                    field:"ID",
+                    type:"text"
+                },{
+                    field: "Type",
+                    type: "text"
+                },{
+                    field: "Title",
+                    type: "text"
+                }]
+            })
+            $("#databaseTab").tableRender({
+                tableName: 'CreateTableSet',
+                toolbar: '#databaseToolbar',
                 columns: [{
                     checkbox: true
                 },{
@@ -666,147 +589,113 @@
                     field: 'IsDelete',
                     title: '是否显示删除按钮'
                 }],
-                responseHandler:function(res){
-                    res = JSON.parse(res)
-                    return res
-                }
+                refreshField: 'TableDescrip',
+                fieldvalue: $("#databaseSearchVal").val(),
+                Modal: '#databaseModal',
+                ModalFieldStr: [{
+                    field:"ID",
+                    type:"text"
+                },{
+                    field: "TableName",
+                    type: "text"
+                },{
+                    field: "TableDescrip",
+                    type: "text"
+                },{
+                    field:"ISFirstCheckBox",
+                    type: "select",
+                    selectTableName:"ISFlag",
+                    selectField:"Description"
+                },{
+                    field:"SingleSelect",
+                    type: "select",
+                    selectTableName:"ISFlag",
+                    selectField:"Description"
+                },{
+                    field:"IsAdd",
+                    type: "select",
+                    selectTableName:"ISFlag",
+                    selectField:"Description"
+                },{
+                    field:"IsUpdate",
+                    type: "select",
+                    selectTableName:"ISFlag",
+                    selectField:"Description"
+                },{
+                    field:"IsDelete",
+                    type: "select",
+                    selectTableName:"ISFlag",
+                    selectField:"Description"
+                }]
             })
-            databasetoolbar = {
-                Search:function(){
-                    $('#databaseTab').bootstrapTable('refresh',{
-                        query:{
-                            field: "TableDescrip",
-                            fieldvalue: $("#databaseSearchVal").val()
-                        }
-                    });
-                },
-                Add:function(){
-                    $("#databaseModal").modal('show')
-                    $('#databaseID').val("");
-                    $('#TableName').val("");
-                    $('#TableDescrip').val("");
-                    $('#ISFirstCheckBox').val("");
-                    $('#SingleSelect').val("");
-                    $('#IsAdd').val("");
-                    $('#IsUpdate').val("");
-                    $('#IsDelete').val("");
-                },
-                Updata:function () {
-                    var rows = $("#databaseTab").bootstrapTable('getAllSelections');
-                    if(rows.length == 1){
-                        if(rows){
-                            $("#databaseModal").modal('show')
-                            $('#databaseID').val(rows[0].ID);
-                            $('#TableName').val(rows[0].TableName);
-                            $('#TableDescrip').val(rows[0].TableDescrip);
-                            $('#ISFirstCheckBox').val(rows[0].ISFirstCheckBox);
-                            $('#SingleSelect').val(rows[0].SingleSelect);
-                            $('#IsAdd').val(rows[0].IsAdd);
-                            $('#IsUpdate').val(rows[0].IsUpdate);
-                            $('#IsDelete').val(rows[0].IsDelete);
-                        }
-                    } else {
-                        bootbox.alert('请单选一条数据进行编辑！');
-                    }
-                },
-                Delete:function(){
-                    var rows = $("#databaseTab").bootstrapTable('getAllSelections');
-                    if (rows.length > 0) {
-                        var jsonarray=[];
-                        bootbox.confirm({
-                            message: "您确认要删除所选的记录吗？",
-                            buttons: {
-                                confirm: {
-                                    label: '删除',
-                                    className: 'btn-success'
-                                },
-                                cancel: {
-                                    label: '返回',
-                                    className: 'btn-danger'
-                                }
-                            },
-                            callback: function (result) {
-                                if(result){
-                                    for (var i = 0; i < rows.length; i++) {
-                                        var obj=createKeyIDObj(parseInt(rows[i].ID));
-                                        jsonarray.push(obj);
-                                    }
-                                    var a = JSON.stringify(jsonarray);
-                                    $.ajax({
-                                        url: 'http://127.0.0.1:5000/CUID',
-                                        method: 'DELETE',
-                                        data: {
-                                            tableName:"CreateTableSet",
-                                            delete_data:a
-                                        },
-                                        success: function (data) {
-                                            if(data == "OK"){
-                                                var dialog = bootbox.dialog({
-                                                    message: '<p class="text-center mb-0"><i class="fa fa-spin fa-cog"></i>操作成功！</p>',
-                                                    closeButton: false
-                                                });
-                                                dialog.init(function(){
-                                                    setTimeout(function(){
-                                                        dialog.modal('hide');
-                                                    }, 2000);
-                                                });
-                                                $("#databaseTab").bootstrapTable('refresh');
-                                            }
-                                        }
-                                    });
-                                }
-                            }
-                        });
-                    } else {
-                        bootbox.alert('请选择要删除的记录')
-                    }
-                },
-                Save:function(){
-                    var idVal = $('#databaseID').val();
-                    var requestType = ""
-                    if (idVal.length >= 1){
-                        requestType = "put"
-                    }else {
-                        requestType = "post"
-                    }
-                    $.ajax({
-                        url:"http://127.0.0.1:5000/CUID",
-                        type:requestType,
-                        data:{
-                            tableName:"CreateTableSet",
-                            ID:$('#databaseID').val(),
-                            TableName:$('#TableName').val(),
-                            TableDescrip:$('#TableDescrip').val(),
-                            ISFirstCheckBox:$('#ISFirstCheckBox').val(),
-                            SingleSelect:$('#SingleSelect').val(),
-                            IsAdd:$('#IsAdd').val(),
-                            IsUpdate:$('#IsUpdate').val(),
-                            IsDelete:$('#IsDelete').val()
-                        },
-                        success:function(data){
-                            if(data == "OK"){
-                                $("#databaseModal").modal('hide')
-                                var dialog = bootbox.dialog({
-                                    message: '<p class="text-center mb-0"><i class="fa fa-spin fa-cog"></i>操作成功！</p>',
-                                    closeButton: false
-                                });
-                                dialog.init(function(){
-                                    setTimeout(function(){
-                                        dialog.modal('hide');
-                                    }, 2000);
-                                });
-                                $('#databaseTab').bootstrapTable('refresh');
-                            } else {
-                                bootbox.alert(data)
-                            }
-                        },
-                        error: function(data){
-                           console.log(data.responseText)
-                           bootbox.alert('请求失败')
-                        },
-                    })
-                }
-            }
+            $("#FieldSetTab").tableRender({
+                tableName: 'FieldSet',
+                toolbar: '#FieldSetToolbar',
+                columns: [{
+                    checkbox: true
+                },{
+                    field: 'title',
+                    title: '字段名称'
+                },{
+                    field: 'field',
+                    title: '字段名'
+                },{
+                    field: 'isedit',
+                    title: '是否做添加修改操作'
+                },{
+                    field: 'edittype',
+                    title: '输入类型'
+                },{
+                    field: 'downtable',
+                    title: '下拉框的数据表'
+                },{
+                    field: 'sortable',
+                    title: '该列是否排序'
+                },{
+                    field: 'visible',
+                    title: '该列是否可见'
+                }],
+                refreshField: 'title',
+                fieldvalue: $("#FieldSetSearchVal").val(),
+                Modal: '#FieldSetModal',
+                ModalFieldStr: [{
+                    field:"ID",
+                    type:"text"
+                },{
+                    field: "title",
+                    type: "text"
+                },{
+                    field: "field",
+                    type: "text"
+                },{
+                    field: "isedit",
+                    type: "select",
+                    selectTableName:"ISFlag",
+                    selectField:"Description"
+                },{
+                    field:"edittype",
+                    type: "select",
+                    selectTableName:"InputTypeTable",
+                    selectField:"Title"
+                },{
+                    field:"downtable",
+                    type: "select",
+                    selectTableName:"CreateTableSet",
+                    selectField:"TableName"
+                },{
+                    field:"sortable",
+                    type: "select",
+                    selectTableName:"ISFlag",
+                    selectField:"Description"
+                },{
+                    field:"visible",
+                    type: "select",
+                    selectTableName:"ISFlag",
+                    selectField:"Description"
+                }],
+                selectSearchTableName:"CreateTableSet",
+                selectSearchTableField:"TableName"
+            })
         })
     </script>
 </body>
