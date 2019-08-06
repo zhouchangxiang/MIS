@@ -59,10 +59,11 @@ def insert(data):
                     setattr(ss, key, data[key])
             db_session.add(ss)
             aud = AuditTrace()
+            print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
             aud.Operation = "用户：" + current_user.Name + " 对表" + tableName + "添加一条数据！"
-            aud.DeitalMSG = "用户：" + current_user.Name + " 对表" + tableName + "添加一条数据！" + " 添加时间：" + datetime.datetime.now().strftime(
+            aud.DeitalMSG = "用户：" + current_user.Name + " 对表" + tableName + "添加一条数据！" + " 添加时间：" + datetime.now().strftime(
                 '%Y-%m-%d %H:%M:%S')
-            aud.ReviseDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            aud.ReviseDate = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             aud.User = current_user.Name
             db_session.add(aud)
             db_session.commit()
@@ -90,9 +91,9 @@ def delete(data):
                     db_session.execute(sql)
                     aud = AuditTrace()
                     aud.Operation = "用户：" + current_user.Name + " 对表" + tableName + "中的ID为"+key+"的数据做了删除操作！"
-                    aud.DeitalMSG = "用户：" + current_user.Name + " 对表" + tableName + "中的ID为"+key+"的数据做了删除操作！" + " 删除时间：" + datetime.datetime.now().strftime(
+                    aud.DeitalMSG = "用户：" + current_user.Name + " 对表" + tableName + "中的ID为"+key+"的数据做了删除操作！" + " 删除时间：" + datetime.now().strftime(
                         '%Y-%m-%d %H:%M:%S')
-                    aud.ReviseDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    aud.ReviseDate = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                     aud.User = current_user.Name
                     db_session.add(aud)
                     db_session.commit()
@@ -125,8 +126,8 @@ def update(data):
                 db_session.add(oclass)
                 aud = AuditTrace()
                 aud.Operation = "用户："+current_user.Name+" 对表"+tableName+"做了更新操作！"
-                aud.DeitalMSG = "用户："+current_user.Name+" 对表"+tableName+"做了更新操作！"+" 更新时间："+datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                aud.ReviseDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                aud.DeitalMSG = "用户："+current_user.Name+" 对表"+tableName+"做了更新操作！"+" 更新时间："+datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                aud.ReviseDate = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 aud.User = current_user.Name
                 db_session.add(aud)
                 db_session.commit()
