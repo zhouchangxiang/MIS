@@ -121,18 +121,6 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="SmallMenuName" class="col-sm-3 control-label">小菜单名字</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" class="form-control" name="SmallMenuName" placeholder="">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="SmallMenuRoute" class="col-sm-3 control-label">小菜单跳转的路由</label>
-                                            <div class="col-sm-9">
-                                                <select id="SmallMenuRoute" class="selectpicker" data-live-search="true"></select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
                                             <label for="BigMenuLogo" class="col-sm-3 control-label">大菜单的图标</label>
                                             <div class="col-sm-9">
                                                 <input type="text" class="form-control" name="BigMenuLogo" placeholder="">
@@ -162,6 +150,61 @@
                         </form>
                     </div>
                     <table id="navTab"></table>
+                    <div id="childMenusModal" class="modal fade">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        ×
+                                    </button>
+                                    <h4 class="modal-title">
+                                        配置信息
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="form-horizontal" action="">
+                                        <div class="form-group">
+                                            <label for="ID" class="col-sm-3 control-label">ID</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="ID" placeholder="" disabled="disabled">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="SmallMenuName" class="col-sm-3 control-label">小菜单名字</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="SmallMenuName" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="SmallMenuRoute" class="col-sm-3 control-label">小菜单跳转的路由</label>
+                                            <div class="col-sm-9">
+                                                <select id="SmallMenuRoute" class="selectpicker" data-live-search="true"></select>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- dialog buttons -->
+                                <div class="modal-footer"><button type="button" class="btn btn-primary" data-save-btn>保存</button></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="childMenusToolbar">
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <select id="childMenusSearchField" class="selectpicker" data-live-search="true"></select>
+                                </div>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="childMenusSearchVal">
+                                </div>
+                                <button type="button" class="btn btn-primary" data-search-btn>查询</button>
+                                <button type="button" class="btn btn-info" data-add-btn>添加</button>
+                                <button type="button" class="btn btn-warning" data-updata-btn>编辑</button>
+                                <button type="button" class="btn btn-danger" data-delete-btn>删除</button>
+                            </div>
+                        </form>
+                    </div>
+                    <table id="childMenusTab"></table>
                 </div>
                 <div role="tabpanel" class="tab-pane" id="ISFlagconfig">
                     <div id="ISFlagModal" class="modal fade">
@@ -385,45 +428,45 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="title" class="col-sm-3 control-label">字段名称</label>
+                                            <label for="TitleName" class="col-sm-3 control-label">字段名称</label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control" name="title" placeholder="">
+                                                <input type="text" class="form-control" name="TitleName" placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="field" class="col-sm-3 control-label">字段名</label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control" name="field" placeholder="">
+                                                <input type="text" class="form-control" name="FieldName" placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="isedit" class="col-sm-3 control-label">是否做添加修改操作</label>
+                                            <label for="Isedit" class="col-sm-3 control-label">是否做添加修改操作</label>
                                             <div class="col-sm-9">
-                                                <select id="isedit" class="selectpicker"></select>
+                                                <select id="Isedit" class="selectpicker"></select>
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="edittype" class="col-sm-3 control-label">输入类型</label>
+                                            <label for="Edittype" class="col-sm-3 control-label">输入类型</label>
                                             <div class="col-sm-9">
-                                                <select id="edittype" class="selectpicker"></select>
+                                                <select id="Edittype" class="selectpicker"></select>
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="downtable" class="col-sm-3 control-label">下拉框的数据表</label>
+                                            <label for="Downtable" class="col-sm-3 control-label">下拉框的数据表</label>
                                             <div class="col-sm-9">
-                                                <select id="downtable" class="selectpicker"></select>
+                                                <select id="Downtable" class="selectpicker"></select>
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="sortable" class="col-sm-3 control-label">该列是否排序</label>
+                                            <label for="Sortable" class="col-sm-3 control-label">该列是否排序</label>
                                             <div class="col-sm-9">
-                                                <select id="sortable" class="selectpicker"></select>
+                                                <select id="Sortable" class="selectpicker"></select>
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="visible" class="col-sm-3 control-label">该列是否可见</label>
+                                            <label for="Visible" class="col-sm-3 control-label">该列是否可见</label>
                                             <div class="col-sm-9">
-                                                <select id="visible" class="selectpicker"></select>
+                                                <select id="Visible" class="selectpicker"></select>
                                             </div>
                                         </div>
                                     </form>
@@ -499,12 +542,6 @@
                     field: 'BigMenuName',
                     title: '大菜单名字'
                 },{
-                    field: 'SmallMenuName',
-                    title: '小菜单名字'
-                },{
-                    field: 'SmallMenuRoute',
-                    title: '小菜单跳转的路由'
-                },{
                     field: 'BigMenuLogo',
                     title: '大菜单图标'
                 }],
@@ -518,6 +555,29 @@
                     field: "BigMenuName",
                     type: "text"
                 },{
+                    field:"BigMenuLogo",
+                    type: "text"
+                }]
+            })
+            $("#childMenusTab").tableRender({
+                tableName: 'childMenus',
+                toolbar: '#childMenusToolbar',
+                columns: [{
+                    checkbox: true
+                },{
+                    field: 'SmallMenuName',
+                    title: '小菜单名字'
+                },{
+                    field: 'SmallMenuRoute',
+                    title: '小菜单跳转的路由'
+                }],
+                refreshDom:"#childMenusSearchField",
+                fieldvalue: "#childMenusSearchVal",
+                Modal: '#childMenusModal',
+                ModalFieldStr: [{
+                    field:"ID",
+                    type:"text"
+                },{
                     field:"SmallMenuName",
                     type: "text"
                 },{
@@ -525,9 +585,6 @@
                     type: "select",
                     selectTableName:"PageRoute",
                     selectField:"Route"
-                },{
-                    field:"BigMenuLogo",
-                    type: "text"
                 }]
             })
             $("#ISFlagTab").tableRender({
@@ -654,25 +711,28 @@
                 columns: [{
                     checkbox: true
                 },{
-                    field: 'title',
+                    field: 'TableName',
+                    title: '表名称'
+                },{
+                    field: 'TitleName',
                     title: '字段名称'
                 },{
-                    field: 'field',
+                    field: 'FieldName',
                     title: '字段名'
                 },{
-                    field: 'isedit',
+                    field: 'Isedit',
                     title: '是否做添加修改操作'
                 },{
-                    field: 'edittype',
+                    field: 'Edittype',
                     title: '输入类型'
                 },{
-                    field: 'downtable',
+                    field: 'Downtable',
                     title: '下拉框的数据表'
                 },{
-                    field: 'sortable',
+                    field: 'Sortable',
                     title: '该列是否排序'
                 },{
-                    field: 'visible',
+                    field: 'Visible',
                     title: '该列是否可见'
                 }],
                 refreshDom:"#FieldSetSearchField",
@@ -682,33 +742,33 @@
                     field:"ID",
                     type:"text"
                 },{
-                    field: "title",
+                    field: "TitleName",
                     type: "text"
                 },{
-                    field: "field",
+                    field: "FieldName",
                     type: "text"
                 },{
-                    field: "isedit",
+                    field: "Isedit",
                     type: "select",
                     selectTableName:"ISFlag",
                     selectField:"Description"
                 },{
-                    field:"edittype",
+                    field:"Edittype",
                     type: "select",
                     selectTableName:"InputTypeTable",
                     selectField:"Title"
                 },{
-                    field:"downtable",
+                    field:"Downtable",
                     type: "select",
                     selectTableName:"CreateTableSet",
                     selectField:"TableName"
                 },{
-                    field:"sortable",
+                    field:"Sortable",
                     type: "select",
                     selectTableName:"ISFlag",
                     selectField:"Description"
                 },{
-                    field:"visible",
+                    field:"Visible",
                     type: "select",
                     selectTableName:"ISFlag",
                     selectField:"Description"
