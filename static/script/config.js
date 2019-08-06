@@ -211,6 +211,11 @@
                     requestData[fieldstr.field] = $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("val");
                 }
             })
+            //判断是否有主表关联，有的话就额外传参
+            if(options.selectSearchTableName != ""){
+                requestData[options.selectSearchTableField] = $(options.toolbar).find("[data-select-search]").selectpicker("val")
+            }
+            console.log(requestData)
             $.ajax({
                 url:"http://127.0.0.1:5000/CUID",
                 type:requestType,
@@ -271,10 +276,11 @@
         //下拉搜索
         $(options.toolbar).on("change","#FieldSetSelectSearch",function(){
             if(options.selectSearchTableName != "") {
+                var selectSearchTablequery = {}
+                selectSearchTablequery.field = options.selectSearchTableField
+                selectSearchTablequery.fieldvalue = $(options.toolbar).find("[data-select-search]").selectpicker("val")
                 $this.bootstrapTable('refresh', {
-                    query: {
-                        [options.selectSearchTableField]: $(options.toolbar).find("[data-select-search]").selectpicker("val")
-                    }
+                    query: selectSearchTablequery
                 });
             }
         })
