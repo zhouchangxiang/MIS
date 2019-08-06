@@ -153,7 +153,10 @@ def select(data):#table, page, rows, fieid, param
         rowsnumber = int(data.get("limit"))
         param = data.get("field")
         tableName = data.get("tableName")
-        paramvalue = data.get("fieldvalue")
+        paramvalue = data.get(""
+                              ""
+                              ""
+                              "")
         inipage = pages * rowsnumber + 0  # 起始页
         endpage = pages * rowsnumber + rowsnumber  # 截止页
         newTable = Table(tableName, metadata, autoload=True, autoload_with=engine)

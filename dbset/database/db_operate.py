@@ -7,7 +7,7 @@ from flask_login import current_user
 import pymssql
 from dbset.database import constant
 
-GLOBAL_DATABASE_CONNECT_STRING= "mssql+pymssql://sa:root@localhost:1433/BK?charset=utf8"
+GLOBAL_DATABASE_CONNECT_STRING= "mssql+pymssql://sa:Qcsw@758@192.168.2.123:1433/BK?charset=utf8"
 engine = create_engine(GLOBAL_DATABASE_CONNECT_STRING, deprecate_large_types=True)
 Session = sessionmaker(bind=engine)
 db_session = Session()
