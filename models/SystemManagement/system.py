@@ -542,17 +542,21 @@ class LeftMenus(Base):
     # 大菜单名字:
     BigMenuName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 小菜单名字:
-    SmallMenuName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 小菜单跳转的路由:
-    SmallMenuRoute = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
     # 大菜单上的图标:
     BigMenuLogo = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # # 小菜单的权限（是否显示出来）:
-    # SmallMenuPermi = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+# 小菜单
+class childMenus(Base):
+    __tablename__ = 'childMenus'
+    # id:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 小菜单名字:
+    SmallMenuName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 小菜单路由:
+    SmallMenuRoute = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 # 数据库建表配置
 class CreateTableSet(Base):

@@ -81,7 +81,7 @@ def insertSyslog(operationType, operationContent, userName):
         logger.error(e)
 
 
-# 日志查询
+# 审计追踪查询
 @systemlog.route('/syslogs/AuditTraceSelecct')
 def AuditTraceSelecct():
     if request.method == 'GET':

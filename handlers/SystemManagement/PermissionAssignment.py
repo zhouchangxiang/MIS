@@ -25,10 +25,10 @@ def getRoleList(id=0):
                            "text": obj.RoleName,
                            "children": getRoleList(obj.ID)})
         srep = ',' + 'items' + ':' + '[]'
-
         return sz
     except Exception as e:
         print(e)
+        logger.error(e)
         insertSyslog("error", "查询角色报错Error：" + str(e), current_user.Name)
         return json.dumps([{"status": "Error：" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
 
@@ -185,4 +185,28 @@ def menuToUser():
             print(e)
             logger.error(e)
             insertSyslog("error", "权限分配下为角色添加权限Error：" + str(e), current_user.Name)
+            return json.dumps([{"status": "Error:" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
+
+# 菜单权限控制
+@permission_distribution.route('/ZYPlanGuid/menuRedirect', methods=['POST', 'GET'])
+def menuRedirect():
+    if request.method == 'POST':
+        data = request.values  # 返回请求中的参数和form
+        try:
+            menuName = data['menuName']
+            RoleNames = db_session.query(User.RoleName).filter(User.Name == current_user.Name).all()
+            flag = 'OK'
+            for rN in RoleNames:
+                roleID = db_session.query(Role.ID).filter(Role.RoleName == rN[0]).first()
+                menus = db_session.query(Menu.ModuleName).join(Role_Menu, isouter=True).filter_by(Role_ID=roleID).all()
+                for menu in menus:
+                    if (menu[0] == menuName):
+                        return 'OK'
+                    else:
+                        flag = '当前用户没有此操作权限！'
+            return flag
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "计划向导生成计划报错Error：" + str(e), current_user.Name)
             return json.dumps([{"status": "Error:" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)

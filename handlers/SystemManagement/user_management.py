@@ -132,29 +132,3 @@ def UpdateUser():
             logger.error(e)
             insertSyslog("error", "更新用户报错Error：" + str(e), current_user.Name)
             return json.dumps([{"status": "Error:" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
-
-@user_manage.route('/user/deleteUser', methods=['POST', 'GET'])
-def deleteUser():
-    if request.method == 'POST':
-        data = request.values
-        try:
-            jsonstr = json.dumps(data.to_dict())
-            if len(jsonstr) > 10:
-                jsonnumber = re.findall(r"\d+\.?\d*", jsonstr)
-                for key in jsonnumber:
-                    id = int(key)
-                    try:
-                        oclass = db_session.query(User).filter_by(id=id).first()
-                        db_session.delete(oclass)
-                        db_session.commit()
-                    except Exception as ee:
-                        db_session.rollback()
-                        print(ee)
-                        insertSyslog("error", "删除户ID为"+string(id)+"报错Error：" + string(ee), current_user.Name)
-                        return json.dumps("删除用户报错", cls=AlchemyEncoder,ensure_ascii=False)
-                return 'OK'
-        except Exception as e:
-            print(e)
-            logger.error(e)
-            insertSyslog("error", "删除用户报错Error：" + str(e), current_user.Name)
-            return json.dumps([{"status": "Error:" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
