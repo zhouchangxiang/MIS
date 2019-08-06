@@ -80,7 +80,9 @@
                         <form class="form-inline">
                             <div class="form-group">
                                 <div class="input-group">
-                                    <label class="input-group-addon">名称</label>
+                                    <select id="pageSearchField" class="selectpicker" data-live-search="true"></select>
+                                </div>
+                                <div class="input-group">
                                     <input type="text" class="form-control" id="pageSearchVal">
                                 </div>
                                 <button type="button" class="btn btn-primary" data-search-btn>查询</button>
@@ -147,7 +149,9 @@
                         <form class="form-inline">
                             <div class="form-group">
                                 <div class="input-group">
-                                    <label class="input-group-addon">小菜单名称</label>
+                                    <select id="navSearchField" class="selectpicker" data-live-search="true"></select>
+                                </div>
+                                <div class="input-group">
                                     <input type="text" class="form-control" id="navSearchVal">
                                 </div>
                                 <button type="button" class="btn btn-primary" data-search-btn>查询</button>
@@ -201,6 +205,13 @@
                     <div id="ISFlagToolbar">
                         <form class="form-inline">
                             <div class="form-group">
+                                <div class="input-group">
+                                    <select id="ISFlagSearchField" class="selectpicker" data-live-search="true"></select>
+                                </div>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="ISFlagSearchVal">
+                                </div>
+                                <button type="button" class="btn btn-primary" data-search-btn>查询</button>
                                 <button type="button" class="btn btn-info" data-add-btn>添加</button>
                                 <button type="button" class="btn btn-warning" data-updata-btn>编辑</button>
                                 <button type="button" class="btn btn-danger" data-delete-btn>删除</button>
@@ -252,7 +263,9 @@
                         <form class="form-inline">
                             <div class="form-group">
                                 <div class="input-group">
-                                    <label class="input-group-addon">名称</label>
+                                    <select id="InputTypeSearchField" class="selectpicker" data-live-search="true"></select>
+                                </div>
+                                <div class="input-group">
                                     <input type="text" class="form-control" id="InputTypeSearchVal">
                                 </div>
                                 <button type="button" class="btn btn-primary" data-search-btn>查询</button>
@@ -337,7 +350,9 @@
                         <form class="form-inline">
                             <div class="form-group">
                                 <div class="input-group">
-                                    <label class="input-group-addon">表的描述</label>
+                                    <select id="databaseSearchField" class="selectpicker" data-live-search="true"></select>
+                                </div>
+                                <div class="input-group">
                                     <input type="text" class="form-control" id="databaseSearchVal">
                                 </div>
                                 <button type="button" class="btn btn-primary" data-search-btn>查询</button>
@@ -422,14 +437,17 @@
                         <form class="form-inline">
                             <div class="form-group">
                                 <div class="input-group">
-                                    <label class="input-group-addon">字段名</label>
+                                    <select id="FieldSetSearchField" class="selectpicker" data-live-search="true"></select>
+                                </div>
+                                <div class="input-group">
                                     <input type="text" class="form-control" id="FieldSetSearchVal">
                                 </div>
                                 <button type="button" class="btn btn-primary" data-search-btn>查询</button>
                                 <button type="button" class="btn btn-info" data-add-btn>添加</button>
                                 <button type="button" class="btn btn-warning" data-updata-btn>编辑</button>
                                 <button type="button" class="btn btn-danger" data-delete-btn>删除</button>
-                                <select class="selectpicker" data-select-search  data-live-search="true"></select>
+                                <label for="" class="control-label">选择数据表:</label>
+                                <select id="FieldSetSelectSearch" class="selectpicker" data-select-search  data-live-search="true"></select>
                             </div>
                         </form>
                     </div>
@@ -455,8 +473,8 @@
                     field: 'Route',
                     title: '路由'
                 }],
-                refreshField: 'SetRoute',
-                fieldvalue: $("#pageSearchVal").val(),
+                refreshDom:"#pageSearchField",
+                fieldvalue: "#pageSearchVal",
                 Modal: '#pageModal',
                 ModalFieldStr: [{
                     field:"ID",
@@ -490,8 +508,8 @@
                     field: 'BigMenuLogo',
                     title: '大菜单图标'
                 }],
-                refreshField: 'SmallMenuName',
-                fieldvalue: $("#navSearchVal").val(),
+                refreshDom:"#navSearchField",
+                fieldvalue: "#navSearchVal",
                 Modal: '#navModal',
                 ModalFieldStr: [{
                     field:"ID",
@@ -524,6 +542,8 @@
                     field: 'Description',
                     title: '描述'
                 }],
+                refreshDom:"#ISFlagSearchField",
+                fieldvalue: "#ISFlagSearchVal",
                 Modal: '#ISFlagModal',
                 ModalFieldStr: [{
                     field:"ID",
@@ -548,8 +568,8 @@
                     field: 'Title',
                     title: '名称'
                 }],
-                refreshField: 'Title',
-                fieldvalue: $("#InputTypeSearchVal").val(),
+                refreshDom:"#InputTypeSearchField",
+                fieldvalue: "#InputTypeSearchVal",
                 Modal: '#InputTypeModal',
                 ModalFieldStr: [{
                     field:"ID",
@@ -589,8 +609,8 @@
                     field: 'IsDelete',
                     title: '是否显示删除按钮'
                 }],
-                refreshField: 'TableDescrip',
-                fieldvalue: $("#databaseSearchVal").val(),
+                refreshDom:"#databaseSearchField",
+                fieldvalue: "#databaseSearchVal",
                 Modal: '#databaseModal',
                 ModalFieldStr: [{
                     field:"ID",
@@ -655,8 +675,8 @@
                     field: 'visible',
                     title: '该列是否可见'
                 }],
-                refreshField: 'title',
-                fieldvalue: $("#FieldSetSearchVal").val(),
+                refreshDom:"#FieldSetSearchField",
+                fieldvalue: "#FieldSetSearchVal",
                 Modal: '#FieldSetModal',
                 ModalFieldStr: [{
                     field:"ID",
