@@ -47,17 +47,17 @@ app.register_blueprint(systemlog)
 app.register_blueprint(batch)
 
 @app.route('/')
-# @login_required
+@login_required
 def index():
     return render_template("./main/index.html")
 
 @app.route('/home')
-# @login_required
+@login_required
 def home():
     return render_template("./main/home.html")
 
 @app.route('/config')
-# @login_required
+@login_required
 def config():
     return render_template("./main/config.html")
 

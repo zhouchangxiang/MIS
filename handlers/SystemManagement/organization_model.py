@@ -23,46 +23,6 @@ organiza = Blueprint('organiza', __name__, template_folder='templates')
 def organization():
     return render_template('./SystemManagement/sysOrganization.html')
 
-@organiza.route('/OrganizationSelect')
-def OrganizationSelect():
-    if request.method == 'GET':
-        data = request.values # 返回请求中的参数和form
-        try:
-            json_str = json.dumps(data.to_dict())
-            if len(json_str) > 10:
-                pages = int(data.get("offset"))  # 页数
-                rowsnumber = int(data.get("limit"))  # 行数
-                inipage = pages * rowsnumber + 0  # 起始页
-                endpage = pages * rowsnumber + rowsnumber  # 截止页
-                OrganizationName = data.get("OrganizationName")
-                if OrganizationName == None or OrganizationName == "":
-                    total = db_session.query(func.count(Organization.ID)).scalar()
-                    organiztions = db_session.query(Organization).all()[inipage:endpage]
-                else:
-                    total = db_session.query(Organization.ID).filter(Organization.OrganizationName.like("%"+OrganizationName+"%")).all()
-                    organiztions = db_session.query(Organization).filter(Organization.OrganizationName.like("%"+OrganizationName+"%")).all()[inipage:endpage]
-                jsonorganzitions = json.dumps(organiztions, cls=AlchemyEncoder, ensure_ascii=False)
-                return '{"total"'+":"+str(total)+',"rows"' +":\n" + jsonorganzitions + "}"
-        except Exception as e:
-            print(e)
-            logger.error(e)
-            insertSyslog("error", "查询组织报错Error：" + str(e), current_user.Name)
-            return json.dumps([{"status": "Error:"+ str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
-@organiza.route('/OrganizationCreate', methods=['GET', 'POST'])
-def OrganizationCreate():
-    if request.method == 'POST':
-        data = request.values
-        return insert(Organization, data)
-@organiza.route('/OrganizationUpdate', methods=['GET', 'POST'])
-def OrganizationUpdate():
-    if request.method == 'POST':
-        data = request.values
-        return update(Organization, data)
-@organiza.route('/OrganizationDelete', methods=['GET', 'POST'])
-def OrganizationDelete():
-    if request.method == 'POST':
-        data = request.values
-        return delete(Organization, data)
 @organiza.route('/organizationMap')
 def organizationMap():
     return render_template('./SystemManagement/index_organization.html')

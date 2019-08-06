@@ -58,13 +58,13 @@ def insert(data):
                 if key != "ID" and key != "tableName":
                     setattr(ss, key, data[key])
             db_session.add(ss)
-            # aud = AuditTrace()
-            # aud.Operation = "用户：" + current_user.Name + " 对表" + tableName + "添加一条数据！"
-            # aud.DeitalMSG = "用户：" + current_user.Name + " 对表" + tableName + "添加一条数据！" + " 添加时间：" + datetime.datetime.now().strftime(
-            #     '%Y-%m-%d %H:%M:%S')
-            # aud.ReviseDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            # aud.User = current_user.Name
-            # db_session.add(aud)
+            aud = AuditTrace()
+            aud.Operation = "用户：" + current_user.Name + " 对表" + tableName + "添加一条数据！"
+            aud.DeitalMSG = "用户：" + current_user.Name + " 对表" + tableName + "添加一条数据！" + " 添加时间：" + datetime.datetime.now().strftime(
+                '%Y-%m-%d %H:%M:%S')
+            aud.ReviseDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            aud.User = current_user.Name
+            db_session.add(aud)
             db_session.commit()
             return 'OK'
         except Exception as e:
@@ -88,13 +88,13 @@ def delete(data):
                 try:
                     sql = "delete from "+"[BK].[dbo].["+tableName+"] where ID = '"+key+"'"
                     db_session.execute(sql)
-                    # aud = AuditTrace()
-                    # aud.Operation = "用户：" + current_user.Name + " 对表" + tableName + "中的ID为"+key+"的数据做了删除操作！"
-                    # aud.DeitalMSG = "用户：" + current_user.Name + " 对表" + tableName + "中的ID为"+key+"的数据做了删除操作！" + " 删除时间：" + datetime.datetime.now().strftime(
-                    #     '%Y-%m-%d %H:%M:%S')
-                    # aud.ReviseDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                    # aud.User = current_user.Name
-                    # db_session.add(aud)
+                    aud = AuditTrace()
+                    aud.Operation = "用户：" + current_user.Name + " 对表" + tableName + "中的ID为"+key+"的数据做了删除操作！"
+                    aud.DeitalMSG = "用户：" + current_user.Name + " 对表" + tableName + "中的ID为"+key+"的数据做了删除操作！" + " 删除时间：" + datetime.datetime.now().strftime(
+                        '%Y-%m-%d %H:%M:%S')
+                    aud.ReviseDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    aud.User = current_user.Name
+                    db_session.add(aud)
                     db_session.commit()
                 except Exception as ee:
                     db_session.rollback()
@@ -123,12 +123,12 @@ def update(data):
                     if hasattr(oclass, key) and key != 'ID' and key != 'tableName':
                         setattr(oclass, key, data[key])
                 db_session.add(oclass)
-                # aud = AuditTrace()
-                # aud.Operation = "用户："+current_user.Name+" 对表"+tableName+"做了更新操作！"
-                # aud.DeitalMSG = "用户："+current_user.Name+" 对表"+tableName+"做了更新操作！"+" 更新时间："+datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                # aud.ReviseDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                # aud.User = current_user.Name
-                # db_session.add(aud)
+                aud = AuditTrace()
+                aud.Operation = "用户："+current_user.Name+" 对表"+tableName+"做了更新操作！"
+                aud.DeitalMSG = "用户："+current_user.Name+" 对表"+tableName+"做了更新操作！"+" 更新时间："+datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                aud.ReviseDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                aud.User = current_user.Name
+                db_session.add(aud)
                 db_session.commit()
                 return 'OK'
             else:
