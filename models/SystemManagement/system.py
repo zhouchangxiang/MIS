@@ -140,8 +140,14 @@ class User(Base):
     #所属部门
     OrganizationName = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
 
+    # 所属部门ID
+    OrganizationID = Column(Integer, primary_key=False, autoincrement=False, nullable=False)
+
     # 角色名称:
     RoleName = Column(Unicode(128), primary_key=False, autoincrement=False, nullable=True)
+
+    # 角色ID:
+    RoleID = Column(Integer, primary_key=False, autoincrement=False, nullable=False)
 
     # @property
     # def password(self):
@@ -189,7 +195,7 @@ class Organization(Base):
     OrganizationSeq = Column(Unicode(10), primary_key=False, autoincrement=False, nullable=True)
 
     # 组织机构名称:
-    OrganizationName = Column(Unicode(200), primary_key=False, autoincrement=False, nullable=True)
+    OrganizationName = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
 
     # 说明:
     Description = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
@@ -587,6 +593,9 @@ class FieldSet(Base):
     __tablename__ = 'FieldSet'
     # id:
     ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 表名称:
+    TableName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # title字段名称（名字）:
     TitleName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
