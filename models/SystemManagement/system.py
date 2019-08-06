@@ -552,6 +552,12 @@ class childMenus(Base):
     # id:
     ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
 
+    # 大菜单名字:
+    BigMenuID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 大菜单名字:
+    BigMenuName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
     # 小菜单名字:
     SmallMenuName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
