@@ -144,7 +144,7 @@ class User(Base):
     OrganizationID = Column(Integer, primary_key=False, autoincrement=False, nullable=False)
 
     # 角色名称:
-    RoleName = Column(Unicode(128), primary_key=False, autoincrement=False, nullable=True)
+    RoleName = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
 
     # 角色ID:
     RoleID = Column(Integer, primary_key=False, autoincrement=False, nullable=False)
