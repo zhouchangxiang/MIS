@@ -204,9 +204,11 @@
 }
 .navUserPanel ul li a{
     color: #666666;
+    border: none;
 }
 .navUserPanel ul li a:hover{
     background: #f6f6f6;
+    border: none;
 }
 
 /* 选项卡样式 */
