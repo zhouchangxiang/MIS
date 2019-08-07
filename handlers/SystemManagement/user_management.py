@@ -10,8 +10,8 @@ from flask_login import current_user
 user_manage = Blueprint('user_manage', __name__, template_folder='templates', url_prefix='/user_manage')
 
 # 用户管理
-@user_manage.route('/default')
-def userManager():
+@user_manage.route('/userpage')
+def userpage():
     departments = db_session.query(Organization.ID, Organization.OrganizationName).all()
     # print(departments)
     # departments = json.dumps(departments, cls=AlchemyEncoder, ensure_ascii=False)
@@ -31,7 +31,7 @@ def userManager():
         name = li[1]
         roleName = {'RoleID': id, 'RoleName': name}
         dataRoleName.append(roleName)
-    return render_template('./SystemManagement/userManager.html', departments=data, roleNames=dataRoleName)
+    return render_template('./userpage.html', departments=data, roleNames=dataRoleName)
 @user_manage.route('/MyUser/Select')
 def MyUserSelect():
     if request.method == 'GET':
