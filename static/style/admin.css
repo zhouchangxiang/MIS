@@ -5,24 +5,23 @@
     background-color: #fff;
 }
 #contentWrap.contentBg{
-    background: #d8d8d8;
+    background-color: #F4F4F4;
     color: #666666;
 }
 .contentLeft{
     position: absolute;
     top: 0;
     left: 0;
-    width: 400px;
+    width: 410px;
     height: 100%;
     box-shadow: none;
 }
 .contentRight{
-    position: absolute;
+    position: relative;
     top: 0;
     left: 0;
-    width: 100%;
     height: 100%;
-    margin-left: 400px;
+    margin-left: 410px;
     box-shadow: none;
     overflow: hidden;
 }
@@ -89,7 +88,7 @@
     font-size: 22px;
     padding: 10px 0;
 }
-.sidebarBg .sidebarLeftNav li a:hover{
+.sidebarLeftBg .sidebarLeftNav li a:hover{
     background: #1678E1;
 }
 .sidebarLeftNav li a.rootMenu{
@@ -103,7 +102,6 @@
     height: 100%;
     margin-left: 0;
     overflow-x: hidden;
-    z-index: 99;
 }
 .sidebarRight::-webkit-scrollbar {
     display: none;
@@ -136,6 +134,19 @@
     background: #07488E;
     color: #ffffff;
 }
+.sidebarMoveBtn{
+    position: absolute;
+    bottom: 60px;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    background: #07488E;
+    color: #ffffff;
+    text-align: center;
+    cursor: pointer;
+    z-index: 101;
+}
 
 /*右上角信息*/
 .navHead{
@@ -143,45 +154,64 @@
     height: 64px;
     background: #D8D8D8;
     color: #15161A;
+    padding: 0 40px;
 }
-.navUser{
+.navLogo{
+    float: left;
     height: 64px;
     line-height: 64px;
-    float: right;
-    cursor: pointer;
 }
-.navUserName{
-    display: inline-block;
+.navLogo img{
+    width: 100%;
+}
+.navHead-item{
+    position: relative;
+    height: 64px;
+    line-height: 64px;
     color: #15161A;
     font-size: 14px;
+    float: right;
+}
+.navHead-item a{
+    display: block;
+    padding: 0 20px;
+    border-top: 2px solid transparent;
+}
+.navHead-item a:hover{
+    border-top: 2px solid #0B76EA;
+}
+.icon-pull-right{
+    height: 0;
+    width: 0;
+    right: -4px;
 }
 .navUserPanel{
     display: none;
     position: absolute;
     left: 0;
     right: 0;
-    top: 68px;
-    background: #1d2025;
+    top: 64px;
+    background: #ffffff;
+    padding: 5px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,.12);
+    border: 1px solid #d2d2d2;
+    border-radius: 2px;
+    white-space: nowrap;
     z-index: 101;
 }
 .navUserPanel ul li {
     line-height: 20px;
 }
 .navUserPanel ul li a{
-    color: #fff;
-    opacity: 0.4;
+    color: #666666;
 }
 .navUserPanel ul li a:hover{
-    opacity: 1;
-    background: none;
+    background: #f6f6f6;
 }
 
 /* 选项卡样式 */
 #layuiTab .layadminHome i{
     display: none;
-}
-#layuiTab .layui-tab-title{
-    background: #ffffff;
 }
 [lay-href], [lay-tips], [layadmin-event]{
     cursor: pointer;
@@ -190,9 +220,7 @@
     position: relative;
     height: 40px;
     line-height: 40px;
-    background-color: #fff;
     box-sizing: border-box;
-    box-shadow: 0 1px 2px 0 rgba(0,0,0,.1);
 }
 .layadmin-pagetabs .layadmin-tabs-control{
     position: absolute;
@@ -204,8 +232,8 @@
     transition: all .3s;
     -webkit-transition: all .3s;
     box-sizing: border-box;
-    border-left: 1px solid #f6f6f6;
-    background: #ffffff;
+    background: #07488E;
+    color: #ffffff;
     z-index: 100;
 }
 .layadmin-pagetabs .layui-icon-down{
@@ -225,7 +253,7 @@
     line-height: 40px;
 }
 .layadmin-tabs-select.layui-nav .layui-nav-item a{
-    color: #666;
+    color: #666666;
 }
 .layadmin-tabs-select.layui-nav .layui-nav-item>a{
     height: 40px;
@@ -248,15 +276,19 @@
     height: 40px;
     padding: 0 80px 0 40px;
     border: none;
+    background: #07488E;
     overflow: hidden;
 }
-.layadmin-pagetabs .layui-tab-title li{
+#LAY_app_tabsheader.layui-tab-title li{
     min-width: 0;
     line-height: 40px;
     text-overflow: ellipsis;
+    color: #ffffff;
     overflow: hidden;
-    border-right: 1px solid #f6f6f6;
     vertical-align: top;
+}
+#LAY_app_tabsheader .layui-this{
+    background-color: #1678E1;
 }
 .layadmin-pagetabs .layui-tab-title li:first-child{
     padding-right: 15px;
