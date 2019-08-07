@@ -9,7 +9,9 @@
             Modal: '', //弹框dom
             ModalFieldStr: [], //弹框内录入的字段对象，field字段名，type字段输入类型，selectTableName下拉框数据表，selectField显示下拉框数据表的字段
             selectSearchTableName:"", //下拉搜索的数据表
-            selectSearchTableField:"" //下拉搜索的数据表的字段
+            selectSearchTableField:"", //下拉搜索的数据表的字段
+            clickParentTableDom:"", //根据父表搜索的表格dom
+            clickParentTableField:"", //根据父表搜索的表的字段
         };
         var options = $.extend(defaluts, options);
         var $this = $(this)
@@ -67,48 +69,15 @@
         })
         //添加按钮
         $(options.toolbar).on("click","[data-add-btn]",function(){
-            $(options.Modal).modal('show')
-            $.each(options.ModalFieldStr,function(i,value){
-                var fieldstr = options.ModalFieldStr[i]
-                //判断输入框类型  为下拉框 则动态添加数据
-                if(fieldstr.type == "text"){
-                    $(options.Modal).find("input[name="+ fieldstr.field +"]").val("");
-                }else if(fieldstr.type == "select"){
-                    var selectField = fieldstr.selectField
-                    $.ajax({
-                        url:"http://127.0.0.1:5000/CUID",
-                        type:"get",
-                        data:{
-                            tableName:fieldstr.selectTableName,
-                            limit: 100000000,
-                            offset:0
-                        },
-                        success:function(res){
-                            res = JSON.parse(res)
-                            var selectOptions = ""
-                            $(options.Modal).find("#"+ fieldstr.field +"").html("")
-                            $.each(res.rows,function(i,value){
-                                selectOptions += "<option value='"+ res.rows[i][selectField] +"'>" + res.rows[i][selectField] + "</option>";
-                            })
-                            $(options.Modal).find("#"+ fieldstr.field +"").append(selectOptions)
-                            $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("refresh")
-                            $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("render")
-                            $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("val",res.rows[0][fieldstr.field]); //赋默认值
-                        }
-                    })
-                }
-            })
-        })
-        //修改按钮
-        $(options.toolbar).on("click","[data-updata-btn]",function(){
-            var rows = $this.bootstrapTable('getAllSelections');
-            if(rows.length == 1){
-                if(rows){
+            if(options.clickParentTableDom != ""){
+                var ParentTableRows = $(options.clickParentTableDom).bootstrapTable("getAllSelections")
+                if(ParentTableRows.length == 1){
                     $(options.Modal).modal('show')
                     $.each(options.ModalFieldStr,function(i,value){
                         var fieldstr = options.ModalFieldStr[i]
+                        //判断输入框类型  为下拉框 则动态添加数据
                         if(fieldstr.type == "text"){
-                            $(options.Modal).find("input[name="+ fieldstr.field +"]").val(rows[0][fieldstr.field]);
+                            $(options.Modal).find("input[name="+ fieldstr.field +"]").val("");
                         }else if(fieldstr.type == "select"){
                             var selectField = fieldstr.selectField
                             $.ajax({
@@ -129,14 +98,132 @@
                                     $(options.Modal).find("#"+ fieldstr.field +"").append(selectOptions)
                                     $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("refresh")
                                     $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("render")
-                                    $(options.Modal).find("#"+ fieldstr.field +"").selectpicker('val',res.rows[0][fieldstr.field])
+                                    $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("val",res.rows[0][fieldstr.field]); //赋默认值
                                 }
                             })
                         }
                     })
+                }else{
+                    bootbox.alert('请单选上级表格数据进行添加！');
                 }
-            } else {
-                bootbox.alert('请单选一条数据进行编辑！');
+            }else{
+                $(options.Modal).modal('show')
+                $.each(options.ModalFieldStr,function(i,value){
+                    var fieldstr = options.ModalFieldStr[i]
+                    //判断输入框类型  为下拉框 则动态添加数据
+                    if(fieldstr.type == "text"){
+                        $(options.Modal).find("input[name="+ fieldstr.field +"]").val("");
+                    }else if(fieldstr.type == "select"){
+                        var selectField = fieldstr.selectField
+                        $.ajax({
+                            url:"http://127.0.0.1:5000/CUID",
+                            type:"get",
+                            data:{
+                                tableName:fieldstr.selectTableName,
+                                limit: 100000000,
+                                offset:0
+                            },
+                            success:function(res){
+                                res = JSON.parse(res)
+                                var selectOptions = ""
+                                $(options.Modal).find("#"+ fieldstr.field +"").html("")
+                                $.each(res.rows,function(i,value){
+                                    selectOptions += "<option value='"+ res.rows[i][selectField] +"'>" + res.rows[i][selectField] + "</option>";
+                                })
+                                $(options.Modal).find("#"+ fieldstr.field +"").append(selectOptions)
+                                $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("refresh")
+                                $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("render")
+                                $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("val",res.rows[0][fieldstr.field]); //赋默认值
+                            }
+                        })
+                    }
+                })
+            }
+        })
+        //修改按钮
+        $(options.toolbar).on("click","[data-updata-btn]",function(){
+            //判断是否有上级表格关联
+            if(options.clickParentTableDom != "") {
+                var ParentTableRows = $(options.clickParentTableDom).bootstrapTable("getAllSelections")
+                if(ParentTableRows.length == 1){
+                    var rows = $this.bootstrapTable('getAllSelections');
+                    if (rows.length == 1) {
+                        if (rows) {
+                            $(options.Modal).modal('show')
+                            $.each(options.ModalFieldStr, function (i, value) {
+                                var fieldstr = options.ModalFieldStr[i]
+                                if (fieldstr.type == "text") {
+                                    $(options.Modal).find("input[name=" + fieldstr.field + "]").val(rows[0][fieldstr.field]);
+                                } else if (fieldstr.type == "select") {
+                                    var selectField = fieldstr.selectField
+                                    $.ajax({
+                                        url: "http://127.0.0.1:5000/CUID",
+                                        type: "get",
+                                        data: {
+                                            tableName: fieldstr.selectTableName,
+                                            limit: 100000000,
+                                            offset: 0
+                                        },
+                                        success: function (res) {
+                                            res = JSON.parse(res)
+                                            var selectOptions = ""
+                                            $(options.Modal).find("#" + fieldstr.field + "").html("")
+                                            $.each(res.rows, function (i, value) {
+                                                selectOptions += "<option value='" + res.rows[i][selectField] + "'>" + res.rows[i][selectField] + "</option>";
+                                            })
+                                            $(options.Modal).find("#" + fieldstr.field + "").append(selectOptions)
+                                            $(options.Modal).find("#" + fieldstr.field + "").selectpicker("refresh")
+                                            $(options.Modal).find("#" + fieldstr.field + "").selectpicker("render")
+                                            $(options.Modal).find("#" + fieldstr.field + "").selectpicker('val', res.rows[0][fieldstr.field])
+                                        }
+                                    })
+                                }
+                            })
+                        }
+                    } else {
+                        bootbox.alert('请单选一条数据进行编辑！');
+                    }
+                }else{
+                    bootbox.alert('请单选上级表格数据进行编辑！');
+                }
+            }else{
+                var rows = $this.bootstrapTable('getAllSelections');
+                if (rows.length == 1) {
+                    if (rows) {
+                        $(options.Modal).modal('show')
+                        $.each(options.ModalFieldStr, function (i, value) {
+                            var fieldstr = options.ModalFieldStr[i]
+                            if (fieldstr.type == "text") {
+                                $(options.Modal).find("input[name=" + fieldstr.field + "]").val(rows[0][fieldstr.field]);
+                            } else if (fieldstr.type == "select") {
+                                var selectField = fieldstr.selectField
+                                $.ajax({
+                                    url: "http://127.0.0.1:5000/CUID",
+                                    type: "get",
+                                    data: {
+                                        tableName: fieldstr.selectTableName,
+                                        limit: 100000000,
+                                        offset: 0
+                                    },
+                                    success: function (res) {
+                                        res = JSON.parse(res)
+                                        var selectOptions = ""
+                                        $(options.Modal).find("#" + fieldstr.field + "").html("")
+                                        $.each(res.rows, function (i, value) {
+                                            selectOptions += "<option value='" + res.rows[i][selectField] + "'>" + res.rows[i][selectField] + "</option>";
+                                        })
+                                        $(options.Modal).find("#" + fieldstr.field + "").append(selectOptions)
+                                        $(options.Modal).find("#" + fieldstr.field + "").selectpicker("refresh")
+                                        $(options.Modal).find("#" + fieldstr.field + "").selectpicker("render")
+                                        $(options.Modal).find("#" + fieldstr.field + "").selectpicker('val', res.rows[0][fieldstr.field])
+                                    }
+                                })
+                            }
+                        })
+                    }
+                } else {
+                    bootbox.alert('请单选一条数据进行编辑！');
+                }
             }
         })
         //删除按钮
@@ -214,6 +301,11 @@
             //判断是否有主表关联，有的话就额外传参
             if(options.selectSearchTableName != ""){
                 requestData[options.selectSearchTableField] = $(options.toolbar).find("[data-select-search]").selectpicker("val")
+            }
+            if(options.clickParentTableDom != ""){
+                var clickParentTableValue = $(options.clickParentTableDom).bootstrapTable("getAllSelections")
+                console.log(clickParentTableValue[0][options.clickParentTableField])
+                requestData[options.clickParentTableField] = clickParentTableValue[0][options.clickParentTableField]
             }
             console.log(requestData)
             $.ajax({
