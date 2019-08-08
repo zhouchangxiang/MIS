@@ -349,7 +349,7 @@ class AuditTrace(Base):
     ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
 
     # 操作:
-    Operation = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    Operation = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
 
     # 详细信息:
     DeitalMSG = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)

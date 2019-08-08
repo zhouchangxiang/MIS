@@ -36,7 +36,7 @@ def insertSyslog(operationType, operationContent, userName):
             if userName == None: userName = ""
             ComputerName = socket.gethostname()
             db_session.add(
-                SysLog(OperationType=operationType, OperationContent=operationContent,OperationDate=datetime.datetime.now(), UserName=userName,
+                SysLog(OperationType=operationType, OperationContent=operationContent,OperationDate=datetime.now().strftime('%Y-%m-%d %H:%M:%S'), UserName=userName,
                        ComputerName=ComputerName, IP=socket.gethostbyname(ComputerName)))
             db_session.commit()
         except Exception as e:
@@ -89,6 +89,7 @@ def delete(data):
                 try:
                     sql = "delete from "+"[BK].[dbo].["+tableName+"] where ID = '"+key+"'"
                     db_session.execute(sql)
+                    db_session.commit()
                     aud = AuditTrace()
                     aud.Operation = "用户：" + current_user.Name + " 对表" + tableName + "中的ID为"+key+"的数据做了删除操作！"
                     aud.DeitalMSG = "用户：" + current_user.Name + " 对表" + tableName + "中的ID为"+key+"的数据做了删除操作！" + " 删除时间：" + datetime.now().strftime(
@@ -98,6 +99,7 @@ def delete(data):
                     db_session.add(aud)
                     db_session.commit()
                 except Exception as ee:
+                    print(ee)
                     db_session.rollback()
                     insertSyslog("error", "删除户ID为"+str(id)+"报错Error：" + str(ee), current_user.Name)
                     return json.dumps("删除用户报错", cls=AlchemyEncoder,ensure_ascii=False)
