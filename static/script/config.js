@@ -8,8 +8,6 @@
             fieldvalue: '', //搜索输入值
             Modal: '', //弹框dom
             ModalFieldStr: [], //弹框内录入的字段对象，field字段名，type字段输入类型，selectTableName下拉框数据表，selectField显示下拉框数据表的字段
-            selectSearchTableName:"", //下拉搜索的数据表
-            selectSearchTableField:"", //下拉搜索的数据表的字段
             clickParentTableDom:"", //根据父表搜索的表格dom
             clickParentTableField:"", //根据父表搜索的表的字段
         };
@@ -93,7 +91,7 @@
                                     var selectOptions = ""
                                     $(options.Modal).find("#"+ fieldstr.field +"").html("")
                                     $.each(res.rows,function(i,value){
-                                        selectOptions += "<option value='"+ res.rows[i][selectField] +"'>" + res.rows[i][selectField] + "</option>";
+                                        selectOptions += "<option value='"+ res.rows[i][fieldstr.selectFieldID] +"'>" + res.rows[i][selectField] + "</option>";
                                     })
                                     $(options.Modal).find("#"+ fieldstr.field +"").append(selectOptions)
                                     $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("refresh")
@@ -128,7 +126,7 @@
                                 var selectOptions = ""
                                 $(options.Modal).find("#"+ fieldstr.field +"").html("")
                                 $.each(res.rows,function(i,value){
-                                    selectOptions += "<option value='"+ res.rows[i][selectField] +"'>" + res.rows[i][selectField] + "</option>";
+                                    selectOptions += "<option value='"+ res.rows[i][fieldstr.selectFieldID] +"'>" + res.rows[i][selectField] + "</option>";
                                 })
                                 $(options.Modal).find("#"+ fieldstr.field +"").append(selectOptions)
                                 $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("refresh")
@@ -169,7 +167,7 @@
                                             var selectOptions = ""
                                             $(options.Modal).find("#" + fieldstr.field + "").html("")
                                             $.each(res.rows, function (i, value) {
-                                                selectOptions += "<option value='" + res.rows[i][selectField] + "'>" + res.rows[i][selectField] + "</option>";
+                                                selectOptions += "<option value='" + res.rows[i][fieldstr.selectFieldID] + "'>" + res.rows[i][selectField] + "</option>";
                                             })
                                             $(options.Modal).find("#" + fieldstr.field + "").append(selectOptions)
                                             $(options.Modal).find("#" + fieldstr.field + "").selectpicker("refresh")
@@ -210,7 +208,7 @@
                                         var selectOptions = ""
                                         $(options.Modal).find("#" + fieldstr.field + "").html("")
                                         $.each(res.rows, function (i, value) {
-                                            selectOptions += "<option value='" + res.rows[i][selectField] + "'>" + res.rows[i][selectField] + "</option>";
+                                            selectOptions += "<option value='" + res.rows[i][fieldstr.selectFieldID] + "'>" + res.rows[i][selectField] + "</option>";
                                         })
                                         $(options.Modal).find("#" + fieldstr.field + "").append(selectOptions)
                                         $(options.Modal).find("#" + fieldstr.field + "").selectpicker("refresh")
@@ -299,15 +297,10 @@
                 }
             })
             //判断是否有主表关联，有的话就额外传参
-            if(options.selectSearchTableName != ""){
-                requestData[options.selectSearchTableField] = $(options.toolbar).find("[data-select-search]").selectpicker("val")
-            }
             if(options.clickParentTableDom != ""){
                 var clickParentTableValue = $(options.clickParentTableDom).bootstrapTable("getAllSelections")
-                console.log(clickParentTableValue[0][options.clickParentTableField])
                 requestData[options.clickParentTableField] = clickParentTableValue[0][options.clickParentTableField]
             }
-            console.log(requestData)
             $.ajax({
                 url:"http://127.0.0.1:5000/CUID",
                 type:requestType,
@@ -334,47 +327,6 @@
                    bootbox.alert('请求失败')
                 },
             })
-        })
-        //判断是否有下拉搜索
-        if(options.selectSearchTableName != ""){
-            var selectField = options.selectSearchTableField
-            $.ajax({
-                url:"http://127.0.0.1:5000/CUID",
-                type:"get",
-                data:{
-                    tableName:options.selectSearchTableName,
-                    limit: 100000000,
-                    offset:0
-                },
-                success:function(res){
-                    res = JSON.parse(res)
-                    var selectOptions = ""
-                    $(options.toolbar).find("[data-select-search]").html("")
-                    $.each(res.rows,function(i,value){
-                        selectOptions += "<option value='"+ res.rows[i][selectField] +"'>" + res.rows[i][selectField] + "</option>";
-                    })
-                    $(options.toolbar).find("[data-select-search]").append(selectOptions)
-                    $(options.toolbar).find("[data-select-search]").selectpicker("refresh")
-                    $(options.toolbar).find("[data-select-search]").selectpicker("render")
-                    $(options.toolbar).find("[data-select-search]").selectpicker("val",res.rows[0][selectField])
-                    $this.bootstrapTable('refresh', {
-                        query: {
-                            [options.selectSearchTableField]: $(options.toolbar).find("[data-select-search]").selectpicker("val")
-                        }
-                    });
-                }
-            })
-        }
-        //下拉搜索
-        $(options.toolbar).on("change","#FieldSetSelectSearch",function(){
-            if(options.selectSearchTableName != "") {
-                var selectSearchTablequery = {}
-                selectSearchTablequery.field = options.selectSearchTableField
-                selectSearchTablequery.fieldvalue = $(options.toolbar).find("[data-select-search]").selectpicker("val")
-                $this.bootstrapTable('refresh', {
-                    query: selectSearchTablequery
-                });
-            }
         })
     }
 })(jQuery)

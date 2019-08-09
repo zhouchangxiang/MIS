@@ -298,3 +298,13 @@
 .layadmin-pagetabs .layui-tab-title li.layui-this, .layadmin-pagetabs .layui-stab-title li:hover{
     background-color: #f6f6f6;
 }
+.layui-tab-content{
+    padding: 0;
+}
+.layui-tab-content .layui-tab-item{
+    height: 100%;
+}
+.x-iframe{
+    width: 100%;
+    height: 100%;
+}
