@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request
 from flask_login import login_required
 from tools import autocode
 from tools.MESLogger import MESLogger
+import json
 logger = MESLogger('../logs', 'log')
 
 system_set = Blueprint('system_set', __name__, template_folder='templates')
@@ -18,6 +19,7 @@ def make_model():
     if request.method == 'POST':
         data = request.values
         try:
+            jsonstr = json.dumps(data.to_dict())
             return autocode.make_model_main(data)
         except Exception as e:
             print(e)

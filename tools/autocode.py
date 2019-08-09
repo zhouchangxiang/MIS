@@ -337,7 +337,7 @@ class MakeModel:
                 tpl += self.makeEndImplement()
                 self.makeModelPythonFile(pythonFileName, tpl)
 
-    def makeModel(self, data, AModifyString):
+    def makeModel(self, data, AModifyString, tableName):
         try:
             import os, configparser
             BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -347,8 +347,11 @@ class MakeModel:
             # tpl += self.makeImportNotes()
             # tpl += self.makeDBNotes()
             # tpl += self.makeBaseModel()
-            tpl += self.makeORMFrontModel(data.get("tableName"))
+            data = data.split(";")
+            tpl += self.makeORMFrontModel(tableName)
             for feild in data:
+                if feild is "" or feild is None:
+                    continue
                 tpl += self.makeGeneralKeyModel(feild["comment"], feild["feildName"], feild["type"], feild["primarykey"], feild["autoincrement"], feild["nullable"])
             tpl += '\n'
             tpl += '#' + data.get("tableName") + '_END:\n'
@@ -427,7 +430,9 @@ def make_model_main(data):
         model = MakeModel()
         notes = ""
         notes = model.ModifyModel("make_model_test.txt",data.get("tableName"))
-        model.makeModel(data.get("Field"), notes)
+        for i in data:
+            print(i)
+        model.makeModel(data.get("Field"), notes, data.get("tableName"))
         init_db()
         os.remove(newFileName)
         return 'OK'
