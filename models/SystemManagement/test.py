@@ -5,7 +5,7 @@
 # ************* make: make Python file
 # ************* STK makemodel.py 1.0.0
 # ************* @author Xujin
-# ************* @date 2019-08-09 11:32:04
+# ************* @date 2019-08-09 14:50:52
 # ************* @Model 
 # ******************************************************************************************/
 
@@ -36,14 +36,14 @@ SessionFactory = sessionmaker(bind=engine)
 session = SessionFactory()
 Base = declarative_base(bind=engine)
 
-#CCC_START:
-class CCC(Base):
-	__tablename__ = "CCC" 
+#AAA_START:
+class AAA(Base):
+	__tablename__ = "AAA" 
 	
 	#xiugai de :
 	Name = Column(Unicode, primary_key = False, autoincrement = False, nullable = True)
 	
-#CCC_END:
+#AAA_END:
 
 # 生成表单的执行语句_START
 def init_db():
