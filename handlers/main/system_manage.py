@@ -18,7 +18,7 @@ def make_model():
     if request.method == 'POST':
         data = request.values
         try:
-            autocode.make_model_main(data)
+            return autocode.make_model_main(data)
         except Exception as e:
             print(e)
             logger.error(e)

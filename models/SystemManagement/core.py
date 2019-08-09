@@ -5,7 +5,7 @@
 # ************* make: make Python file
 # ************* STK makemodel.py 1.0.0
 # ************* @author Xujin
-# ************* @date 2019-08-09 14:50:52
+# ************* @date 2019-08-09 15:58:36
 # ************* @Model 
 # ******************************************************************************************/
 
@@ -36,15 +36,6 @@ SessionFactory = sessionmaker(bind=engine)
 session = SessionFactory()
 Base = declarative_base(bind=engine)
 
-#AAA_START:
-class AAA(Base):
-	__tablename__ = "AAA" 
-	
-	#xiugai de :
-	Name = Column(Unicode, primary_key = False, autoincrement = False, nullable = True)
-	
-#AAA_END:
-
 # 生成表单的执行语句_START
 def init_db():
 	try:
@@ -56,3 +47,17 @@ def drop_db():
 	Base.metadata.drop_all(engine)
 init_db()
 # 生成表单的执行语句_END
+
+#表字段类型
+class FieldType(Base):
+    __tablename__ = 'FieldType'
+    # id:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 类型:
+    Type = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 描述:
+    Description = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+	
+#MMM_END:

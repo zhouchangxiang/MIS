@@ -6,6 +6,10 @@ import re
 import xlrd
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import MetaData, create_engine
+metadata = MetaData()
+from sqlalchemy import Table
+from models.SystemManagement.core import init_db
 
 from tools.MESLogger import MESLogger
 logger = MESLogger('../logs', 'log')
@@ -220,7 +224,6 @@ class MakeModel:
         f = open(fileName, 'w',encoding='utf-8')
         f.write(fileString)
         f.close()
-        print('ok')
 
     def ModifyModel(self,AFilename,ATableName):
         currentPath = os.path.abspath('.')
@@ -261,7 +264,12 @@ class MakeModel:
                         elif i == 1:
                             continue
                         tmp += line
-                    print(tmp)
+                if tmp is "":
+                    tmp += self.makeDevNotes()
+                    tmp += self.makeImportNotes()
+                    tmp += self.makeDBNotes()
+                    tmp += self.makeBaseModel()
+                    tmp += self.makeEndImplement()
                 if isExist == "TRUE":
                     sql = "drop table " + "[BK].[dbo].[" + ATableName + "]"
                     db_session.execute(sql)
@@ -335,21 +343,20 @@ class MakeModel:
             BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             pythonFileName = os.path.join(BASE_DIR, r'models\SystemManagement\test.py')
             tpl = ''
-            tpl += self.makeDevNotes()
-            tpl += self.makeImportNotes()
-            tpl += self.makeDBNotes()
-            tpl += self.makeBaseModel()
+            # tpl += self.makeDevNotes()
+            # tpl += self.makeImportNotes()
+            # tpl += self.makeDBNotes()
+            # tpl += self.makeBaseModel()
             tpl += self.makeORMFrontModel(data.get("tableName"))
-            # for feild in data:
-            #     print(feild["comment"])
-            tpl += self.makeGeneralKeyModel(data["comment"], data["feildName"], data["type"], data["primarykey"], data["autoincrement"], data["nullable"])
+            for feild in data:
+                tpl += self.makeGeneralKeyModel(feild["comment"], feild["feildName"], feild["type"], feild["primarykey"], feild["autoincrement"], feild["nullable"])
             tpl += '\n'
             tpl += '#' + data.get("tableName") + '_END:\n'
             print(tpl)
             if len(tpl) > 10:
-                tpl += self.makeEndImplement()
+                # tpl += self.makeEndImplement()
                 notes = AModifyString + tpl
-                self.makeModelPythonFile(pythonFileName, tpl)
+                self.makeModelPythonFile(pythonFileName, notes)
         except Exception as e:
             os.remove("make_model_test.txt")
             print(e)
@@ -373,10 +380,10 @@ class MakeModel:
             prewRowName = ''
             nowRowName = ''
             tpl = ''
-            # tpl += self.makeDevNotes()
-            # tpl += self.makeImportNotes()
-            # tpl += self.makeDBNotes()
-            # tpl += self.makeBaseModel()
+            tpl += self.makeDevNotes()
+            tpl += self.makeImportNotes()
+            tpl += self.makeDBNotes()
+            tpl += self.makeBaseModel()
 
             # 遍历sheet表中所有行，生成通用的类
             prewRowName = ''
@@ -412,17 +419,18 @@ def make_model_main(data):
     try:
         import os,configparser
         BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        # system = os.path.join(BASE_DIR,r'models\SystemManagement\system.py')
-        oldFileName = os.path.join(BASE_DIR,r'models\SystemManagement\test.py')
-        backFileName = os.path.join(BASE_DIR,r'models\SystemManagement\test_black.py')
+        oldFileName = os.path.join(BASE_DIR,r'models\SystemManagement\core.py')
+        backFileName = os.path.join(BASE_DIR,r'models\SystemManagement\core_black.py')
         shutil.copyfile(oldFileName, backFileName)
         newFileName = "make_model_test.txt"
         os.rename(backFileName,newFileName)
         model = MakeModel()
         notes = ""
         notes = model.ModifyModel("make_model_test.txt",data.get("tableName"))
-        model.makeModel(data, notes)
+        model.makeModel(data.get("Field"), notes)
+        init_db()
         os.remove(newFileName)
+        return 'OK'
     except Exception as e:
         print(e)
         os.remove(newFileName)
