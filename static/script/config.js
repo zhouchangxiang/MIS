@@ -96,7 +96,6 @@
                                     $(options.Modal).find("#"+ fieldstr.field +"").append(selectOptions)
                                     $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("refresh")
                                     $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("render")
-                                    $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("val",res.rows[0][fieldstr.field]); //赋默认值
                                 }
                             })
                         }
@@ -131,7 +130,6 @@
                                 $(options.Modal).find("#"+ fieldstr.field +"").append(selectOptions)
                                 $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("refresh")
                                 $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("render")
-                                $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("val",res.rows[0][fieldstr.field]); //赋默认值
                             }
                         })
                     }
@@ -172,7 +170,7 @@
                                             $(options.Modal).find("#" + fieldstr.field + "").append(selectOptions)
                                             $(options.Modal).find("#" + fieldstr.field + "").selectpicker("refresh")
                                             $(options.Modal).find("#" + fieldstr.field + "").selectpicker("render")
-                                            $(options.Modal).find("#" + fieldstr.field + "").selectpicker('val', res.rows[0][fieldstr.field])
+                                            $(options.Modal).find("#" + fieldstr.field + "").selectpicker('val', rows[0][fieldstr.field])
                                         }
                                     })
                                 }
@@ -213,7 +211,7 @@
                                         $(options.Modal).find("#" + fieldstr.field + "").append(selectOptions)
                                         $(options.Modal).find("#" + fieldstr.field + "").selectpicker("refresh")
                                         $(options.Modal).find("#" + fieldstr.field + "").selectpicker("render")
-                                        $(options.Modal).find("#" + fieldstr.field + "").selectpicker('val', res.rows[0][fieldstr.field])
+                                        $(options.Modal).find("#" + fieldstr.field + "").selectpicker('val', rows[0][fieldstr.field])
                                     }
                                 })
                             }
