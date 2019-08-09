@@ -573,6 +573,7 @@
                                 <button type="button" class="btn btn-info" data-add-btn>添加</button>
                                 <button type="button" class="btn btn-warning" data-updata-btn>编辑</button>
                                 <button type="button" class="btn btn-danger" data-delete-btn>删除</button>
+                                <button type="button" class="btn btn-success" data-reset-table-btn>重置服务端字段表</button>
                             </div>
                         </form>
                     </div>
@@ -938,6 +939,42 @@
                 }],
                 clickParentTableDom:"#databaseTab",
                 clickParentTableField:"TableName"
+            })
+            //重置字段表
+            $("#FieldSetToolbar").on("click","[data-reset-table-btn]",function(){
+                $.ajax({
+                    url:"http://127.0.0.1:5000/CUID",
+                    type: "get",
+                    data: {
+                        tableName:"FieldSet",
+                        limit: 100000000,
+                        offset:0
+                    },
+                    success: function (res) {
+                        res = JSON.parse(res)
+                        var queryData = {}
+                        var queryField = []
+                        $.each(res.rows, function (i, value) {
+                            queryData.tableName = res.rows[i].TableName
+                            var queryFieldItem = {}
+                            queryFieldItem.comment = res.rows[i].comment
+                            queryFieldItem.type = res.rows[i].type
+                            queryFieldItem.primarykey = res.rows[i].primarykey
+                            queryFieldItem.autoincrement = res.rows[i].autoincrement
+                            queryFieldItem.nullable = res.rows[i].nullable
+                            queryField.push(queryFieldItem)
+                        })
+                        queryData.Field = queryField
+                        $.ajax({
+                            url: "/system_set/make_model",
+                            type: "post",
+                            data: queryData,
+                            success: function (res) {
+                                console.log(res)
+                            }
+                        })
+                    }
+                })
             })
         })
     </script>
