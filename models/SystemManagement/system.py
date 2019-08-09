@@ -676,7 +676,7 @@ class InputTypeTable(Base):
     # 名称:
     Title = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-#是否
+#表字段类型
 class FieldType(Base):
     __tablename__ = 'FieldType'
     # id:
