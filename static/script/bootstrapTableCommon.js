@@ -31,24 +31,24 @@
             success: function (data) {
                 data = JSON.parse(data)
                 //是否在第一列显示复选框
-                if(data.rows[0].ISFirstCheckBox == "是"){
+                if(data.rows[0].ISFirstCheckBox == "True"){
                     columns = [{checkbox: true}]
                     //是否单选
-                    if(data.rows[0].SingleSelect == "是"){
+                    if(data.rows[0].SingleSelect == "True"){
                         SingleSelect = true
-                    }else if(data.rows[0].SingleSelect == "否"){
+                    }else if(data.rows[0].SingleSelect == "False"){
                         SingleSelect = false
                     }
-                }else if(data.rows[0].ISFirstCheckBox == "否"){
+                }else if(data.rows[0].ISFirstCheckBox == "False"){
                     columns = [{checkbox: false}]
                 }
-                if(data.rows[0].IsAdd == "是"){
+                if(data.rows[0].IsAdd == "True"){
                     addbtn = '<button type="button" class="btn btn-info" data-add-btn>添加</button>'
                 }
-                if(data.rows[0].IsUpdate == "是"){
+                if(data.rows[0].IsUpdate == "True"){
                     updatabtn = '<button type="button" class="btn btn-warning" data-updata-btn>编辑</button>'
                 }
-                if(data.rows[0].IsDelete == "是"){
+                if(data.rows[0].IsDelete == "True"){
                     deletebtn = '<button type="button" class="btn btn-danger" data-delete-btn>删除</button>'
                 }
                 toolbar = '<div id="'+ options.tableName + "toolbar" +'">' +
@@ -112,18 +112,18 @@
                     columnsField.title = data.rows[i].TitleName
                     columnsField.inputType = data.rows[i].Edittype  //该字段输入类型
                     columnsField.DownTable = data.rows[i].Downtable //该字段下拉框加载的数据表
-                    if(data.rows[i].Sortable == "是"){
+                    if(data.rows[i].Sortable == "True"){
                         columnsField.sortable = true
                         columnsField.order = "asc"
                     }
-                    if(data.rows[i].Visible == "是"){
+                    if(data.rows[i].Visible == "True"){
                         columnsField.visible = true
-                    }else if(data.rows[i].Visible == "否"){
+                    }else if(data.rows[i].Visible == "False"){
                         columnsField.visible = false
                     }
                     columns.push(columnsField)
                     //渲染模态框
-                    if(data.rows[i].Isedit == "是"){
+                    if(data.rows[i].Isedit == "True"){
                         if(columnsField.inputType == "输入框"){
                             ModalfieldHtml += '<div class="form-group">' +
                                 '<label for="'+ data.rows[i].FieldName +'" class="col-sm-3 control-label">'+ data.rows[i].TitleName +'</label>' +
@@ -230,7 +230,6 @@
                                     $(ModalID).find("#"+ columns[i].field +"selectField").append(selectOptions)
                                     $(ModalID).find("#"+ columns[i].field +"selectField").selectpicker("refresh")
                                     $(ModalID).find("#"+ columns[i].field +"selectField").selectpicker("render")
-                                    $(ModalID).find("#"+ columns[i].field +"selectField").selectpicker("val",res.rows[0].TitleName); //赋默认值
                                 }
                             })
                         }
@@ -265,7 +264,6 @@
                                 $(ModalID).find("#"+ columns[i].field +"selectField").append(selectOptions)
                                 $(ModalID).find("#"+ columns[i].field +"selectField").selectpicker("refresh")
                                 $(ModalID).find("#"+ columns[i].field +"selectField").selectpicker("render")
-                                $(ModalID).find("#"+ columns[i].field +"selectField").selectpicker("val",res.rows[0].TitleName); //赋默认值
                             }
                         })
                     }
