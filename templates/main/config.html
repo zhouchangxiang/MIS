@@ -962,11 +962,11 @@
                             queryFieldItem.primarykey = res.rows[i].primarykey
                             queryFieldItem.autoincrement = res.rows[i].autoincrement
                             queryFieldItem.nullable = res.rows[i].nullable
-                            queryField.push(queryFieldItem + ";")
+                            queryField.push(queryFieldItem)
                         })
+                        queryField = queryField.join(";")
                         queryField = JSON.stringify(queryField)
                         queryData.Field = queryField
-                        console.log(queryData)
                         $.ajax({
                             url: "/system_set/make_model",
                             type: "post",
