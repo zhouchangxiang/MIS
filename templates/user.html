@@ -3,8 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>用户管理</title>
+    <link rel="stylesheet" href="../static/style/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/style/bootstrap-table.min.css">
+    <link rel="stylesheet" href="../static/style/bootstrap-select.min.css">
+    <link rel="stylesheet" href="../static/style/base.css">
+    <script src="../static/script/jquery-3.3.1.min.js"></script>
+    <script src="../static/script/bootstrap.min.js"></script>
+    <script src="../static/script/bootstrap-table.min.js"></script>
+    <script src="../static/script/bootstrap-table-zh-CN.min.js"></script>
+    <script src="../static/script/bootstrap-select.min.js"></script>
+    <script src="../static/script/bootbox.min.js"></script>
+    <script src="../static/script/base.js"></script>
+    <script src="../static/script/bootstrapTableCommon.js"></script>
 </head>
-<body>
-
+<body style="padding: 15px;">
+    <table id="tab"></table>
+    <script>
+        $(function(){
+            $("#tab").tableRender({
+                tableName:"user"
+            })
+        })
+    </script>
 </body>
 </html>

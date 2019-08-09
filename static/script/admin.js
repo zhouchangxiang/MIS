@@ -112,7 +112,7 @@ $(function () {
 
 	//装选项卡内容的高度设置
 	$(window).resize(function () {
-		$(".layui-tab-content").css("height",$(document).innerHeight() - 108)
+		$(".layui-tab-content").css("height",$(document).innerHeight() - 104)
 	}).resize();
 
 	//左右折叠导航

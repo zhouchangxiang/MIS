@@ -28,7 +28,6 @@
                 <li role="presentation"><a href="#ISFlagconfig" aria-controls="ISFlagconfig" role="tab" data-toggle="tab">基本判断配置</a></li>
                 <li role="presentation"><a href="#InputTypeconfig" aria-controls="InputTypeconfig" role="tab" data-toggle="tab">字段输入类型配置</a></li>
                 <li role="presentation"><a href="#databaseconfig" aria-controls="databaseconfig" role="tab" data-toggle="tab">数据库建表</a></li>
-                <li role="presentation"><a href="#fieldconfig" aria-controls="fieldconfig" role="tab" data-toggle="tab">表字段配置</a></li>
             </ul>
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane active" id="pageconfig">
@@ -406,8 +405,6 @@
                         </form>
                     </div>
                     <table id="databaseTab"></table>
-                </div>
-                <div role="tabpanel" class="tab-pane" id="fieldconfig">
                     <div id="FieldSetModal" class="modal fade">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -489,8 +486,6 @@
                                 <button type="button" class="btn btn-info" data-add-btn>添加</button>
                                 <button type="button" class="btn btn-warning" data-updata-btn>编辑</button>
                                 <button type="button" class="btn btn-danger" data-delete-btn>删除</button>
-                                <label for="" class="control-label">选择数据表:</label>
-                                <select id="FieldSetSelectSearch" class="selectpicker" data-select-search  data-live-search="true"></select>
                             </div>
                         </form>
                     </div>
@@ -584,6 +579,7 @@
                     field:"SmallMenuRoute",
                     type: "select",
                     selectTableName:"PageRoute",
+                    selectFieldID:"Route",
                     selectField:"Route"
                 }],
                 clickParentTableDom:"#navTab",
@@ -684,26 +680,31 @@
                     field:"ISFirstCheckBox",
                     type: "select",
                     selectTableName:"ISFlag",
+                    selectFieldID:"Flag",
                     selectField:"Description"
                 },{
                     field:"SingleSelect",
                     type: "select",
                     selectTableName:"ISFlag",
+                    selectFieldID:"Flag",
                     selectField:"Description"
                 },{
                     field:"IsAdd",
                     type: "select",
                     selectTableName:"ISFlag",
+                    selectFieldID:"Flag",
                     selectField:"Description"
                 },{
                     field:"IsUpdate",
                     type: "select",
                     selectTableName:"ISFlag",
+                    selectFieldID:"Flag",
                     selectField:"Description"
                 },{
                     field:"IsDelete",
                     type: "select",
                     selectTableName:"ISFlag",
+                    selectFieldID:"Flag",
                     selectField:"Description"
                 }]
             })
@@ -736,6 +737,24 @@
                 },{
                     field: 'Visible',
                     title: '该列是否可见'
+                },{
+                    field: 'comment',
+                    title: '字段注释'
+                },{
+                    field: 'type',
+                    title: '字段类型'
+                },{
+                    field: 'primarykey',
+                    title: '是否为主键'
+                },{
+                    field: 'primarykey',
+                    title: '是否为主键'
+                },{
+                    field: 'autoincrement',
+                    title: '是否自增'
+                },{
+                    field: 'nullable',
+                    title: '是否为空'
                 }],
                 refreshDom:"#FieldSetSearchField",
                 fieldvalue: "#FieldSetSearchVal",
@@ -753,30 +772,38 @@
                     field: "Isedit",
                     type: "select",
                     selectTableName:"ISFlag",
-                    selectField:"Description"
+                    selectFieldID:"Flag",
+                    selectField:"Description",
                 },{
                     field:"Edittype",
                     type: "select",
                     selectTableName:"InputTypeTable",
+                    selectFieldID:"Title",
                     selectField:"Title"
                 },{
                     field:"Downtable",
                     type: "select",
                     selectTableName:"CreateTableSet",
+                    selectFieldID:"TableName",
                     selectField:"TableName"
                 },{
                     field:"Sortable",
                     type: "select",
                     selectTableName:"ISFlag",
+                    selectFieldID:"Flag",
                     selectField:"Description"
                 },{
                     field:"Visible",
                     type: "select",
                     selectTableName:"ISFlag",
+                    selectFieldID:"Flag",
                     selectField:"Description"
+                },{
+                    field: "comment",
+                    type: "text"
                 }],
-                selectSearchTableName:"CreateTableSet",
-                selectSearchTableField:"TableName"
+                clickParentTableDom:"#databaseTab",
+                clickParentTableField:"TableName"
             })
         })
     </script>
