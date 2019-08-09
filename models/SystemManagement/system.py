@@ -631,6 +631,27 @@ class FieldSet(Base):
     # visible该列是否可见(默认true):
     Visible = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+    # # 下拉框显示数据表的字段:
+    # downTableShowField = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 字段注释:
+    comment = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+
+    # 字段类型:
+    type = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+
+    # 字段注释:
+    comment = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+
+    # 是否为主键（默认False）:
+    primarykey = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 是否自增（默认False）:
+    autoincrement = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 是否为空（默认True）:
+    nullable = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 #是否
 class ISFlag(Base):
     __tablename__ = 'ISFlag'
@@ -654,6 +675,18 @@ class InputTypeTable(Base):
 
     # 名称:
     Title = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+#是否
+class FieldType(Base):
+    __tablename__ = 'FieldType'
+    # id:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 类型:
+    Type = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 描述:
+    Description = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 
 # 生成表单的执行语句

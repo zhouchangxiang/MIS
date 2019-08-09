@@ -6,7 +6,7 @@ from dbset.account import auth_lib
 from handlers.account import account_auth
 from handlers.SystemManagement import user_management, PermissionAssignment,Role_management
 from handlers.QualityManagement import ProcessContinuousData
-from handlers.main import home
+from handlers.main import system_manage
 from handlers.SystemManagement.organization_model import organiza
 from handlers.EquipmentModel.euipment_model import equip
 from handlers.ProductionManagement.producebatch_model import produce
@@ -30,7 +30,7 @@ app.register_blueprint(user_management.user_manage)
 # 角色管理
 app.register_blueprint(Role_management.role_management)
 # 主页
-app.register_blueprint(home.home_page)
+app.register_blueprint(system_manage.system_set)
 # 权限分配
 app.register_blueprint(PermissionAssignment.permission_distribution)
 #组织机构
