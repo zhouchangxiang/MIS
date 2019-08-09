@@ -26,7 +26,7 @@
                 <li role="presentation" class="active"><a href="#pageconfig" aria-controls="pageconfig" role="tab" data-toggle="tab">页面路由配置</a></li>
                 <li role="presentation"><a href="#navconfig" aria-controls="navconfig" role="tab" data-toggle="tab">左侧导航菜单配置</a></li>
                 <li role="presentation"><a href="#ISFlagconfig" aria-controls="ISFlagconfig" role="tab" data-toggle="tab">基本判断配置</a></li>
-                <li role="presentation"><a href="#InputTypeconfig" aria-controls="InputTypeconfig" role="tab" data-toggle="tab">字段输入类型配置</a></li>
+                <li role="presentation"><a href="#InputTypeconfig" aria-controls="InputTypeconfig" role="tab" data-toggle="tab">输入类型和字段类型配置</a></li>
                 <li role="presentation"><a href="#databaseconfig" aria-controls="databaseconfig" role="tab" data-toggle="tab">数据库建表</a></li>
             </ul>
             <div class="tab-content">
@@ -501,12 +501,14 @@
                                             <label for="Edittype" class="col-sm-3 control-label">输入类型</label>
                                             <div class="col-sm-9">
                                                 <select id="Edittype" class="selectpicker"></select>
+                                                <span class="text-muted">不做添加修改操作，忽略此项</span>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="Downtable" class="col-sm-3 control-label">下拉框的数据表</label>
                                             <div class="col-sm-9">
                                                 <select id="Downtable" class="selectpicker"></select>
+                                                <span class="text-muted">输入类型不为下拉框，忽略此项</span>
                                             </div>
                                         </div>
                                         <div class="form-group">
