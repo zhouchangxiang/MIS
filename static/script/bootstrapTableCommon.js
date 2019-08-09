@@ -42,6 +42,7 @@
                 }else if(data.rows[0].ISFirstCheckBox == "否"){
                     columns = [{checkbox: false}]
                 }
+                console.log(data.rows[0])
                 if(data.rows[0].IsAdd == "是"){
                     addbtn = '<button type="button" class="btn btn-info" data-add-btn>添加</button>'
                 }
@@ -112,19 +113,21 @@
                     columnsField.title = data.rows[i].TitleName
                     columnsField.inputType = data.rows[i].Edittype  //该字段输入类型
                     columnsField.DownTable = data.rows[i].Downtable //该字段下拉框加载的数据表
-                    if(data.rows[i].Sortable == "是"){
+                    if(data.rows[i].Sortable == "True"){
                         columnsField.sortable = true
                         columnsField.order = "asc"
                     }
-                    if(data.rows[i].Visible == "是"){
+                    if(data.rows[i].Visible == "True"){
                         columnsField.visible = true
-                    }else if(data.rows[i].Visible == "否"){
+                    }else if(data.rows[i].Visible == "False"){
                         columnsField.visible = false
                     }
                     columns.push(columnsField)
+                    console.log(columns)
                     //渲染模态框
-                    if(data.rows[i].Isedit == "是"){
+                    if(data.rows[i].Isedit == "True"){
                         if(columnsField.inputType == "输入框"){
+                            console.log(columnsField)
                             ModalfieldHtml += '<div class="form-group">' +
                                 '<label for="'+ data.rows[i].FieldName +'" class="col-sm-3 control-label">'+ data.rows[i].TitleName +'</label>' +
                                 '<div class="col-sm-9">' +

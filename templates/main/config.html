@@ -318,6 +318,61 @@
                         </form>
                     </div>
                     <table id="InputTypeTab"></table>
+                    <div id="FieldTypeModal" class="modal fade">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        ×
+                                    </button>
+                                    <h4 class="modal-title">
+                                        配置信息
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="form-horizontal" action="">
+                                        <div class="form-group">
+                                            <label for="ID" class="col-sm-3 control-label">ID</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="ID" placeholder="" disabled="disabled">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="Type" class="col-sm-3 control-label">类型</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="Type" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="Description" class="col-sm-3 control-label">描述</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="Description" placeholder="">
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- dialog buttons -->
+                                <div class="modal-footer"><button type="button" class="btn btn-primary" data-save-btn>保存</button></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="FieldTypeToolbar">
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <select id="FieldTypeSearchField" class="selectpicker" data-live-search="true"></select>
+                                </div>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="FieldTypeSearchVal">
+                                </div>
+                                <button type="button" class="btn btn-primary" data-search-btn>查询</button>
+                                <button type="button" class="btn btn-info" data-add-btn>添加</button>
+                                <button type="button" class="btn btn-warning" data-updata-btn>编辑</button>
+                                <button type="button" class="btn btn-danger" data-delete-btn>删除</button>
+                            </div>
+                        </form>
+                    </div>
+                    <table id="FieldTypeTab"></table>
                 </div>
                 <div role="tabpanel" class="tab-pane" id="databaseconfig">
                     <div id="databaseModal" class="modal fade">
@@ -464,6 +519,36 @@
                                             <label for="Visible" class="col-sm-3 control-label">该列是否可见</label>
                                             <div class="col-sm-9">
                                                 <select id="Visible" class="selectpicker"></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="comment" class="col-sm-3 control-label">字段注释</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="comment" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="type" class="col-sm-3 control-label">字段类型</label>
+                                            <div class="col-sm-9">
+                                                <select id="type" class="selectpicker" data-live-search="true"></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="primarykey" class="col-sm-3 control-label">是否为主键</label>
+                                            <div class="col-sm-9">
+                                                <select id="primarykey" class="selectpicker" data-live-search="true"></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="autoincrement" class="col-sm-3 control-label">是否自增</label>
+                                            <div class="col-sm-9">
+                                                <select id="autoincrement" class="selectpicker" data-live-search="true"></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="nullable" class="col-sm-3 control-label">是否为空</label>
+                                            <div class="col-sm-9">
+                                                <select id="nullable" class="selectpicker" data-live-search="true"></select>
                                             </div>
                                         </div>
                                     </form>
@@ -637,6 +722,32 @@
                     type: "text"
                 }]
             })
+            $("#FieldTypeTab").tableRender({
+                tableName: 'FieldType',
+                toolbar: '#FieldTypeToolbar',
+                columns: [{
+                    checkbox: true
+                },{
+                    field: 'Type',
+                    title: '类型'
+                },{
+                    field: 'Description',
+                    title: '描述'
+                }],
+                refreshDom:"#FieldTypeSearchField",
+                fieldvalue: "#FieldTypeSearchVal",
+                Modal: '#FieldTypeModal',
+                ModalFieldStr: [{
+                    field:"ID",
+                    type:"text"
+                },{
+                    field: "Type",
+                    type: "text"
+                },{
+                    field: "Description",
+                    type: "text"
+                }]
+            })
             $("#databaseTab").tableRender({
                 tableName: 'CreateTableSet',
                 toolbar: '#databaseToolbar',
@@ -747,9 +858,6 @@
                     field: 'primarykey',
                     title: '是否为主键'
                 },{
-                    field: 'primarykey',
-                    title: '是否为主键'
-                },{
                     field: 'autoincrement',
                     title: '是否自增'
                 },{
@@ -801,6 +909,30 @@
                 },{
                     field: "comment",
                     type: "text"
+                },{
+                    field: "type",
+                    type: "select",
+                    selectTableName:"FieldType",
+                    selectFieldID:"Type",
+                    selectField:"Type"
+                },{
+                    field: "primarykey",
+                    type: "select",
+                    selectTableName:"ISFlag",
+                    selectFieldID:"Flag",
+                    selectField:"Description"
+                },{
+                    field: "autoincrement",
+                    type: "select",
+                    selectTableName:"ISFlag",
+                    selectFieldID:"Flag",
+                    selectField:"Description"
+                },{
+                    field: "nullable",
+                    type: "select",
+                    selectTableName:"ISFlag",
+                    selectFieldID:"Flag",
+                    selectField:"Description"
                 }],
                 clickParentTableDom:"#databaseTab",
                 clickParentTableField:"TableName"
