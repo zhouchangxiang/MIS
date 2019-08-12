@@ -12,7 +12,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 410px;
+    width: 368px;
     height: 100%;
     box-shadow: none;
 }
@@ -21,7 +21,7 @@
     top: 0;
     left: 0;
     height: 100%;
-    margin-left: 410px;
+    margin-left: 368px;
     box-shadow: none;
     overflow: hidden;
 }
@@ -98,7 +98,7 @@
     position: absolute;
     left: 82px;
     top: 0;
-    width: 328px;
+    width: 286px;
     height: 100%;
     margin-left: 0;
     overflow-x: hidden;
@@ -152,7 +152,7 @@
 .navHead{
     position: relative;
     height: 64px;
-    background: #D8D8D8;
+    background: #ffffff;
     color: #15161A;
     padding: 0 40px;
 }

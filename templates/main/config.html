@@ -962,6 +962,7 @@
                             queryFieldItem.primarykey = res.rows[i].primarykey
                             queryFieldItem.autoincrement = res.rows[i].autoincrement
                             queryFieldItem.nullable = res.rows[i].nullable
+                            queryFieldItem.FieldName = res.rows[i].FieldName
                             queryField.push(queryFieldItem)
                         })
                         queryField = JSON.stringify(queryField)
