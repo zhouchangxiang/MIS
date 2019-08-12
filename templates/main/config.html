@@ -950,6 +950,7 @@
                         limit: 100000000,
                         offset:0
                     },
+                    traditional:true,
                     success: function (res) {
                         res = JSON.parse(res)
                         var queryData = {}
@@ -965,8 +966,8 @@
                             queryFieldItem.FieldName = res.rows[i].FieldName
                             queryField.push(queryFieldItem)
                         })
-                        queryField = JSON.stringify(queryField)
-                        queryField = queryField.replace(",{",";{").replace(",{",";{")
+                        {#queryField = JSON.stringify(queryField)#}
+                        {#queryField = queryField.replace(",{",";{").replace(",{",";{")#}
                         queryData.Field = queryField
                         console.log(queryData)
                         $.ajax({
