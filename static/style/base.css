@@ -27,6 +27,9 @@ a:hover{text-decoration: none}
     position: relative;
     height: 100%;
 }
+.wrap{
+    padding: 15px;
+}
 
 /*登录*/
 .loginContent{

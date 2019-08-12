@@ -964,7 +964,10 @@
                             queryFieldItem.nullable = res.rows[i].nullable
                             queryField.push(queryFieldItem)
                         })
+                        queryField = JSON.stringify(queryField)
+                        queryField = queryField.replace(",{",";{").replace(",{",";{")
                         queryData.Field = queryField
+                        console.log(queryData)
                         $.ajax({
                             url: "/system_set/make_model",
                             type: "post",
