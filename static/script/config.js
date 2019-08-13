@@ -56,12 +56,14 @@
             onUncheck:function(row, $element){
                 if(options.clickChildTableDom != "") {
                     var ParentTableRows = $this.bootstrapTable("getAllSelections")
-                    $(options.clickChildTableDom).bootstrapTable('refresh', {
-                        query: {
-                            field: options.clickChildTTableField,
-                            fieldvalue: ParentTableRows[0][options.clickChildTTableField]
-                        }
-                    })
+                    if(ParentTableRows[0]){
+                        $(options.clickChildTableDom).bootstrapTable('refresh', {
+                            query: {
+                                field: options.clickChildTTableField,
+                                fieldvalue: ParentTableRows[0][options.clickChildTTableField]
+                            }
+                        })
+                    }
                 }
             }
         })
