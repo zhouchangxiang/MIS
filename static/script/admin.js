@@ -117,14 +117,16 @@ $(function () {
 
 	//左右折叠导航
 	$(".sidebarMoveBtn").on('click',function(){
-		if($(".sidebarRight").css("left") == "82px"){
-			$(".sidebarRight").animate({left:"-204px"})
-            $(".contentRight").animate({marginLeft:"82px"})
+		if($(".sidebarRight").css("left") == "60px"){
+			$(".sidebarRight").animate({left:"-226px"})
+            $(".contentRight").animate({marginLeft:"60px"})
+            $(".contentLeft").animate({width:"60px"})
 			$(".sidebarMoveBtn").css({background:"#ffffff",color:"#07488E"})
 			$(".sidebarMoveBtn").find("i").removeClass("glyphicon-menu-left").addClass("glyphicon-menu-right")
 		}else{
-            $(".sidebarRight").animate({left:"82px"})
-            $(".contentRight").animate({marginLeft:"368px"})
+            $(".sidebarRight").animate({left:"60px"})
+            $(".contentRight").animate({marginLeft:"346px"})
+            $(".contentLeft").animate({width:"346px"})
 			$(".sidebarMoveBtn").css({background:"#07488E",color:"#ffffff"})
 			$(".sidebarMoveBtn").find("i").removeClass("glyphicon-menu-right").addClass("glyphicon-menu-left")
 		}
