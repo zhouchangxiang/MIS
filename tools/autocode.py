@@ -11,6 +11,7 @@ metadata = MetaData()
 from sqlalchemy import Table
 from models.SystemManagement.core import init_db
 import json
+import datetime
 
 from tools.MESLogger import MESLogger
 logger = MESLogger('../logs', 'log')
@@ -272,7 +273,8 @@ class MakeModel:
                     tmp += self.makeBaseModel()
                     tmp += self.makeEndImplement()
                 if isExist == "TRUE":
-                    sql = "drop table " + "[BK].[dbo].[" + ATableName + "]"
+                    ATableNameNew = ATableName + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    sql = "EXEC sp_rename '" +ATableName+"', '"+ATableNameNew+"'"
                     db_session.execute(sql)
                     db_session.commit()
             f = open(AFilename, 'w', encoding='utf-8')
@@ -342,24 +344,27 @@ class MakeModel:
         try:
             import os, configparser
             BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            pythonFileName = os.path.join(BASE_DIR, r'models\SystemManagement\test.py')
+            pythonFileName = os.path.join(BASE_DIR, r'models\SystemManagement\core.py')
             tpl = ''
             # tpl += self.makeDevNotes()
             # tpl += self.makeImportNotes()
             # tpl += self.makeDBNotes()
             # tpl += self.makeBaseModel()
             tpl += self.makeORMFrontModel(tableName)
-            str = data.split(";")
+            str = data[1:-1].split(";")
+            tpl = '\n\t'
+            tpl = "ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)"
             for i in str:
                 i = json.loads(i)
-                tpl += self.makeGeneralKeyModel(i.get("comment"), i.get("feildName"), i.get("type"),
+                print(i["FieldName"])
+                tpl += self.makeGeneralKeyModel(i.get("comment"), i.get("FieldName"), i.get("type"),
                                                 i.get("primarykey"), i.get("autoincrement"), i.get("nullable"))
 
             tpl += '\n'
-            tpl += '#' + data.get("tableName") + '_END:\n'
+            tpl += '#' + tableName + '_END:\n'
             print(tpl)
             if len(tpl) > 10:
-                # tpl += self.makeEndImplement()
+                tpl += self.makeEndImplement()
                 notes = AModifyString + tpl
                 self.makeModelPythonFile(pythonFileName, notes)
         except Exception as e:
@@ -431,15 +436,10 @@ def make_model_main(data):
         os.rename(backFileName,newFileName)
         model = MakeModel()
         notes = ""
-        ss = data.split(";")
-        tableName = ""
-        for i in ss:
-            i = json.loads(i)
-            tableName = i.get("tableName")
-            if tableName != None or tableName != "":
-                break
+        tableName = data.get("tableName")
+        datastr = data.get("Field")
         notes = model.ModifyModel("make_model_test.txt",tableName)
-        model.makeModel(data, notes, tableName)
+        model.makeModel(datastr, notes, tableName)
         init_db()
         os.remove(newFileName)
         return 'OK'
