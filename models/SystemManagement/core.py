@@ -52,6 +52,18 @@ class AA(Base):
 
 # AA_END:
 
+ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+	#用户名:
+	name = Column(Unicode, primary_key = True, autoincrement = True, nullable = True)
+	
+	#密码:
+	password = Column(Unicode, primary_key = True, autoincrement = True, nullable = True)
+	
+	#NAME:
+	NAME = Column(Unicode, primary_key = False, autoincrement = False, nullable = False)
+	
+#AAA_END:
+
 # 生成表单的执行语句_START
 def init_db():
 	try:

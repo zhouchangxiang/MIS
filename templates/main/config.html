@@ -946,55 +946,60 @@
             })
             //重置model
             $("#FieldSetToolbar").on("click","[data-reset-table-btn]",function(){
-                $.ajax({
-                    url:"http://127.0.0.1:5000/CUID",
-                    type: "get",
-                    data: {
-                        tableName:"FieldSet",
-                        limit: 100000000,
-                        offset:0
-                    },
-                    traditional:true,
-                    success: function (res) {
-                        res = JSON.parse(res)
-                        var queryData = {}
-                        var queryField = []
-                        $.each(res.rows, function (i, value) {
-                            queryData.tableName = res.rows[i].TableName
-                            var queryFieldItem = {}
-                            queryFieldItem.comment = res.rows[i].comment
-                            queryFieldItem.type = res.rows[i].type
-                            queryFieldItem.primarykey = res.rows[i].primarykey
-                            queryFieldItem.autoincrement = res.rows[i].autoincrement
-                            queryFieldItem.nullable = res.rows[i].nullable
-                            queryFieldItem.FieldName = res.rows[i].FieldName
-                            queryField.push(queryFieldItem)
-                        })
-                        queryField = JSON.stringify(queryField)
-                        queryField = queryField.replace(",{",";{").replace(",{",";{")
-                        queryData.Field = queryField
-                        $.ajax({
-                            url: "/system_set/make_model",
-                            type: "post",
-                            data: queryData,
-                            success: function (res) {
-                                if(res == "OK"){
-                                    var dialog = bootbox.dialog({
-                                        message: '<p class="text-center mb-0"><i class="fa fa-spin fa-cog"></i>操作成功！</p>',
-                                        closeButton: false
-                                    });
-                                    dialog.init(function(){
-                                        setTimeout(function(){
-                                            dialog.modal('hide');
-                                        }, 2000);
-                                    });
-                                }else{
-                                    bootbox.alert(res)
+                var ParentTableRows = $("#databaseTab").bootstrapTable("getAllSelections")
+                if(ParentTableRows.length == 1){
+                    $.ajax({
+                        url:"http://127.0.0.1:5000/CUID",
+                        type: "get",
+                        data: {
+                            tableName:"FieldSet",
+                            limit: 100000000,
+                            offset:0
+                        },
+                        traditional:true,
+                        success: function (res) {
+                            res = JSON.parse(res)
+                            var queryData = {}
+                            var queryField = []
+                            $.each(res.rows, function (i, value) {
+                                queryData.tableName = res.rows[i].TableName
+                                var queryFieldItem = {}
+                                queryFieldItem.comment = res.rows[i].comment
+                                queryFieldItem.type = res.rows[i].type
+                                queryFieldItem.primarykey = res.rows[i].primarykey
+                                queryFieldItem.autoincrement = res.rows[i].autoincrement
+                                queryFieldItem.nullable = res.rows[i].nullable
+                                queryFieldItem.FieldName = res.rows[i].FieldName
+                                queryField.push(queryFieldItem)
+                            })
+                            queryField = JSON.stringify(queryField)
+                            queryField = queryField.replace(",{",";{").replace(",{",";{")
+                            queryData.Field = queryField
+                            $.ajax({
+                                url: "/system_set/make_model",
+                                type: "post",
+                                data: queryData,
+                                success: function (res) {
+                                    if(res == "OK"){
+                                        var dialog = bootbox.dialog({
+                                            message: '<p class="text-center mb-0"><i class="fa fa-spin fa-cog"></i>操作成功！</p>',
+                                            closeButton: false
+                                        });
+                                        dialog.init(function(){
+                                            setTimeout(function(){
+                                                dialog.modal('hide');
+                                            }, 2000);
+                                        });
+                                    }else{
+                                        bootbox.alert(res)
+                                    }
                                 }
-                            }
-                        })
-                    }
-                })
+                            })
+                        }
+                    })
+                }else{
+                    bootbox.alert('请单选上级表格数据,获取单表字段！');
+                }
             })
         })
     </script>

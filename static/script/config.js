@@ -52,6 +52,9 @@
                         }
                     })
                 }
+            },
+            onUncheck:function(row, $element){
+                console.log(row)
             }
         })
         //搜索字段框渲染
