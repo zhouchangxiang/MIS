@@ -13,7 +13,7 @@ $(function () {
 			$(".sidebarLeftNav").html("")
 			var sidebarLeftNavHtml = ""
 			$.each(res.rows,function(i,value){
-				sidebarLeftNavHtml += '<li><a href="javascript:;" class="sidebarLeftItem" rel="'+ res.rows[i].ID +'" title="'+ res.rows[i].BigMenuName +'"><span class="'+ res.rows[i].BigMenuLogo +'"></span></a></li>'
+				sidebarLeftNavHtml += '<li><a href="javascript:;" class="sidebarLeftItem" rel="'+ res.rows[i].BigMenuName +'" title="'+ res.rows[i].BigMenuName +'"><span class="'+ res.rows[i].BigMenuLogo +'"></span></a></li>'
 			})
 			$(".sidebarLeftNav").append(sidebarLeftNavHtml)
         }
@@ -25,7 +25,7 @@ $(function () {
 			method: 'get',
 			data: {
 				tableName: 'childMenus',
-				field: 'ID',
+				field: 'BigMenuName',
 				fieldvalue: navID,
 				limit: 100000000,
 				offset: 0
@@ -186,6 +186,7 @@ $(function () {
 	  	});
 		//导航菜单点击增加到tabs选项卡
 		$('.sidebarRightNav').on('click',".site-tab", function(){
+			$(this).addClass("site-tab-active").parent().siblings().find(".site-tab").removeClass("site-tab-active")
 			var url = $(this).attr('lay-href');
 			var title = $(this).find("span").html();
 			var index = $(this).attr('lay-href');
@@ -198,7 +199,6 @@ $(function () {
 			 };
 			tab.tabAdd(title, url, index);
 			tab.tabChange(index);
-			$(this).addClass("site-tab-active").parents().siblings().find(".site-tab").removeClass("site-tab-active")
 		});
 		//选项卡右侧导航栏效果
 		$(".layadmin-tabs-select").on("mouseover",function () {
