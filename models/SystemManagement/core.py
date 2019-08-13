@@ -52,9 +52,6 @@ class AA(Base):
 
 # AA_END:
 
-<<<<<<< HEAD
-ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
-=======
 
 #AAA_START:
 class AAA(Base):
@@ -63,7 +60,6 @@ class AAA(Base):
 	#ID:
 	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
 	
->>>>>>> 9e0b91edad03e6f2a6ccb7fb89fda326a4f83a1a
 	#用户名:
 	name = Column(Unicode, primary_key = True, autoincrement = True, nullable = True)
 	
@@ -81,4 +77,5 @@ def init_db():
 		Base.metadata.create_all(engine)
 	except Exception as err:
 		raise Exception('创建数据库出错！错误信息为：' + str(err))
+
 # 生成表单的执行语句_END
