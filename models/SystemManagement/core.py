@@ -24,8 +24,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import pymssql
 
 # 创建对象的基类
-engine = create_engine(
-		GLOBAL_DATABASE_CONNECT_STRING, deprecate_large_types=True,
+engine = create_engine(GLOBAL_DATABASE_CONNECT_STRING, deprecate_large_types=True,
 		max_overflow=0,  # 超过连接池大小外最多创建的连接
 		pool_size=100,  # 连接池大小
 		pool_timeout=50,  # 池中没有线程最多等待的时间，否则报错
@@ -34,23 +33,8 @@ engine = create_engine(
 )
 SessionFactory = sessionmaker(bind=engine)
 session = SessionFactory()
-Base = declarative_base(bind=engine)
+Base = declarative_base(engine)
 
-# AA_START:
-class AA(Base):
-	__tablename__ = "AA"
-
-	# 用户名:
-	name = Column(Unicode, primary_key=False, autoincrement=False, nullable=True)
-
-	# 密码:
-	password = Column(Unicode, primary_key=False, autoincrement=False, nullable=True)
-
-	# ID:
-	ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
-
-
-# AA_END:
 
 
 #AAA_START:
@@ -60,34 +44,13 @@ class AAA(Base):
 	#ID:
 	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
 	
-	#用户名:
-	name = Column(Unicode, primary_key = True, autoincrement = True, nullable = True)
-	
-	#密码:
-	password = Column(Unicode, primary_key = True, autoincrement = True, nullable = True)
-	
 	#NAME:
 	NAME = Column(Unicode, primary_key = False, autoincrement = False, nullable = False)
 	
 #AAA_END:
 
-
-#user_START:
-class user(Base):
-	__tablename__ = "user" 
-	
-	#ID:
-	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
-	
-	#用户名:
-	name = Column(Unicode, primary_key = True, autoincrement = True, nullable = True)
-	
-	#密码:
-	password = Column(Unicode, primary_key = True, autoincrement = True, nullable = True)
-	
-#user_END:
-
 # 生成表单的执行语句_START
+Base.metadata.create_all(engine)
 def init_db():
 	try:
 		Base.metadata.create_all(engine)

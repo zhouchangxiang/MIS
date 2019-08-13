@@ -4,6 +4,7 @@ import time, os, random,sys,shutil
 import subprocess
 import re
 import xlrd
+from flask import Flask
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import MetaData, create_engine
@@ -12,6 +13,9 @@ from sqlalchemy import Table
 from models.SystemManagement.core import init_db
 import json
 import datetime
+from models.SystemManagement.core import Base
+
+app = Flask(__name__)
 
 from tools.MESLogger import MESLogger
 logger = MESLogger('../logs', 'log')
@@ -108,13 +112,14 @@ class MakeModel:
         notes += ")\n"
         notes += "SessionFactory = sessionmaker(bind=engine)\n"
         notes += "session = SessionFactory()\n"
-        notes += 'Base = declarative_base(bind=engine)\n'
+        notes += 'Base = declarative_base(engine)\n'
         notes = notes.replace("{0}",sqlstring)
         return notes
 
     def makeEndImplement(self):
         notes = '\n'
         notes += '# 生成表单的执行语句_START\n'
+        notes += 'Base.metadata.create_all(engine)\n'
         notes += "def init_db():\n\t"
         notes += "try:\n\t\t"
         notes += "Base.metadata.create_all(engine)\n\t"
@@ -436,7 +441,7 @@ def make_model_main(data):
         datastr = data.get("Field")
         notes = model.ModifyModel("make_model_test.txt",tableName)
         model.makeModel(datastr, notes, tableName)
-        init_db()
+        os.system("python "+oldFileName)
         os.remove(newFileName)
         return 'OK'
     except Exception as e:
