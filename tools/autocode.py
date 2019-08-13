@@ -10,6 +10,7 @@ from sqlalchemy import MetaData, create_engine
 metadata = MetaData()
 from sqlalchemy import Table
 from models.SystemManagement.core import init_db
+import json
 
 from tools.MESLogger import MESLogger
 logger = MESLogger('../logs', 'log')
@@ -347,12 +348,13 @@ class MakeModel:
             # tpl += self.makeImportNotes()
             # tpl += self.makeDBNotes()
             # tpl += self.makeBaseModel()
-            data = data.split(";")
             tpl += self.makeORMFrontModel(tableName)
-            for feild in data:
-                if feild is "" or feild is None:
-                    continue
-                tpl += self.makeGeneralKeyModel(feild["comment"], feild["feildName"], feild["type"], feild["primarykey"], feild["autoincrement"], feild["nullable"])
+            str = data.split(";")
+            for i in str:
+                i = json.loads(i)
+                tpl += self.makeGeneralKeyModel(i.get("comment"), i.get("feildName"), i.get("type"),
+                                                i.get("primarykey"), i.get("autoincrement"), i.get("nullable"))
+
             tpl += '\n'
             tpl += '#' + data.get("tableName") + '_END:\n'
             print(tpl)
@@ -429,10 +431,15 @@ def make_model_main(data):
         os.rename(backFileName,newFileName)
         model = MakeModel()
         notes = ""
-        notes = model.ModifyModel("make_model_test.txt",data.get("tableName"))
-        for i in data:
-            print(i)
-        model.makeModel(data.get("Field"), notes, data.get("tableName"))
+        ss = data.split(";")
+        tableName = ""
+        for i in ss:
+            i = json.loads(i)
+            tableName = i.get("tableName")
+            if tableName != None or tableName != "":
+                break
+        notes = model.ModifyModel("make_model_test.txt",tableName)
+        model.makeModel(data, notes, tableName)
         init_db()
         os.remove(newFileName)
         return 'OK'
