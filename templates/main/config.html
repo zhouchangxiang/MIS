@@ -640,7 +640,9 @@
                 },{
                     field:"BigMenuLogo",
                     type: "text"
-                }]
+                }],
+                clickChildTableDom:"#childMenusTab",
+                clickChildTTableField:"BigMenuName"
             })
             $("#childMenusTab").tableRender({
                 tableName: 'childMenus',
@@ -820,7 +822,9 @@
                     selectTableName:"ISFlag",
                     selectFieldID:"Flag",
                     selectField:"Description"
-                }]
+                }],
+                clickChildTableDom:"#FieldSetTab",
+                clickChildTTableField:"TableName"
             })
             $("#FieldSetTab").tableRender({
                 tableName: 'FieldSet',
