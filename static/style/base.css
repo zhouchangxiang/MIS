@@ -26,6 +26,7 @@ html{
 }
 ul,ol{list-style-type:none;}
 a:hover{text-decoration: none}
+a:focus{text-decoration: none}
 .vertical-middle{
     vertical-align: middle;
 }
