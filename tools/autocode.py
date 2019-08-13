@@ -121,9 +121,6 @@ class MakeModel:
         notes += "except Exception as err:\n\t\t"
         notes += "raise Exception('创建数据库出错！错误信息为：' + str(err))\n"
         notes += "\n"
-        notes += "def drop_db():\n\t"
-        notes += "Base.metadata.drop_all(engine)\n"
-        notes += "init_db()\n"
         notes += '# 生成表单的执行语句_END\n'
 
         return notes
@@ -351,9 +348,8 @@ class MakeModel:
             # tpl += self.makeDBNotes()
             # tpl += self.makeBaseModel()
             tpl += self.makeORMFrontModel(tableName)
+            tpl += self.makeGeneralKeyModel("ID", "ID", "Integer", "True", "True", "False")
             str = data[1:-1].split(";")
-            tpl = '\n\t'
-            tpl = "ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)"
             for i in str:
                 i = json.loads(i)
                 print(i["FieldName"])

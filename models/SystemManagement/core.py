@@ -52,14 +52,29 @@ class AA(Base):
 
 # AA_END:
 
+
+#AAA_START:
+class AAA(Base):
+	__tablename__ = "AAA" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#用户名:
+	name = Column(Unicode, primary_key = True, autoincrement = True, nullable = True)
+	
+	#密码:
+	password = Column(Unicode, primary_key = True, autoincrement = True, nullable = True)
+	
+	#NAME:
+	NAME = Column(Unicode, primary_key = False, autoincrement = False, nullable = False)
+	
+#AAA_END:
+
 # 生成表单的执行语句_START
 def init_db():
 	try:
 		Base.metadata.create_all(engine)
 	except Exception as err:
 		raise Exception('创建数据库出错！错误信息为：' + str(err))
-
-def drop_db():
-	Base.metadata.drop_all(engine)
-init_db()
 # 生成表单的执行语句_END
