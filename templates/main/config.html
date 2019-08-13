@@ -953,12 +953,15 @@
                         type: "get",
                         data: {
                             tableName:"FieldSet",
+                            field: 'TableName',
+                            fieldvalue: ParentTableRows[0].TableName,
                             limit: 100000000,
                             offset:0
                         },
                         traditional:true,
                         success: function (res) {
                             res = JSON.parse(res)
+                            console.log(res)
                             var queryData = {}
                             var queryField = []
                             $.each(res.rows, function (i, value) {

@@ -54,7 +54,15 @@
                 }
             },
             onUncheck:function(row, $element){
-                console.log(row)
+                if(options.clickChildTableDom != "") {
+                    var ParentTableRows = $this.bootstrapTable("getAllSelections")
+                    $(options.clickChildTableDom).bootstrapTable('refresh', {
+                        query: {
+                            field: options.clickChildTTableField,
+                            fieldvalue: ParentTableRows[0][options.clickChildTTableField]
+                        }
+                    })
+                }
             }
         })
         //搜索字段框渲染
