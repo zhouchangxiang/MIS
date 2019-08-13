@@ -140,12 +140,32 @@ $(function () {
 			element = layui.element;
 		//触发事件
 		var tab = {
-			//新增一个Tab项
 			tabAdd: function(title,url,id){
 				element.tabAdd('xbs_tab', {
 					title: title,
 					content: '<iframe tab-id="' + id + '" frameborder="0" src="' + url + '" class="x-iframe"></iframe>',
 					id: id
+				})
+			},
+			closeThisTabs:function(){
+				if(!$(".layui-this").hasClass("layadminHome")){
+					$(".layui-this").find(".layui-tab-close").trigger('click');
+				}
+			},
+			closeOtherTabs:function(){
+				$("#LAY_app_tabsheader li").each(function(){
+					if(!$(this).hasClass("layui-this")){
+						if(!$(this).hasClass("layadminHome")){
+							$(this).find(".layui-tab-close").trigger('click');
+						}
+					}
+				})
+			},
+			closeAllTabs:function(){
+				$("#LAY_app_tabsheader li").each(function(){
+					if(!$(this).hasClass("layadminHome")){
+						$(this).find(".layui-tab-close").trigger('click');
+					}
 				})
 			},
 			tabDelete: function(othis,id){

@@ -8,6 +8,8 @@
             fieldvalue: '', //搜索输入值
             Modal: '', //弹框dom
             ModalFieldStr: [], //弹框内录入的字段对象，field字段名，type字段输入类型，selectTableName下拉框数据表，selectField显示下拉框数据表的字段
+            clickChildTableDom:"#childMenusTab", //子表的dom
+            clickChildTTableField:"BigMenuName", //搜索子表的字段
             clickParentTableDom:"", //根据父表搜索的表格dom
             clickParentTableField:"", //根据父表搜索的表的字段
         };
@@ -40,6 +42,16 @@
             responseHandler:function(res){
                 res = JSON.parse(res)
                 return res
+            },
+            onCheck:function(row, $element){
+                if(options.clickChildTableDom != ""){
+                    $(options.clickChildTableDom).bootstrapTable('refresh', {
+                        query: {
+                            field: options.clickChildTTableField,
+                            fieldvalue: row[options.clickChildTTableField]
+                        }
+                    })
+                }
             }
         })
         //搜索字段框渲染
