@@ -536,6 +536,12 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
+                                            <label for="length" class="col-sm-3 control-label">VARCHAR长度</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="length" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
                                             <label for="primarykey" class="col-sm-3 control-label">是否为主键</label>
                                             <div class="col-sm-9">
                                                 <select id="primarykey" class="selectpicker"></select>
@@ -862,6 +868,9 @@
                     field: 'type',
                     title: '字段类型'
                 },{
+                    field: 'length',
+                    title: 'VARCHAR长度'
+                },{
                     field: 'primarykey',
                     title: '是否为主键'
                 },{
@@ -928,6 +937,9 @@
                     selectTableName:"ISFlag",
                     selectFieldID:"Flag",
                     selectField:"Description"
+                },{
+                    field: "length",
+                    type: "text"
                 },{
                     field: "autoincrement",
                     type: "select",

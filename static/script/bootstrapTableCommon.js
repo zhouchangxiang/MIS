@@ -438,7 +438,7 @@
                 data:requestData,
                 success:function(data){
                     if(data == "OK"){
-                        $(options.Modal).modal('hide')
+                        $(ModalID).modal('hide')
                         var dialog = bootbox.dialog({
                             message: '<p class="text-center mb-0"><i class="fa fa-spin fa-cog"></i>操作成功！</p>',
                             closeButton: false
