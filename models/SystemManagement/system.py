@@ -352,10 +352,13 @@ class AuditTrace(Base):
     Operation = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
 
     # 详细信息:
-    DeitalMSG = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+    DeitalMSG = Column(Unicode(200), primary_key=False, autoincrement=False, nullable=True)
 
     # 修改日期
     ReviseDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 操作表:
+    TableName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 用户:
     User = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
@@ -631,8 +634,8 @@ class FieldSet(Base):
     # visible该列是否可见(默认true):
     Visible = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # # 下拉框显示数据表的字段:
-    # downTableShowField = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # VARCHAR长度:
+    length = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 字段注释:
     comment = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
