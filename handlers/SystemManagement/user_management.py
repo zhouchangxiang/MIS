@@ -7,7 +7,7 @@ from dbset.main.BSFramwork import AlchemyEncoder
 from dbset.log.BK2TLogger import logger,insertSyslog
 from flask_login import current_user
 
-user_manage = Blueprint('user_manage', __name__, template_folder='templates', url_prefix='/user_manage')
+user_manage = Blueprint('user_manage', __name__, template_folder='templates')
 
 # 用户管理
 @user_manage.route('/userpage')

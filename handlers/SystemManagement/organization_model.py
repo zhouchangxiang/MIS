@@ -21,7 +21,7 @@ organiza = Blueprint('organiza', __name__, template_folder='templates')
 # 组织机构建模
 @organiza.route('/organization')
 def organization():
-    return render_template('./SystemManagement/sysOrganization.html')
+    return render_template('./sysOrganization.html')
 
 @organiza.route('/organizationMap')
 def organizationMap():
