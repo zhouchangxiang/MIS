@@ -36,10 +36,10 @@ class MakeModel:
         self.name = 'Xujin'
 
     # 类型替换
-    def changeDataTpye(self,s):
+    def changeDataTpye(self,s,length):
         strRe = s
         if 'VARCHAR' in s.upper():
-            strRe = s.upper().replace("VARCHAR","Unicode")
+            strRe = s.upper().replace("VARCHAR","Unicode")+"("+str(length)+")"
         elif s.upper() == 'DATETIME':
             strRe = 'DateTime'
         elif s.upper() == 'INT':
@@ -120,11 +120,11 @@ class MakeModel:
         notes = '\n'
         notes += '# 生成表单的执行语句_START\n'
         notes += 'Base.metadata.create_all(engine)\n'
-        notes += "def init_db():\n\t"
-        notes += "try:\n\t\t"
-        notes += "Base.metadata.create_all(engine)\n\t"
-        notes += "except Exception as err:\n\t\t"
-        notes += "raise Exception('创建数据库出错！错误信息为：' + str(err))\n"
+        # notes += "def init_db():\n\t"
+        # notes += "try:\n\t\t"
+        # notes += "Base.metadata.create_all(engine)\n\t"
+        # notes += "except Exception as err:\n\t\t"
+        # notes += "raise Exception('创建数据库出错！错误信息为：' + str(err))\n"
         notes += "\n"
         notes += '# 生成表单的执行语句_END\n'
 
@@ -138,12 +138,12 @@ class MakeModel:
         return notes
 
     # 创建通用列
-    def makeGeneralKeyModel(self,comment,name,type,primarykey,autoincrement,nullable):
+    def makeGeneralKeyModel(self,comment,name,type,primarykey,autoincrement,nullable,length):
         notes = '\n\t'
         notes += '#' + comment + ':\n\t'
-        notes += '{0} = Column({1}, primary_key = {2}, autoincrement = {3}, nullable = {4})\n\t'
+        notes += '{0} = Column({1}(5), primary_key = {2}, autoincrement = {3}, nullable = {4})\n\t'
         notes = notes.replace("{0}", name)
-        type = self.changeDataTpye(type)
+        type = self.changeDataTpye(type,length)
         notes = notes.replace("{1}", type)
         primarykey = self.changeDataTpye(primarykey)
         notes = notes.replace("{2}", primarykey)
@@ -353,13 +353,13 @@ class MakeModel:
             # tpl += self.makeDBNotes()
             # tpl += self.makeBaseModel()
             tpl += self.makeORMFrontModel(tableName)
-            tpl += self.makeGeneralKeyModel("ID", "ID", "Integer", "True", "True", "False")
+            tpl += self.makeGeneralKeyModel("ID", "ID", "Integer", "True", "True", "False", "")
             str = data[1:-1].split(";")
             for i in str:
                 i = json.loads(i)
                 print(i["FieldName"])
                 tpl += self.makeGeneralKeyModel(i.get("comment"), i.get("FieldName"), i.get("type"),
-                                                i.get("primarykey"), i.get("autoincrement"), i.get("nullable"))
+                                                i.get("primarykey"), i.get("autoincrement"), i.get("nullable"), i.get("length"))
 
             tpl += '\n'
             tpl += '#' + tableName + '_END:\n'

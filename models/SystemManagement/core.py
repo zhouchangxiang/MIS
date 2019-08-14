@@ -35,20 +35,6 @@ SessionFactory = sessionmaker(bind=engine)
 session = SessionFactory()
 Base = declarative_base(engine)
 
-
-
-#AAA_START:
-class AAA(Base):
-	__tablename__ = "AAA" 
-	
-	#ID:
-	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
-	
-	#NAME:
-	NAME = Column(Unicode, primary_key = False, autoincrement = False, nullable = False)
-	
-#AAA_END:
-
 # 生成表单的执行语句_START
 Base.metadata.create_all(engine)
 def init_db():
