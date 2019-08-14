@@ -14,6 +14,8 @@
     <script src="../../static/script/bootstrap-select.min.js"></script>
     <script src="../../static/script/bootbox.min.js"></script>
     <script src="../../static/script/config.js"></script>
+    <script src="../../static/script/FileSaver.js"></script>
+    <script src="../../static/script/FileSaverAddPage.js"></script>
     <script src="../../static/script/base.js"></script>
 </head>
 <body>
@@ -23,14 +25,30 @@
     <div class="container">
         <div>
             <ul class="nav nav-pills" role="tablist">
-                <li role="presentation" class="active"><a href="#pageconfig" aria-controls="pageconfig" role="tab" data-toggle="tab">页面路由配置</a></li>
+                <li role="presentation" class="active"><a href="#addPage" aria-controls="addPage" role="tab" data-toggle="tab">新建页面</a></li>
+                <li role="presentation"><a href="#pageconfig" aria-controls="pageconfig" role="tab" data-toggle="tab">页面路由配置</a></li>
                 <li role="presentation"><a href="#navconfig" aria-controls="navconfig" role="tab" data-toggle="tab">左侧导航菜单配置</a></li>
                 <li role="presentation"><a href="#ISFlagconfig" aria-controls="ISFlagconfig" role="tab" data-toggle="tab">基本判断配置</a></li>
                 <li role="presentation"><a href="#InputTypeconfig" aria-controls="InputTypeconfig" role="tab" data-toggle="tab">输入类型和字段类型配置</a></li>
                 <li role="presentation"><a href="#databaseconfig" aria-controls="databaseconfig" role="tab" data-toggle="tab">数据库建表</a></li>
             </ul>
             <div class="tab-content">
-                <div role="tabpanel" class="tab-pane active" id="pageconfig">
+                <div role="tabpanel" class="tab-pane active" id="addPage">
+                    <section id="html-demo">
+                        <div class="input" id="html" contenteditable="">
+                            <h3>初始文本</h3>
+                            <ul>
+                                <li>列表1</li>
+                                <li>列表2</li>
+                            </ul>
+                        </div>
+                        <form id="html-options">
+                            <label>文件名: <input type="text" class="filename" id="html-filename" placeholder="a rich document"/>.xhtml</label>
+                            <input type="submit" value="Save"/>
+                        </form>
+                    </section>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="pageconfig">
                     <div id="pageModal" class="modal fade">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -985,6 +1003,7 @@
                                 queryFieldItem.autoincrement = res.rows[i].autoincrement
                                 queryFieldItem.nullable = res.rows[i].nullable
                                 queryFieldItem.FieldName = res.rows[i].FieldName
+                                queryFieldItem.length = res.rows[i].length
                                 queryField.push(queryFieldItem)
                             })
                             queryField = JSON.stringify(queryField)
