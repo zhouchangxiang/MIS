@@ -19,6 +19,6 @@ from dbset.database.db_operate import db_session
 calender = Blueprint('calender', __name__, template_folder='templates')
 
 # 日历
-@calender.route('/calender')
-def calender():
+@calender.route('/plantcalender')
+def plantcalender():
     return render_template('./calender.html')
