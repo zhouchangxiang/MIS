@@ -10,7 +10,6 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import MetaData, create_engine
 metadata = MetaData()
 from sqlalchemy import Table
-from models.SystemManagement.core import init_db
 import json
 import datetime
 from models.SystemManagement.core import Base
@@ -141,15 +140,15 @@ class MakeModel:
     def makeGeneralKeyModel(self,comment,name,type,primarykey,autoincrement,nullable,length):
         notes = '\n\t'
         notes += '#' + comment + ':\n\t'
-        notes += '{0} = Column({1}(5), primary_key = {2}, autoincrement = {3}, nullable = {4})\n\t'
+        notes += '{0} = Column({1}, primary_key = {2}, autoincrement = {3}, nullable = {4})\n\t'
         notes = notes.replace("{0}", name)
         type = self.changeDataTpye(type,length)
         notes = notes.replace("{1}", type)
-        primarykey = self.changeDataTpye(primarykey)
+        primarykey = self.changeDataTpye(primarykey,"")
         notes = notes.replace("{2}", primarykey)
-        autoincrement = self.changeDataTpye(autoincrement)
+        autoincrement = self.changeDataTpye(autoincrement,"")
         notes = notes.replace("{3}", autoincrement)
-        nullable = self.changeDataTpye(nullable)
+        nullable = self.changeDataTpye(nullable,"")
         notes = notes.replace("{4}", nullable)
         return notes
 

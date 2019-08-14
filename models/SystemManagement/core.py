@@ -35,12 +35,22 @@ SessionFactory = sessionmaker(bind=engine)
 session = SessionFactory()
 Base = declarative_base(engine)
 
+
+
+
+#AAA_START:
+class AAA(Base):
+	__tablename__ = "AAA" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#name:
+	name = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+#AAA_END:
+
 # 生成表单的执行语句_START
 Base.metadata.create_all(engine)
-def init_db():
-	try:
-		Base.metadata.create_all(engine)
-	except Exception as err:
-		raise Exception('创建数据库出错！错误信息为：' + str(err))
 
 # 生成表单的执行语句_END

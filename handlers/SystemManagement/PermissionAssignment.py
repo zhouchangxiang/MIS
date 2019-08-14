@@ -10,9 +10,9 @@ from dbset.main.BSFramwork import AlchemyEncoder
 permission_distribution = Blueprint('permission_distribution', __name__, template_folder='templates')
 
 # 权限分配
-@permission_distribution.route('/roleright')
+@permission_distribution.route('/permission')
 def roleright():
-    return render_template('./SystemManagement/roleRight.html')
+    return render_template('./permission.html')
 
 # 角色列表树形图
 def getRoleList(id=0):

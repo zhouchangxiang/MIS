@@ -60,7 +60,7 @@ def insert(data):
             db_session.add(ss)
             aud = AuditTrace()
             aud.TableName = tableName
-            aud.Operation = "用户：" + current_user.Name + " 对表" + tableName + "添加一条数据:"+json.dumps(data)
+            aud.Operation = "用户：" + current_user.Name + " 对表" + tableName + "添加一条数据:"+json.dumps(data.to_dict())
             aud.DeitalMSG = "用户：" + current_user.Name + " 对表" + tableName + "添加一条数据！" + " 添加时间：" + datetime.now().strftime(
                 '%Y-%m-%d %H:%M:%S')
             aud.ReviseDate = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -128,7 +128,7 @@ def update(data):
                 db_session.add(oclass)
                 aud = AuditTrace()
                 aud.TableName = tableName
-                aud.Operation = "用户："+current_user.Name+" 对表"+tableName+"的"+json.dumps(oclass)+"做了更新操作:"+json.dumps(data)
+                aud.Operation = "用户："+current_user.Name+" 对表"+tableName+"的ID为："+str(oclass.ID)+"的数据做了更新操作:"+json.dumps(data.to_dict())
                 aud.DeitalMSG = "用户："+current_user.Name+" 对表"+tableName+"做了更新操作！"+" 更新时间："+datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 aud.ReviseDate = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 aud.User = current_user.Name

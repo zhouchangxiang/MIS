@@ -3,6 +3,7 @@ from flask_restful import reqparse, abort, Api, Resource
 import json
 from flask_login import login_required
 from dbset.account import auth_lib
+from handlers.SystemManagement.calendar import calender
 from handlers.account import account_auth
 from handlers.SystemManagement import user_management, PermissionAssignment,Role_management
 from handlers.QualityManagement import ProcessContinuousData
@@ -45,6 +46,8 @@ app.register_blueprint(produce)
 app.register_blueprint(systemlog)
 # 批次管理
 app.register_blueprint(batch)
+# 批次管理
+app.register_blueprint(calender)
 
 @app.route('/')
 @login_required
@@ -60,17 +63,6 @@ def home():
 @login_required
 def config():
     return render_template("./main/config.html")
-
-@app.route('/test1')
-# @login_required
-def test1():
-    return render_template("./test1.html")
-@app.route('/test2')
-# @login_required
-def test2():
-    return render_template("./test2.html")
-
-
 
 api = Api(app)
 
