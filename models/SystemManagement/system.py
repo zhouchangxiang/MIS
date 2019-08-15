@@ -14,13 +14,13 @@ Session = sessionmaker(bind=engine)
 db_session= Session()
 Base = declarative_base(engine)
 
-# 菜单与角色关联表
-Role_Menu = Table(
-    "role_menu",
-    Base.metadata,
-    Column("Role_ID", Integer, ForeignKey("role.ID"), nullable=False, primary_key=True),
-    Column("Menu_ID", Integer, ForeignKey("menu.ID"), nullable=False, primary_key=True)
-)
+# # 菜单与角色关联表
+# Role_Menu = Table(
+#     "role_menu",
+#     Base.metadata,
+#     Column("Role_ID", Integer, ForeignKey("role.ID"), nullable=False, primary_key=True),
+#     Column("Menu_ID", Integer, ForeignKey("menu.ID"), nullable=False, primary_key=True)
+# )
 
 class SysLog(Base):
 	__tablename__ = "SysLog"
@@ -46,47 +46,17 @@ class SysLog(Base):
 	# 类型:
 	OperationType = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
 
-# 模块菜单表
-class Menu(Base):
-    __tablename__ = 'menu'
-    # 模块ID
-    ID = Column(Integer, primary_key=True, autoincrement=True)
-
-    # 模块名称
-    ModuleName = Column(Unicode(32), nullable=False)
-
-    # 模块编码
-    ModuleCode = Column(String(100),nullable=False)
-
-    # 模块路由
-    Url = Column(String(100), nullable=True)
-
-    # 描述
-    Description = Column(Unicode(1024), nullable=True)
-
-    # 创建时间
-    CreateDate = Column(DateTime, default=datetime.now, nullable=True)
-
-    # 创建人
-    Creator = Column(Unicode(50), nullable=True)
-
-    # 父节点
-    ParentNode = Column(Integer, nullable=True)
-
-    # 查询角色
-    roles = relationship("Role", secondary=Role_Menu)
-
 # 角色表
 class Role(Base):
     __tablename__ = 'role'
     # id:
     ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
 
-    # # 角色编码:
-    # RoleCode = Column(String(100), primary_key=False, autoincrement=False, nullable=True)
+    # 角色编码:
+    RoleCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 角色顺序:
-    RoleSeq = Column(String(10), primary_key=False, autoincrement=False, nullable=True)
+    RoleSeq = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 角色名称:
     RoleName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
@@ -95,7 +65,7 @@ class Role(Base):
     Description = Column(Unicode(62), primary_key=False, autoincrement=False, nullable=True)
 
     # 创建人:
-    CreatePerson = Column(Unicode(20), primary_key=False, autoincrement=False, nullable=True)
+    CreatePerson = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 创建时间:
     CreateDate = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
@@ -103,8 +73,8 @@ class Role(Base):
     # 父节点
     ParentNode = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
 
-    # 查询权限
-    menus = relationship("Menu", secondary=Role_Menu)
+    # # 查询权限
+    # menus = relationship("Menu", secondary=Role_Menu)
 
 # 用户表
 class User(Base):
@@ -146,8 +116,8 @@ class User(Base):
     # 角色名称:
     RoleName = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
 
-    # 角色ID:
-    RoleID = Column(Integer, primary_key=False, autoincrement=False, nullable=False)
+    # 角色编码:
+    RoleCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # @property
     # def password(self):
@@ -536,36 +506,63 @@ class PageRoute(Base):
     # 路由:
     Route = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-# 左菜单配置
-class LeftMenus(Base):
-    __tablename__ = 'LeftMenus'
-    # id:
-    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
 
-    # 大菜单名字:
-    BigMenuName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+# 模块菜单表
+class ModulMenus(Base):
+    __tablename__ = 'ModulMenus'
+    # 模块ID
+    ID = Column(Integer, primary_key=True, autoincrement=True)
 
-    # 大菜单上的图标:
-    BigMenuLogo = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 模块菜单名字:
+    ModulMenuName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+    # 模块菜单名字:
+    ModulMenuCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-# 小菜单
-class childMenus(Base):
-    __tablename__ = 'childMenus'
-    # id:
-    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+    # 菜单路由:
+    ModulMenuRoute = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 大菜单名字:
-    BigMenuID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+    # 创建时间
+    CreateDate = Column(Unicode(32), default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'), nullable=True)
 
-    # 大菜单名字:
-    BigMenuName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 父节点
+    ParentNode = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
 
-    # 小菜单名字:
-    SmallMenuName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 菜单类型:
+    MenuType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 小菜单路由:
-    SmallMenuRoute = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 菜单创建人:
+    Creator = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+# 资源菜单表
+class ResourceMenus(Base):
+    __tablename__ = 'ResourceMenus'
+    # 资源ID
+    ID = Column(Integer, primary_key=True, autoincrement=True)
+
+    # 模块菜单名字:
+    ModulMenuName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 模块菜单名字:
+    ModulMenuCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 资源菜单名字:
+    ResourceMenuName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 资源菜单路由:
+    ResourceMenuRoute = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 创建时间
+    CreateDate = Column(Unicode(32), default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'), nullable=True)
+
+    # 父节点
+    ParentNode = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 菜单类型:
+    MenuType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 菜单创建人:
+    Creator = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 # 数据库建表配置
 class CreateTableSet(Base):
@@ -637,14 +634,11 @@ class FieldSet(Base):
     # VARCHAR长度:
     length = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 字段注释:
-    comment = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
-
     # 字段类型:
-    type = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+    type = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 字段注释:
-    comment = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+    comment = Column(Unicode(65), primary_key=False, autoincrement=False, nullable=True)
 
     # 是否为主键（默认False）:
     primarykey = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
@@ -690,6 +684,56 @@ class FieldType(Base):
 
     # 描述:
     Description = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+#权限表
+class Permission(Base):
+    __tablename__ = 'Permission'
+    # ID
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 菜单名字:
+    MenuName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 菜单名字:
+    MenuCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 用户名
+    Name = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+
+    # 工号
+    WorkNumber = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 创建时间
+    CreateData = Column(DateTime, primary_key=False, autoincrement=False, nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+
+# 角色默认权限表
+class RolePermission(Base):
+    __tablename__ = 'RolePermission'
+    # ID
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 菜单名字:
+    MenuName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 菜单名字:
+    MenuCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 用户名
+    Name = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+
+    # 工号
+    WorkNumber = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 创建时间
+    CreateData = Column(DateTime, primary_key=False, autoincrement=False, nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+
+    # 角色编码:
+    RoleCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 角色名称:
+    RoleName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+
 
 
 # 生成表单的执行语句

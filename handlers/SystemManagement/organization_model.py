@@ -25,7 +25,7 @@ def organization():
 
 @organiza.route('/organizationMap')
 def organizationMap():
-    return render_template('./SystemManagement/index_organization.html')
+    return render_template('./index_organization.html')
 
 @organiza.route('/organizationMap/selectAll')#组织结构
 def selectAll():

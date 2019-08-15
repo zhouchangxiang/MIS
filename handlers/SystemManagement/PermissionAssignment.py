@@ -2,7 +2,7 @@ import json
 import re
 from flask import render_template,request,Blueprint,redirect,url_for
 from dbset.database.db_operate import db_session
-from models.SystemManagement.system import Role_Menu,Role,User,Menu
+from models.SystemManagement.system import Role,User
 from flask_login import current_user
 from dbset.log.BK2TLogger import logger,insertSyslog
 from dbset.main.BSFramwork import AlchemyEncoder
@@ -11,7 +11,7 @@ permission_distribution = Blueprint('permission_distribution', __name__, templat
 
 # 权限分配
 @permission_distribution.route('/permission')
-def roleright():
+def permission():
     return render_template('./permission.html')
 
 # 角色列表树形图

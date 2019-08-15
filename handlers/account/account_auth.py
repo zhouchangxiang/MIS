@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from dbset.log.BK2TLogger import logger
 from dbset.main.BSFramwork import AlchemyEncoder
-from models.SystemManagement.system import User, Role, Menu, Role_Menu
+from models.SystemManagement.system import User, Role
 from flask_login import login_required, logout_user, login_user,current_user,LoginManager
 from sqlalchemy.exc import InvalidRequestError
 from dbset.database.db_operate import db_session
@@ -39,10 +39,10 @@ def login():
             password = data.get('password')
                 # 验证账户与密码
             user = db_session.query(User).filter_by(WorkNumber=work_number).first()
-            print(current_user.is_anonymous)
-            if not current_user.is_anonymous:
-                error = '该用户已在其他地方登陆，请确认退出后再进行操作！'
-                return render_template('./main/login.html', error=error)
+            # print(current_user.is_anonymous)
+            # if not current_user.is_anonymous:
+            #     error = '该用户已在其他地方登陆，请确认退出后再进行操作！'
+            #     return render_template('./main/login.html', error=error)
             # if user.Status is "1":
             #     error = '该用户已在其他地方登陆，请确认退出后再进行操作！'
             #     return render_template('./main/login.html', error=error)
@@ -51,14 +51,14 @@ def login():
                 login_user(user)  # login_user(user)调用user_loader()把用户设置到db_session中
                 # 查询用户当前菜单权限
                 roles = db_session.query(User.RoleName).filter_by(WorkNumber=work_number).all()
-                menus = []
-                for role in roles:
-                    for index in role:
-                        role_id = db_session.query(Role.ID).filter_by(RoleName=index).first()
-                        menu = db_session.query(Menu.ModuleCode).join(Role_Menu, isouter=True).filter_by(Role_ID=role_id).all()
-                        for li in menu:
-                            menus.append(li[0])
-                session['menus'] = menus
+                # menus = []
+                # for role in roles:
+                #     for index in role:
+                #         role_id = db_session.query(Role.ID).filter_by(RoleName=index).first()
+                #         menu = db_session.query(Menu.ModuleCode).join(Role_Menu, isouter=True).filter_by(Role_ID=role_id).all()
+                #         for li in menu:
+                #             menus.append(li[0])
+                # session['menus'] = menus
                 # user.Status = "1"
                 # db_session.commit()
                 return redirect('/')
