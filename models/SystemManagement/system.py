@@ -531,6 +531,9 @@ class ModulMenus(Base):
     # 菜单类型:
     MenuType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+    # 菜单图标:
+    MenuLogo = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
     # 菜单创建人:
     Creator = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
@@ -560,6 +563,9 @@ class ResourceMenus(Base):
 
     # 菜单类型:
     MenuType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 菜单图标:
+    MenuLogo = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 菜单创建人:
     Creator = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
