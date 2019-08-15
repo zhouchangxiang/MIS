@@ -6,7 +6,7 @@
             parentTableID: '', //父表ID
             parentTableLinkField: '', //父表关联的字段
         };
-        var options = $.extend(defaluts, options);
+        options = $.extend(defaluts, options);
         var ModalID = "#" + options.tableName + "Modal" //弹框dom
         var toolbarID = "#" + options.tableName + "toolbar" //操作栏dom
         var FieldSetSearchID = "#" + options.tableName + "FieldSetSearchDom" //搜索字段的dom
@@ -30,43 +30,46 @@
             },
             success: function (data) {
                 data = JSON.parse(data)
-                //是否在第一列显示复选框
-                if(data.rows[0].ISFirstCheckBox == "True"){
-                    columns = [{checkbox: true}]
-                    //是否单选
-                    if(data.rows[0].SingleSelect == "True"){
-                        SingleSelect = true
-                    }else if(data.rows[0].SingleSelect == "False"){
-                        SingleSelect = false
+                if(data.rows == []){
+                    //是否在第一列显示复选框
+                    if(data.rows[0].ISFirstCheckBox == "True"){
+                        columns = [{checkbox: true}]
+                        //是否单选
+                        if(data.rows[0].SingleSelect == "True"){
+                            SingleSelect = true
+                        }else if(data.rows[0].SingleSelect == "False"){
+                            SingleSelect = false
+                        }
+                    }else if(data.rows[0].ISFirstCheckBox == "False"){
+                        columns = [{checkbox: false}]
                     }
-                }else if(data.rows[0].ISFirstCheckBox == "False"){
-                    columns = [{checkbox: false}]
+                    if(data.rows[0].IsAdd == "True"){
+                        addbtn = '<button type="button" class="btn btn-info" data-add-btn>添加</button>'
+                    }
+                    if(data.rows[0].IsUpdate == "True"){
+                        updatabtn = '<button type="button" class="btn btn-warning" data-updata-btn>编辑</button>'
+                    }
+                    if(data.rows[0].IsDelete == "True"){
+                        deletebtn = '<button type="button" class="btn btn-danger" data-delete-btn>删除</button>'
+                    }
+                    toolbar = '<div id="'+ options.tableName + "toolbar" +'">' +
+                        '<form class="form-inline">' +
+                        '<div class="form-group">' +
+                        '<div class="input-group">' +
+                        '<select id="'+ options.tableName + "FieldSetSearchDom" +'" class="selectpicker" data-live-search="true"></select>' +
+                        '</div> ' +
+                        '<div class="input-group">' +
+                        '<input type="text" class="form-control" data-field-search-value>' +
+                        '</div> ' +
+                        '<button type="button" class="btn btn-primary" data-search-btn>查询</button> ' +
+                        addbtn + "&nbsp;" +
+                        updatabtn + "&nbsp;" +
+                        deletebtn + "&nbsp;" +
+                        '</div>' +
+                        '</form>' +
+                        '</div>'
+
                 }
-                if(data.rows[0].IsAdd == "True"){
-                    addbtn = '<button type="button" class="btn btn-info" data-add-btn>添加</button>'
-                }
-                if(data.rows[0].IsUpdate == "True"){
-                    updatabtn = '<button type="button" class="btn btn-warning" data-updata-btn>编辑</button>'
-                }
-                if(data.rows[0].IsDelete == "True"){
-                    deletebtn = '<button type="button" class="btn btn-danger" data-delete-btn>删除</button>'
-                }
-                toolbar = '<div id="'+ options.tableName + "toolbar" +'">' +
-                    '<form class="form-inline">' +
-                    '<div class="form-group">' +
-                    '<div class="input-group">' +
-                    '<select id="'+ options.tableName + "FieldSetSearchDom" +'" class="selectpicker" data-live-search="true"></select>' +
-                    '</div> ' +
-                    '<div class="input-group">' +
-                    '<input type="text" class="form-control" data-field-search-value>' +
-                    '</div> ' +
-                    '<button type="button" class="btn btn-primary" data-search-btn>查询</button> ' +
-                    addbtn + "&nbsp;" +
-                    updatabtn + "&nbsp;" +
-                    deletebtn + "&nbsp;" +
-                    '</div>' +
-                    '</form>' +
-                    '</div>'
             }
         })
         //在配置字段表中或者tableName这条数据
@@ -105,42 +108,44 @@
                     '</div>' +
                     '</div>'
                 var ModalfieldHtml = ""
-                $.each(data.rows,function (i,value) {
-                    //生成列头对象
-                    var columnsField = {}
-                    columnsField.field = data.rows[i].FieldName
-                    columnsField.title = data.rows[i].TitleName
-                    columnsField.inputType = data.rows[i].Edittype  //该字段输入类型
-                    columnsField.DownTable = data.rows[i].Downtable //该字段下拉框加载的数据表
-                    if(data.rows[i].Sortable == "True"){
-                        columnsField.sortable = true
-                        columnsField.order = "asc"
-                    }
-                    if(data.rows[i].Visible == "True"){
-                        columnsField.visible = true
-                    }else if(data.rows[i].Visible == "False"){
-                        columnsField.visible = false
-                    }
-                    columns.push(columnsField)
-                    //渲染模态框
-                    if(data.rows[i].Isedit == "True"){
-                        if(columnsField.inputType == "输入框"){
-                            ModalfieldHtml += '<div class="form-group">' +
-                                '<label for="'+ data.rows[i].FieldName +'" class="col-sm-3 control-label">'+ data.rows[i].TitleName +'</label>' +
-                                '<div class="col-sm-9">' +
-                                '<input type="text" class="form-control" name="'+ data.rows[i].FieldName +'" placeholder="">' +
-                                '</div>' +
-                                '</div>'
-                        }else if(columnsField.inputType == "下拉框"){
-                            ModalfieldHtml += '<div class="form-group">' +
-                                '<label for="'+ data.rows[i].FieldName + 'selectField" class="col-sm-3 control-label">'+ data.rows[i].TitleName +'</label>' +
-                                '<div class="col-sm-9">' +
-                                '<select id="'+ data.rows[i].FieldName + 'selectField" class="selectpicker" data-live-search="true"></select>' +
-                                '</div>' +
-                                '</div>'
+                if(data.rows == []) {
+                    $.each(data.rows, function (i, value) {
+                        //生成列头对象
+                        var columnsField = {}
+                        columnsField.field = data.rows[i].FieldName
+                        columnsField.title = data.rows[i].TitleName
+                        columnsField.inputType = data.rows[i].Edittype  //该字段输入类型
+                        columnsField.DownTable = data.rows[i].Downtable //该字段下拉框加载的数据表
+                        if (data.rows[i].Sortable == "True") {
+                            columnsField.sortable = true
+                            columnsField.order = "asc"
                         }
-                    }
-                })
+                        if (data.rows[i].Visible == "True") {
+                            columnsField.visible = true
+                        } else if (data.rows[i].Visible == "False") {
+                            columnsField.visible = false
+                        }
+                        columns.push(columnsField)
+                        //渲染模态框
+                        if (data.rows[i].Isedit == "True") {
+                            if (columnsField.inputType == "输入框") {
+                                ModalfieldHtml += '<div class="form-group">' +
+                                    '<label for="' + data.rows[i].FieldName + '" class="col-sm-3 control-label">' + data.rows[i].TitleName + '</label>' +
+                                    '<div class="col-sm-9">' +
+                                    '<input type="text" class="form-control" name="' + data.rows[i].FieldName + '" placeholder="">' +
+                                    '</div>' +
+                                    '</div>'
+                            } else if (columnsField.inputType == "下拉框") {
+                                ModalfieldHtml += '<div class="form-group">' +
+                                    '<label for="' + data.rows[i].FieldName + 'selectField" class="col-sm-3 control-label">' + data.rows[i].TitleName + '</label>' +
+                                    '<div class="col-sm-9">' +
+                                    '<select id="' + data.rows[i].FieldName + 'selectField" class="selectpicker" data-live-search="true"></select>' +
+                                    '</div>' +
+                                    '</div>'
+                            }
+                        }
+                    })
+                }
                 $("body").prepend(ModalHtml)
                 $(ModalID).find(".form-horizontal").append(ModalfieldHtml)
             },
