@@ -2,7 +2,7 @@ import json
 import re
 from flask import render_template,request,Blueprint,redirect,url_for
 from dbset.database.db_operate import db_session
-from models.SystemManagement.system import Role, User, Permission, ResourceMenus
+from models.SystemManagement.system import Role, User, Permission, ResourceMenus, ModulMenus
 from flask_login import current_user
 from dbset.log.BK2TLogger import logger,insertSyslog
 from dbset.main.BSFramwork import AlchemyEncoder
@@ -237,4 +237,24 @@ def SelectMenus():
             print(e)
             logger.error(e)
             insertSyslog("error", "菜单权限查询报错Error：" + str(e), current_user.Name)
+            return json.dumps([{"status": "Error:" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
+
+# 增加菜单父节点查询
+@permission_distribution.route('/Permission/SelectParentMenus', methods=['POST', 'GET'])
+def SelectParentMenus():
+    if request.method == 'GET':
+        data = request.values
+        try:
+            pages = int(data.get("offset"))  # 页数
+            rowsnumber = int(data.get("limit"))  # 行数
+            inipage = pages * rowsnumber + 0  # 起始页
+            endpage = pages * rowsnumber + rowsnumber  # 截止页
+            total = db_session.query(ModulMenus).filter(ModulMenus.MenuType.in_(("系统级", "模块级"))).count()
+            oclass = db_session.query(ModulMenus).filter(ModulMenus.MenuType.in_(("系统级", "模块级"))).all()[inipage:endpage]
+            jsonoclass = json.dumps(oclass, cls=AlchemyEncoder, ensure_ascii=False)
+            return '{"total"' + ":" + str(total) + ',"rows"' + ":\n" + jsonoclass + "}"
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "增加菜单父节点查询报错Error：" + str(e), current_user.Name)
             return json.dumps([{"status": "Error:" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
