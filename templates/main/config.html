@@ -25,21 +25,13 @@
             <ul class="nav nav-pills" role="tablist">
 {#                <li role="presentation" class="active"><a href="#addPage" aria-controls="addPage" role="tab" data-toggle="tab">新建页面</a></li>#}
                 <li role="presentation"><a href="#pageconfig" aria-controls="pageconfig" role="tab" data-toggle="tab">页面路由配置</a></li>
+                <li role="presentation"><a href="#MenuTypeconfig" aria-controls="MenuTypeconfig" role="tab" data-toggle="tab">菜单类型配置</a></li>
                 <li role="presentation"><a href="#navconfig" aria-controls="navconfig" role="tab" data-toggle="tab">模块菜单配置</a></li>
                 <li role="presentation"><a href="#ISFlagconfig" aria-controls="ISFlagconfig" role="tab" data-toggle="tab">基本判断配置</a></li>
                 <li role="presentation"><a href="#InputTypeconfig" aria-controls="InputTypeconfig" role="tab" data-toggle="tab">输入类型和字段类型配置</a></li>
                 <li role="presentation"><a href="#databaseconfig" aria-controls="databaseconfig" role="tab" data-toggle="tab">数据库建表</a></li>
             </ul>
             <div class="tab-content">
-{#                <div role="tabpanel" class="tab-pane active" id="addPage">#}
-{#                    <div class="input" id="html" contenteditable="" style="padding: 15px;">#}
-{#                        <table id="table"></table>#}
-{#                    </div>#}
-{#                    <form id="html-options">#}
-{#                        <label>文件名: <input type="text" class="filename" id="html-filename" />.html</label>#}
-{#                        <input type="submit" id="saveHtml" value="Save"/>#}
-{#                    </form>#}
-{#                </div>#}
                 <div role="tabpanel" class="tab-pane active" id="pageconfig">
                     <div id="pageModal" class="modal fade">
                         <div class="modal-dialog">
@@ -103,6 +95,63 @@
                     </div>
                     <table id="pageTab"></table>
                 </div>
+                <div role="tabpanel" class="tab-pane" id="MenuTypeconfig">
+                    <div id="MenuTypeModal" class="modal fade">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                        ×
+                                    </button>
+                                    <h4 class="modal-title">
+                                        配置信息
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="form-horizontal" action="">
+                                        <div class="form-group">
+                                            <label for="ID" class="col-sm-3 control-label">ID</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="ID" placeholder="" disabled="disabled">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="TypeName" class="col-sm-3 control-label">类型名称</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="TypeName" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="TypeCode" class="col-sm-3 control-label">类型编码</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="TypeCode" placeholder="">
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- dialog buttons -->
+                                <div class="modal-footer"><button type="button" class="btn btn-primary saveForm" data-save-btn>保存</button></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="MenuTypeToolbar">
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <select id="MenuTypeSearchField" class="selectpicker" data-live-search="true"></select>
+                                </div>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="MenuTypeSearchVal">
+                                </div>
+                                <button type="button" class="btn btn-primary" data-search-btn>查询</button>
+                                <button type="button" class="btn btn-info" data-add-btn>添加</button>
+                                <button type="button" class="btn btn-warning" data-updata-btn>编辑</button>
+                                <button type="button" class="btn btn-danger" data-delete-btn>删除</button>
+                            </div>
+                        </form>
+                    </div>
+                    <table id="MenuTypeTab"></table>
+                </div>
                 <div role="tabpanel" class="tab-pane" id="navconfig">
                     <div id="ModulMenusModal" class="modal fade">
                         <div class="modal-dialog">
@@ -138,7 +187,19 @@
                                         <div class="form-group">
                                             <label for="MenuType" class="col-sm-3 control-label">菜单类型</label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control" name="MenuType" placeholder="">
+                                                <select id="MenuType" class="selectpicker"></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="ParentNode" class="col-sm-3 control-label">父节点</label>
+                                            <div class="col-sm-9">
+                                                <select id="ParentNode" class="selectpicker"></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="ModulMenuRoute" class="col-sm-3 control-label">子菜单路由</label>
+                                            <div class="col-sm-9">
+                                                <select id="ModulMenuRoute" class="selectpicker"></select>
                                             </div>
                                         </div>
                                     </form>
@@ -441,7 +502,7 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="TitleName" class="col-sm-3 control-label">字段名称</label>
+                                            <label for="TitleName" class="col-sm-3 control-label">表头名字</label>
                                             <div class="col-sm-9">
                                                 <input type="text" class="form-control" name="TitleName" placeholder="">
                                             </div>
@@ -583,64 +644,84 @@
                     type: "text"
                 }]
             })
-            $("#navTab").tableRender({
-                tableName: 'LeftMenus',
-                toolbar: '#navToolbar',
+            $("#MenuTypeTab").tableRender({
+                tableName: 'MenuType',
+                toolbar: '#MenuTypeToolbar',
                 columns: [{
                     checkbox: true
                 },{
-                    field: 'BigMenuName',
-                    title: '大菜单名字'
+                    field: 'TypeName',
+                    title: '类型名称'
                 },{
-                    field: 'BigMenuLogo',
-                    title: '大菜单图标'
+                    field: 'TypeCode',
+                    title: '类型编码'
                 }],
-                refreshDom:"#navSearchField",
-                fieldvalue: "#navSearchVal",
-                Modal: '#navModal',
+                refreshDom:"#MenuTypeSearchField",
+                fieldvalue: "#MenuTypeSearchVal",
+                Modal: '#MenuTypeModal',
                 ModalFieldStr: [{
                     field:"ID",
                     type:"text"
                 }, {
-                    field: "BigMenuName",
+                    field: "TypeName",
                     type: "text"
                 },{
-                    field:"BigMenuLogo",
+                    field:"TypeCode",
                     type: "text"
-                }],
-                clickChildTableDom:"#childMenusTab",
-                clickChildTTableField:"BigMenuName"
+                }]
             })
-            $("#childMenusTab").tableRender({
-                tableName: 'childMenus',
-                toolbar: '#childMenusToolbar',
+            $("#ModulMenusTab").tableRender({
+                tableName: 'ModulMenus',
+                toolbar: '#ModulMenusToolbar',
                 columns: [{
                     checkbox: true
                 },{
-                    field: 'SmallMenuName',
-                    title: '小菜单名字'
+                    field: 'ModulMenuName',
+                    title: '模块菜单名字'
                 },{
-                    field: 'SmallMenuRoute',
-                    title: '小菜单跳转的路由'
+                    field: 'ModulMenuCode',
+                    title: '模块菜单编码'
+                },{
+                    field: 'MenuType',
+                    title: '菜单类型'
+                },{
+                    field: 'ParentNode',
+                    title: '父节点'
+                },{
+                    field: 'ModulMenuRoute',
+                    title: '子菜单路由'
                 }],
-                refreshDom:"#childMenusSearchField",
-                fieldvalue: "#childMenusSearchVal",
-                Modal: '#childMenusModal',
+                refreshDom:"#ModulMenusSearchField",
+                fieldvalue: "#ModulMenusSearchVal",
+                Modal: '#ModulMenusModal',
                 ModalFieldStr: [{
                     field:"ID",
                     type:"text"
-                },{
-                    field:"SmallMenuName",
+                }, {
+                    field: "ModulMenuName",
                     type: "text"
                 },{
-                    field:"SmallMenuRoute",
+                    field:"ModulMenuCode",
+                    type: "text"
+                },{
+                    field:"MenuType",
+                    type: "select",
+                    selectTableName:"MenuType",
+                    selectFieldID:"TypeCode",
+                    selectField:"TypeName"
+                },{
+                    field:"ParentNode",
+                    type: "select",
+                    selectTableName:"/Permission/SelectParentMenus",
+                    selectFieldID:"ID",
+                    selectField:"ModulMenuName"
+                },{
+                    field:"ModulMenuRoute",
                     type: "select",
                     selectTableName:"PageRoute",
                     selectFieldID:"Route",
                     selectField:"Route"
-                }],
-                clickParentTableDom:"#navTab",
-                clickParentTableField:"BigMenuName"
+                }]
             })
             $("#ISFlagTab").tableRender({
                 tableName: 'ISFlag',
@@ -770,7 +851,8 @@
                     type: "select",
                     selectTableName:"ISFlag",
                     selectFieldID:"Flag",
-                    selectField:"Description"
+                    selectField:"Description",
+                    selectDefault:"False"
                 },{
                     field:"IsAdd",
                     type: "select",
