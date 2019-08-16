@@ -2,7 +2,7 @@ import json
 import re
 from flask import render_template,request,Blueprint,redirect,url_for
 from dbset.database.db_operate import db_session
-from models.SystemManagement.system import Role,User
+from models.SystemManagement.system import Role, User, Permission, ResourceMenus
 from flask_login import current_user
 from dbset.log.BK2TLogger import logger,insertSyslog
 from dbset.main.BSFramwork import AlchemyEncoder
@@ -209,4 +209,32 @@ def menuRedirect():
             print(e)
             logger.error(e)
             insertSyslog("error", "计划向导生成计划报错Error：" + str(e), current_user.Name)
+            return json.dumps([{"status": "Error:" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
+
+#----------------------------------------------------------------------------------------%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+# 菜单权限查询
+@permission_distribution.route('/Permission/SelectMenus', methods=['POST', 'GET'])
+def SelectMenus():
+    if request.method == 'GET':
+        data = request.values
+        try:
+            MenuType = data.get("MenuType")
+            Name = current_user.Name
+            periss = db_session.query(Permission).filter(Permission.Name == current_user.Name, Permission.MenuType == MenuType).all()
+            flag = 'OK'
+            dic = []
+            for i in periss:
+                if MenuType == "资源级":
+                    oclass = db_session.query(ResourceMenus).filter(ResourceMenus.ModulMenuName.like("%"+i.MenuName+"%")).first()
+                    dic.append(oclass)
+                else:
+                    oclass = db_session.query(ResourceMenus).filter(
+                        ResourceMenus.ResourceMenuName.like("%" + i.MenuName + "%")).first()
+                    dic.append(oclass)
+            return json.dumps(dic, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "菜单权限查询报错Error：" + str(e), current_user.Name)
             return json.dumps([{"status": "Error:" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)

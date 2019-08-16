@@ -516,7 +516,7 @@ class ModulMenus(Base):
     # 模块菜单名字:
     ModulMenuName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 模块菜单名字:
+    # 模块菜单编码:
     ModulMenuCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 菜单路由:
@@ -546,7 +546,7 @@ class ResourceMenus(Base):
     # 模块菜单名字:
     ModulMenuName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 模块菜单名字:
+    # 模块菜单编码:
     ModulMenuCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 资源菜单名字:
@@ -700,6 +700,9 @@ class Permission(Base):
     # 菜单名字:
     MenuName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+    # 菜单类型:
+    MenuType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
     # 菜单名字:
     MenuCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
@@ -723,6 +726,9 @@ class RolePermission(Base):
 
     # 菜单名字:
     MenuCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 菜单类型:
+    MenuType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 用户名
     Name = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)

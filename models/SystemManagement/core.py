@@ -35,20 +35,20 @@ SessionFactory = sessionmaker(bind=engine)
 session = SessionFactory()
 Base = declarative_base(engine)
 
+#MenuType_START:
+class MenuType(Base):
+	__tablename__ = "MenuType"
 
-
-
-#AAA_START:
-class AAA(Base):
-	__tablename__ = "AAA" 
-	
 	#ID:
 	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
-	
-	#name:
-	name = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-#AAA_END:
+
+	#类型名称:
+	TypeName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+
+	#类型编码:
+	TypeCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+
+#MenuType_END:
 
 # 生成表单的执行语句_START
 Base.metadata.create_all(engine)
