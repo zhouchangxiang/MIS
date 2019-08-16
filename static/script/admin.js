@@ -4,7 +4,9 @@ $(function () {
         url: 'http://127.0.0.1:5000/CUID',
         method: 'get',
         data: {
-            tableName: 'LeftMenus',
+            tableName: 'ModulMenus',
+			field: 'MenuType',
+            MenuType: '模块级',
             limit: 100000000,
             offset: 0
         },
@@ -13,7 +15,7 @@ $(function () {
 			$(".sidebarLeftNav").html("")
 			var sidebarLeftNavHtml = ""
 			$.each(res.rows,function(i,value){
-				sidebarLeftNavHtml += '<li><a href="javascript:;" class="sidebarLeftItem" rel="'+ res.rows[i].BigMenuName +'" title="'+ res.rows[i].BigMenuName +'"><span class="'+ res.rows[i].BigMenuLogo +'"></span></a></li>'
+				sidebarLeftNavHtml += '<li><a href="javascript:;" class="sidebarLeftItem" rel="'+ res.rows[i].ParentNode +'" title="'+ res.rows[i].ModulMenuName +'"><span class="'+ res.rows[i].MenuLogo +'"></span></a></li>'
 			})
 			$(".sidebarLeftNav").append(sidebarLeftNavHtml)
 			$(".sidebarLeftNav li").eq(0).find("a").addClass("rootMenu").click()
@@ -25,9 +27,9 @@ $(function () {
 			url: 'http://127.0.0.1:5000/CUID',
 			method: 'get',
 			data: {
-				tableName: 'childMenus',
-				field: 'BigMenuName',
-				fieldvalue: navID,
+				tableName: 'ModulMenus',
+				field: 'ParentNode',
+				ParentNode: navID,
 				limit: 100000000,
 				offset: 0
 			},
@@ -36,7 +38,7 @@ $(function () {
 				$(".sidebarRightNav").html("")
 				var sidebarRightNavHtml = ""
 				$.each(res.rows,function(i,value){
-					sidebarRightNavHtml += '<li><a href="javascript:;" lay-href="'+ res.rows[i].SmallMenuRoute +'" class="site-tab"><span>'+ res.rows[i].SmallMenuName +'</span></a></li>'
+					sidebarRightNavHtml += '<li><a href="javascript:;" lay-href="'+ res.rows[i].ModulMenuRoute +'" class="site-tab"><span>'+ res.rows[i].ModulMenuName +'</span></a></li>'
 				})
 				$(".sidebarRightNav").append(sidebarRightNavHtml)
 			}

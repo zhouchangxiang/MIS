@@ -197,6 +197,12 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
+                                            <label for="MenuLogo" class="col-sm-3 control-label">模块图标</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="MenuLogo" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
                                             <label for="ModulMenuRoute" class="col-sm-3 control-label">子菜单路由</label>
                                             <div class="col-sm-9">
                                                 <select id="ModulMenuRoute" class="selectpicker"></select>
@@ -688,6 +694,9 @@
                     field: 'ParentNode',
                     title: '父节点'
                 },{
+                    field: 'MenuLogo',
+                    title: '模块图标'
+                },{
                     field: 'ModulMenuRoute',
                     title: '子菜单路由'
                 }],
@@ -716,11 +725,15 @@
                     selectFieldID:"ID",
                     selectField:"ModulMenuName"
                 },{
+                    field:"MenuLogo",
+                    type: "text"
+                },{
                     field:"ModulMenuRoute",
                     type: "select",
                     selectTableName:"PageRoute",
                     selectFieldID:"Route",
-                    selectField:"Route"
+                    selectField:"Route",
+                    selectDefault:"javascript:;"
                 }]
             })
             $("#ISFlagTab").tableRender({
