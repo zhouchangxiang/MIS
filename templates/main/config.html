@@ -14,8 +14,6 @@
     <script src="../../static/script/bootstrap-select.min.js"></script>
     <script src="../../static/script/bootbox.min.js"></script>
     <script src="../../static/script/config.js"></script>
-    <script src="../../static/script/FileSaver.js"></script>
-    <script src="../../static/script/FileSaverAddPage.js"></script>
     <script src="../../static/script/base.js"></script>
 </head>
 <body>
@@ -25,30 +23,24 @@
     <div class="container">
         <div>
             <ul class="nav nav-pills" role="tablist">
-                <li role="presentation" class="active"><a href="#addPage" aria-controls="addPage" role="tab" data-toggle="tab">新建页面</a></li>
+{#                <li role="presentation" class="active"><a href="#addPage" aria-controls="addPage" role="tab" data-toggle="tab">新建页面</a></li>#}
                 <li role="presentation"><a href="#pageconfig" aria-controls="pageconfig" role="tab" data-toggle="tab">页面路由配置</a></li>
-                <li role="presentation"><a href="#navconfig" aria-controls="navconfig" role="tab" data-toggle="tab">左侧导航菜单配置</a></li>
+                <li role="presentation"><a href="#navconfig" aria-controls="navconfig" role="tab" data-toggle="tab">模块菜单配置</a></li>
                 <li role="presentation"><a href="#ISFlagconfig" aria-controls="ISFlagconfig" role="tab" data-toggle="tab">基本判断配置</a></li>
                 <li role="presentation"><a href="#InputTypeconfig" aria-controls="InputTypeconfig" role="tab" data-toggle="tab">输入类型和字段类型配置</a></li>
                 <li role="presentation"><a href="#databaseconfig" aria-controls="databaseconfig" role="tab" data-toggle="tab">数据库建表</a></li>
             </ul>
             <div class="tab-content">
-                <div role="tabpanel" class="tab-pane active" id="addPage">
-                    <section id="html-demo">
-                        <div class="input" id="html" contenteditable="">
-                            <h3>初始文本</h3>
-                            <ul>
-                                <li>列表1</li>
-                                <li>列表2</li>
-                            </ul>
-                        </div>
-                        <form id="html-options">
-                            <label>文件名: <input type="text" class="filename" id="html-filename" placeholder="a rich document"/>.xhtml</label>
-                            <input type="submit" value="Save"/>
-                        </form>
-                    </section>
-                </div>
-                <div role="tabpanel" class="tab-pane" id="pageconfig">
+{#                <div role="tabpanel" class="tab-pane active" id="addPage">#}
+{#                    <div class="input" id="html" contenteditable="" style="padding: 15px;">#}
+{#                        <table id="table"></table>#}
+{#                    </div>#}
+{#                    <form id="html-options">#}
+{#                        <label>文件名: <input type="text" class="filename" id="html-filename" />.html</label>#}
+{#                        <input type="submit" id="saveHtml" value="Save"/>#}
+{#                    </form>#}
+{#                </div>#}
+                <div role="tabpanel" class="tab-pane active" id="pageconfig">
                     <div id="pageModal" class="modal fade">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -112,7 +104,7 @@
                     <table id="pageTab"></table>
                 </div>
                 <div role="tabpanel" class="tab-pane" id="navconfig">
-                    <div id="navModal" class="modal fade">
+                    <div id="ModulMenusModal" class="modal fade">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -132,15 +124,21 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="BigMenuName" class="col-sm-3 control-label">大菜单名字</label>
+                                            <label for="ModulMenuName" class="col-sm-3 control-label">模块菜单名字</label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control" name="BigMenuName" placeholder="">
+                                                <input type="text" class="form-control" name="ModulMenuName" placeholder="">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="BigMenuLogo" class="col-sm-3 control-label">大菜单的图标</label>
+                                            <label for="ModulMenuCode" class="col-sm-3 control-label">模块菜单编码</label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control" name="BigMenuLogo" placeholder="">
+                                                <input type="text" class="form-control" name="ModulMenuCode" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="MenuType" class="col-sm-3 control-label">菜单类型</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="MenuType" placeholder="">
                                             </div>
                                         </div>
                                     </form>
@@ -150,14 +148,14 @@
                             </div>
                         </div>
                     </div>
-                    <div id="navToolbar">
+                    <div id="ModulMenusToolbar">
                         <form class="form-inline">
                             <div class="form-group">
                                 <div class="input-group">
-                                    <select id="navSearchField" class="selectpicker" data-live-search="true"></select>
+                                    <select id="ModulMenusSearchField" class="selectpicker" data-live-search="true"></select>
                                 </div>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="navSearchVal">
+                                    <input type="text" class="form-control" id="ModulMenusSearchVal">
                                 </div>
                                 <button type="button" class="btn btn-primary" data-search-btn>查询</button>
                                 <button type="button" class="btn btn-info" data-add-btn>添加</button>
@@ -166,62 +164,7 @@
                             </div>
                         </form>
                     </div>
-                    <table id="navTab"></table>
-                    <div id="childMenusModal" class="modal fade">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                                        ×
-                                    </button>
-                                    <h4 class="modal-title">
-                                        配置信息
-                                    </h4>
-                                </div>
-                                <div class="modal-body">
-                                    <form class="form-horizontal" action="">
-                                        <div class="form-group">
-                                            <label for="ID" class="col-sm-3 control-label">ID</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" class="form-control" name="ID" placeholder="" disabled="disabled">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="SmallMenuName" class="col-sm-3 control-label">小菜单名字</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" class="form-control" name="SmallMenuName" placeholder="">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="SmallMenuRoute" class="col-sm-3 control-label">小菜单跳转的路由</label>
-                                            <div class="col-sm-9">
-                                                <select id="SmallMenuRoute" class="selectpicker" data-live-search="true"></select>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                                <!-- dialog buttons -->
-                                <div class="modal-footer"><button type="button" class="btn btn-primary" data-save-btn>保存</button></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="childMenusToolbar">
-                        <form class="form-inline">
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <select id="childMenusSearchField" class="selectpicker" data-live-search="true"></select>
-                                </div>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="childMenusSearchVal">
-                                </div>
-                                <button type="button" class="btn btn-primary" data-search-btn>查询</button>
-                                <button type="button" class="btn btn-info" data-add-btn>添加</button>
-                                <button type="button" class="btn btn-warning" data-updata-btn>编辑</button>
-                                <button type="button" class="btn btn-danger" data-delete-btn>删除</button>
-                            </div>
-                        </form>
-                    </div>
-                    <table id="childMenusTab"></table>
+                    <table id="ModulMenusTab"></table>
                 </div>
                 <div role="tabpanel" class="tab-pane" id="ISFlagconfig">
                     <div id="ISFlagModal" class="modal fade">
@@ -933,7 +876,8 @@
                     type: "select",
                     selectTableName:"ISFlag",
                     selectFieldID:"Flag",
-                    selectField:"Description"
+                    selectField:"Description",
+                    selectDefault:"False"
                 },{
                     field:"Visible",
                     type: "select",
@@ -948,22 +892,25 @@
                     type: "select",
                     selectTableName:"FieldType",
                     selectFieldID:"Type",
-                    selectField:"Type"
+                    selectField:"Type",
+                    selectDefault:"VARCHAR"
+                },{
+                    field: "length",
+                    type: "text"
                 },{
                     field: "primarykey",
                     type: "select",
                     selectTableName:"ISFlag",
                     selectFieldID:"Flag",
-                    selectField:"Description"
-                },{
-                    field: "length",
-                    type: "text"
+                    selectField:"Description",
+                    selectDefault:"False"
                 },{
                     field: "autoincrement",
                     type: "select",
                     selectTableName:"ISFlag",
                     selectFieldID:"Flag",
-                    selectField:"Description"
+                    selectField:"Description",
+                    selectDefault:"False"
                 },{
                     field: "nullable",
                     type: "select",

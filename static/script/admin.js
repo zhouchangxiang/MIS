@@ -16,6 +16,7 @@ $(function () {
 				sidebarLeftNavHtml += '<li><a href="javascript:;" class="sidebarLeftItem" rel="'+ res.rows[i].BigMenuName +'" title="'+ res.rows[i].BigMenuName +'"><span class="'+ res.rows[i].BigMenuLogo +'"></span></a></li>'
 			})
 			$(".sidebarLeftNav").append(sidebarLeftNavHtml)
+			$(".sidebarLeftNav li").eq(0).find("a").addClass("rootMenu").click()
         }
     })
 	$(".sidebarLeftNav").on('click',".sidebarLeftItem",function(){
@@ -41,6 +42,11 @@ $(function () {
 			}
 		})
         $(this).addClass("rootMenu").parent().siblings().find("a").removeClass("rootMenu")
+		$(".sidebarRight .sidebarRightHead").each(function(){
+			if($(this).attr("data-menu-indet") == navID){
+				$(this).removeClass("hidden").siblings(".sidebarRightHead").addClass("hidden")
+			}
+		})
 	})
 
 	//右上角用户信息

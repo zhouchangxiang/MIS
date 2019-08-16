@@ -15,6 +15,10 @@
         };
         var options = $.extend(defaluts, options);
         var $this = $(this)
+        var singleSelect = false
+        if(options.clickChildTableDom != ""){
+            singleSelect = true
+        }
         //表格渲染
         $this.bootstrapTable({
             url: "http://127.0.0.1:5000/CUID",
@@ -33,7 +37,7 @@
             pageList: [10, 20, 30, 40, 50],
             sidePagination: "server",
             paginationLoop:false,
-            singleSelect:false,
+            singleSelect:singleSelect,
             clickToSelect:true,
             locale: "zh-CN",
             striped: true,
@@ -51,19 +55,6 @@
                             fieldvalue: row[options.clickChildTTableField]
                         }
                     })
-                }
-            },
-            onUncheck:function(row, $element){
-                if(options.clickChildTableDom != "") {
-                    var ParentTableRows = $this.bootstrapTable("getAllSelections")
-                    if(ParentTableRows[0]){
-                        $(options.clickChildTableDom).bootstrapTable('refresh', {
-                            query: {
-                                field: options.clickChildTTableField,
-                                fieldvalue: ParentTableRows[0][options.clickChildTTableField]
-                            }
-                        })
-                    }
                 }
             }
         })
@@ -121,6 +112,9 @@
                                     $(options.Modal).find("#"+ fieldstr.field +"").append(selectOptions)
                                     $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("refresh")
                                     $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("render")
+                                    if(fieldstr.selectDefault != ""){
+                                        $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("val",fieldstr.selectDefault)
+                                    }
                                 }
                             })
                         }
@@ -155,6 +149,9 @@
                                 $(options.Modal).find("#"+ fieldstr.field +"").append(selectOptions)
                                 $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("refresh")
                                 $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("render")
+                                if(fieldstr.selectDefault != ""){
+                                    $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("val",fieldstr.selectDefault)
+                                }
                             }
                         })
                     }
