@@ -15,7 +15,7 @@ $(function () {
 			$(".sidebarLeftNav").html("")
 			var sidebarLeftNavHtml = ""
 			$.each(res.rows,function(i,value){
-				sidebarLeftNavHtml += '<li><a href="javascript:;" class="sidebarLeftItem" rel="'+ res.rows[i].ParentNode +'" title="'+ res.rows[i].ModulMenuName +'"><span class="'+ res.rows[i].MenuLogo +'"></span></a></li>'
+				sidebarLeftNavHtml += '<li><a href="javascript:;" class="sidebarLeftItem" rel="'+ res.rows[i].ID +'" title="'+ res.rows[i].ModulMenuName +'"><span class="'+ res.rows[i].MenuLogo +'"></span></a></li>'
 			})
 			$(".sidebarLeftNav").append(sidebarLeftNavHtml)
 			$(".sidebarLeftNav li").eq(0).find("a").addClass("rootMenu").click()
