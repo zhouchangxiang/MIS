@@ -35,21 +35,6 @@ SessionFactory = sessionmaker(bind=engine)
 session = SessionFactory()
 Base = declarative_base(engine)
 
-#MenuType_START:
-class MenuType(Base):
-	__tablename__ = "MenuType"
-
-	#ID:
-	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
-
-	#类型名称:
-	TypeName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-
-	#类型编码:
-	TypeCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-
-#MenuType_END:
-
 # 生成表单的执行语句_START
 Base.metadata.create_all(engine)
 
