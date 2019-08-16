@@ -131,29 +131,55 @@
                         $(options.Modal).find("input[name="+ fieldstr.field +"]").val("");
                     }else if(fieldstr.type == "select"){
                         var selectField = fieldstr.selectField
-                        $.ajax({
-                            url:"http://127.0.0.1:5000/CUID",
-                            type:"get",
-                            data:{
-                                tableName:fieldstr.selectTableName,
-                                limit: 100000000,
-                                offset:0
-                            },
-                            success:function(res){
-                                res = JSON.parse(res)
-                                var selectOptions = ""
-                                $(options.Modal).find("#"+ fieldstr.field +"").html("")
-                                $.each(res.rows,function(i,value){
-                                    selectOptions += "<option value='"+ res.rows[i][fieldstr.selectFieldID] +"'>" + res.rows[i][selectField] + "</option>";
-                                })
-                                $(options.Modal).find("#"+ fieldstr.field +"").append(selectOptions)
-                                $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("refresh")
-                                $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("render")
-                                if(fieldstr.selectDefault != ""){
-                                    $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("val",fieldstr.selectDefault)
+                        if(!fieldstr.selectTableName){
+                            $.ajax({
+                                url:fieldstr.selectUrl,
+                                type:"get",
+                                data:{
+                                    limit: 100000000,
+                                    offset:0
+                                },
+                                success:function(res){
+                                    res = JSON.parse(res)
+                                    var selectOptions = ""
+                                    $(options.Modal).find("#"+ fieldstr.field +"").html("")
+                                    $.each(res.rows,function(i,value){
+                                        selectOptions += "<option value='"+ res.rows[i][fieldstr.selectFieldID] +"'>" + res.rows[i][selectField] + "</option>";
+                                    })
+                                    $(options.Modal).find("#"+ fieldstr.field +"").append(selectOptions)
+                                    $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("refresh")
+                                    $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("render")
+                                    if(fieldstr.selectDefault != ""){
+                                        $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("val",fieldstr.selectDefault)
+                                    }
                                 }
-                            }
-                        })
+                            })
+                        }else{
+                            $.ajax({
+                                url:"http://127.0.0.1:5000/CUID",
+                                type:"get",
+                                data:{
+                                    tableName:fieldstr.selectTableName,
+                                    limit: 100000000,
+                                    offset:0
+                                },
+                                success:function(res){
+                                    res = JSON.parse(res)
+                                    var selectOptions = ""
+                                    $(options.Modal).find("#"+ fieldstr.field +"").html("")
+                                    $.each(res.rows,function(i,value){
+                                        selectOptions += "<option value='"+ res.rows[i][fieldstr.selectFieldID] +"'>" + res.rows[i][selectField] + "</option>";
+                                    })
+                                    $(options.Modal).find("#"+ fieldstr.field +"").append(selectOptions)
+                                    $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("refresh")
+                                    $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("render")
+                                    if(fieldstr.selectDefault != ""){
+                                        $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("val",fieldstr.selectDefault)
+                                    }
+                                }
+                            })
+                        }
+
                     }
                 })
             }
