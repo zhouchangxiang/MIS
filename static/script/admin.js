@@ -23,6 +23,7 @@ $(function () {
     })
 	$(".sidebarLeftNav").on('click',".sidebarLeftItem",function(){
 		var navID = $(this).attr("rel")
+		var title = $(this).attr("title")
 		$.ajax({
 			url: 'http://127.0.0.1:5000/CUID',
 			method: 'get',
@@ -45,7 +46,7 @@ $(function () {
 		})
         $(this).addClass("rootMenu").parent().siblings().find("a").removeClass("rootMenu")
 		$(".sidebarRight .sidebarRightHead").each(function(){
-			if($(this).attr("data-menu-indet") == navID){
+			if($(this).attr("data-menu-indet") == title){
 				$(this).removeClass("hidden").siblings(".sidebarRightHead").addClass("hidden")
 			}
 		})
