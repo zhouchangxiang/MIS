@@ -540,6 +540,12 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
+                                            <label for="Order" class="col-sm-3 control-label">下拉框显示字段</label>
+                                            <div class="col-sm-9">
+                                                <select id="Order" class="selectpicker" data-live-search="true"></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
                                             <label for="Sortable" class="col-sm-3 control-label">该列是否排序</label>
                                             <div class="col-sm-9">
                                                 <select id="Sortable" class="selectpicker"></select>
@@ -912,6 +918,9 @@
                     field: 'Downtable',
                     title: '下拉框的数据表'
                 },{
+                    field: 'Order',
+                    title: '下拉框显示字段'
+                },{
                     field: 'Sortable',
                     title: '该列是否排序'
                 },{
@@ -965,7 +974,12 @@
                     type: "select",
                     selectTableName:"CreateTableSet",
                     selectFieldID:"TableName",
-                    selectField:"TableName"
+                    selectField:"TableName",
+                    selectLinkedFieldID:"Order",
+                    selectLinkedShowField:"FieldName",
+                },{
+                    field:"Order",
+                    type: "select"
                 },{
                     field:"Sortable",
                     type: "select",
