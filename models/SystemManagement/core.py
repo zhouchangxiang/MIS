@@ -35,6 +35,41 @@ SessionFactory = sessionmaker(bind=engine)
 session = SessionFactory()
 Base = declarative_base(engine)
 
+
+#Factory_START:
+class Factory(Base):
+	__tablename__ = "Factory" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#所在地区:
+	Region = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
+	
+	#厂名:
+	FactoryName = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
+	
+#Factory_END:
+
+
+#DepartmentManager_START:
+class DepartmentManager(Base):
+	__tablename__ = "DepartmentManager" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#部门名称:
+	部门名称 = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#部门编码:
+	DepartCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#所属厂区:
+	DepartLoad = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+#DepartmentManager_END:
+
 # 生成表单的执行语句_START
 Base.metadata.create_all(engine)
 
