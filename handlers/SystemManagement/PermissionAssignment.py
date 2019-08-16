@@ -221,17 +221,23 @@ def SelectMenus():
         try:
             MenuType = data.get("MenuType")
             Name = current_user.Name
+            if Name == "系统管理员":
+                oclass = db_session.query(ModulMenus).all()
+                return json.dumps(oclass, cls=AlchemyEncoder, ensure_ascii=False)
             periss = db_session.query(Permission).filter(Permission.Name == current_user.Name, Permission.MenuType == MenuType).all()
             flag = 'OK'
             dic = []
             for i in periss:
-                if MenuType == "资源级":
-                    oclass = db_session.query(ResourceMenus).filter(ResourceMenus.ModulMenuName.like("%"+i.MenuName+"%")).first()
-                    dic.append(oclass)
-                else:
-                    oclass = db_session.query(ResourceMenus).filter(
-                        ResourceMenus.ResourceMenuName.like("%" + i.MenuName + "%")).first()
-                    dic.append(oclass)
+                oclass = db_session.query(ModulMenus).filter(
+                    ModulMenus.ResourceMenuName.like("%" + i.MenuName + "%")).first()
+                dic.append(oclass)
+                # if MenuType == "资源级":
+                #     oclass = db_session.query(ResourceMenus).filter(ResourceMenus.ModulMenuName.like("%"+i.MenuName+"%")).first()
+                #     dic.append(oclass)
+                # else:
+                #     oclass = db_session.query(ModulMenus).filter(
+                #         ModulMenus.ResourceMenuName.like("%" + i.MenuName + "%")).first()
+                #     dic.append(oclass)
             return json.dumps(dic, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
