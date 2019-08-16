@@ -6,7 +6,7 @@ $(function () {
         data: {
             tableName: 'ModulMenus',
 			field: 'MenuType',
-            MenuType: '模块级',
+            fieldvalue: '模块级',
             limit: 100000000,
             offset: 0
         },
@@ -29,7 +29,7 @@ $(function () {
 			data: {
 				tableName: 'ModulMenus',
 				field: 'ParentNode',
-				ParentNode: navID,
+				fieldvalue: navID,
 				limit: 100000000,
 				offset: 0
 			},
