@@ -1063,7 +1063,7 @@
                                 queryField.push(queryFieldItem)
                             })
                             queryField = JSON.stringify(queryField)
-                            queryField = queryField.replace(",{",";{").replace(",{",";{")
+                            queryField = queryField.replace(/,{/g,";{") //全局将外层的，替换为；
                             queryData.Field = queryField
                             $.ajax({
                                 url: "/system_set/make_model",
