@@ -94,29 +94,105 @@
                             $(options.Modal).find("input[name="+ fieldstr.field +"]").val("");
                         }else if(fieldstr.type == "select"){
                             var selectField = fieldstr.selectField
-                            $.ajax({
-                                url:"http://127.0.0.1:5000/CUID",
-                                type:"get",
-                                data:{
-                                    tableName:fieldstr.selectTableName,
-                                    limit: 100000000,
-                                    offset:0
-                                },
-                                success:function(res){
-                                    res = JSON.parse(res)
-                                    var selectOptions = ""
-                                    $(options.Modal).find("#"+ fieldstr.field +"").html("")
-                                    $.each(res.rows,function(i,value){
-                                        selectOptions += "<option value='"+ res.rows[i][fieldstr.selectFieldID] +"'>" + res.rows[i][selectField] + "</option>";
-                                    })
-                                    $(options.Modal).find("#"+ fieldstr.field +"").append(selectOptions)
-                                    $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("refresh")
-                                    $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("render")
-                                    if(fieldstr.selectDefault != ""){
-                                        $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("val",fieldstr.selectDefault)
+                            if(fieldstr.selectUrl){ //有selectUrl就请求单独的路由获取数据
+                                $.ajax({
+                                    url:fieldstr.selectUrl,
+                                    type:"get",
+                                    data:{
+                                        limit: 100000000,
+                                        offset:0
+                                    },
+                                    success:function(res){
+                                        res = JSON.parse(res)
+                                        var selectOptions = ""
+                                        $(options.Modal).find("#"+ fieldstr.field +"").html("")
+                                        $.each(res.rows,function(i,value){
+                                            selectOptions += "<option value='"+ res.rows[i][fieldstr.selectFieldID] +"'>" + res.rows[i][selectField] + "</option>";
+                                        })
+                                        $(options.Modal).find("#"+ fieldstr.field +"").append(selectOptions)
+                                        $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("refresh")
+                                        $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("render")
+                                        if(fieldstr.selectDefault != ""){
+                                            $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("val",fieldstr.selectDefault)
+                                        }
                                     }
-                                }
-                            })
+                                })
+                            }else if(fieldstr.selectTableName){ //用selectTableName表名获取数据
+                                $.ajax({
+                                    url:"http://127.0.0.1:5000/CUID",
+                                    type:"get",
+                                    data:{
+                                        tableName:fieldstr.selectTableName,
+                                        limit: 100000000,
+                                        offset:0
+                                    },
+                                    success:function(res){
+                                        res = JSON.parse(res)
+                                        var selectOptions = ""
+                                        $(options.Modal).find("#"+ fieldstr.field +"").html("")
+                                        $.each(res.rows,function(i,value){
+                                            selectOptions += "<option value='"+ res.rows[i][fieldstr.selectFieldID] +"'>" + res.rows[i][selectField] + "</option>";
+                                        })
+                                        $(options.Modal).find("#"+ fieldstr.field +"").append(selectOptions)
+                                        $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("refresh")
+                                        $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("render")
+                                        if(fieldstr.selectDefault != ""){
+                                            $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("val",fieldstr.selectDefault)
+                                        }
+                                        if(fieldstr.selectLinkedFieldID){ //有selectLinkedFieldID属性就下拉时对其属性下拉框动态加载表字段
+                                            //默认选中状态，给子下拉框添加数据
+                                            var selectVal = $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("val")
+                                            $.ajax({
+                                                url:"http://127.0.0.1:5000/CUID",
+                                                type:"get",
+                                                data:{
+                                                    tableName:"FieldSet",
+                                                    field:"TableName",
+                                                    fieldvalue:selectVal,
+                                                    limit: 100000000,
+                                                    offset:0
+                                                },
+                                                success:function(res) {
+                                                    res = JSON.parse(res)
+                                                    var linkSelectOptions = ""
+                                                    $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").html("")
+                                                    $.each(res.rows,function(i,value){
+                                                        linkSelectOptions += "<option value='"+ res.rows[i][fieldstr.selectLinkedShowField] +"'>" + res.rows[i][fieldstr.selectLinkedShowField] + "</option>";
+                                                    })
+                                                    $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").append(linkSelectOptions)
+                                                    $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").selectpicker("refresh")
+                                                    $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").selectpicker("render")
+                                                }
+                                            })
+                                            $(options.Modal).find("#"+ fieldstr.field +"").on("change",function(){
+                                                selectVal = $(this).selectpicker("val")
+                                                $.ajax({
+                                                    url:"http://127.0.0.1:5000/CUID",
+                                                    type:"get",
+                                                    data:{
+                                                        tableName:"FieldSet",
+                                                        field:"TableName",
+                                                        fieldvalue:selectVal,
+                                                        limit: 100000000,
+                                                        offset:0
+                                                    },
+                                                    success:function(res) {
+                                                        res = JSON.parse(res)
+                                                        var linkSelectOptions = ""
+                                                        $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").html("")
+                                                        $.each(res.rows,function(i,value){
+                                                            linkSelectOptions += "<option value='"+ res.rows[i][fieldstr.selectLinkedShowField] +"'>" + res.rows[i][fieldstr.selectLinkedShowField] + "</option>";
+                                                        })
+                                                        $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").append(linkSelectOptions)
+                                                        $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").selectpicker("refresh")
+                                                        $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").selectpicker("render")
+                                                    }
+                                                })
+                                            })
+                                        }
+                                    }
+                                })
+                            }
                         }
                     })
                 }else{
@@ -131,7 +207,7 @@
                         $(options.Modal).find("input[name="+ fieldstr.field +"]").val("");
                     }else if(fieldstr.type == "select"){
                         var selectField = fieldstr.selectField
-                        if(!fieldstr.selectTableName){
+                        if(fieldstr.selectUrl){ //有selectUrl就请求单独的路由获取数据
                             $.ajax({
                                 url:fieldstr.selectUrl,
                                 type:"get",
@@ -154,7 +230,7 @@
                                     }
                                 }
                             })
-                        }else{
+                        }else if(fieldstr.selectTableName){ //用selectTableName表名获取数据
                             $.ajax({
                                 url:"http://127.0.0.1:5000/CUID",
                                 type:"get",
@@ -175,6 +251,57 @@
                                     $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("render")
                                     if(fieldstr.selectDefault != ""){
                                         $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("val",fieldstr.selectDefault)
+                                    }
+                                    if(fieldstr.selectLinkedFieldID){ //有selectLinkedFieldID属性就下拉时对其属性下拉框动态加载表字段
+                                        //默认选中状态，给子下拉框添加数据
+                                        var selectVal = $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("val")
+                                        $.ajax({
+                                            url:"http://127.0.0.1:5000/CUID",
+                                            type:"get",
+                                            data:{
+                                                tableName:"FieldSet",
+                                                field:"TableName",
+                                                fieldvalue:selectVal,
+                                                limit: 100000000,
+                                                offset:0
+                                            },
+                                            success:function(res) {
+                                                res = JSON.parse(res)
+                                                var linkSelectOptions = ""
+                                                $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").html("")
+                                                $.each(res.rows,function(i,value){
+                                                    linkSelectOptions += "<option value='"+ res.rows[i][fieldstr.selectLinkedShowField] +"'>" + res.rows[i][fieldstr.selectLinkedShowField] + "</option>";
+                                                })
+                                                $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").append(linkSelectOptions)
+                                                $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").selectpicker("refresh")
+                                                $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").selectpicker("render")
+                                            }
+                                        })
+                                        $(options.Modal).find("#"+ fieldstr.field +"").on("change",function(){
+                                            selectVal = $(this).selectpicker("val")
+                                            $.ajax({
+                                                url:"http://127.0.0.1:5000/CUID",
+                                                type:"get",
+                                                data:{
+                                                    tableName:"FieldSet",
+                                                    field:"TableName",
+                                                    fieldvalue:selectVal,
+                                                    limit: 100000000,
+                                                    offset:0
+                                                },
+                                                success:function(res) {
+                                                    res = JSON.parse(res)
+                                                    var linkSelectOptions = ""
+                                                    $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").html("")
+                                                    $.each(res.rows,function(i,value){
+                                                        linkSelectOptions += "<option value='"+ res.rows[i][fieldstr.selectLinkedShowField] +"'>" + res.rows[i][fieldstr.selectLinkedShowField] + "</option>";
+                                                    })
+                                                    $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").append(linkSelectOptions)
+                                                    $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").selectpicker("refresh")
+                                                    $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").selectpicker("render")
+                                                }
+                                            })
+                                        })
                                     }
                                 }
                             })
@@ -199,27 +326,102 @@
                                     $(options.Modal).find("input[name=" + fieldstr.field + "]").val(rows[0][fieldstr.field]);
                                 } else if (fieldstr.type == "select") {
                                     var selectField = fieldstr.selectField
-                                    $.ajax({
-                                        url: "http://127.0.0.1:5000/CUID",
-                                        type: "get",
-                                        data: {
-                                            tableName: fieldstr.selectTableName,
-                                            limit: 100000000,
-                                            offset: 0
-                                        },
-                                        success: function (res) {
-                                            res = JSON.parse(res)
-                                            var selectOptions = ""
-                                            $(options.Modal).find("#" + fieldstr.field + "").html("")
-                                            $.each(res.rows, function (i, value) {
-                                                selectOptions += "<option value='" + res.rows[i][fieldstr.selectFieldID] + "'>" + res.rows[i][selectField] + "</option>";
-                                            })
-                                            $(options.Modal).find("#" + fieldstr.field + "").append(selectOptions)
-                                            $(options.Modal).find("#" + fieldstr.field + "").selectpicker("refresh")
-                                            $(options.Modal).find("#" + fieldstr.field + "").selectpicker("render")
-                                            $(options.Modal).find("#" + fieldstr.field + "").selectpicker('val', rows[0][fieldstr.field])
-                                        }
-                                    })
+                                    if(fieldstr.selectUrl) {
+                                        $.ajax({
+                                            url:fieldstr.selectUrl,
+                                            type: "get",
+                                            data: {
+                                                limit: 100000000,
+                                                offset: 0
+                                            },
+                                            success: function (res) {
+                                                res = JSON.parse(res)
+                                                var selectOptions = ""
+                                                $(options.Modal).find("#" + fieldstr.field + "").html("")
+                                                $.each(res.rows, function (i, value) {
+                                                    selectOptions += "<option value='" + res.rows[i][fieldstr.selectFieldID] + "'>" + res.rows[i][selectField] + "</option>";
+                                                })
+                                                $(options.Modal).find("#" + fieldstr.field + "").append(selectOptions)
+                                                $(options.Modal).find("#" + fieldstr.field + "").selectpicker("refresh")
+                                                $(options.Modal).find("#" + fieldstr.field + "").selectpicker("render")
+                                                $(options.Modal).find("#" + fieldstr.field + "").selectpicker('val', rows[0][fieldstr.field])
+                                            }
+                                        })
+                                    }else if(fieldstr.selectTableName){
+                                        $.ajax({
+                                            url: "http://127.0.0.1:5000/CUID",
+                                            type: "get",
+                                            data: {
+                                                tableName: fieldstr.selectTableName,
+                                                limit: 100000000,
+                                                offset: 0
+                                            },
+                                            success: function (res) {
+                                                res = JSON.parse(res)
+                                                var selectOptions = ""
+                                                $(options.Modal).find("#" + fieldstr.field + "").html("")
+                                                $.each(res.rows, function (i, value) {
+                                                    selectOptions += "<option value='" + res.rows[i][fieldstr.selectFieldID] + "'>" + res.rows[i][selectField] + "</option>";
+                                                })
+                                                $(options.Modal).find("#" + fieldstr.field + "").append(selectOptions)
+                                                $(options.Modal).find("#" + fieldstr.field + "").selectpicker("refresh")
+                                                $(options.Modal).find("#" + fieldstr.field + "").selectpicker("render")
+                                                $(options.Modal).find("#" + fieldstr.field + "").selectpicker('val', rows[0][fieldstr.field])
+                                                if(fieldstr.selectLinkedFieldID){ //有selectLinkedFieldID属性就下拉时对其属性下拉框动态加载表字段
+                                                    //默认选中状态，给子下拉框添加数据
+                                                    var selectVal = $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("val")
+                                                    $.ajax({
+                                                        url:"http://127.0.0.1:5000/CUID",
+                                                        type:"get",
+                                                        data:{
+                                                            tableName:"FieldSet",
+                                                            field:"TableName",
+                                                            fieldvalue:selectVal,
+                                                            limit: 100000000,
+                                                            offset:0
+                                                        },
+                                                        success:function(res) {
+                                                            res = JSON.parse(res)
+                                                            var linkSelectOptions = ""
+                                                            $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").html("")
+                                                            $.each(res.rows,function(i,value){
+                                                                linkSelectOptions += "<option value='"+ res.rows[i][fieldstr.selectLinkedShowField] +"'>" + res.rows[i][fieldstr.selectLinkedShowField] + "</option>";
+                                                            })
+                                                            $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").append(linkSelectOptions)
+                                                            $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").selectpicker("refresh")
+                                                            $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").selectpicker("render")
+                                                            $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID + "").selectpicker('val', rows[0][fieldstr.selectLinkedFieldID])
+                                                        }
+                                                    })
+                                                    $(options.Modal).find("#"+ fieldstr.field +"").on("change",function(){
+                                                        selectVal = $(this).selectpicker("val")
+                                                        $.ajax({
+                                                            url:"http://127.0.0.1:5000/CUID",
+                                                            type:"get",
+                                                            data:{
+                                                                tableName:"FieldSet",
+                                                                field:"TableName",
+                                                                fieldvalue:selectVal,
+                                                                limit: 100000000,
+                                                                offset:0
+                                                            },
+                                                            success:function(res) {
+                                                                res = JSON.parse(res)
+                                                                var linkSelectOptions = ""
+                                                                $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").html("")
+                                                                $.each(res.rows,function(i,value){
+                                                                    linkSelectOptions += "<option value='"+ res.rows[i][fieldstr.selectLinkedShowField] +"'>" + res.rows[i][fieldstr.selectLinkedShowField] + "</option>";
+                                                                })
+                                                                $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").append(linkSelectOptions)
+                                                                $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").selectpicker("refresh")
+                                                                $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").selectpicker("render")
+                                                            }
+                                                        })
+                                                    })
+                                                }
+                                            }
+                                        })
+                                    }
                                 }
                             })
                         }
@@ -240,7 +442,7 @@
                                 $(options.Modal).find("input[name=" + fieldstr.field + "]").val(rows[0][fieldstr.field]);
                             } else if (fieldstr.type == "select") {
                                 var selectField = fieldstr.selectField
-                                if(!fieldstr.selectTableName) {
+                                if(fieldstr.selectUrl) {
                                     $.ajax({
                                         url:fieldstr.selectUrl,
                                         type: "get",
@@ -261,7 +463,7 @@
                                             $(options.Modal).find("#" + fieldstr.field + "").selectpicker('val', rows[0][fieldstr.field])
                                         }
                                     })
-                                }else{
+                                }else if(fieldstr.selectTableName){
                                     $.ajax({
                                         url: "http://127.0.0.1:5000/CUID",
                                         type: "get",
@@ -281,6 +483,58 @@
                                             $(options.Modal).find("#" + fieldstr.field + "").selectpicker("refresh")
                                             $(options.Modal).find("#" + fieldstr.field + "").selectpicker("render")
                                             $(options.Modal).find("#" + fieldstr.field + "").selectpicker('val', rows[0][fieldstr.field])
+                                            if(fieldstr.selectLinkedFieldID){ //有selectLinkedFieldID属性就下拉时对其属性下拉框动态加载表字段
+                                                //默认选中状态，给子下拉框添加数据
+                                                var selectVal = $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("val")
+                                                $.ajax({
+                                                    url:"http://127.0.0.1:5000/CUID",
+                                                    type:"get",
+                                                    data:{
+                                                        tableName:"FieldSet",
+                                                        field:"TableName",
+                                                        fieldvalue:selectVal,
+                                                        limit: 100000000,
+                                                        offset:0
+                                                    },
+                                                    success:function(res) {
+                                                        res = JSON.parse(res)
+                                                        var linkSelectOptions = ""
+                                                        $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").html("")
+                                                        $.each(res.rows,function(i,value){
+                                                            linkSelectOptions += "<option value='"+ res.rows[i][fieldstr.selectLinkedShowField] +"'>" + res.rows[i][fieldstr.selectLinkedShowField] + "</option>";
+                                                        })
+                                                        $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").append(linkSelectOptions)
+                                                        $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").selectpicker("refresh")
+                                                        $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").selectpicker("render")
+                                                        $(options.Modal).find("#" + fieldstr.selectLinkedFieldID + "").selectpicker('val', rows[0][fieldstr.selectLinkedFieldID])
+                                                    }
+                                                })
+                                                $(options.Modal).find("#"+ fieldstr.field +"").on("change",function(){
+                                                    selectVal = $(this).selectpicker("val")
+                                                    $.ajax({
+                                                        url:"http://127.0.0.1:5000/CUID",
+                                                        type:"get",
+                                                        data:{
+                                                            tableName:"FieldSet",
+                                                            field:"TableName",
+                                                            fieldvalue:selectVal,
+                                                            limit: 100000000,
+                                                            offset:0
+                                                        },
+                                                        success:function(res) {
+                                                            res = JSON.parse(res)
+                                                            var linkSelectOptions = ""
+                                                            $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").html("")
+                                                            $.each(res.rows,function(i,value){
+                                                                linkSelectOptions += "<option value='"+ res.rows[i][fieldstr.selectLinkedShowField] +"'>" + res.rows[i][fieldstr.selectLinkedShowField] + "</option>";
+                                                            })
+                                                            $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").append(linkSelectOptions)
+                                                            $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").selectpicker("refresh")
+                                                            $(options.Modal).find("#"+ fieldstr.selectLinkedFieldID +"").selectpicker("render")
+                                                        }
+                                                    })
+                                                })
+                                            }
                                         }
                                     })
                                 }

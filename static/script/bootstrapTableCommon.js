@@ -30,7 +30,7 @@
             },
             success: function (data) {
                 data = JSON.parse(data)
-                if(data.rows == []){
+                if(data.rows != []){
                     //是否在第一列显示复选框
                     if(data.rows[0].ISFirstCheckBox == "True"){
                         columns = [{checkbox: true}]
@@ -108,14 +108,16 @@
                     '</div>' +
                     '</div>'
                 var ModalfieldHtml = ""
-                if(data.rows == []) {
+                if(data.rows != []) {
                     $.each(data.rows, function (i, value) {
                         //生成列头对象
                         var columnsField = {}
+                        columnsField.ID = data.rows[i].ID
                         columnsField.field = data.rows[i].FieldName
                         columnsField.title = data.rows[i].TitleName
                         columnsField.inputType = data.rows[i].Edittype  //该字段输入类型
                         columnsField.DownTable = data.rows[i].Downtable //该字段下拉框加载的数据表
+                        columnsField.DownTableShowField = data.rows[i].Order //该字段下拉框数据表显示的字段
                         if (data.rows[i].Sortable == "True") {
                             columnsField.sortable = true
                             columnsField.order = "asc"
@@ -219,18 +221,17 @@
                                 url:"http://127.0.0.1:5000/CUID",
                                 type:"get",
                                 data:{
-                                    tableName:"FieldSet",
-                                    field:"TableName",
-                                    fieldvalue:columns[i].DownTable,
+                                    tableName:columns[i].DownTable,
                                     limit: 100000000,
                                     offset:0
                                 },
                                 success:function(res){
                                     res = JSON.parse(res)
+                                    var selectOptionsShowField = columns[i].DownTableShowField
                                     var selectOptions = ""
                                     $(ModalID).find("#"+ columns[i].field +"selectField").html("");
                                     $.each(res.rows,function(i,value){
-                                        selectOptions += "<option value='"+ res.rows[i].TitleName +"'>" + res.rows[i].TitleName + "</option>";
+                                        selectOptions += "<option value='"+ res.rows[i][selectOptionsShowField] +"'>" + res.rows[i][selectOptionsShowField] + "</option>";
                                     })
                                     $(ModalID).find("#"+ columns[i].field +"selectField").append(selectOptions)
                                     $(ModalID).find("#"+ columns[i].field +"selectField").selectpicker("refresh")
@@ -253,18 +254,17 @@
                             url:"http://127.0.0.1:5000/CUID",
                             type:"get",
                             data:{
-                                tableName:"FieldSet",
-                                field:"TableName",
-                                fieldvalue:columns[i].DownTable,
+                                tableName:columns[i].DownTable,
                                 limit: 100000000,
                                 offset:0
                             },
                             success:function(res){
                                 res = JSON.parse(res)
+                                var selectOptionsShowField = columns[i].DownTableShowField
                                 var selectOptions = ""
                                 $(ModalID).find("#"+ columns[i].field +"selectField").html("");
                                 $.each(res.rows,function(i,value){
-                                    selectOptions += "<option value='"+ res.rows[i].TitleName +"'>" + res.rows[i].TitleName + "</option>";
+                                    selectOptions += "<option value='"+ res.rows[i][selectOptionsShowField] +"'>" + res.rows[i][selectOptionsShowField] + "</option>";
                                 })
                                 $(ModalID).find("#"+ columns[i].field +"selectField").append(selectOptions)
                                 $(ModalID).find("#"+ columns[i].field +"selectField").selectpicker("refresh")
@@ -287,24 +287,24 @@
                             $(ModalID).modal('show')
                             $.each(columns, function (i, value) {
                                 if (columns[i].inputType == "输入框") {
+                                    $(ModalID).find("input[name=ID]").val(rows[0].ID);
                                     $(ModalID).find("input[name=" + columns[i].field + "]").val(rows[0][columns[i].field]);
                                 } else if (columns[i].inputType == "下拉框") {
                                     $.ajax({
                                         url: "http://127.0.0.1:5000/CUID",
                                         type: "get",
                                         data: {
-                                            tableName:"FieldSet",
-                                            field:"TableName",
-                                            fieldvalue:columns[i].DownTable,
+                                            tableName:columns[i].DownTable,
                                             limit: 100000000,
                                             offset: 0
                                         },
                                         success: function (res) {
                                             res = JSON.parse(res)
+                                            var selectOptionsShowField = columns[i].DownTableShowField
                                             var selectOptions = ""
                                             $(ModalID).find("#" + columns[i].field +"selectField").html("")
                                             $.each(res.rows, function (i, value) {
-                                                selectOptions += "<option value='" + res.rows[i].TitleName + "'>" + res.rows[i].TitleName + "</option>";
+                                                selectOptions += "<option value='" + res.rows[i][selectOptionsShowField] + "'>" + res.rows[i][selectOptionsShowField] + "</option>";
                                             })
                                             $(ModalID).find("#" + columns[i].field +"selectField").append(selectOptions)
                                             $(ModalID).find("#" + columns[i].field +"selectField").selectpicker("refresh")
@@ -328,24 +328,24 @@
                         $(ModalID).modal('show')
                         $.each(columns, function (i, value) {
                             if (columns[i].inputType == "输入框") {
+                                $(ModalID).find("input[name=ID]").val(rows[0].ID);
                                 $(ModalID).find("input[name=" + columns[i].field + "]").val(rows[0][columns[i].field]);
                             } else if (columns[i].inputType == "下拉框") {
                                 $.ajax({
                                     url: "http://127.0.0.1:5000/CUID",
                                     type: "get",
                                     data: {
-                                        tableName:"FieldSet",
-                                        field:"TableName",
-                                        fieldvalue:columns[i].DownTable,
+                                        tableName:columns[i].DownTable,
                                         limit: 100000000,
                                         offset: 0
                                     },
                                     success: function (res) {
                                         res = JSON.parse(res)
+                                        var selectOptionsShowField = columns[i].DownTableShowField
                                         var selectOptions = ""
                                         $(ModalID).find("#" + columns[i].field +"selectField").html("")
                                         $.each(res.rows, function (i, value) {
-                                            selectOptions += "<option value='" + res.rows[i].TitleName + "'>" + res.rows[i].TitleName + "</option>";
+                                            selectOptions += "<option value='" + res.rows[i][selectOptionsShowField] + "'>" + res.rows[i][selectOptionsShowField] + "</option>";
                                         })
                                         $(ModalID).find("#" + columns[i].field +"selectField").append(selectOptions)
                                         $(ModalID).find("#" + columns[i].field +"selectField").selectpicker("refresh")
@@ -425,6 +425,7 @@
             }
             var requestData = {} //请求参数的对象  获取表单内容
             requestData.tableName = options.tableName
+            requestData.ID = idVal
             $.each(columns,function(i,value){
                 if(columns[i].inputType == "输入框"){
                     requestData[columns[i].field] = $(ModalID).find("input[name="+ columns[i].field +"]").val();
