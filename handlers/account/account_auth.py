@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from dbset.log.BK2TLogger import logger
 from dbset.main.BSFramwork import AlchemyEncoder
-from models.SystemManagement.system import User, Role
+from models.SystemManagement.system import User
 from flask_login import login_required, logout_user, login_user,current_user,LoginManager
 from sqlalchemy.exc import InvalidRequestError
 from dbset.database.db_operate import db_session
