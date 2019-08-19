@@ -5,7 +5,6 @@ from flask import render_template,request,Blueprint
 from sqlalchemy import func
 from tools.common import insert,delete,update
 from dbset.database.db_operate import db_session
-from models.SystemManagement.system import Role
 from flask_login import current_user
 from dbset.log.BK2TLogger import logger,insertSyslog
 from dbset.main.BSFramwork import AlchemyEncoder

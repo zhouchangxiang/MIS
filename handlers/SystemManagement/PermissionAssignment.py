@@ -2,7 +2,7 @@ import json
 import re
 from flask import render_template,request,Blueprint,redirect,url_for
 from dbset.database.db_operate import db_session
-from models.SystemManagement.system import Role, User, Permission, ResourceMenus, ModulMenus
+from models.SystemManagement.system import User, Permission, ResourceMenus, ModulMenus
 from flask_login import current_user
 from dbset.log.BK2TLogger import logger,insertSyslog
 from dbset.main.BSFramwork import AlchemyEncoder

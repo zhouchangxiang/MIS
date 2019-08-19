@@ -1,7 +1,7 @@
 import json, string, re, datetime
 from flask import Blueprint, render_template, request
 from dbset.database.db_operate import db_session
-from models.SystemManagement.system import Organization,Role,User
+from models.SystemManagement.system import Organization,User
 from sqlalchemy import and_,desc
 from dbset.main.BSFramwork import AlchemyEncoder
 from dbset.log.BK2TLogger import logger,insertSyslog

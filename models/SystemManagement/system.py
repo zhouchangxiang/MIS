@@ -46,36 +46,6 @@ class SysLog(Base):
 	# 类型:
 	OperationType = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
 
-# 角色表
-class Role(Base):
-    __tablename__ = 'role'
-    # id:
-    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
-
-    # 角色编码:
-    RoleCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 角色顺序:
-    RoleSeq = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 角色名称:
-    RoleName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 角色说明:
-    Description = Column(Unicode(62), primary_key=False, autoincrement=False, nullable=True)
-
-    # 创建人:
-    CreatePerson = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 创建时间:
-    CreateDate = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
-
-    # 父节点
-    ParentNode = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
-
-    # # 查询权限
-    # menus = relationship("Menu", secondary=Role_Menu)
-
 # 用户表
 class User(Base):
     __tablename__ = 'user'
