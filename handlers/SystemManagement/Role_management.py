@@ -14,15 +14,15 @@ role_management = Blueprint('role_management', __name__, template_folder='templa
 # 工作台菜单role
 @role_management.route('/sysrole')
 def sysrole():
-    dataRoleInfo = []
-    roleNames = db_session.query(Role.ID, Role.RoleName).all()
-    for role in roleNames:
-        li = list(role)
-        id = li[0]
-        name = li[1]
-        roleName = {'RoleID': id, 'RoleName': name}
-        dataRoleInfo.append(roleName)
-    return render_template('./sysRole.html', RoleInfos=dataRoleInfo)
+    # dataRoleInfo = []
+    # roleNames = db_session.query(Role.ID, Role.RoleName).all()
+    # for role in roleNames:
+    #     li = list(role)
+    #     id = li[0]
+    #     name = li[1]
+    #     roleName = {'RoleID': id, 'RoleName': name}
+    #     dataRoleInfo.append(roleName)
+    return render_template('./sysRole.html') #RoleInfos=dataRoleInfo
 
 
 # role更新数据，通过传入的json数据，解析之后进行相应更新
