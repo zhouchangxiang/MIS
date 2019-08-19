@@ -72,29 +72,28 @@ class DepartmentManager(Base):
 	
 #DepartmentManager_END:
 
-
-<<<<<<< HEAD
 #MenuType_START:
 class MenuType(Base):
-	__tablename__ = "MenuType" 
-=======
-#Role_START:
-class Role(Base):
-	__tablename__ = "Role" 
->>>>>>> 3f776a865664135fc40e3e1a6c15cb2bc229d8eb
+	__tablename__ = "MenuType"
 	
 	#ID:
 	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
-	
-<<<<<<< HEAD
+
 	#类型名称:
 	TypeName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
 	
 	#类型编码:
 	TypeCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
+
 #MenuType_END:
-=======
+
+# Role_START:
+class Role(Base):
+	__tablename__ = "Role"
+
+	# ID:
+	ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
 	#角色编码:
 	RoleCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
 	
@@ -108,7 +107,6 @@ class Role(Base):
 	ParentNode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
 	
 #Role_END:
->>>>>>> 3f776a865664135fc40e3e1a6c15cb2bc229d8eb
 
 # 生成表单的执行语句_START
 Base.metadata.create_all(engine)
