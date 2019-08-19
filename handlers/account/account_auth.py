@@ -4,13 +4,13 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from dbset.log.BK2TLogger import logger
 from dbset.main.BSFramwork import AlchemyEncoder
-from models.SystemManagement.system import User
 from flask_login import login_required, logout_user, login_user,current_user,LoginManager
 from sqlalchemy.exc import InvalidRequestError
 from dbset.database.db_operate import db_session
 from PIL import Image, ImageFont, ImageDraw, ImageFilter
 import random
 from io import BytesIO
+from models.SystemManagement.core import User
 
 #flask_login的初始化
 login_manager = LoginManager()
@@ -30,7 +30,7 @@ def login():
         if request.method == 'GET':
             return render_template('./main/login.html')
         if request.method == 'POST':
-            form = LoginForm()
+            # form = LoginForm()
             # if session.get('image') != form.verify_code.data:
             #     error = '验证码错误'
             #     return render_template('./main/login.html', error=error)
@@ -50,6 +50,7 @@ def login():
             if user and (user.confirm_password(password) or user.Password == password):
                 login_user(user)  # login_user(user)调用user_loader()把用户设置到db_session中
                 # 查询用户当前菜单权限
+                print(request.session())
                 roles = db_session.query(User.RoleName).filter_by(WorkNumber=work_number).all()
                 # menus = []
                 # for role in roles:
@@ -82,13 +83,13 @@ def logout():
     # user.Status = "0"
     return redirect(url_for('login_auth.login'))
 
-from wtforms import StringField,SubmitField
-from wtforms.validators import Required, DataRequired
-
-from flask_wtf import FlaskForm
-class LoginForm(FlaskForm):
-    verify_code = StringField('验证码', validators=[DataRequired()])
-    submit = SubmitField('登录')
+# from wtforms import StringField,SubmitField
+# from wtforms.validators import Required, DataRequired
+#
+# from flask_wtf import FlaskForm
+# class LoginForm(FlaskForm):
+#     verify_code = StringField('验证码', validators=[DataRequired()])
+#     submit = SubmitField('登录')
 #
 # @login_auth.route('/login', methods=['GET', 'POST'])
 # def login():

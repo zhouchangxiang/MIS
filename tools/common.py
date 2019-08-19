@@ -4,7 +4,7 @@ from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import sessionmaker
 from flask_login import current_user
 import re
-from models.SystemManagement.system import Equipment,SysLog,User,Organization,Equipment,AuditTrace,QualityControlTree,\
+from models.SystemManagement.system import Equipment,SysLog,Organization,Equipment,AuditTrace,QualityControlTree,\
     BatchInfo,BatchInfoDetail,EletronicBatchDataStore,BatchType,BrandFlag,FlowConfirm,FieldSet,CreateTableSet,PageRoute,FlowConfirm
 from dbset.database.db_operate import GLOBAL_DATABASE_CONNECT_STRING
 from dbset.main.BSFramwork import AlchemyEncoder

@@ -7,7 +7,7 @@ from sqlalchemy import desc
 from dbset.database.db_operate import db_session,pool
 from dbset.main.BSFramwork import AlchemyEncoder
 from models.SystemManagement.system import BatchInfoDetail, EletronicBatchDataStore, Equipment, BatchType, \
-    ElectronicBatchTwo, BatchInfo, AuditTrace, BrandFlag, FlowConfirm, User
+    ElectronicBatchTwo, BatchInfo, AuditTrace, BrandFlag, FlowConfirm
 from dbset.log.BK2TLogger import logger,insertSyslog
 from flask_login import login_required, logout_user, login_user,current_user,LoginManager
 from tools.common import insert,delete,update
