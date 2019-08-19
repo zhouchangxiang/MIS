@@ -50,7 +50,10 @@ def login():
             if user and (user.confirm_password(password) or user.Password == password):
                 login_user(user)  # login_user(user)调用user_loader()把用户设置到db_session中
                 # 查询用户当前菜单权限
-                print(request.session())
+                # session["name"] = "python"
+                # session["mobile"] = "18612345678"
+                #
+                # print(request.session())
                 roles = db_session.query(User.RoleName).filter_by(WorkNumber=work_number).all()
                 # menus = []
                 # for role in roles:
