@@ -52,6 +52,8 @@ class Factory(Base):
 #Factory_END:
 
 
+
+
 #DepartmentManager_START:
 class DepartmentManager(Base):
 	__tablename__ = "DepartmentManager" 
@@ -60,7 +62,7 @@ class DepartmentManager(Base):
 	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
 	
 	#部门名称:
-	部门名称 = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	DepartName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
 	
 	#部门编码:
 	DepartCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
@@ -69,6 +71,22 @@ class DepartmentManager(Base):
 	DepartLoad = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
 	
 #DepartmentManager_END:
+
+
+#MenuType_START:
+class MenuType(Base):
+	__tablename__ = "MenuType" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#类型名称:
+	TypeName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#类型编码:
+	TypeCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+#MenuType_END:
 
 # 生成表单的执行语句_START
 Base.metadata.create_all(engine)

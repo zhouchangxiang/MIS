@@ -356,7 +356,6 @@ class MakeModel:
             str = data[1:-1].split(";")
             for i in str:
                 i = json.loads(i)
-                print(i["FieldName"])
                 tpl += self.makeGeneralKeyModel(i.get("comment"), i.get("FieldName"), i.get("type"),
                                                 i.get("primarykey"), i.get("autoincrement"), i.get("nullable"), i.get("length"))
 
