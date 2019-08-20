@@ -31,44 +31,15 @@ def login():
         if request.method == 'GET':
             return render_template('./main/login.html')
         if request.method == 'POST':
-            # form = LoginForm()
-            # if session.get('image') != form.verify_code.data:
-            #     error = '验证码错误'
-            #     return render_template('./main/login.html', error=error)
             data = request.values
             work_number = data.get('WorkNumber')
             password = data.get('password')
                 # 验证账户与密码
             user = db_session.query(User).filter_by(WorkNumber=work_number).first()
-            # print(current_user.is_anonymous)
-            # if not current_user.is_anonymous:
-            #     error = '该用户已在其他地方登陆，请确认退出后再进行操作！'
-            #     return render_template('./main/login.html', error=error)
-            # if user.Status is "1":
-            #     error = '该用户已在其他地方登陆，请确认退出后再进行操作！'
-            #     return render_template('./main/login.html', error=error)
-            aa = current_user
             if user and (user.confirm_password(password) or user.Password == password):
                 login_user(user)  # login_user(user)调用user_loader()把用户设置到db_session中
-                # 查询用户当前菜单权限\
-                aa = request.headers
-                bb = aa["COOKIE"]
-                t = str(time.time())
-                t = t.split(".")
-                nowTime = t[1]
-                session['session_id'] = nowTime
-                cc = session.get("session_id")
-                print(cc)
-                aa.__setattr__("session_id", nowTime)
-                print(aa)
-                # dd = session.keys().__getattribute__("_id")
-                # cc = session.get("key")
-                # print(aa["COOKIE"])
-                # print(request.headers.Cookie.session)
-                # session["name"] = "python"
-                # session["mobile"] = "18612345678"
-                #
-                # print(request.session())
+                user.session_id = str(time.time())
+                db_session.commit()
                 roles = db_session.query(User.RoleName).filter_by(WorkNumber=work_number).all()
                 # menus = []
                 # for role in roles:
@@ -86,6 +57,7 @@ def login():
             return render_template('./main/login.html', error=error)
     except Exception as e:
         print(e)
+        db_session.rollback()
         logger.error(e)
         return json.dumps([{"status": "Error:" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
 
