@@ -57,6 +57,7 @@ $(function () {
 	setCookie("jobNumber",jobNumber)
 	setCookie("sesseionid",sesseionid)
 	//事实匹配sessionid 新用户登录后踢掉上一个用户
+	var isLoaded = true;
 	function reqs() {
 		$.ajax({
 			url: 'http://127.0.0.1:5000/CUID',
@@ -72,6 +73,7 @@ $(function () {
 				res = JSON.parse(res)
 				var dataSesseionid = getCookie("sesseionid")
 				if(res.rows[0].session_id != dataSesseionid){
+					isLoaded = false;
 					bootbox.alert({
 						message: "您的账号已在其他设备登录，请重新登录",
 						callback: function () {
@@ -85,7 +87,11 @@ $(function () {
 			}
 		});
 	}
-	setInterval(reqs, 2000);
+	setInterval(function() {
+		if(isLoaded){
+			reqs();
+		}
+	}, 2000);
 
 	//右上角用户信息
 	$(".navHead-item").mouseover(function() {
