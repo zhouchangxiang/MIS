@@ -11,6 +11,7 @@ from PIL import Image, ImageFont, ImageDraw, ImageFilter
 import random
 from io import BytesIO
 from models.SystemManagement.core import User
+import time
 
 #flask_login的初始化
 login_manager = LoginManager()
@@ -49,7 +50,19 @@ def login():
             aa = current_user
             if user and (user.confirm_password(password) or user.Password == password):
                 login_user(user)  # login_user(user)调用user_loader()把用户设置到db_session中
-                # 查询用户当前菜单权限
+                # 查询用户当前菜单权限\
+                aa = request.headers
+                bb = aa["COOKIE"]
+                t = str(time.time())
+                t = t.split(".")
+                nowTime = t[1]
+                session['session_id'] = nowTime
+                aa = session.get("session_id")
+                print(aa)
+                # dd = session.keys().__getattribute__("_id")
+                # cc = session.get("key")
+                # print(aa["COOKIE"])
+                # print(request.headers.Cookie.session)
                 # session["name"] = "python"
                 # session["mobile"] = "18612345678"
                 #

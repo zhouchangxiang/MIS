@@ -56,7 +56,10 @@ def insert(data):
             ss = obj()
             for key in data:
                 if key != "ID" and key != "tableName":
-                    setattr(ss, key, data[key])
+                    if key == "Password":
+                        setattr(ss, key, ss.password(data[key]))
+                    else:
+                        setattr(ss, key, data[key])
             db_session.add(ss)
             aud = AuditTrace()
             aud.TableName = tableName
