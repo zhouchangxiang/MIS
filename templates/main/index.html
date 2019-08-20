@@ -82,29 +82,5 @@
     <script src="../../static/layui/layui.js"></script>
     <script src="../../static/script/base.js"></script>
     <script src="../../static/script/admin.js"></script>
-    <script>
-        $(function(){
-            //setCookie("name","张三")
-            $("#getCookie").on('click',function(){
-                console.log(getCookie("name"))
-            })
-            function setCookie(name,value,iDay){
-                var oDate=new Date();
-                    oDate.setDate(oDate.getDate()+iDay);
-                document.cookie=name+'='+value+';expires='+oDate;
-            }
-            function getCookie(key){
-                console.log(document.cookie)
-                var startIndex = document.cookie.indexOf(name); //开始索引
-                if (startIndex > -1) {
-                        var tempStr = document.cookie.substring(startIndex, document.cookie.length);
-                    var endIndex = tempStr.indexOf(";")//结束索引：第一个分号 索引
-                    var item = tempStr.substring(0, endIndex);
-                    return item.split("=")[1];
-                }
-                return "";
-            }
-        })
-    </script>
 </body>
 </html>

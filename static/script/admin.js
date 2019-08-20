@@ -57,20 +57,31 @@ $(function () {
 	setCookie("jobNumber",jobNumber)
 	setCookie("sesseionid",sesseionid)
 	//事实匹配sessionid 新用户登录后踢掉上一个用户
-	// function reqs() {
-	// 	$.ajax({
-	// 		url: 'demo.php',
-	// 		type: 'get',
-	// 		success: function(res) {
-	// 			console.log(res);
-	// 		},
-	// 		error: function() {
-	// 			bootbox.alert('请求sessionid失败');
-	// 		}
-	// 	});
-	// }
- 	// reqs()
-	// setInterval(reqs, 2000);
+	function reqs() {
+		$.ajax({
+			url: 'http://127.0.0.1:5000/CUID',
+			type: 'get',
+			data:{
+				tableName: 'User',
+				field: 'WorkNumber',
+				fieldvalue: jobNumber,
+				limit: 100000000,
+				offset: 0
+			},
+			success: function(res) {
+				res = JSON.parse(res)
+				console.log(res.rows[0].session_id)
+				if(res.rows[0].session_id != getCookie("sesseionid")){
+					//bootbox.alert('您的账号已在其他设备登录，请重新登录');
+					//window.location.href = "/account/logout"
+				}
+			},
+			error: function() {
+				bootbox.alert('请求sessionid失败');
+			}
+		});
+	}
+	setInterval(reqs, 5000);
 
 	//右上角用户信息
 	$(".navHead-item").mouseover(function() {
@@ -238,3 +249,20 @@ $(function () {
         })
 	});
 })
+//设置和获取cookie
+function setCookie(name,value,iDay){
+	var oDate=new Date();
+		oDate.setDate(oDate.getDate()+iDay);
+	document.cookie=name+'='+value+';expires='+oDate;
+}
+function getCookie(key){
+	console.log(document.cookie)
+	var startIndex = document.cookie.indexOf(name); //开始索引
+    if (startIndex > -1) {
+            var tempStr = document.cookie.substring(startIndex, document.cookie.length);
+        var endIndex = tempStr.indexOf(";")//结束索引：第一个分号 索引
+        var item = tempStr.substring(0, endIndex);
+        return item.split("=")[1];
+    }
+    return "";
+}
