@@ -72,8 +72,12 @@ $(function () {
 				res = JSON.parse(res)
 				console.log(res.rows[0].session_id)
 				if(res.rows[0].session_id != getCookie("sesseionid")){
-					//bootbox.alert('您的账号已在其他设备登录，请重新登录');
-					//window.location.href = "/account/logout"
+					bootbox.alert({
+						message: "您的账号已在其他设备登录，请重新登录",
+						callback: function () {
+							window.location.href = "/account/logout"
+						}
+					})
 				}
 			},
 			error: function() {
