@@ -51,7 +51,8 @@ def login():
                 # session['menus'] = menus
                 # user.Status = "1"
                 # db_session.commit()
-                return render_template('./main/index.html',WorkNumber=WorkNumber,Name=user.Name,session_id=str(time.time()))
+                use = db_session.query(User).filter_by(WorkNumber=WorkNumber).first()
+                return render_template('./main/index.html',WorkNumber=use.WorkNumber,Name=use.Name,session_id=use.session_id)
             # 认证失败返回登录页面
             error = '用户名或密码错误'
             return render_template('./main/login.html', error=error)
