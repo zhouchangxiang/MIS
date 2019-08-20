@@ -85,7 +85,7 @@ $(function () {
 			}
 		});
 	}
-	setInterval(reqs, 5000);
+	setInterval(reqs, 2000);
 
 	//右上角用户信息
 	$(".navHead-item").mouseover(function() {
