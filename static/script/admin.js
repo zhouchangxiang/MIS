@@ -70,9 +70,7 @@ $(function () {
 			},
 			success: function(res) {
 				res = JSON.parse(res)
-				console.log(res.rows[0].session_id)
 				var dataSesseionid = getCookie("sesseionid")
-				console.log(dataSesseionid)
 				if(res.rows[0].session_id != dataSesseionid){
 					bootbox.alert({
 						message: "您的账号已在其他设备登录，请重新登录",
