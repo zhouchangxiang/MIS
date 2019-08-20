@@ -51,6 +51,26 @@ $(function () {
 			}
 		})
 	})
+	//添加修改cookie 用户信息
+	var jobNumber = $("#userInfo").attr("data-job-number");
+	var sesseionid = $("#userInfo").attr("data-sesseionid");
+	setCookie("jobNumber",jobNumber)
+	setCookie("sesseionid",sesseionid)
+	//事实匹配sessionid 新用户登录后踢掉上一个用户
+	// function reqs() {
+	// 	$.ajax({
+	// 		url: 'demo.php',
+	// 		type: 'get',
+	// 		success: function(res) {
+	// 			console.log(res);
+	// 		},
+	// 		error: function() {
+	// 			bootbox.alert('请求sessionid失败');
+	// 		}
+	// 	});
+	// }
+ 	// reqs()
+	// setInterval(reqs, 2000);
 
 	//右上角用户信息
 	$(".navHead-item").mouseover(function() {

@@ -35,7 +35,7 @@
                     <div class="navLogo"><a href="/"><img src="../../static/images/logo.png" alt=""></a></div>
                     <ul class="navHead-riht">
                         <li class="navHead-item">
-                            <a href="javascript:;"><cite>系统管理员</cite><i class="glyphicon glyphicon-triangle-bottom icon-pull-right"></i></a>
+                            <a href="javascript:;" id="userInfo" data-job-number="{{ WorkNumber }}" data-sesseionid="{{ session_id }}"><cite>{{ Name }}</cite><i class="glyphicon glyphicon-triangle-bottom icon-pull-right"></i></a>
                             <div class="navUserPanel">
                                 <ul class="nav nav-pills nav-stacked">
                                     <li><a href="javascript:;" id="seeUserMessage">用户信息</a></li>
@@ -82,5 +82,29 @@
     <script src="../../static/layui/layui.js"></script>
     <script src="../../static/script/base.js"></script>
     <script src="../../static/script/admin.js"></script>
+    <script>
+        $(function(){
+            //setCookie("name","张三")
+            $("#getCookie").on('click',function(){
+                console.log(getCookie("name"))
+            })
+            function setCookie(name,value,iDay){
+                var oDate=new Date();
+                    oDate.setDate(oDate.getDate()+iDay);
+                document.cookie=name+'='+value+';expires='+oDate;
+            }
+            function getCookie(key){
+                console.log(document.cookie)
+                var startIndex = document.cookie.indexOf(name); //开始索引
+                if (startIndex > -1) {
+                        var tempStr = document.cookie.substring(startIndex, document.cookie.length);
+                    var endIndex = tempStr.indexOf(";")//结束索引：第一个分号 索引
+                    var item = tempStr.substring(0, endIndex);
+                    return item.split("=")[1];
+                }
+                return "";
+            }
+        })
+    </script>
 </body>
 </html>
