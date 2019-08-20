@@ -57,7 +57,9 @@ def login():
                 t = t.split(".")
                 nowTime = t[1]
                 session['session_id'] = nowTime
-                aa = session.get("session_id")
+                cc = session.get("session_id")
+                print(cc)
+                aa.__setattr__("session_id", nowTime)
                 print(aa)
                 # dd = session.keys().__getattribute__("_id")
                 # cc = session.get("key")
