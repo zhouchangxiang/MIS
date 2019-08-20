@@ -10,7 +10,7 @@ from flask_login import current_user
 user_manage = Blueprint('user_manage', __name__, template_folder='templates')
 
 # 用户管理
-@user_manage.route('/userpage')
+@user_manage.route('/user_manage/userpage')
 def userpage():
     # departments = db_session.query(Organization.ID, Organization.OrganizationName).all()
     # # print(departments)
