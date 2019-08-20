@@ -245,7 +245,6 @@
                 }
             }else{
                 $(ModalID).modal('show')
-                    console.log(columns)
                 $.each(columns,function(i,value){
                     //判断输入框类型  为下拉框 则动态添加数据
                     if(columns[i].inputType == "输入框"){
@@ -261,7 +260,6 @@
                             },
                             success:function(res){
                                 res = JSON.parse(res)
-                                console.log(res)
                                 var selectOptionsShowField = columns[i].DownTableShowField
                                 var selectOptions = ""
                                 $(ModalID).find("#"+ columns[i].field +"selectField").html("");
