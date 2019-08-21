@@ -127,7 +127,10 @@ def update(data):
             if oclass:
                 for key in data:
                     if hasattr(oclass, key) and key != 'ID' and key != 'tableName':
-                        setattr(oclass, key, data[key])
+                        if key == "Password":
+                            setattr(oclass, key, oclass.password(data[key]))
+                        else:
+                            setattr(oclass, key, data[key])
                 db_session.add(oclass)
                 aud = AuditTrace()
                 aud.TableName = tableName
