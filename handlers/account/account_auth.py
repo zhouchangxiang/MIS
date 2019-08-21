@@ -40,7 +40,7 @@ def login():
                 login_user(user)  # login_user(user)调用user_loader()把用户设置到db_session中
                 user.session_id = str(time.time())
                 db_session.commit()
-                roles = db_session.query(User.RoleName).filter_by(WorkNumber=WorkNumber).all()
+                # roles = db_session.query(User.RoleName).filter_by(WorkNumber=WorkNumber).all()
                 # menus = []
                 # for role in roles:
                 #     for index in role:
