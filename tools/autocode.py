@@ -352,7 +352,10 @@ class MakeModel:
             # tpl += self.makeDBNotes()
             # tpl += self.makeBaseModel()
             tpl += self.makeORMFrontModel(tableName)
-            tpl += self.makeGeneralKeyModel("ID", "ID", "Integer", "True", "True", "False", "")
+            if tableName == "User":
+                tpl += self.makeGeneralKeyModel("id", "id", "Integer", "True", "True", "False", "")
+            else:
+                tpl += self.makeGeneralKeyModel("ID", "ID", "Integer", "True", "True", "False", "")
             str = data[1:-1].split(";")
             for i in str:
                 i = json.loads(i)

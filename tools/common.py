@@ -127,6 +127,8 @@ def update(data):
                 oclass = db_session.query(obj).filter_by(id=int(data.get('id'))).first()
             else:
                 oclass = db_session.query(obj).filter_by(ID=int(data.get('ID'))).first()
+            print(oclass)
+            jsonoclass = json.dumps(oclass, cls=AlchemyEncoder, ensure_ascii=False)
             if oclass:
                 for key in data:
                     if hasattr(oclass, key) and key != 'ID' and key != 'tableName' and key != "id":

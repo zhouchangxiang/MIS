@@ -109,11 +109,13 @@ class Role(Base):
 #Role_END:
 
 
+
+
 #User_START:
 class User(Base):
 	__tablename__ = "User" 
 	
-	#ID:
+	#id:
 	id = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
 	
 	#用户名:
@@ -152,9 +154,6 @@ class User(Base):
 	#角色编码:
 	RoleCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
 
-	# session_ID:
-	session_id = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
 	# @property
 	# def password(self):
 	#     raise AttributeError('password is not a readable attribute')
@@ -183,7 +182,6 @@ class User(Base):
 
 	def get_id(self):
 		return str(self.id)  # python 3
-	
 #User_END:
 
 # 生成表单的执行语句_START
