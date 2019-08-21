@@ -87,6 +87,7 @@
             },
             success:function(data){
                 data = JSON.parse(data)
+                console.log(data)
                 var ModalHtml = '<div id="'+ options.tableName + "Modal" +'" class="modal fade">'+
                     '<div class="modal-dialog">' +
                     '<div class="modal-content">' +
@@ -97,9 +98,9 @@
                     '<div class="modal-body">' +
                     '<form class="form-horizontal" action="">' +
                     '<div class="form-group">' +
-                    '<label for="ID" class="col-sm-3 control-label">ID</label>' +
+                    '<label for="'+ options.primaryKey +'" class="col-sm-3 control-label">ID</label>' +
                     '<div class="col-sm-9">' +
-                    '<input type="text" class="form-control" name="ID" placeholder="" disabled="disabled">' +
+                    '<input type="text" class="form-control" name="'+ options.primaryKey +'" placeholder="" disabled="disabled">' +
                     '</div>' +
                     '</div>' +
                     '</form>' +
@@ -113,7 +114,7 @@
                     $.each(data.rows, function (i, value) {
                         //生成列头对象
                         var columnsField = {}
-                        columnsField.ID = data.rows[i].ID
+                        columnsField[options.primaryKey] = data.rows[i][options.primaryKey]
                         columnsField.field = data.rows[i].FieldName
                         columnsField.title = data.rows[i].TitleName
                         columnsField.inputType = data.rows[i].Edittype  //该字段输入类型
@@ -288,7 +289,7 @@
                             $(ModalID).modal('show')
                             $.each(columns, function (i, value) {
                                 if (columns[i].inputType == "输入框") {
-                                    $(ModalID).find("input[name=ID]").val(rows[0][options.primaryKey]);
+                                    $(ModalID).find('input[name='+ options.primaryKey +']').val(rows[0][options.primaryKey]);
                                     $(ModalID).find("input[name=" + columns[i].field + "]").val(rows[0][columns[i].field]);
                                 } else if (columns[i].inputType == "下拉框") {
                                     $.ajax({
@@ -329,7 +330,7 @@
                         $(ModalID).modal('show')
                         $.each(columns, function (i, value) {
                             if (columns[i].inputType == "输入框") {
-                                $(ModalID).find("input[name=ID]").val(rows[0][options.primaryKey]);
+                                $(ModalID).find('input[name='+ options.primaryKey +']').val(rows[0][options.primaryKey]);
                                 $(ModalID).find("input[name=" + columns[i].field + "]").val(rows[0][columns[i].field]);
                             } else if (columns[i].inputType == "下拉框") {
                                 $.ajax({
@@ -417,7 +418,7 @@
         })
         //保存按钮
         $(ModalID).on("click","[data-save-btn]",function(){
-            var idVal = $(ModalID).find("input[name=ID]").val();
+            var idVal = $(ModalID).find("input[name='+ options.primaryKey +']").val();
             var requestType = ""
             if (idVal.length >= 1){
                 requestType = "put"
