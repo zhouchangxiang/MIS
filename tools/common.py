@@ -55,7 +55,7 @@ def insert(data):
             obj = Base.classes.get(tableName)
             ss = obj()
             for key in data:
-                if key != "ID" and key != "tableName":
+                if key != "ID" and key != "tableName" and key != "id":
                     if key == "Password":
                         setattr(ss, key, ss.password(data[key]))
                     else:
@@ -123,10 +123,13 @@ def update(data):
             tableName = str(data.get("tableName"))
             obj = Base.classes.get(tableName)
             ss = obj()
-            oclass = db_session.query(obj).filter_by(ID=int(data.get('ID'))).first()
+            if tableName == "User":
+                oclass = db_session.query(obj).filter_by(id=int(data.get('id'))).first()
+            else:
+                oclass = db_session.query(obj).filter_by(ID=int(data.get('ID'))).first()
             if oclass:
                 for key in data:
-                    if hasattr(oclass, key) and key != 'ID' and key != 'tableName':
+                    if hasattr(oclass, key) and key != 'ID' and key != 'tableName' and key != "id":
                         if key == "Password":
                             setattr(oclass, key, oclass.password(data[key]))
                         else:
@@ -134,7 +137,7 @@ def update(data):
                 db_session.add(oclass)
                 aud = AuditTrace()
                 aud.TableName = tableName
-                aud.Operation = "用户："+current_user.Name+" 对表"+tableName+"的ID为："+str(oclass.ID)+"的数据做了更新操作:"+json.dumps(data.to_dict())
+                aud.Operation = "用户："+current_user.Name+" 对表"+tableName+"的数据："+json.dumps(oclass)+"的数据做了更新操作:"+json.dumps(data.to_dict())
                 aud.DeitalMSG = "用户："+current_user.Name+" 对表"+tableName+"做了更新操作！"+" 更新时间："+datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 aud.ReviseDate = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 aud.User = current_user.Name
