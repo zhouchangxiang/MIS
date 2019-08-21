@@ -19,6 +19,20 @@
         if(options.clickChildTableDom != ""){
             singleSelect = true
         }
+
+        //搜索字段框渲染
+        var columns = options.columns
+        var resfreshFieldSelectOptions = ""
+        $(options.toolbar).find(options.refreshDom).html("<option value=''>请选择列头搜索</option>")
+        $.each(columns,function(i,value){
+            if(columns[i].field){
+                resfreshFieldSelectOptions += "<option value='"+ columns[i].field +"'>" + columns[i].title + "</option>";
+            }
+        })
+        $(options.toolbar).find(options.refreshDom).append(resfreshFieldSelectOptions)
+        $(options.toolbar).find(options.refreshDom).selectpicker("refresh")
+        $(options.toolbar).find(options.refreshDom).selectpicker("render")
+        $(options.toolbar).find(options.refreshDom).selectpicker("val", columns[0].title); //赋默认值
         //表格渲染
         $this.bootstrapTable({
             url: "http://127.0.0.1:5000/CUID",
@@ -26,6 +40,8 @@
             queryParams:function(params){
                 return {
                     tableName: options.tableName,
+                    field: $(options.toolbar).find(options.refreshDom).selectpicker("val"),
+                    fieldvalue: $(options.toolbar).find(options.fieldvalue).val(),
                     limit : params.limit,
                     offset : parseInt(params.offset/params.limit)
                 };
@@ -58,19 +74,6 @@
                 }
             }
         })
-        //搜索字段框渲染
-        var columns = options.columns
-        var resfreshFieldSelectOptions = ""
-        $(options.toolbar).find(options.refreshDom).html("")
-        $.each(columns,function(i,value){
-            if(columns[i].field){
-                resfreshFieldSelectOptions += "<option value='"+ columns[i].field +"'>" + columns[i].title + "</option>";
-            }
-        })
-        $(options.toolbar).find(options.refreshDom).append(resfreshFieldSelectOptions)
-        $(options.toolbar).find(options.refreshDom).selectpicker("refresh")
-        $(options.toolbar).find(options.refreshDom).selectpicker("render")
-        $(options.toolbar).find(options.refreshDom).selectpicker("val", columns[0].title); //赋默认值
 
         //搜索按钮
         $(options.toolbar).on("click","[data-search-btn]",function(){
