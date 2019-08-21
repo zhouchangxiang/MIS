@@ -3,6 +3,7 @@
         var $this = $(this)
         var defaluts = {
             tableName: '', //表名
+            primaryKey:'ID', //主键
             parentTableID: '', //父表ID
             parentTableLinkField: '', //父表关联的字段
         };
@@ -287,7 +288,7 @@
                             $(ModalID).modal('show')
                             $.each(columns, function (i, value) {
                                 if (columns[i].inputType == "输入框") {
-                                    $(ModalID).find("input[name=ID]").val(rows[0].ID);
+                                    $(ModalID).find("input[name=ID]").val(rows[0][options.primaryKey]);
                                     $(ModalID).find("input[name=" + columns[i].field + "]").val(rows[0][columns[i].field]);
                                 } else if (columns[i].inputType == "下拉框") {
                                     $.ajax({
@@ -328,7 +329,7 @@
                         $(ModalID).modal('show')
                         $.each(columns, function (i, value) {
                             if (columns[i].inputType == "输入框") {
-                                $(ModalID).find("input[name=ID]").val(rows[0].ID);
+                                $(ModalID).find("input[name=ID]").val(rows[0][options.primaryKey]);
                                 $(ModalID).find("input[name=" + columns[i].field + "]").val(rows[0][columns[i].field]);
                             } else if (columns[i].inputType == "下拉框") {
                                 $.ajax({
@@ -381,7 +382,7 @@
                     callback: function (result) {
                         if(result){
                             for (var i = 0; i < rows.length; i++) {
-                                var obj=createKeyIDObj(parseInt(rows[i].ID));
+                                var obj=createKeyIDObj(parseInt(rows[i][options.primaryKey]));
                                 jsonarray.push(obj);
                             }
                             var a = JSON.stringify(jsonarray);
@@ -425,7 +426,7 @@
             }
             var requestData = {} //请求参数的对象  获取表单内容
             requestData.tableName = options.tableName
-            requestData.ID = idVal
+            requestData[options.primaryKey] = idVal
             $.each(columns,function(i,value){
                 if(columns[i].inputType == "输入框"){
                     requestData[columns[i].field] = $(ModalID).find("input[name="+ columns[i].field +"]").val();
