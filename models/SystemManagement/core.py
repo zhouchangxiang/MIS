@@ -154,6 +154,9 @@ class User(Base):
 	#角色编码:
 	RoleCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
 
+	# session_id:
+	session_id = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 	# @property
 	# def password(self):
 	#     raise AttributeError('password is not a readable attribute')
