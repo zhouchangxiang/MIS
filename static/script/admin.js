@@ -83,6 +83,7 @@ $(function () {
 				}
 			},
 			error: function() {
+				isLoaded = false;
 				bootbox.alert('请求sessionid失败');
 			}
 		});
