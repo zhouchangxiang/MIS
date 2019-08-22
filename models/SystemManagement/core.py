@@ -122,7 +122,7 @@ class User(Base):
 	Name = Column(Unicode(64), primary_key = False, autoincrement = False, nullable = True)
 	
 	#密码:
-	Password = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	Password = Column(Unicode(128), primary_key = False, autoincrement = False, nullable = True)
 	
 	#工号:
 	WorkNumber = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)

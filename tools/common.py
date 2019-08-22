@@ -12,6 +12,7 @@ from models.SystemManagement.system import SysLog
 from tools.MESLogger import MESLogger
 import socket
 import datetime
+from models.SystemManagement.core import User
 from models.SystemManagement.system import *
 
 engine = create_engine(GLOBAL_DATABASE_CONNECT_STRING, deprecate_large_types=True)
@@ -57,7 +58,7 @@ def insert(data):
             for key in data:
                 if key != "ID" and key != "tableName" and key != "id":
                     if key == "Password":
-                        setattr(ss, key, ss.password(data[key]))
+                        setattr(ss, key, generate_password_hash(data['Password']))
                     else:
                         setattr(ss, key, data[key])
             db_session.add(ss)
@@ -124,22 +125,20 @@ def update(data):
             obj = Base.classes.get(tableName)
             ss = obj()
             if tableName == "User":
-                oclass = db_session.query(obj).filter_by(id=int(data.get('id'))).first()
+                oclass = db_session.query(obj).filter_by(id=int(data.get('ID'))).first()
             else:
                 oclass = db_session.query(obj).filter_by(ID=int(data.get('ID'))).first()
-            print(oclass)
-            jsonoclass = json.dumps(oclass, cls=AlchemyEncoder, ensure_ascii=False)
             if oclass:
                 for key in data:
                     if hasattr(oclass, key) and key != 'ID' and key != 'tableName' and key != "id":
                         if key == "Password":
-                            setattr(oclass, key, oclass.password(data[key]))
+                            setattr(oclass, key, generate_password_hash(data['Password']))
                         else:
                             setattr(oclass, key, data[key])
                 db_session.add(oclass)
                 aud = AuditTrace()
                 aud.TableName = tableName
-                aud.Operation = "用户："+current_user.Name+" 对表"+tableName+"的数据："+json.dumps(oclass)+"的数据做了更新操作:"+json.dumps(data.to_dict())
+                aud.Operation = "用户："+current_user.Name+" 对表"+tableName+"ID为："+data.get('ID')+"的数据做了更新操作:"+json.dumps(data.to_dict())
                 aud.DeitalMSG = "用户："+current_user.Name+" 对表"+tableName+"做了更新操作！"+" 更新时间："+datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 aud.ReviseDate = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 aud.User = current_user.Name
