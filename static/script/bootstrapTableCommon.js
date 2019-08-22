@@ -384,7 +384,7 @@
                     callback: function (result) {
                         if(result){
                             for (var i = 0; i < rows.length; i++) {
-                                var obj=createKeyIDObj(parseInt(rows[i].ID));
+                                var obj=createKeyIDObj(parseInt(rows[i][options.primaryKey]));
                                 jsonarray.push(obj);
                             }
                             var a = JSON.stringify(jsonarray);
