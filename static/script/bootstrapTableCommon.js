@@ -3,7 +3,7 @@
         var $this = $(this)
         var defaluts = {
             tableName: '', //表名
-            //primaryKey:'ID', //主键
+            primaryKey:'ID', //主键
             parentTableID: '', //父表ID
             parentTableLinkField: '', //父表关联的字段
         };
@@ -290,7 +290,7 @@
                             $(ModalID).modal('show')
                             $.each(columns, function (i, value) {
                                 if (columns[i].inputType == "输入框") {
-                                    $(ModalID).find('input[name=ID]').val(rows[0].ID);
+                                    $(ModalID).find('input[name=ID]').val(rows[0][options.primaryKey]);
                                     $(ModalID).find("input[name=" + columns[i].field + "]").val(rows[0][columns[i].field]);
                                 } else if (columns[i].inputType == "下拉框") {
                                     $.ajax({
@@ -331,7 +331,7 @@
                         $(ModalID).modal('show')
                         $.each(columns, function (i, value) {
                             if (columns[i].inputType == "输入框") {
-                                $(ModalID).find('input[name=ID]').val(rows[0].ID);
+                                $(ModalID).find('input[name=ID]').val(rows[0][options.primaryKey]);
                                 $(ModalID).find("input[name=" + columns[i].field + "]").val(rows[0][columns[i].field]);
                             } else if (columns[i].inputType == "下拉框") {
                                 $.ajax({
