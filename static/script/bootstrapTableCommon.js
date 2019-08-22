@@ -3,7 +3,7 @@
         var $this = $(this)
         var defaluts = {
             tableName: '', //表名
-            primaryKey:'ID', //主键
+            //primaryKey:'ID', //主键
             parentTableID: '', //父表ID
             parentTableLinkField: '', //父表关联的字段
         };
@@ -87,7 +87,6 @@
             },
             success:function(data){
                 data = JSON.parse(data)
-                console.log(data)
                 var ModalHtml = '<div id="'+ options.tableName + "Modal" +'" class="modal fade">'+
                     '<div class="modal-dialog">' +
                     '<div class="modal-content">' +
@@ -98,9 +97,9 @@
                     '<div class="modal-body">' +
                     '<form class="form-horizontal" action="">' +
                     '<div class="form-group">' +
-                    '<label for="'+ options.primaryKey +'" class="col-sm-3 control-label">ID</label>' +
+                    '<label for="ID" class="col-sm-3 control-label">ID</label>' +
                     '<div class="col-sm-9">' +
-                    '<input type="text" class="form-control" name="'+ options.primaryKey +'" placeholder="" disabled="disabled">' +
+                    '<input type="text" class="form-control" name="ID" placeholder="" disabled="disabled">' +
                     '</div>' +
                     '</div>' +
                     '</form>' +
@@ -114,12 +113,13 @@
                     $.each(data.rows, function (i, value) {
                         //生成列头对象
                         var columnsField = {}
-                        columnsField[options.primaryKey] = data.rows[i][options.primaryKey]
+                        columnsField.ID = data.rows[i].ID
                         columnsField.field = data.rows[i].FieldName
                         columnsField.title = data.rows[i].TitleName
                         columnsField.inputType = data.rows[i].Edittype  //该字段输入类型
                         columnsField.DownTable = data.rows[i].Downtable //该字段下拉框加载的数据表
                         columnsField.DownTableShowField = data.rows[i].Order //该字段下拉框数据表显示的字段
+                        columnsField.Isedit = data.rows[i].Isedit //该字段下拉框数据表显示的字段
                         if (data.rows[i].Sortable == "True") {
                             columnsField.sortable = true
                             columnsField.order = "asc"
@@ -149,6 +149,7 @@
                             }
                         }
                     })
+                    console.log(columns)
                 }
                 $("body").prepend(ModalHtml)
                 $(ModalID).find(".form-horizontal").append(ModalfieldHtml)
@@ -289,7 +290,7 @@
                             $(ModalID).modal('show')
                             $.each(columns, function (i, value) {
                                 if (columns[i].inputType == "输入框") {
-                                    $(ModalID).find('input[name='+ options.primaryKey +']').val(rows[0][options.primaryKey]);
+                                    $(ModalID).find('input[name=ID]').val(rows[0].ID);
                                     $(ModalID).find("input[name=" + columns[i].field + "]").val(rows[0][columns[i].field]);
                                 } else if (columns[i].inputType == "下拉框") {
                                     $.ajax({
@@ -330,7 +331,7 @@
                         $(ModalID).modal('show')
                         $.each(columns, function (i, value) {
                             if (columns[i].inputType == "输入框") {
-                                $(ModalID).find('input[name='+ options.primaryKey +']').val(rows[0][options.primaryKey]);
+                                $(ModalID).find('input[name=ID]').val(rows[0].ID);
                                 $(ModalID).find("input[name=" + columns[i].field + "]").val(rows[0][columns[i].field]);
                             } else if (columns[i].inputType == "下拉框") {
                                 $.ajax({
@@ -383,7 +384,7 @@
                     callback: function (result) {
                         if(result){
                             for (var i = 0; i < rows.length; i++) {
-                                var obj=createKeyIDObj(parseInt(rows[i][options.primaryKey]));
+                                var obj=createKeyIDObj(parseInt(rows[i].ID));
                                 jsonarray.push(obj);
                             }
                             var a = JSON.stringify(jsonarray);
@@ -418,7 +419,7 @@
         })
         //保存按钮
         $(ModalID).on("click","[data-save-btn]",function(){
-            var idVal = $(ModalID).find("input[name='+ options.primaryKey +']").val();
+            var idVal = $(ModalID).find('input[name="ID"]').val();
             var requestType = ""
             if (idVal.length >= 1){
                 requestType = "put"
@@ -427,12 +428,14 @@
             }
             var requestData = {} //请求参数的对象  获取表单内容
             requestData.tableName = options.tableName
-            requestData[options.primaryKey] = idVal
+            requestData.ID = idVal
             $.each(columns,function(i,value){
-                if(columns[i].inputType == "输入框"){
-                    requestData[columns[i].field] = $(ModalID).find("input[name="+ columns[i].field +"]").val();
-                }else if(columns[i].inputType == "下拉框"){
-                    requestData[columns[i].field] = $(ModalID).find("#"+ columns[i].field +"selectField").selectpicker("val");
+                if(columns[i].Isedit == "True"){
+                    if(columns[i].inputType == "输入框"){
+                        requestData[columns[i].field] = $(ModalID).find("input[name="+ columns[i].field +"]").val();
+                    }else if(columns[i].inputType == "下拉框"){
+                        requestData[columns[i].field] = $(ModalID).find("#"+ columns[i].field +"selectField").selectpicker("val");
+                    }
                 }
             })
             //判断是否有主表关联，有的话就额外传参
