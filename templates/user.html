@@ -105,6 +105,7 @@
                     checkedNodes.ModulMenuCode = nodes[i].ModulMenuCode
                     data.push(checkedNodes)
                 })
+                data = JSON.stringify(data)
                 console.log(data)
                 $.ajax({
                     url:"/permission/PermissionsSave",
