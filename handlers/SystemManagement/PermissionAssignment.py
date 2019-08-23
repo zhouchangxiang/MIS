@@ -269,14 +269,12 @@ def SelectParentMenus():
 @permission_distribution.route('/permission/menulisttree')
 def menulisttree():
     if request.method == 'GET':
-        role_data = request.values
-        if 'id' not in role_data.keys():
-            try:
-                data = getMenuList(id=0)
-                jsondata = json.dumps(data, cls=AlchemyEncoder, ensure_ascii=False)
-                return jsondata.encode("utf8")
-            except Exception as e:
-                print(e)
-                logger.error(e)
-                insertSyslog("error", "加载菜单列表Error：" + str(e), current_user.Name)
-                return json.dumps([{"status": "Error:" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
+        try:
+            data = getMenuList(id=0)
+            jsondata = json.dumps(data, cls=AlchemyEncoder, ensure_ascii=False)
+            return jsondata.encode("utf8")
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "加载菜单列表Error：" + str(e), current_user.Name)
+            return json.dumps([{"status": "Error:" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
