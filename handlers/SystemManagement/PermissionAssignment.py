@@ -115,6 +115,9 @@ def getMenuList(id=0):
             if obj.ParentNode == id:
                     sz.append({"id": obj.ID,
                                "text": obj.ModulMenuName,
+                               "ModulMenuName":obj.ModulMenuName,
+                               "MenuType":obj.MenuType,
+                               "ModulMenuCode":obj.ModulMenuCode,
                                # "checked": trueOrFalse(obj, role_menus),
                                "children": getMenuList(obj.ID)})
         return sz
