@@ -107,16 +107,16 @@ def trueOrFalse(obj,role_menus):
     return False
 
 # 权限分配下的功能模块列表
-def getMenuList(role_menus, id=0):
+def getMenuList(id=0):
     sz = []
     try:
-        menus = db_session.query(Menu).filter_by(ParentNode=id).all()
+        menus = db_session.query(ModulMenus).filter_by(ParentNode=id).all()
         for obj in menus:
             if obj.ParentNode == id:
                     sz.append({"id": obj.ID,
-                               "text": obj.ModuleName,
-                               "checked": trueOrFalse(obj, role_menus),
-                               "children": getMenuList(role_menus, obj.ID)})
+                               "text": obj.ModulMenuName,
+                               # "checked": trueOrFalse(obj, role_menus),
+                               "children": getMenuList(obj.ID)})
         return sz
     except Exception as e:
         print(e)
@@ -264,3 +264,19 @@ def SelectParentMenus():
             logger.error(e)
             insertSyslog("error", "增加菜单父节点查询报错Error：" + str(e), current_user.Name)
             return json.dumps([{"status": "Error:" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
+
+# 加载菜单列表
+@permission_distribution.route('/permission/menulisttree')
+def menulisttree():
+    if request.method == 'GET':
+        role_data = request.values
+        if 'id' not in role_data.keys():
+            try:
+                data = getMenuList(id=0)
+                jsondata = json.dumps(data, cls=AlchemyEncoder, ensure_ascii=False)
+                return jsondata.encode("utf8")
+            except Exception as e:
+                print(e)
+                logger.error(e)
+                insertSyslog("error", "加载菜单列表Error：" + str(e), current_user.Name)
+                return json.dumps([{"status": "Error:" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
