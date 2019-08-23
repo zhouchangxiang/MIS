@@ -101,13 +101,13 @@ def userList():
                 insertSyslog("error", "通过点击角色查询用户报错Error：" + str(e), current_user.Name)
                 return json.dumps([{"status": "Error:" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
 
-def trueOrFalse(obj,role_menus):
-    if str(obj.ModuleName) in role_menus:
+def trueOrFalse(obj,user_menus):
+    if str(obj.ModulMenuName) in user_menus:
         return True
     return False
 
 # 权限分配下的功能模块列表
-def getMenuList(id=0):
+def getMenuList(user_menus, id=0):
     sz = []
     try:
         menus = db_session.query(ModulMenus).filter_by(ParentNode=id).all()
@@ -118,8 +118,8 @@ def getMenuList(id=0):
                                "ModulMenuName":obj.ModulMenuName,
                                "MenuType":obj.MenuType,
                                "ModulMenuCode":obj.ModulMenuCode,
-                               # "checked": trueOrFalse(obj, role_menus),
-                               "nodes": getMenuList(obj.ID)})
+                               "checked": trueOrFalse(obj, user_menus),
+                               "nodes": getMenuList(user_menus, obj.ID)})
         return sz
     except Exception as e:
         print(e)
@@ -273,7 +273,8 @@ def SelectParentMenus():
 def menulisttree():
     if request.method == 'GET':
         try:
-            data = getMenuList(id=0)
+            user_menus = []
+            data = getMenuList(user_menus, id=0)
             jsondata = json.dumps(data, cls=AlchemyEncoder, ensure_ascii=False)
             return jsondata.encode("utf8")
         except Exception as e:
