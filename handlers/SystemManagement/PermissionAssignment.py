@@ -269,7 +269,7 @@ def SelectParentMenus():
             return json.dumps([{"status": "Error:" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
 
 # 加载菜单列表
-@permission_distribution.route('/permission/menulisttree')
+@permission_distribution.route('/permission/menulisttree', methods=['POST', 'GET'])
 def menulisttree():
     if request.method == 'GET':
         try:
@@ -284,7 +284,7 @@ def menulisttree():
             return json.dumps([{"status": "Error:" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
 
 # 加载菜单列表
-@permission_distribution.route('/permission/PermissionsSave')
+@permission_distribution.route('/permission/PermissionsSave', methods=['POST', 'GET'])
 def PermissionsSave():
     if request.method == 'POST':
         data = request.values
