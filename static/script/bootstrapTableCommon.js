@@ -6,6 +6,7 @@
             primaryKey:'ID', //主键
             parentTableID: '', //父表ID
             parentTableLinkField: '', //父表关联的字段
+            toolbarBtnArr:[] //操作栏按钮
         };
         options = $.extend(defaluts, options);
         var ModalID = "#" + options.tableName + "Modal" //弹框dom
@@ -53,6 +54,10 @@
                     if(data.rows[0].IsDelete == "True"){
                         deletebtn = '<button type="button" class="btn btn-danger" data-delete-btn>删除</button>'
                     }
+                    var toolbarBtnHtml = ""
+                    $.each(options.toolbarBtnArr,function(i,value){
+                        toolbarBtnHtml += '<button type="button" class="btn btn-warning" id="'+ options.toolbarBtnArr[i].domID +'">'+ options.toolbarBtnArr[i].title +'</button>'
+                    })
                     toolbar = '<div id="'+ options.tableName + "toolbar" +'">' +
                         '<form class="form-inline">' +
                         '<div class="form-group">' +
@@ -66,6 +71,7 @@
                         addbtn + "&nbsp;" +
                         updatabtn + "&nbsp;" +
                         deletebtn + "&nbsp;" +
+                        toolbarBtnHtml + "&nbsp;" +
                         '</div>' +
                         '</form>' +
                         '</div>'
@@ -149,7 +155,6 @@
                             }
                         }
                     })
-                    console.log(columns)
                 }
                 $("body").prepend(ModalHtml)
                 $(ModalID).find(".form-horizontal").append(ModalfieldHtml)
