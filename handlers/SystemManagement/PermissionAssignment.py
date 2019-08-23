@@ -1,6 +1,8 @@
 import json
 import re
 from flask import render_template,request,Blueprint,redirect,url_for
+from flask_restful import reqparse
+
 from dbset.database.db_operate import db_session
 from models.SystemManagement.system import Permission, ResourceMenus, ModulMenus
 from flask_login import current_user
@@ -289,12 +291,22 @@ def PermissionsSave():
     if request.method == 'POST':
         data = request.values
         try:
-            json_str = json.dumps(data.to_dict())
-            if len(json_str) > 10:
+            datastr = json.loads(data.get("data"))
+            #删除之前的权限
+            perss = db_session.query(Permission).filter(Permission.WorkNumber == datastr[0].get("WorkNumber")).all()
+            for pe in perss:
+                db_session.delete(pe)
+            db_session.commit()
+            for i in datastr:
                 per = Permission()
+                per.MenuName = i.get("MenuName")
+                per.MenuType = i.get("MenuType")
+                per.MenuCode = i.get("MenuCode")
+                per.Name = i.get("Name")
+                per.WorkNumber = i.get("WorkNumber")
                 db_session.add(per)
-                db_session.commit()
-                return 'OK'
+            db_session.commit()
+            return 'OK'
         except Exception as e:
             db_session.rollback()
             print(e)
