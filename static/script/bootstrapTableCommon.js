@@ -412,6 +412,8 @@
                                             }, 2000);
                                         });
                                         $this.bootstrapTable('refresh');
+                                    } else {
+                                        bootbox.alert(data)
                                     }
                                 }
                             });

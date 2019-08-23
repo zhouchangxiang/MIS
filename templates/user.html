@@ -112,7 +112,20 @@
                     type:"post",
                     data:{data:data},
                     success:function(res){
-                        console.log(res)
+                        if(res == "OK"){
+                            var dialog = bootbox.dialog({
+                                message: '<p class="text-center mb-0"><i class="fa fa-spin fa-cog"></i>操作成功！</p>',
+                                closeButton: false
+                            });
+                            dialog.init(function(){
+                                setTimeout(function(){
+                                    dialog.modal('hide');
+                                }, 2000);
+                            });
+                            $("#tab").bootstrapTable('refresh');
+                        } else {
+                            bootbox.alert(data)
+                        }
                     }
                 })
             })
