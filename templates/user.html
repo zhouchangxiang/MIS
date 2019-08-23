@@ -75,7 +75,6 @@
                         url:"/permission/menulisttree",
                         type:"get",
                         success:function(res){
-                            console.log(res)
                             $('#treeview-checkable').treeview({
                                 data: res,
                                 showIcon: false,
@@ -95,24 +94,24 @@
             })
             $("#jurisdictionModal").on("click","[data-save-btn]",function(){
                 var nodes = $('#treeview-checkable').treeview("getChecked")
-                console.log(nodes)
+                var tableRows = $("#tab").bootstrapTable("getAllSelections")
+                var data = []
+                $.each(nodes,function(i,value){
+                    var checkedNodes = {}
+                    checkedNodes.Name = tableRows[0].Name
+                    checkedNodes.WorkNumber = tableRows[0].WorkNumber
+                    checkedNodes.MenuName = nodes[i].text
+                    checkedNodes.MenuType = nodes[i].MenuType
+                    checkedNodes.ModulMenuCode = nodes[i].ModulMenuCode
+                    data.push(checkedNodes)
+                })
+                console.log(data)
                 $.ajax({
                     url:"/permission/PermissionsSave",
-                    type:"get",
-                    data:nodes,
+                    type:"post",
+                    data:data,
                     success:function(res){
                         console.log(res)
-                        $('#treeview-checkable').treeview({
-                            data: res,
-                            showIcon: false,
-                            showCheckbox: true,
-                            onNodeChecked: function(event, node) {
-                                console.log(node)
-                            },
-                            onNodeUnchecked: function (event, node) {
-                                console.log(node)
-                            }
-                        });
                     }
                 })
             })
