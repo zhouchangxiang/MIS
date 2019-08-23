@@ -119,7 +119,7 @@ def getMenuList(id=0):
                                "MenuType":obj.MenuType,
                                "ModulMenuCode":obj.ModulMenuCode,
                                # "checked": trueOrFalse(obj, role_menus),
-                               "children": getMenuList(obj.ID)})
+                               "nodes": getMenuList(obj.ID)})
         return sz
     except Exception as e:
         print(e)
