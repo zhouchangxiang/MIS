@@ -80,10 +80,10 @@
                                 showIcon: false,
                                 showCheckbox: true,
                                 onNodeChecked: function(event, node) {
-                                    console.log(node)
+                                    //console.log(node)
                                 },
                                 onNodeUnchecked: function (event, node) {
-                                    console.log(node)
+                                    //console.log(node)
                                 }
                             });
                         }
@@ -106,7 +106,6 @@
                     data.push(checkedNodes)
                 })
                 data = JSON.stringify(data)
-                console.log(data)
                 $.ajax({
                     url:"/permission/PermissionsSave",
                     type:"post",
