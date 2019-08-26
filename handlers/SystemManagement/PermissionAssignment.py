@@ -104,9 +104,13 @@ def userList():
                 return json.dumps([{"status": "Error:" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
 
 def trueOrFalse(obj,user_menus):
+    dic = {}
     if str(obj.ModulMenuName) in user_menus:
-        return True
-    return False
+        dic["checked"] = True
+        return dic
+    else:
+        dic["checked"] = False
+    return dic
 
 # 权限分配下的功能模块列表
 def getMenuList(user_menus, id=0):
@@ -120,7 +124,7 @@ def getMenuList(user_menus, id=0):
                                "ModulMenuName":obj.ModulMenuName,
                                "MenuType":obj.MenuType,
                                "ModulMenuCode":obj.ModulMenuCode,
-                               "checked": trueOrFalse(obj, user_menus),
+                               "state":trueOrFalse(obj, user_menus),
                                "nodes": getMenuList(user_menus, obj.ID)})
         return sz
     except Exception as e:
