@@ -93,7 +93,7 @@ def delete(data):
             jsonnumber = re.findall(r"\d+\.?\d*", jsonstr)
             for key in jsonnumber:
                 try:
-                    sql = "delete from "+"[BK].[dbo].["+tableName+"] where ID = '"+key+"'"
+                    sql = "delete from "+"[DB_MICS].[dbo].["+tableName+"] where ID = '"+key+"'"
                     db_session.execute(sql)
                     aud = AuditTrace()
                     aud.TableName = tableName

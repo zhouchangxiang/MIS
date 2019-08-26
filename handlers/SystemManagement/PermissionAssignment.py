@@ -276,6 +276,9 @@ def menulisttree():
     if request.method == 'GET':
         try:
             user_menus = []
+            usermenus = db_session.query(Permission.MenuName).filter(Permission.WorkNumber == current_user.WorkNumber).all()
+            for menu in usermenus:
+                user_menus.append(menu[0])
             data = getMenuList(user_menus, id=0)
             jsondata = json.dumps(data, cls=AlchemyEncoder, ensure_ascii=False)
             return jsondata.encode("utf8")
