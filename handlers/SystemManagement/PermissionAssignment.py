@@ -330,11 +330,12 @@ def PermissionsMenus():
         data = request.values
         try:
             MenuName = data.get("MenuName")
+            MenuType = data.get("MenuType")
             if MenuName == None:
                 MenuNames = db_session.query(Permission.MenuName).filter(Permission.WorkNumber == current_user.WorkNumber).all()
             else:
                 ParentNode = db_session.query(ModulMenus.ID).filter(ModulMenus.ModulMenuName == MenuName).first()
-                pmenus = db_session.query(ModulMenus.ModulMenuName).filter(ModulMenus.ParentNode == ParentNode).all()
+                pmenus = db_session.query(ModulMenus.ModulMenuName).filter(ModulMenus.ParentNode == ParentNode,ModulMenus.MenuType == MenuType).all()
                 cmenus = db_session.query(Permission.MenuName).filter(Permission.WorkNumber == current_user.WorkNumber).all()
                 MenuNames = list(set(pmenus).intersection(set(cmenus)))
             dir = []
