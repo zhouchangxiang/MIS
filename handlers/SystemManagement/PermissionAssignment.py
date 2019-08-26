@@ -342,7 +342,7 @@ def PermissionsMenus():
             for mn in MenuNames:
                 meu = db_session.query(ModulMenus).filter(ModulMenus.ModulMenuName == mn).first()
                 dir.append(meu)
-            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
+            return json.dumps(dir.sort(key=(lambda x: x[0])), cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             db_session.rollback()
             print(e)
