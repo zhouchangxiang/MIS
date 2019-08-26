@@ -553,6 +553,9 @@ class FieldSet(Base):
     # 是否为空（默认True）:
     nullable = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+    # 列宽:
+    width = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 #是否
 class ISFlag(Base):
     __tablename__ = 'ISFlag'
