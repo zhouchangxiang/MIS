@@ -8,11 +8,10 @@ $(function () {
 		},
         success: function (res) {
             res = JSON.parse(res)
-        	console.log(res)
 			$(".sidebarLeftNav").html("")
 			var sidebarLeftNavHtml = ""
-			$.each(res.rows,function(i,value){
-				sidebarLeftNavHtml += '<li><a href="javascript:;" class="sidebarLeftItem" rel="'+ res.rows[i].ID +'" title="'+ res.rows[i].ModulMenuName +'"><span class="'+ res.rows[i].MenuLogo +'"></span></a></li>'
+			$.each(res,function(i,value){
+				sidebarLeftNavHtml += '<li><a href="javascript:;" class="sidebarLeftItem" rel="'+ res[i].ID +'" title="'+ res[i].ModulMenuName +'"><span class="'+ res[i].MenuLogo +'"></span></a></li>'
 			})
 			$(".sidebarLeftNav").append(sidebarLeftNavHtml)
 			$(".sidebarLeftNav li").eq(0).find("a").addClass("rootMenu").click()
@@ -33,8 +32,8 @@ $(function () {
 				console.log(res)
 				$(".sidebarRightNav").html("")
 				var sidebarRightNavHtml = ""
-				$.each(res.rows,function(i,value){
-					sidebarRightNavHtml += '<li><a href="javascript:;" lay-href="'+ res.rows[i].ModulMenuRoute +'" class="site-tab"><span>'+ res.rows[i].ModulMenuName +'</span></a></li>'
+				$.each(res,function(i,value){
+					sidebarRightNavHtml += '<li><a href="javascript:;" lay-href="'+ res[i].ModulMenuRoute +'" class="site-tab"><span>'+ res[i].ModulMenuName +'</span></a></li>'
 				})
 				$(".sidebarRightNav").append(sidebarRightNavHtml)
 			}
