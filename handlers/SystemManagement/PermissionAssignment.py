@@ -274,9 +274,11 @@ def SelectParentMenus():
 @permission_distribution.route('/permission/menulisttree', methods=['POST', 'GET'])
 def menulisttree():
     if request.method == 'GET':
+        data = request.values
         try:
+            WorkNumber = data.get("WorkNumber")
             user_menus = []
-            usermenus = db_session.query(Permission.MenuName).filter(Permission.WorkNumber == current_user.WorkNumber).all()
+            usermenus = db_session.query(Permission.MenuName).filter(Permission.WorkNumber == WorkNumber).all()
             for menu in usermenus:
                 user_menus.append(menu[0])
             data = getMenuList(user_menus, id=0)
