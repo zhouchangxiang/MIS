@@ -74,6 +74,9 @@
                     $.ajax({
                         url:"/permission/menulisttree",
                         type:"get",
+                        data:{
+                            WorkNumber:tableRows[0].WorkNumber
+                        },
                         success:function(res){
                             $('#treeview-checkable').treeview({
                                 data: res,
@@ -112,6 +115,7 @@
                     data:{data:data},
                     success:function(res){
                         if(res == "OK"){
+                            $("#jurisdictionModal").modal('hide')
                             var dialog = bootbox.dialog({
                                 message: '<p class="text-center mb-0"><i class="fa fa-spin fa-cog"></i>操作成功！</p>',
                                 closeButton: false
