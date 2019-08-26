@@ -1,17 +1,14 @@
 $(function () {
 	//获取主菜单导航内容
 	$.ajax({
-        url: 'http://127.0.0.1:5000/CUID',
+        url: '/permission/PermissionsMenus',
         method: 'get',
-        data: {
-            tableName: 'ModulMenus',
-			field: 'MenuType',
-            fieldvalue: '模块级',
-            limit: 100000000,
-            offset: 0
-        },
+		data:{
+        	MenuType: "模块级"
+		},
         success: function (res) {
             res = JSON.parse(res)
+        	console.log(res)
 			$(".sidebarLeftNav").html("")
 			var sidebarLeftNavHtml = ""
 			$.each(res.rows,function(i,value){
@@ -25,17 +22,15 @@ $(function () {
 		var navID = $(this).attr("rel")
 		var title = $(this).attr("title")
 		$.ajax({
-			url: 'http://127.0.0.1:5000/CUID',
+			url: '/permission/PermissionsMenus',
 			method: 'get',
 			data: {
-				tableName: 'ModulMenus',
-				field: 'ParentNode',
-				fieldvalue: navID,
-				limit: 100000000,
-				offset: 0
+				MenuType: "资源级",
+				MenuName:title
 			},
 			success: function (res) {
 				res = JSON.parse(res)
+				console.log(res)
 				$(".sidebarRightNav").html("")
 				var sidebarRightNavHtml = ""
 				$.each(res.rows,function(i,value){

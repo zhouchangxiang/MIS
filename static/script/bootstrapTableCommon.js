@@ -56,7 +56,7 @@
                     }
                     var toolbarBtnHtml = ""
                     $.each(options.toolbarBtnArr,function(i,value){
-                        toolbarBtnHtml += '<button type="button" class="btn btn-warning" id="'+ options.toolbarBtnArr[i].domID +'">'+ options.toolbarBtnArr[i].title +'</button>'
+                        toolbarBtnHtml += '<button type="button" class="btn btn-default" id="'+ options.toolbarBtnArr[i].domID +'">'+ options.toolbarBtnArr[i].title +'</button>'
                     })
                     toolbar = '<div id="'+ options.tableName + "toolbar" +'">' +
                         '<form class="form-inline">' +
@@ -121,7 +121,6 @@
                         var columnsField = {}
                         columnsField.ID = data.rows[i].ID
                         columnsField.field = data.rows[i].FieldName
-                        columnsField.width = data.rows[i].width
                         columnsField.title = data.rows[i].TitleName
                         columnsField.inputType = data.rows[i].Edittype  //该字段输入类型
                         columnsField.DownTable = data.rows[i].Downtable //该字段下拉框加载的数据表
