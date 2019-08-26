@@ -121,6 +121,7 @@
                         var columnsField = {}
                         columnsField.ID = data.rows[i].ID
                         columnsField.field = data.rows[i].FieldName
+                        columnsField.width = data.rows[i].width
                         columnsField.title = data.rows[i].TitleName
                         columnsField.inputType = data.rows[i].Edittype  //该字段输入类型
                         columnsField.DownTable = data.rows[i].Downtable //该字段下拉框加载的数据表

@@ -35,7 +35,7 @@
                     <div class="navLogo"><a href="/"><img src="../../static/images/logo.png" alt=""></a></div>
                     <ul class="navHead-riht">
                         <li class="navHead-item">
-                            <a href="javascript:;" id="userInfo" data-job-number="{{ WorkNumber }}" data-sesseionid="{{ session_id }}"><cite>{{ Name }}</cite><i class="glyphicon glyphicon-triangle-bottom icon-pull-right"></i></a>
+                            <a href="javascript:;" id="userInfo" data-job-number="{{ current_user['WorkNumber'] }}" data-sesseionid="{{ current_user['session_id'] }}"><cite>{{ current_user['Name'] }}</cite><i class="glyphicon glyphicon-triangle-bottom icon-pull-right"></i></a>
                             <div class="navUserPanel">
                                 <ul class="nav nav-pills nav-stacked">
                                     <li><a href="javascript:;" id="seeUserMessage">用户信息</a></li>
