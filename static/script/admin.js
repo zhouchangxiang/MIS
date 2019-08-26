@@ -29,7 +29,6 @@ $(function () {
 			},
 			success: function (res) {
 				res = JSON.parse(res)
-				console.log(res)
 				$(".sidebarRightNav").html("")
 				var sidebarRightNavHtml = ""
 				$.each(res,function(i,value){
