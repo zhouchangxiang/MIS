@@ -329,10 +329,17 @@ def PermissionsMenus():
     if request.method == 'GET':
         data = request.values
         try:
-            MenuNames = db_session.query(Permission.MenuName).filter(Permission.WorkNumber == current_user.WorkNumber).all()
+            MenuName = data.get("MenuName")
+            if MenuName == None:
+                MenuNames = db_session.query(Permission.MenuName).filter(Permission.WorkNumber == current_user.WorkNumber).all()
+            else:
+                ParentNode = db_session.query(ModulMenus.ID).filter(ModulMenus.ModulMenuName == MenuName).first()
+                pmenus = db_session.query(ModulMenus.ModulMenuName).filter(ModulMenus.ParentNode == ParentNode).all()
+                cmenus = db_session.query(Permission.MenuName).filter(Permission.WorkNumber == current_user.WorkNumber).all()
+                MenuNames = list(set(pmenus).intersection(set(cmenus)))
             dir = []
-            for menuName in MenuNames:
-                meu = db_session.query(ModulMenus).filter(ModulMenus.ModulMenuName == menuName).first()
+            for mn in MenuNames:
+                meu = db_session.query(ModulMenus).filter(ModulMenus.ModulMenuName == mn).first()
                 dir.append(meu)
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
