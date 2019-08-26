@@ -39,7 +39,7 @@ def insertSyslog(operationType, operationContent, userName):
             if userName == None: userName = ""
             ComputerName = socket.gethostname()
             db_session.add(
-                SysLog(OperationType=operationType, OperationContent=operationContent,OperationDate=datetime.now().strftime('%Y-%m-%d %H:%M:%S'), UserName=userName,
+                SysLog(OperationType=operationType, OperationContent=operationContent,OperationDate=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), UserName=userName,
                        ComputerName=ComputerName, IP=socket.gethostbyname(ComputerName)))
             db_session.commit()
         except Exception as e:
@@ -67,9 +67,9 @@ def insert(data):
             aud = AuditTrace()
             aud.TableName = tableName
             aud.Operation = "用户：" + current_user.Name + " 对表" + tableName + "添加一条数据:"+json.dumps(data.to_dict())
-            aud.DeitalMSG = "用户：" + current_user.Name + " 对表" + tableName + "添加一条数据！" + " 添加时间：" + datetime.now().strftime(
+            aud.DeitalMSG = "用户：" + current_user.Name + " 对表" + tableName + "添加一条数据！" + " 添加时间：" + datetime.datetime.now().strftime(
                 '%Y-%m-%d %H:%M:%S')
-            aud.ReviseDate = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            aud.ReviseDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             aud.User = current_user.Name
             db_session.add(aud)
             db_session.commit()
@@ -98,9 +98,9 @@ def delete(data):
                     aud = AuditTrace()
                     aud.TableName = tableName
                     aud.Operation = "用户：" + current_user.Name + " 对表" + tableName + "中的ID为"+key+"的数据做了删除操作！"
-                    aud.DeitalMSG = "用户：" + current_user.Name + " 对表" + tableName + "中的ID为"+key+"的数据做了删除操作！" + " 删除时间：" + datetime.now().strftime(
+                    aud.DeitalMSG = "用户：" + current_user.Name + " 对表" + tableName + "中的ID为"+key+"的数据做了删除操作！" + " 删除时间：" + datetime.datetime.now().strftime(
                         '%Y-%m-%d %H:%M:%S')
-                    aud.ReviseDate = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    aud.ReviseDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                     aud.User = current_user.Name
                     db_session.add(aud)
                     db_session.commit()
@@ -141,8 +141,8 @@ def update(data):
                 aud = AuditTrace()
                 aud.TableName = tableName
                 aud.Operation = "用户："+current_user.Name+" 对表"+tableName+"ID为："+data.get('ID')+"的数据做了更新操作:"+json.dumps(data.to_dict())
-                aud.DeitalMSG = "用户："+current_user.Name+" 对表"+tableName+"做了更新操作！"+" 更新时间："+datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                aud.ReviseDate = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                aud.DeitalMSG = "用户："+current_user.Name+" 对表"+tableName+"做了更新操作！"+" 更新时间："+datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                aud.ReviseDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 aud.User = current_user.Name
                 db_session.add(aud)
                 db_session.commit()
