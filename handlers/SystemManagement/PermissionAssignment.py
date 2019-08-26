@@ -332,7 +332,7 @@ def PermissionsMenus():
             MenuName = data.get("MenuName")
             MenuType = data.get("MenuType")
             if MenuName == None:
-                MenuNames = db_session.query(Permission.MenuName).filter(Permission.WorkNumber == current_user.WorkNumber).all()
+                MenuNames = db_session.query(Permission.MenuName).filter(Permission.WorkNumber == current_user.WorkNumber, Permission.MenuType == MenuType).all()
             else:
                 ParentNode = db_session.query(ModulMenus.ID).filter(ModulMenus.ModulMenuName == MenuName).first()
                 pmenus = db_session.query(ModulMenus.ModulMenuName).filter(ModulMenus.ParentNode == ParentNode,ModulMenus.MenuType == MenuType).all()
