@@ -322,3 +322,22 @@ def PermissionsSave():
             logger.error(e)
             insertSyslog("error", "添加用户报错Error：" + str(e), current_user.Name)
             return json.dumps([{"status": "Error:" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
+
+# 加载菜单列表
+@permission_distribution.route('/permission/PermissionsMenus', methods=['POST', 'GET'])
+def PermissionsMenus():
+    if request.method == 'GET':
+        data = request.values
+        try:
+            MenuNames = db_session.query(Permission.MenuName).filter(Permission.WorkNumber == current_user.WorkNumber).all()
+            dir = []
+            for menuName in MenuNames:
+                meu = db_session.query(ModulMenus).filter(ModulMenus.ModulMenuName == menuName).first()
+                dir.append(meu)
+            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            db_session.rollback()
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "添加用户报错Error：" + str(e), current_user.Name)
+            return json.dumps([{"status": "Error:" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
