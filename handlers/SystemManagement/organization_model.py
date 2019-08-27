@@ -15,6 +15,7 @@ from collections import Counter
 from dbset.log.BK2TLogger import logger,insertSyslog
 from tools.common import insert,delete,update
 from dbset.database.db_operate import db_session
+from models.SystemManagement.core import Factory, DepartmentManager, Role
 
 organiza = Blueprint('organiza', __name__, template_folder='templates')
 
@@ -120,3 +121,31 @@ def myenterprise():
             print(e)
             logger.error(e)
             return json.dumps([{"status": "Error：" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
+
+# 组织架构图
+@organiza.route('/organizationTU', methods=['POST', 'GET'])
+def organizationTU():
+    if request.method == 'GET':
+        data = request.values
+        try:
+            dic = []
+            facs = db_session.query(Factory).all()
+            for fa in facs:
+                deps = db_session.query(DepartmentManager).filter(DepartmentManager.DepartLoad == fa.FactoryName).all()
+                for dep in deps:
+                    die = []
+                    die.append(fa.FactoryName)
+                    die.append(dep.DepartName)
+                    dic.append(die)
+                    ros = db_session.query(Role).filter(Role.ParentNode == dep.DepartName).all()
+                    for ro in ros:
+                        dif = []
+                        dif.append(dep.DepartName)
+                        dif.append(ro.RoleName)
+                        dic.append(dif)
+            return json.dumps(dic, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "组织架构图报错Error：" + str(e), current_user.Name)
+            return json.dumps([{"status": "Error:" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
