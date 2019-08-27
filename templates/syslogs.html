@@ -3,8 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <title>系统日志</title>
+    <link rel="stylesheet" href="../static/style/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/style/bootstrap-table.min.css">
+    <link rel="stylesheet" href="../static/style/bootstrap-select.min.css">
+    <link rel="stylesheet" href="../static/style/base.css">
+    <script src="../static/script/jquery-3.3.1.min.js"></script>
+    <script src="../static/script/bootstrap.min.js"></script>
+    <script src="../static/script/bootstrap-table.min.js"></script>
+    <script src="../static/script/bootstrap-table-zh-CN.min.js"></script>
+    <script src="../static/script/bootstrap-select.min.js"></script>
+    <script src="../static/script/bootbox.min.js"></script>
+    <script src="../static/script/base.js"></script>
+    <script src="../static/script/bootstrapTableCommon.js"></script>
 </head>
 <body>
-
+    <div class="wrap">
+        <div id="logtoolbar">
+            <form class="form-inline">
+                <div class="form-group">
+                    <div class="input-group">
+                        <select id="logSearchField" class="selectpicker" data-live-search="true"></select>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" class="form-control" data-field-search-value>
+                    </div>
+                    <button type="button" class="btn btn-primary" data-search-btn>查询</button>
+                </div>
+            </form>
+        </div>
+        <table id="tab"></table>
+    </div>
+    <script>
+        $(function(){
+            var columns = [{
+                    field: 'Operation',
+                    title: '操作'
+                },{
+                    field: 'DeitalMSG',
+                    title: '详细信息'
+                },{
+                    field: 'ReviseDate',
+                    title: '修改日期'
+                },{
+                    field: 'TableName',
+                    title: '操作表'
+                },{
+                    field: 'User',
+                    title: '用户'
+                },{
+                    field: 'Other',
+                    title: '其他'
+                }]
+            //表格渲染
+            $("#tab").bootstrapTable('destroy').bootstrapTable({
+                url: "/AuditTraceSelect",
+                method: 'get',
+                queryParams:function(params){
+                    return {
+                        limit : params.limit,
+                        offset : parseInt(params.offset/params.limit)
+                    };
+                },
+                pagination: true,
+                toolbar:"#logtoolbar",
+                pageNumber:1,
+                pageSize: 10,
+                pageList: [10, 20, 30, 40, 50],
+                sidePagination: "server",
+                paginationLoop:false,
+                locale: "zh-CN",
+                striped: true,
+                showRefresh:true,
+                columns: columns,
+                responseHandler:function(res){
+                    res = JSON.parse(res)
+                    return res
+                }
+            })
+            //搜索字段框渲染
+            var resfreshFieldSelectOptions = ""
+            $("#logtoolbar").find("#logSearchField").html("<option value=''>请选择列头搜索</option>")
+            $.each(columns,function(i,value){
+                if(columns[i].field){
+                    resfreshFieldSelectOptions += "<option value='"+ columns[i].field +"'>" + columns[i].title + "</option>";
+                }
+            })
+            $("#logtoolbar").find("#logSearchField").append(resfreshFieldSelectOptions)
+            $("#logtoolbar").find("#logSearchField").selectpicker("refresh")
+            $("#logtoolbar").find("#logSearchField").selectpicker("render")
+            $("#logtoolbar").find("#logSearchField").selectpicker("val", ""); //赋默认值
+            //搜索按钮
+            $("#logtoolbar").on("click","[data-search-btn]",function(){
+                $("#tab").bootstrapTable('refresh',{
+                    query:{
+                        field: $("#logtoolbar").find("#logSearchField").selectpicker("val"),
+                        fieldvalue: $("#logtoolbar").find("[data-field-search-value]").val()
+                    }
+                });
+            })
+        })
+    </script>
 </body>
 </html>
