@@ -73,11 +73,6 @@
       e[b]);
    }
 })(jQuery, this);
-$(function(){
-    $(".selectpicker").selectpicker({
-        noneSelectedText: '' //默认显示内容
-    })
-})
 //根据key匹配id  加入数据
 function adddata(ids,res){
     $("#" + ids).html(res)
