@@ -643,6 +643,7 @@
                             }, 1000);
                         });
                         if(options.clickParentTableDom != ""){
+                            var clickParentTableValue = $(options.clickParentTableDom).bootstrapTable("getAllSelections")
                             $this.bootstrapTable('refresh',{
                                 query:{
                                     field: options.clickParentTableField,
