@@ -640,9 +640,18 @@
                         dialog.init(function(){
                             setTimeout(function(){
                                 dialog.modal('hide');
-                            }, 2000);
+                            }, 1000);
                         });
-                        $this.bootstrapTable('refresh');
+                        if(options.clickParentTableDom != ""){
+                            $this.bootstrapTable('refresh',{
+                                query:{
+                                    field: options.clickParentTableField,
+                                    fieldvalue: clickParentTableValue[0][options.clickParentTableField]
+                                }
+                            });
+                        }else{
+                            $this.bootstrapTable('refresh');
+                        }
                     } else {
                         bootbox.alert(data)
                     }

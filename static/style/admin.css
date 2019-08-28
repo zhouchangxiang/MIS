@@ -45,6 +45,7 @@
 .sidebarLeft{
     position: absolute;
     height:100%;
+    padding-bottom:60px;
     left: 0;
     top: 0;
     width: 60px;
@@ -81,6 +82,12 @@
 }
 #contentWrap .sidebarLeftBg a.rootMenu{
     background-color: #1678E1;
+}
+.version{
+    position: absolute;
+    bottom: 30px;
+    width: 100%;
+    text-align: center;
 }
 .sidebarRight{
     position: absolute;
