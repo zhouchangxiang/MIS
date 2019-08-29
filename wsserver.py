@@ -4,10 +4,11 @@ import socket
 import base64
 import hashlib
 import time
-
+from dbset.database.db_operate import db_session
 from flask import Flask
 from flask_restful import reqparse, abort, Api, Resource
-
+from models.SystemManagement.core import User
+from flask_login import current_user
 
 def get_headers(data):
     """
@@ -105,11 +106,15 @@ def run():
     # body = str(bytes_list, encoding='utf-8')
     icount = 0
     while True:
+        # session_id = db_session.query(User.session_id).filter(User.WorkNumber == current_user.WorkNumber).frist()
+        # if session_id:
+        #     session_id = session_id[0]
         bytes_list = ""
         icount = icount + 1
         strtmp = "My Websocket中文测试" + str(icount)
         # str(bytes_list.encode('utf-8').strip() + b"\n")
         # body = str(bytes_list, encoding='utf-8')
+        # print(session_id)
         bytemsg = bytes(strtmp, encoding="utf8")
         send_msg(conn, bytemsg)
         time.sleep(1)

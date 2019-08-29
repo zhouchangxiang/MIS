@@ -7,7 +7,7 @@ import re
 
 from werkzeug.security import generate_password_hash
 
-from models.SystemManagement.system import Equipment,SysLog,Organization,Equipment,AuditTrace,QualityControlTree,\
+from models.SystemManagement.system import SysLog,Organization,AuditTrace,QualityControlTree,\
     BatchInfo,BatchInfoDetail,EletronicBatchDataStore,BatchType,BrandFlag,FlowConfirm,FieldSet,CreateTableSet,PageRoute,FlowConfirm
 from dbset.database.db_operate import GLOBAL_DATABASE_CONNECT_STRING
 from dbset.main.BSFramwork import AlchemyEncoder
@@ -66,9 +66,8 @@ def insert(data):
             db_session.add(ss)
             aud = AuditTrace()
             aud.TableName = tableName
-            aud.Operation = "用户：" + current_user.Name + " 对表" + tableName + "添加一条数据:"+json.dumps(data.to_dict())
-            aud.DeitalMSG = "用户：" + current_user.Name + " 对表" + tableName + "添加一条数据！" + " 添加时间：" + datetime.datetime.now().strftime(
-                '%Y-%m-%d %H:%M:%S')
+            aud.Operation = current_user.Name + " 对表" + tableName + "添加一条数据:"
+            aud.DeitalMSG = "用户：" + current_user.Name + " 对表" + tableName + "添加一条数据！"+json.dumps(data.to_dict())
             aud.ReviseDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             aud.User = current_user.Name
             db_session.add(aud)
@@ -97,9 +96,8 @@ def delete(data):
                     db_session.execute(sql)
                     aud = AuditTrace()
                     aud.TableName = tableName
-                    aud.Operation = "用户：" + current_user.Name + " 对表" + tableName + "中的ID为"+key+"的数据做了删除操作！"
-                    aud.DeitalMSG = "用户：" + current_user.Name + " 对表" + tableName + "中的ID为"+key+"的数据做了删除操作！" + " 删除时间：" + datetime.datetime.now().strftime(
-                        '%Y-%m-%d %H:%M:%S')
+                    aud.Operation = current_user.Name + " 对表" + tableName + "中的ID为"+key+"的数据做了删除操作！"
+                    aud.DeitalMSG = "用户：" + current_user.Name + " 对表" + tableName + "中的ID为"+key+"的数据做了删除操作！"
                     aud.ReviseDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                     aud.User = current_user.Name
                     db_session.add(aud)
@@ -140,8 +138,8 @@ def update(data):
                 db_session.add(oclass)
                 aud = AuditTrace()
                 aud.TableName = tableName
-                aud.Operation = "用户："+current_user.Name+" 对表"+tableName+"ID为："+data.get('ID')+"的数据做了更新操作:"+json.dumps(data.to_dict())
-                aud.DeitalMSG = "用户："+current_user.Name+" 对表"+tableName+"做了更新操作！"+" 更新时间："+datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                aud.Operation =current_user.Name+" 对表"+tableName+"ID为："+data.get('ID')+"的数据做了更新操作:"+json.dumps(data.to_dict())
+                aud.DeitalMSG = "用户："+current_user.Name+" 对表"+tableName+"做了更新操作！"
                 aud.ReviseDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 aud.User = current_user.Name
                 db_session.add(aud)

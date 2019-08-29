@@ -14,7 +14,6 @@ from io import StringIO
 import calendar
 from dbset.main.BSFramwork import AlchemyEncoder
 from dbset.database import db_operate
-from models.SystemManagement.system import Equipment
 from dbset.log.BK2TLogger import logger,insertSyslog
 from tools.common import insert,delete,update
 from dbset.database.db_operate import db_session

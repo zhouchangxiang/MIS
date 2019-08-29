@@ -187,6 +187,191 @@ class User(Base):
 		return str(self.id)  # python 3
 #User_END:
 
+
+#Equipment_START:
+class Equipment(Base):
+	__tablename__ = "Equipment" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#设备编码:
+	EQPCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#设备名称:
+	EQPName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#设备状态:
+	Equipment_State = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#成本归属:
+	CostAttach = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#基本参数:
+	Equipment_Model = Column(Unicode(100), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采购日期:
+	Procurement_Date = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#工艺段:
+	PUID = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#备注说明:
+	Desc = Column(Unicode(100), primary_key = False, autoincrement = False, nullable = True)
+	
+#Equipment_END:
+
+
+#SpareStock_START:
+class SpareStock(Base):
+	__tablename__ = "SpareStock" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#备件编码:
+	SpareCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#备件名称:
+	SpareName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#备件状态:
+	SpareStatus = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#备件型号:
+	SpareModel = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#生产厂家:
+	SpareFactory = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#备件类型:
+	SpareType = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#备件功率:
+	SparePower = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#描述:
+	Description = Column(Unicode(120), primary_key = False, autoincrement = False, nullable = True)
+	
+	#备件使用状况:
+	StockUseStatus = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#生产日期:
+	ProductionDate = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#录入时间:
+	CreateDate = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#录入人:
+	InStockPeople = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#审核人:
+	CheckedPeople = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#审核时间:
+	CheckedDate = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#入库时间:
+	InStockDate = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+#SpareStock_END:
+
+
+#SpareTypeStore_START:
+class SpareTypeStore(Base):
+	__tablename__ = "SpareTypeStore" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#备件类型编码:
+	SpareTypeCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#备件类型名称:
+	SpareTypeName = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
+	
+	#父节点:
+	ParentNode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+#SpareTypeStore_END:
+
+
+#EquipmentReportingRecord_START:
+class EquipmentReportingRecord(Base):
+	__tablename__ = "EquipmentReportingRecord" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#设备维修计划单号:
+	FailureNumber = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#工序:
+	PUIDName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#故障时间:
+	FailureDate = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#早晚班:
+	Shift = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#设备名称:
+	EQPName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#故障描述:
+	FailureReportingDesc = Column(Unicode(120), primary_key = False, autoincrement = False, nullable = True)
+	
+	#原因分析:
+	AnalysisFailure = Column(Unicode(120), primary_key = False, autoincrement = False, nullable = True)
+	
+	#解决措施:
+	Precautions = Column(Unicode(100), primary_key = False, autoincrement = False, nullable = True)
+	
+	#不影响生产:
+	UnAffectingProduction = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#影响生产:
+	AffectingProduction = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#维修人:
+	Repairman = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#备件更换情况:
+	ReplacementOfSpareParts = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+#EquipmentReportingRecord_END:
+
+
+#EquipmentMaintenanceStore_START:
+class EquipmentMaintenanceStore(Base):
+	__tablename__ = "EquipmentMaintenanceStore" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#设备型号:
+	EquipmentType = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#设备名称:
+	EquipentName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#设备编号:
+	EquipmentNumber = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#操作内容:
+	Content = Column(Unicode(120), primary_key = False, autoincrement = False, nullable = True)
+	
+	#保养责任人:
+	PersonLiable = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#督导人:
+	SuperVisor = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#操作时间:
+	OperationDate = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+#EquipmentMaintenanceStore_END:
+
 # 生成表单的执行语句_START
 Base.metadata.create_all(engine)
 
