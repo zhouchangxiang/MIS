@@ -32,7 +32,7 @@
         $(options.toolbar).find(options.refreshDom).append(resfreshFieldSelectOptions)
         $(options.toolbar).find(options.refreshDom).selectpicker("refresh")
         $(options.toolbar).find(options.refreshDom).selectpicker("render")
-        $(options.toolbar).find(options.refreshDom).selectpicker("val", columns[0].title); //赋默认值
+        $(options.toolbar).find(options.refreshDom).selectpicker("val", ""); //赋默认值
         //表格渲染
         $this.bootstrapTable({
             url: "http://127.0.0.1:5000/CUID",
