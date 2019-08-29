@@ -14,7 +14,7 @@
     <script src="../static/script/bootstrap/bootstrap-select.min.js"></script>
     <script src="../static/script/bootstrap/bootbox.min.js"></script>
     <script src="../static/script/base.js"></script>
-    <script src="../static/script/bootstrapTableCommon.js"></script>
+    <script src="../static/script/config.js"></script>
 </head>
 <body>
     <div class="wrap">
@@ -25,7 +25,7 @@
                         <select id="logSearchField" class="selectpicker" data-live-search="true"></select>
                     </div>
                     <div class="input-group">
-                        <input type="text" class="form-control" data-field-search-value>
+                        <input type="text" class="form-control" id="FieldTypeSearchVal">
                     </div>
                     <button type="button" class="btn btn-primary" data-search-btn>查询</button>
                 </div>
@@ -35,7 +35,10 @@
     </div>
     <script>
         $(function(){
-            var columns = [{
+            $("#tab").tableRender({
+                tableName: 'AuditTrace',
+                toolbar: '#logtoolbar',
+                columns: [{
                     field: 'Operation',
                     title: '操作'
                 },{
@@ -53,53 +56,32 @@
                 },{
                     field: 'Other',
                     title: '其他'
+                }],
+                refreshDom:"#logSearchField",
+                fieldvalue: "#FieldTypeSearchVal",
+                Modal: '#FieldTypeModal',
+                ModalFieldStr: [{
+                    field:"ID",
+                    type:"text"
+                },{
+                    field: "Operation",
+                    type: "text"
+                },{
+                    field: "DeitalMSG",
+                    type: "text"
+                },{
+                    field: "ReviseDate",
+                    type: "text"
+                },{
+                    field: "TableName",
+                    type: "text"
+                },{
+                    field: "User",
+                    type: "text"
+                },{
+                    field: "Other",
+                    type: "text"
                 }]
-            //表格渲染
-            $("#tab").bootstrapTable('destroy').bootstrapTable({
-                url: "/AuditTraceSelect",
-                method: 'get',
-                queryParams:function(params){
-                    return {
-                        limit : params.limit,
-                        offset : parseInt(params.offset/params.limit)
-                    };
-                },
-                pagination: true,
-                toolbar:"#logtoolbar",
-                pageNumber:1,
-                pageSize: 10,
-                pageList: [10, 20, 30, 40, 50],
-                sidePagination: "server",
-                paginationLoop:false,
-                locale: "zh-CN",
-                striped: true,
-                showRefresh:true,
-                columns: columns,
-                responseHandler:function(res){
-                    res = JSON.parse(res)
-                    return res
-                }
-            })
-            //搜索字段框渲染
-            var resfreshFieldSelectOptions = ""
-            $("#logtoolbar").find("#logSearchField").html("<option value=''>请选择列头搜索</option>")
-            $.each(columns,function(i,value){
-                if(columns[i].field){
-                    resfreshFieldSelectOptions += "<option value='"+ columns[i].field +"'>" + columns[i].title + "</option>";
-                }
-            })
-            $("#logtoolbar").find("#logSearchField").append(resfreshFieldSelectOptions)
-            $("#logtoolbar").find("#logSearchField").selectpicker("refresh")
-            $("#logtoolbar").find("#logSearchField").selectpicker("render")
-            $("#logtoolbar").find("#logSearchField").selectpicker("val", ""); //赋默认值
-            //搜索按钮
-            $("#logtoolbar").on("click","[data-search-btn]",function(){
-                $("#tab").bootstrapTable('refresh',{
-                    query:{
-                        field: $("#logtoolbar").find("#logSearchField").selectpicker("val"),
-                        fieldvalue: $("#logtoolbar").find("[data-field-search-value]").val()
-                    }
-                });
             })
         })
     </script>
