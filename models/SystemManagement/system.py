@@ -177,10 +177,10 @@ class AuditTrace(Base):
     ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
 
     # 操作:
-    Operation = Column(Unicode(500), primary_key=False, autoincrement=False, nullable=True)
+    Operation = Column(Unicode(300), primary_key=False, autoincrement=False, nullable=True)
 
     # 详细信息:
-    DeitalMSG = Column(Unicode(200), primary_key=False, autoincrement=False, nullable=True)
+    DeitalMSG = Column(Unicode(800), primary_key=False, autoincrement=False, nullable=True)
 
     # 修改日期
     ReviseDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)

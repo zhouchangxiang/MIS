@@ -1,5 +1,5 @@
 import json
-from sqlalchemy import create_engine, and_
+from sqlalchemy import create_engine, and_, desc
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import sessionmaker
 from flask_login import current_user
@@ -66,7 +66,7 @@ def insert(data):
             db_session.add(ss)
             aud = AuditTrace()
             aud.TableName = tableName
-            aud.Operation = current_user.Name + " 对表" + tableName + "添加一条数据:"
+            aud.Operation = current_user.Name + " 对表" + tableName + "添加一条数据！"
             aud.DeitalMSG = "用户：" + current_user.Name + " 对表" + tableName + "添加一条数据！"+json.dumps(data.to_dict())
             aud.ReviseDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             aud.User = current_user.Name
@@ -173,10 +173,10 @@ def select(data):#table, page, rows, fieid, param
         newTable = Table(tableName, metadata, autoload=True, autoload_with=engine)
         if (param == "" or param == None):
             total = db_session.query(newTable).count()
-            oclass = db_session.query(newTable).all()[inipage:endpage]
+            oclass = db_session.query(newTable).order_by(desc("id")).all()[inipage:endpage]
         else:
             total = db_session.query(newTable).filter(newTable.columns._data[param].like("%"+paramvalue+"%")).count()
-            oclass = db_session.query(newTable).filter(newTable.columns._data[param].like("%"+paramvalue+"%")).all()[
+            oclass = db_session.query(newTable).filter(newTable.columns._data[param].like("%"+paramvalue+"%")).order_by(desc("id")).all()[
                      inipage:endpage]
         dir = []
         for i in oclass:

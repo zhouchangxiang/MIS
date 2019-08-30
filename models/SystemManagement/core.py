@@ -372,6 +372,25 @@ class EquipmentMaintenanceStore(Base):
 	
 #EquipmentMaintenanceStore_END:
 
+
+#plantCalendarScheduling_START:
+class plantCalendarScheduling(Base):
+	__tablename__ = "plantCalendarScheduling" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#颜色:
+	color = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#标题:
+	title = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#时间:
+	start = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = False)
+	
+#plantCalendarScheduling_END:
+
 # 生成表单的执行语句_START
 Base.metadata.create_all(engine)
 
