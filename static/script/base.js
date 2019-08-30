@@ -129,3 +129,9 @@ function myTimeformatter(date){
     var s = date.getSeconds()
     return Appendzero(y) + '-' + Appendzero(m) + '-' + Appendzero(d) + ' ' + Appendzero(h) + ':' + Appendzero(minutes) + ':' + Appendzero(s);
 }
+//封装id
+function createKeyIDObj(keyID){
+    return {
+        id:keyID
+    }
+}

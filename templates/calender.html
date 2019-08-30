@@ -135,6 +135,7 @@
                         data:{
                             tableName:"plantCalendarScheduling",
                             ID:event.ID,
+                            start:startDate
                         },
                         success: function (data) {
                             if(data == "OK"){
@@ -152,14 +153,14 @@
                     bootbox.confirm({
                         size: "small",
                         message: "确认删除",
-                        callback: function(result){ /* result is a boolean; true = OK, false = Cancel*/
+                        callback: function(result){
                             if(result){
                                 $.ajax({
                                     url: 'http://127.0.0.1:5000/CUID',
                                     type: 'DELETE',
                                     data:{
                                         tableName:"plantCalendarScheduling",
-                                        delete_data:a
+                                        delete_data:createKeyIDObj(event.ID)
                                     },
                                     success: function (data) {
                                         if(data == "OK"){
@@ -176,41 +177,7 @@
                     })
                 },
                 dayClick:function(date, allDay, jsEvent, view){
-                    var startDate = myformatter(date._d)
-                    $.ajax({
-                        url: "/SchedulingMaterialSearch",
-                        type: 'post',
-                        data:{
-                            SchedulingTime:startDate
-                        },
-                        success: function (data) {
-                            if(data != ""){
-                                bootbox.alert({
-                                    size: "small",
-                                    message: data,
-                                    buttons: {
-                                        ok: {
-                                            label: '知道了'
-                                        }
-                                    }
-                                })
-                            }else{
-                                bootbox.alert({
-                                    size: "small",
-                                    message: "暂无数据",
-                                    buttons: {
-                                        ok: {
-                                            label: '知道了'
-                                        }
-                                    }
-                                })
-                            }
-                        },
-                        error: function () {
-                            $("#loadingModal").modal('hide');
-                            bootbox.alert("获取物料时请求失败")
-                        }
-                     });
+
                 }
             });
         })
