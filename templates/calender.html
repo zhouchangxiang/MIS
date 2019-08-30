@@ -3,8 +3,217 @@
 <head>
     <meta charset="UTF-8">
     <title>工厂日历</title>
+    <link rel="stylesheet" href="../static/style/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/style/fullcalendar.min.css">
+    <link rel="stylesheet" href="../static/style/base.css">
+    <script src="../static/script/jquery-3.3.1.min.js"></script>
+    <script src="../static/script/jquery-ui.min.js"></script>
+    <script src="../static/script/bootstrap/bootstrap.min.js"></script>
+    <script src="../static/script/bootstrap/bootbox.min.js"></script>
+    <script src="../static/script/moment.min.js"></script>
+    <script src="../static/script/fullcalendar.min.js"></script>
+    <script src="../static/script/zh-cn.js"></script>
+    <script src="../static/script/base.js"></script>
+    <style>
+        #external-events {
+            padding: 10px;
+            background: #eee;
+            border-radius: 3px;
+        }
+        #external-events .fc-event {
+            margin: 10px 0;
+            cursor: pointer;
+        }
+        #external-events p {
+            margin: 1.5em 0;
+            font-size: 11px;
+            color: #666;
+        }
+        #external-events p input {
+            margin: 0;
+            vertical-align: middle;
+        }
+    </style>
 </head>
 <body>
-
+    <div class="wrap">
+        <div class="col-md-2 col-sm-2">
+            <div id='external-events'>
+                <h4>可拖放的日程</h4>
+                <a class='fc-event' style="background: #00c3db;border: 1px solid #00c3db;">维保</a>
+                <a class='fc-event' style="background: #f7d013;border: 1px solid #f7d013;">休息</a>
+                <a class='fc-event' style="background: #e73b3b;border: 1px solid #e73b3b;">其他</a>
+            </div>
+        </div>
+        <div class="col-md-10 col-sm-10">
+            <div id='calendar' style="width: 100%;"></div>
+        </div>
+    </div>
+    <script>
+        $(function(){
+            $('#external-events .fc-event').each(function() {
+                $(this).data('event', {
+                    title: $.trim($(this).text()), // 使用元素的文本作为事件标题
+                    stick: false // 拖动后不固定显示在日历上
+                });
+                // 使用jQuery UI使事件可拖动
+                $(this).draggable({
+                    zIndex: 999,
+                    revert: true,      // 是否会导致事件返回到它
+                    revertDuration: 0  //  拖动后的原始位置
+                });
+            });
+            $('#calendar').fullCalendar({
+                header:{
+                    right: 'prev,next today',
+                    center: 'title',
+                    left: 'month,agendaWeek,agendaDay,listMonth'
+                },
+                locale:'zh-cn',
+                editable: true, //支持拖动换位
+                navLinks: true, //是否可以单击日/周名称来导航视图
+                weekNumbers: true, //是否在日历中显示第几周
+                droppable: true, // 允许将事件放在日历上
+                height:560,
+                //初始化数据
+                events:function(start,end,timezone,callback){
+                    $.ajax({
+                        url: 'http://127.0.0.1:5000/CUID',
+                        type: 'get',
+                        data:{
+                            tableName: "plantCalendarScheduling",
+                            limit : 100000000,
+                            offset : 0
+                        },
+                        success: function (data) {
+                            data = JSON.parse(data)
+                            callback(data.rows);
+                        },
+                        error: function () {
+                            bootbox.alert("请求失败")
+                        }
+                     });
+                 },
+                drop: function(date, allDay) {
+                    var title = $(this).html()
+                    var color = ""
+                    if(title == "维保"){
+                        color = "#00c3db"
+                    }else if(title == "休息"){
+                        color = "#f7d013"
+                    }else if(title == "其他"){
+                        color = "#e73b3b"
+                    }
+                    var startDate = myDayformatter(date._d)
+                    $.ajax({
+                        url: 'http://127.0.0.1:5000/CUID',
+                        type: 'post',
+                        data:{
+                            tableName:"plantCalendarScheduling",
+                            title:title,
+                            start:startDate,
+                            color:color
+                        },
+                        success: function (data) {
+                            if(data == "OK"){
+                                $('#calendar').fullCalendar('refetchEvents');
+                            }else{
+                                bootbox.alert(data)
+                            }
+                        },
+                        error: function () {
+                            bootbox.alert("请求失败")
+                        }
+                     });
+                 },
+                //拖拽换位事件
+                eventDrop:function(event,dayDelta,minuteDelta,allDay,revertFund){
+                    var startDate = myDayformatter(event.start._d)
+                    $.ajax({
+                        url: 'http://127.0.0.1:5000/CUID',
+                        type: 'put',
+                        data:{
+                            tableName:"plantCalendarScheduling",
+                            ID:event.ID,
+                        },
+                        success: function (data) {
+                            if(data == "OK"){
+                                $('#calendar').fullCalendar('refetchEvents');
+                            }
+                        },
+                        error: function () {
+                            bootbox.alert("修改时请求失败")
+                        }
+                     });
+                },
+                //点击日程事件进行删除
+                eventClick:function(event){
+                    bootbox.setLocale("zh_CN");
+                    bootbox.confirm({
+                        size: "small",
+                        message: "确认删除",
+                        callback: function(result){ /* result is a boolean; true = OK, false = Cancel*/
+                            if(result){
+                                $.ajax({
+                                    url: 'http://127.0.0.1:5000/CUID',
+                                    type: 'DELETE',
+                                    data:{
+                                        tableName:"plantCalendarScheduling",
+                                        delete_data:a
+                                    },
+                                    success: function (data) {
+                                        if(data == "OK"){
+                                            $('#calendar').fullCalendar('refetchEvents');
+                                        }
+                                    },
+                                    error: function () {
+                                        $("#loadingModal").modal('hide');
+                                        bootbox.alert("删除时请求失败")
+                                    }
+                                 });
+                            }
+                        }
+                    })
+                },
+                dayClick:function(date, allDay, jsEvent, view){
+                    var startDate = myformatter(date._d)
+                    $.ajax({
+                        url: "/SchedulingMaterialSearch",
+                        type: 'post',
+                        data:{
+                            SchedulingTime:startDate
+                        },
+                        success: function (data) {
+                            if(data != ""){
+                                bootbox.alert({
+                                    size: "small",
+                                    message: data,
+                                    buttons: {
+                                        ok: {
+                                            label: '知道了'
+                                        }
+                                    }
+                                })
+                            }else{
+                                bootbox.alert({
+                                    size: "small",
+                                    message: "暂无数据",
+                                    buttons: {
+                                        ok: {
+                                            label: '知道了'
+                                        }
+                                    }
+                                })
+                            }
+                        },
+                        error: function () {
+                            $("#loadingModal").modal('hide');
+                            bootbox.alert("获取物料时请求失败")
+                        }
+                     });
+                }
+            });
+        })
+    </script>
 </body>
 </html>

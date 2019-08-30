@@ -102,6 +102,15 @@ function Appendzero(obj){
         return obj
     }
 }
+function myDayformatter(date){
+    var y = date.getFullYear();
+    var m = date.getMonth()+1;
+    var d = date.getDate();
+    var h = date.getHours()
+    var minutes = date.getMinutes()
+    var s = date.getSeconds()
+    return Appendzero(y) + '-' + Appendzero(m) + '-' + Appendzero(d);
+}
 function myformatter(date){
     var y = date.getFullYear();
     var m = date.getMonth()+1;

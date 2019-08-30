@@ -36,6 +36,8 @@ a:focus{text-decoration: none}
 }
 .wrap{
     padding: 15px;
+    clear: both;
+    overflow: hidden;
 }
 
 /*登录*/
