@@ -15,7 +15,9 @@
     width: 346px;
     height: 100%;
     box-shadow: 2px 0 5px 0 rgba(222,209,209,0.50);
-    z-index: 100;
+    z-index: 101;
+    transition: all .3s;
+    -webkit-transition: all .3s;
 }
 .contentRight{
     position: relative;
@@ -25,6 +27,8 @@
     margin-left: 346px;
     box-shadow: none;
     overflow: hidden;
+    transition: all .3s;
+    -webkit-transition: all .3s;
 }
 .contentRightB{
     height: 100%;
@@ -154,6 +158,17 @@
     cursor: pointer;
     z-index: 101;
 }
+.body-shade{
+    position: absolute;
+    display: none;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,.3);
+    z-index: 100;
+    cursor: pointer;
+}
 
 /*右上角信息*/
 .navHead{
@@ -178,6 +193,9 @@
     color: #15161A;
     font-size: 14px;
     float: right;
+}
+.flexibleCon{
+    display: none;
 }
 .navHead-item a{
     display: block;

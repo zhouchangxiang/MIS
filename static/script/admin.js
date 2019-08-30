@@ -154,9 +154,21 @@ $(function () {
       	}
 	})
 
-	//装选项卡内容的高度设置
 	$(window).resize(function () {
+		//装选项卡内容的高度设置
 		$(".layui-tab-content").css("height",$(document).innerHeight() - 104)
+
+		if($(window).width() <= 992) {
+			$(".contentLeft").css("left","-346px")
+			$(".contentRight").css("marginLeft","0")
+			$(".body-shade").css("display","none")
+			$(".flexibleCon").css("display","block")
+		}else{
+			$(".contentLeft").css("left","0")
+			$(".contentRight").css("marginLeft","346px")
+			$(".body-shade").css("display","none")
+			$(".flexibleCon").css("display","none")
+		}
 	}).resize();
 
 	//左右折叠导航
@@ -174,6 +186,20 @@ $(function () {
 			$(".sidebarMoveBtn").css({background:"#07488E",color:"#ffffff"})
 			$(".sidebarMoveBtn").find("i").removeClass("glyphicon-menu-right").addClass("glyphicon-menu-left")
 		}
+	})
+
+	//移动端展开菜单
+	$(".flexible").on('click',function(){
+		if($(".contentLeft").css("left") == "-346px"){
+			$(".contentLeft").css("left","0")
+			$(".contentRight").css("marginLeft","346px")
+			$(".body-shade").css("display","block")
+		}
+	})
+	$(".body-shade").on('click',function(){
+		$(".contentLeft").css("left","-346px")
+		$(".contentRight").css("marginLeft","0")
+		$(".body-shade").css("display","none")
 	})
 
 	var $body = $('body')
@@ -230,6 +256,11 @@ $(function () {
 	  	});
 		//导航菜单点击增加到tabs选项卡
 		$('.sidebarRightNav').on('click',".site-tab", function(){
+			if($(window).width() <= 992) {
+				$(".contentLeft").css("left","-346px")
+				$(".contentRight").css("marginLeft","0")
+				$(".body-shade").css("display","none")
+			}
 			$(this).addClass("site-tab-active").parent().siblings().find(".site-tab").removeClass("site-tab-active")
 			var url = $(this).attr('lay-href');
 			var title = $(this).find("span").html();
