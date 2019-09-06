@@ -6,15 +6,115 @@
     <link rel="stylesheet" href="../../static/style/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="../../static/style/bootstrap/bootstrap-table.min.css">
     <link rel="stylesheet" href="../../static/style/bootstrap/bootstrap-select.min.css">
+    <link rel="stylesheet" href="../../static/style/bootstrap/bootstrap-treeview.min.css">
     <link rel="stylesheet" href="../../static/style/base.css">
-    <script src="../../static/script/jquery-3.3.1.min.js"></script>
-    <script src="../../static/script/bootstrap/bootstrap.min.js"></script>
-    <script src="../../static/script/bootstrap/bootstrap-table.min.js"></script>
-    <script src="../../static/script/bootstrap/bootstrap-table-zh-CN.min.js"></script>
-    <script src="../../static/script/bootstrap/bootstrap-select.min.js"></script>
-    <script src="../../static/script/bootstrap/bootbox.min.js"></script>
-    <script src="../../static/script/config.js"></script>
-    <script src="../../static/script/base.js"></script>
+    <style type="text/css">
+        /************拖动/画流程图部分CSS************/
+        .draggable{
+            float: left;
+            width: 40px;
+            height: 30px;
+            margin-top: 3px;
+            margin-bottom:10px;
+            background: rgb(255,255,255);
+            text-align: center;
+            border:2px solid rgb(136,242,75);
+            font-size: 14px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            margin-right: 10px;
+         }
+        .draggable:hover{
+            cursor:pointer;
+        }
+        .droppable{
+            height: 700px;
+            margin-top: 0px;
+            padding-left: 0px;
+        }
+        .drop-active{
+            background: rgb(238,238,238);
+        }
+        /*圆角矩形*/
+        .roundedRect{
+            border-radius: 8px;
+        }
+        /*圆*/
+        .circle{
+            height: 30px;
+            width: 30px;
+            border-radius: 15px;
+            padding: 0px;
+
+        }
+        /*菱形*/
+        .rhombus{
+            padding: 0px;
+            width: 30px;
+            height: 30px;
+            margin-top: 12px;
+            margin-left: 18px;
+            font-size: 12px;
+            -webkit-transform-origin: 0 100%;
+            -moz-transform-origin: 0 100%;
+            -o-transform-origin: 0 100%;
+            -ms-transform-origin: 0 100%;
+            transform-origin: 0 100%;
+            -webkit-transform:rotate(-45deg);
+            -moz-transform:rotate(-45deg);
+            -o-transform:rotate(-45deg);
+            -ms-transform:rotate(-45deg);
+            transform:rotate(-45deg);
+        }
+        /*以下是创建新部件的时候改变的属性(和右侧工具栏的大小不同)*/
+        .new-circle{
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+        }
+        .new-rhombus{
+            width: 60px;
+            height: 60px;
+        }
+        .new-roundedRect,.new-rect{width: 120px;}
+        /*以上是创建新部件的时候改变的属性(和右侧工具栏的大小不同)*/
+        /******************右侧属性栏******************/
+        /*location|size|fill|shadow*/
+        .lo-xy-display{
+            margin-top: 28px;
+        }
+        .chart-location-form{border:none;}
+        .chart-fill-display{margin-top: 16px;}
+        .chart-shadow-display{margin-top: 10px;}
+        .chart-size-border-display{margin-top: 14px;}
+        .chart-fill-border-display{
+            margin-top: 16px;
+        }
+        .chart-fill-border-selector{
+            width: 144px;
+        }
+        /*font*/
+        #json-display-area{
+            min-width: 208px;
+            max-width: 208px;
+            bottom: 20px;
+            height: auto;
+            width: 208px;
+        }
+        /*颜色选择器的位置*/
+        .label-flag-color{
+
+        }
+        /*jsPlumb拖动事件*/
+        ._jsPlumb_drag_select * {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+    </style>
 </head>
 <body>
     <div class="configHeader">
@@ -30,6 +130,7 @@
                 <li role="presentation"><a href="#ISFlagconfig" aria-controls="ISFlagconfig" role="tab" data-toggle="tab">基本判断配置</a></li>
                 <li role="presentation"><a href="#InputTypeconfig" aria-controls="InputTypeconfig" role="tab" data-toggle="tab">输入类型和字段类型配置</a></li>
                 <li role="presentation"><a href="#databaseconfig" aria-controls="databaseconfig" role="tab" data-toggle="tab">数据库建表</a></li>
+                <li role="presentation"><a href="#workFlow" aria-controls="workFlow" role="tab" data-toggle="tab">业务流程搭建</a></li>
             </ul>
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane active" id="pageconfig">
@@ -619,9 +720,285 @@
                     </div>
                     <table id="FieldSetTab"></table>
                 </div>
+                <div role="tabpanel" class="tab-pane" id="workFlow">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <ul class="nav nav-pills" style="background: rgb(228,226,227)">
+                                <li role="presentation" class="dropdown"><a href="javascript:;" id="new-box">新部件</a></li>
+                                <li role="presentation" class="dropdown">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                      线条<span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <div class="chart-list chart-stylex">
+                                          <h4 class="top-menu-selector" id="line-Straight">直线</h4>
+                                          <h4 class="top-menu-selector" id="line-Bezier">曲线</h4>
+                                          <h4 class="top-menu-selector" id="line-Flowchart">流程线</h4>
+                                        </div>
+                                    </ul>
+                                </li>
+                                <li role="presentation" class="dropdown">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                      对齐<span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <div class="chart-list chart-stylex">
+                                          <h4 class="top-menu-selector" id="align-left">居左</h4>
+                                          <h4 class="top-menu-selector" id="align-center">居中</h4>
+                                          <h4 class="top-menu-selector" id="align-right">居右</h4>
+                                        </div>
+                                    </ul>
+                                </li>
+                                <li role="presentation" class="dropdown"><a href="javascript:;" id="chart-save">保存</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div id="chart-container" class="chart-design droppable"></div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="panel-group" id="shoufengqing">
+                                <div class="panel panel-default">
+                                    <div data-parent="#shoufengqing" data-toggle="collapse" data-target="#div1" class="panel-heading">
+                                        <h3 class="panel-title">图形</h3>
+                                    </div>
+                                    <div id="div1" class="collapse in">
+                                        <div class="panel-body">
+                                            <div class="list-content">
+                                                <div class="area">
+                                                    <div class="draggable" id="rect">文本</div>
+                                                    <div class="draggable roundedRect" id="roundedRect">文本</div>
+                                                    <div class="draggable circle" id="circle">文本</div>
+                                                    <div class="draggable rhombus" id="rhombus">文本</div>
+                                                </div>
+                                          </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div data-parent="#shoufengqing" data-toggle="collapse" data-target="#div2" class="panel-heading">
+                                        <h3 class="panel-title">位置</h3>
+                                    </div>
+                                    <div id="div2" class="collapse">
+                                        <div class="panel-body">
+                                            <div class="list-content">
+                                                <div class="lo-xy-display">
+                                                  <label>顶边:</label><input id="lo-x-display" type="text" class="chart-location-form" value="0" width="40">
+                                                  <p></p>
+                                                  <label>左边:</label><input id="lo-y-display" type="text" class="chart-location-form" value="0" width="40">
+                                                </div>
+                                              </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div data-parent="#shoufengqing" data-toggle="collapse" data-target="#div3" class="panel-heading">
+                                        <h3 class="panel-title">尺寸</h3>
+                                    </div>
+                                    <div id="div3" class="collapse">
+                                        <div class="panel-body">
+                                            <div class="list-content">
+                                                <div class="lo-xy-display chart-size-border-display">
+                                                  <label>宽度:</label><input id="chart-width-display" type="number" class="chart-location-form" value="0" width="40">
+                                                  <p></p>
+                                                  <label>高度:</label><input id="chart-height-display" type="number" class="chart-location-form" value="0" width="40">
+                                                  <p></p>
+                                                  <label>圆角:</label><input id="chart-border-display" type="number" class="chart-location-form" value="0" width="40">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div data-parent="#shoufengqing" data-toggle="collapse" data-target="#div4" class="panel-heading">
+                                        <h3 class="panel-title">填充</h3>
+                                    </div>
+                                    <div id="div4" class="collapse">
+                                        <div class="panel-body">
+                                            <div class="list-content">
+                                                <div class="lo-xy-display chart-fill-display">
+                                                  <label>填充色:</label><input id="chart-background-color-display" type="color" class="chart-location-form" value="0" width="40">
+                                                  <p></p>
+                                                  <label>渐近:</label><input id="chart-blur-range-display" type="range" class="chart-location-form" value="0" max="50" min="0" width="40">
+                                                  <p></p>
+                                                  <label class="label-flag-color">渐近色:</label><input id="chart-fill-blur-color-display" type="color" class="chart-location-form" value="0" width="40">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div data-parent="#shoufengqing" data-toggle="collapse" data-target="#div5" class="panel-heading">
+                                        <h3 class="panel-title">线框</h3>
+                                    </div>
+                                    <div id="div5" class="collapse">
+                                        <div class="panel-body">
+                                            <div class="list-content">
+                                                <div class="lo-xy-display chart-fill-border-display">
+                                                  <label>样式:</label>
+                                                  <select class="chart-fill-border-selector">
+                                                    <option value="none">无线框</option>
+                                                    <option value="solid">实线框</option>
+                                                    <option value="dashed">虚线框</option>
+                                                    <option value="dotted">点线框</option>
+                                                    <option value="double">双线框</option>
+                                                  </select>
+                                                  <p></p>
+                                                  <label>线粗:</label><input id="chart-fill-border-width-display" type="number" class="chart-location-form" value="0" width="40">
+                                                  <p></p>
+                                                  <label>线颜色:</label><input id="chart-fill-border-color-display" type="color" class="chart-location-form" value="0" width="40">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div data-parent="#shoufengqing" data-toggle="collapse" data-target="#div6" class="panel-heading">
+                                        <h3 class="panel-title">阴影</h3>
+                                    </div>
+                                    <div id="div6" class="collapse">
+                                        <div class="panel-body">
+                                            <div class="list-content">
+                                                <div class="lo-xy-display chart-shadow-display">
+                                                  <label>水平阴影:</label><input id="chart-h-shadow-display" type="range" class="chart-location-form" value="0" width="40" min="-100" max="100">
+                                                  <p></p>
+                                                  <label>垂直阴影:</label><input id="chart-v-shadow-display" type="range" class="chart-location-form" value="0" width="40" min="-100" max="100">
+                                                  <p></p>
+                                                  <label>模糊距离:</label><input id="chart-shadow-blur-display" type="range" class="chart-location-form" value="0" width="40" min="-100" max="100">
+                                                  <p></p>
+                                                  <label>阴影尺寸:</label><input id="chart-shadow-spread-display" type="range" class="chart-location-form" value="0" width="40" min="-100" max="100">
+                                                  <p></p>
+                                                  <label>阴影颜色:</label><input id="chart-shadow-color-display" type="color" class="chart-location-form" value="0" width="40" min="-100" max="100">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div data-parent="#shoufengqing" data-toggle="collapse" data-target="#div7" class="panel-heading">
+                                        <h3 class="panel-title">字体</h3>
+                                    </div>
+                                    <div id="div7" class="collapse">
+                                        <div class="panel-body">
+                                            <div class="list-content">
+                                                <div class="chart-font-display">
+                                                    <label>字体名称:</label><input id="chart-font-display" type="text" class="chart-location-form" value="微软雅黑" width="40">
+                                                    <p></p>
+                                                    <label>字体大小:</label><input id="chart-font-size-display" type="number" class="chart-location-form" value="14" width="40">
+                                                    <p></p>
+                                                    <label>字体颜色:</label><input id="chart-font-color-display" type="color" class="chart-location-form" value="rgb(0,0,0)" width="40">
+                                                    <p></p>
+                                                    <label>字体样式:</label>
+                                                    <input type="button" class="fl-btn fl-font-style" id="B" style="font-weight:bold" value="B">
+                                                    <input type="button" class="fl-btn fl-font-style fl-font-style-both" id="I" style="font-style:italic" value="I">
+                                                    <input type="button" class="fl-btn fl-font-style fl-font-style-right" id="U" style="text-decoration:underline" value="U">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div data-parent="#shoufengqing" data-toggle="collapse" data-target="#div8" class="panel-heading">
+                                        <h3 class="panel-title">对齐</h3>
+                                    </div>
+                                    <div id="div8" class="collapse">
+                                        <div class="panel-body">
+                                            <div class="list-content">
+                                                <div class="chart-font-display">
+                                                    <label>对齐方式:</label>
+                                                        <input id="chart-align-display" type="text" style="display:none;" class="chart-location-form" value="居中" width="40">
+                                                        <input type="button" class="fl-btn fl-align-style" id="btn-align-left" value="左">
+                                                        <input type="button" class="fl-btn fl-align-style fl-align-style-both" id="btn-align-center" value="中">
+                                                        <input type="button" class="fl-btn fl-align-style fl-align-style-both" id="btn-align-right" value="右">
+                                                        <input type="button" class="fl-btn fl-align-style fl-align-style-right" id="btn-align-none" value="无">
+                                                    <p></p>
+                                                    <label>文字高度:</label><input id="chart-font-height-display" type="Number" class="chart-location-form" value="0" width="40">
+                                                    <p></p>
+                                                    <label>文字间距:</label><input id="chart-font-spacing-display" type="Number" class="chart-location-form" value="0" width="40">
+                                                    <p></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div data-parent="#shoufengqing" data-toggle="collapse" data-target="#div9" class="panel-heading">
+                                        <h3 class="panel-title">JSON</h3>
+                                    </div>
+                                    <div id="div9" class="collapse">
+                                        <div class="panel-body">
+                                            <div class="list-content">
+                                                <div class="chart-font-display">
+                                                    <label>JSON数据:</label><textarea id="json-display-area"></textarea>
+                                                    <p></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div data-parent="#shoufengqing" data-toggle="collapse" data-target="#div10" class="panel-heading">
+                                        <h3 class="panel-title">背景</h3>
+                                    </div>
+                                    <div id="div10" class="collapse">
+                                        <div class="panel-body">
+                                            <h4 class="right-style-selector" id="style-entertainment">娱乐型</h4>
+                                            <h4 class="right-style-selector" id="style-enterprises">商务型</h4>
+                                            <h4 class="right-style-selector" id="style-blue">blue</h4>
+                                            <h4 class="right-style-selector" id="style-dark">dark</h4>
+                                            <h4 class="right-style-selector" id="style-pink">pink</h4>
+                                        </div>
+                                    </div>
+                                </div>
+				            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="chart-ratio">
+                                <input id="rear-ratio" class="chart-ratio-form" value="100" min="50" max="300" placeholder="10" type="range" onchange="ratioDisplay()" step="10">
+                                <div class="rare-ratio">
+                                    <input id="rear-ratio-display" class="chart-ratio-form" value="100" width="40" min="50" max="300" placeholder="10" type="number" onchange="ratioDisplay2()" step="10">
+                                </div>
+                                <div class="chart-ratio-cover"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="save-form">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            <div class="modal-title">JSON数据</div>
+                          </div>
+                          <div class="modal-body">
+                            <div id="save-json-form-display"></div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-primary">保存</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <script src="../../static/script/jquery-3.3.1.min.js"></script>
+    <script src="../../static/script/jquery-ui.min.js"></script>
+    <script src="../../static/script/flowChart/jquery.jsPlumb-1.4.0-all.js"></script>
+    <script src="../../static/script/flowChart/html2canvas.js"></script>
+    <script src="../../static/script/bootstrap/bootstrap.min.js"></script>
+    <script src="../../static/script/bootstrap/bootstrap-table.min.js"></script>
+    <script src="../../static/script/bootstrap/bootstrap-table-zh-CN.min.js"></script>
+    <script src="../../static/script/bootstrap/bootstrap-select.min.js"></script>
+    <script src="../../static/script/bootstrap/bootbox.min.js"></script>
+    <script src="../../static/script/bootstrap/bootstrap-treeview.min.js"></script>
+    <script src="../../static/script/flowChart/main.js"></script>
+    <script src="../../static/script/config.js"></script>
+    <script src="../../static/script/base.js"></script>
     <script>
         $(function(){
             $("#pageTab").tableRender({

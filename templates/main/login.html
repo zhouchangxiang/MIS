@@ -10,11 +10,11 @@
 </head>
 <body>
     <div class="loginContent">
-        <div class="loginContainer">
+        <div class="container" style="height: 100%;position: relative;">
             <div class="enterInfo">
                 <img src="../../static/images/enterInfo.png" alt="">
             </div>
-            <div class="loginInfo">
+            <div class="loginInfo col-md-5 col-xs-12">
                 <form action="/account/login" id="loginForm" method="post">
                     <div class="form-group">
                         <label class="prepend">
@@ -40,5 +40,17 @@
             </div>
         </div>
     </div>
+    <script src="../../static/script/jquery-3.3.1.min.js"></script>
+    <script>
+        $(function(){
+            $(window).resize(function () {
+                if($(window).width() <= 992) {
+                    $(".enterInfo").css("display","none")
+                }else{
+                    $(".enterInfo").css("display","block")
+                }
+            }).resize();
+        })
+    </script>
 </body>
 </html>

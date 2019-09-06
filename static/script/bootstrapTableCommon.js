@@ -18,7 +18,7 @@
         var addbtn = "" //添加按钮dom
         var updatabtn = "" //修改按钮dom
         var deletebtn = "" //删除按钮dom
-        //在配置数据表中或者tableName这条数据
+        //在配置数据表中获取tableName这条数据
         $.ajax({
             url: "http://127.0.0.1:5000/CUID",
             type: "get",
