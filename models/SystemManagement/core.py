@@ -36,20 +36,6 @@ session = SessionFactory()
 Base = declarative_base(engine)
 
 
-#Factory_START:
-class Factory(Base):
-	__tablename__ = "Factory" 
-	
-	#ID:
-	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
-	
-	#所在地区:
-	Region = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
-	
-	#厂名:
-	FactoryName = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
-	
-#Factory_END:
 
 
 
@@ -390,6 +376,78 @@ class plantCalendarScheduling(Base):
 	start = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = False)
 	
 #plantCalendarScheduling_END:
+
+
+#Station_START:
+class Station(Base):
+	__tablename__ = "Station" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#所属部门:
+	DepartName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#岗位类型:
+	StationType = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#岗位名称:
+	StationName = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
+	
+	#岗位编码:
+	StationCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+#Station_END:
+
+
+#Enterprise_START:
+class Enterprise(Base):
+	__tablename__ = "Enterprise" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#上级企业:
+	ParentNode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#企业类型:
+	Type = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#描述:
+	Desc = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
+	
+	#父节点名称:
+	ParentNodeName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#企业代码:
+	EnterpriseNo = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#企业名称:
+	EnterpriseName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#企业编码:
+	EnterpriseCode = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
+	
+#Enterprise_END:
+
+
+#Factory_START:
+class Factory(Base):
+	__tablename__ = "Factory" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#所属企业:
+	EnterpriseName = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
+	
+	#厂名:
+	FactoryName = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
+	
+	#所在地区:
+	Region = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
+	
+#Factory_END:
 
 # 生成表单的执行语句_START
 Base.metadata.create_all(engine)

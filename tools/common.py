@@ -138,8 +138,8 @@ def update(data):
                 db_session.add(oclass)
                 aud = AuditTrace()
                 aud.TableName = tableName
-                aud.Operation =current_user.Name+" 对表"+tableName+"ID为："+data.get('ID')+"的数据做了更新操作:"+json.dumps(data.to_dict())
-                aud.DeitalMSG = "用户："+current_user.Name+" 对表"+tableName+"做了更新操作！"
+                aud.Operation =current_user.Name+" 对表"+tableName+"的数据做了更新操作！"
+                aud.DeitalMSG = "用户："+current_user.Name+" 对表"+tableName+"ID为："+data.get('ID')+"做了更新操作："+json.dumps(data.to_dict())
                 aud.ReviseDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 aud.User = current_user.Name
                 db_session.add(aud)

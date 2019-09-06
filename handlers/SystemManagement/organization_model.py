@@ -24,6 +24,11 @@ organiza = Blueprint('organiza', __name__, template_folder='templates')
 def organization():
     return render_template('./sysOrganization.html')
 
+#  企业管理
+@organiza.route('/sysyEnterprise')
+def sysyEnterprise():
+    return render_template('./sysyEnterprise.html')
+
 # 厂区管理
 @organiza.route('/sysFactory')
 def sysFactory():
@@ -33,6 +38,11 @@ def sysFactory():
 @organiza.route('/sysDepartment')
 def sysDepartment():
     return render_template('./sysDepartment.html')
+
+#  岗位管理
+@organiza.route('/sysStation')
+def sysStation():
+    return render_template('./sysStation.html')
 
 @organiza.route('/organizationMap')
 def organizationMap():
