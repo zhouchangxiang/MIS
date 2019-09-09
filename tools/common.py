@@ -194,6 +194,42 @@ def select(data):#table, page, rows, fieid, param
         logger.error(e)
         insertSyslog("error", "查询报错Error：" + str(e), current_user.Name)
 
+# 精确查询
+def accurateSelect(data):
+    try:
+        pages = int(data.get("offset"))
+        rowsnumber = int(data.get("limit"))
+        param = data.get("field")
+        tableName = data.get("tableName")
+        paramvalue = data.get("fieldvalue")
+        inipage = pages * rowsnumber + 0  # 起始页
+        endpage = pages * rowsnumber + rowsnumber  # 截止页
+        newTable = Table(tableName, metadata, autoload=True, autoload_with=engine)
+        if (param == "" or param == None):
+            total = db_session.query(newTable).count()
+            oclass = db_session.query(newTable).order_by(desc("ID")).all()[inipage:endpage]
+        else:
+            total = db_session.query(newTable).filter(
+                newTable.columns._data[param] == paramvalue).count()
+            oclass = db_session.query(newTable).filter(
+                newTable.columns._data[param] == paramvalue).order_by(desc("ID")).all()[
+                     inipage:endpage]
+        dir = []
+        for i in oclass:
+            a = 0
+            divi = {}
+            for j in newTable.columns._data:
+                divi[str(j)] = str(i[a])
+                a = a + 1
+            dir.append(divi)
+        jsonoclass = json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
+        jsonoclass = '{"total"' + ":" + str(total) + ',"rows"' + ":\n" + jsonoclass + "}"
+        return jsonoclass
+    except Exception as e:
+        print(e)
+        logger.error(e)
+        insertSyslog("error", "查询报错Error：" + str(e), current_user.Name)
+
 def FuzzyQuery(tablename, params):
     '''
     :param tablename: 要进行查询的model

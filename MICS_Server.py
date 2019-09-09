@@ -14,7 +14,7 @@ from handlers.ProductionManagement.producebatch_model import produce
 from handlers.SystemManagement.systemlog import systemlog
 from flask_bootstrap import Bootstrap
 from handlers.batchmanager.batch_manager import batch
-from tools.common import insert,delete,update,select
+from tools.common import insert, delete, update, select, accurateSelect
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
@@ -144,7 +144,12 @@ class CUID(Resource):
         return task, 201
 class CUIDList(Resource):
     def get(self):
-        return select(request.values)
+        data = request.values
+        searchModes = data.get("searchModes")
+        if searchModes == "精确查询":
+            return accurateSelect(request.values)
+        else:#模糊查询
+            return select(request.values)
 
     def post(self):
         return insert(request.values)
