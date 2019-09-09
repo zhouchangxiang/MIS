@@ -2,6 +2,7 @@
     $.fn.tableRender = function(options){
         var defaluts = {
             tableName: '', //表名
+            queryUrl:"http://127.0.0.1:5000/CUID",
             toolbar: '', //操作栏dom
             columns:[], //字段
             refreshDom:"", //搜索字段的dom
@@ -35,7 +36,7 @@
         $(options.toolbar).find(options.refreshDom).selectpicker("val", ""); //赋默认值
         //表格渲染
         $this.bootstrapTable({
-            url: "http://127.0.0.1:5000/CUID",
+            url: options.queryUrl,
             method: 'get',
             queryParams:function(params){
                 return {
