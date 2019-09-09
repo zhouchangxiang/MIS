@@ -174,38 +174,6 @@ class User(Base):
 #User_END:
 
 
-#Equipment_START:
-class Equipment(Base):
-	__tablename__ = "Equipment" 
-	
-	#ID:
-	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
-	
-	#设备编码:
-	EQPCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#设备名称:
-	EQPName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#设备状态:
-	Equipment_State = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#成本归属:
-	CostAttach = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#基本参数:
-	Equipment_Model = Column(Unicode(100), primary_key = False, autoincrement = False, nullable = True)
-	
-	#采购日期:
-	Procurement_Date = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#工艺段:
-	PUID = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#备注说明:
-	Desc = Column(Unicode(100), primary_key = False, autoincrement = False, nullable = True)
-	
-#Equipment_END:
 
 
 #SpareStock_START:
@@ -378,26 +346,6 @@ class plantCalendarScheduling(Base):
 #plantCalendarScheduling_END:
 
 
-#Station_START:
-class Station(Base):
-	__tablename__ = "Station" 
-	
-	#ID:
-	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
-	
-	#所属部门:
-	DepartName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#岗位类型:
-	StationType = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#岗位名称:
-	StationName = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
-	
-	#岗位编码:
-	StationCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-#Station_END:
 
 
 #Enterprise_START:
@@ -448,6 +396,137 @@ class Factory(Base):
 	Region = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
 	
 #Factory_END:
+
+
+#Station_START:
+class Station(Base):
+	__tablename__ = "Station" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#地址:
+	Address = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
+	
+	#电话:
+	Phone = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#岗位负责人:
+	PersonCharge = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
+	
+	#岗位职责:
+	Responsibility = Column(Unicode(100), primary_key = False, autoincrement = False, nullable = True)
+	
+	#所属部门:
+	DepartName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#岗位类型:
+	StationType = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#岗位名称:
+	StationName = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
+	
+	#岗位编码:
+	StationCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+#Station_END:
+
+
+#Equipment_START:
+class Equipment(Base):
+	__tablename__ = "Equipment" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#车间:
+	workshop = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
+	
+	#车间:
+	WorkShop = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
+	
+	#操作时间:
+	OperationDate = Column(Unicode(OperationDate), primary_key = False, autoincrement = False, nullable = True)
+	
+	#督导人:
+	SuperVisor = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#保养责任人:
+	PersonLiable = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#操作内容:
+	Content = Column(Unicode(120), primary_key = False, autoincrement = False, nullable = True)
+	
+	#设备编号:
+	EquipmentNumber = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#设备名称:
+	EquipentName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#设备型号:
+	EquipmentType = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#备件更换情况:
+	ReplacementOfSpareParts = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#维修人:
+	Repairman = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#影响生产:
+	AffectingProduction = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#不影响生产:
+	UnAffectingProduction = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#解决措施:
+	Precautions = Column(Unicode(100), primary_key = False, autoincrement = False, nullable = True)
+	
+	#原因分析:
+	AnalysisFailure = Column(Unicode(120), primary_key = False, autoincrement = False, nullable = True)
+	
+	#故障描述:
+	FailureReportingDesc = Column(Unicode(120), primary_key = False, autoincrement = False, nullable = True)
+	
+	#设备名称:
+	EQPName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#早晚班:
+	Shift = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#故障时间:
+	FailureDate = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#工序:
+	PUIDName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#设备维修计划单号:
+	FailureNumber = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#备注说明:
+	Desc = Column(Unicode(100), primary_key = False, autoincrement = False, nullable = True)
+	
+	#工艺段:
+	PUID = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采购日期:
+	Procurement_Date = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#基本参数:
+	Equipment_Model = Column(Unicode(100), primary_key = False, autoincrement = False, nullable = True)
+	
+	#成本归属:
+	CostAttach = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#设备状态:
+	Equipment_State = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#设备名称:
+	EQPName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#设备编码:
+	EQPCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+#Equipment_END:
 
 # 生成表单的执行语句_START
 Base.metadata.create_all(engine)

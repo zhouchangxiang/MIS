@@ -223,7 +223,7 @@ class MakeModel:
 
     def makeModelPythonFile(self, fileName,fileString):
         # self.checkFileExists(fileName)
-        print('Make \'' + fileName + '\' waiting...')
+        # print('Make \'' + fileName + '\' waiting...')
         f = open(fileName, 'w',encoding='utf-8')
         f.write(fileString)
         f.close()
@@ -237,7 +237,7 @@ class MakeModel:
             if not os.path.exists(model_path):
                 print("不存在！")
             else:
-                print("存在!!")
+                # print("存在!!")
                 with open(AFilename, 'r', encoding='UTF-8') as f:
                     lines = f.readlines()
                     i = 0
@@ -364,7 +364,6 @@ class MakeModel:
 
             tpl += '\n'
             tpl += '#' + tableName + '_END:\n'
-            print(tpl)
             if len(tpl) > 10:
                 tpl += self.makeEndImplement()
                 notes = AModifyString + tpl

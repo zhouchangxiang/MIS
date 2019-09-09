@@ -51,4 +51,3 @@ config_retxt.read(CONFIG_retxt,encoding='UTF-8')
 
 
 REDIS_retxt = config_retxt['BK']
-print(REDIS_retxt)
