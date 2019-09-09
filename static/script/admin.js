@@ -47,8 +47,8 @@ $(function () {
 	//添加修改cookie 用户信息
 	var jobNumber = $("#userInfo").attr("data-job-number");
 	var sesseionid = $("#userInfo").attr("data-sesseionid");
-	setCookie("jobNumber",jobNumber)
-	setCookie("sesseionid",sesseionid)
+	$.cookie("jobNumber",jobNumber)
+	$.cookie("sesseionid",sesseionid)
 	//事实匹配sessionid 新用户登录后踢掉上一个用户
 	var isLoaded = true;
 	function reqs() {
@@ -64,7 +64,7 @@ $(function () {
 			},
 			success: function(res) {
 				res = JSON.parse(res)
-				var dataSesseionid = getCookie("sesseionid")
+				var dataSesseionid = $.cookie("sesseionid")
 				if(res.rows[0].session_id != dataSesseionid){
 					isLoaded = false;
 					bootbox.alert({
@@ -284,28 +284,3 @@ $(function () {
         })
 	});
 })
-//设置和获取cookie
-function setCookie(name,value,iDay){
-	var oDate=new Date();
-		oDate.setDate(oDate.getDate()+iDay);
-	document.cookie=name+'='+value+';expires='+oDate;
-}
-function getCookie(cookie_name){
-	var allcookies = document.cookie;
-	//索引长度，开始索引的位置
-	var cookie_pos = allcookies.indexOf(cookie_name);
-	// 如果找到了索引，就代表cookie存在,否则不存在
-	if (cookie_pos != -1) {
-		// 把cookie_pos放在值的开始，只要给值加1即可
-		//计算取cookie值得开始索引，加的1为“=”
-		cookie_pos = cookie_pos + cookie_name.length + 1;
-		//计算取cookie值得结束索引
-		var cookie_end = allcookies.indexOf(";", cookie_pos);
-		if (cookie_end == -1) {
-			cookie_end = allcookies.length;
-		}
-		//得到想要的cookie的值
-		var value = unescape(allcookies.substring(cookie_pos, cookie_end));
-	}
-	return value;
-}
