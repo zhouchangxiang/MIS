@@ -78,14 +78,16 @@
             onPageChange:function (number, size) {
                 if(options.clickParentTableDom != ""){
                     var clickParentTableValue = $(options.clickParentTableDom).bootstrapTable("getAllSelections")
-                    $this.bootstrapTable('refresh',{
-                        query:{
-                            field: options.clickParentTableField,
-                            fieldvalue: clickParentTableValue[0][options.clickParentTableField],
-                            limit:size,
-                            offset:number - 1
-                        }
-                    });
+                    if(clickParentTableValue != ""){
+                        $this.bootstrapTable('refresh',{
+                            query:{
+                                field: options.clickParentTableField,
+                                fieldvalue: clickParentTableValue[0][options.clickParentTableField],
+                                limit:size,
+                                offset:number - 1
+                            }
+                        });
+                    }
                 }
             }
         })
