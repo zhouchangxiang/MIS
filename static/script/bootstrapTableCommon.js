@@ -156,6 +156,11 @@
                         }
                     })
                 }
+                columns.sort(up);
+                //ID字段升序排列
+                function up(x,y){
+                    return x.ID-y.ID
+                }
                 $("body").prepend(ModalHtml)
                 $(ModalID).find(".form-horizontal").append(ModalfieldHtml)
             },
