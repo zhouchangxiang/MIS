@@ -3,7 +3,6 @@ from flask import Blueprint, render_template, request, make_response
 import json
 import datetime
 from sqlalchemy import desc
-
 from dbset.database.db_operate import db_session,pool
 from dbset.main.BSFramwork import AlchemyEncoder
 from models.SystemManagement.system import BatchInfoDetail, EletronicBatchDataStore, BatchType, \

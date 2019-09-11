@@ -534,6 +534,43 @@ class User(Base):
 	
 #User_END:
 
+
+#ElectricEnergy_START:
+class ElectricEnergy(Base):
+	__tablename__ = "ElectricEnergy" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#采集天:
+	CollectionDay = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集月:
+	CollectionMonth = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集年:
+	CollectionYear = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集时间:
+	CollectionDate = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集点ID:
+	CollectionPointID = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
+	
+	#价格ID:
+	PriceID = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
+	
+	#仪表ID:
+	DeviceID = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
+	
+	#单位:
+	Unit = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#电能值:
+	ElectricEnergyValue = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+#ElectricEnergy_END:
+
 # 生成表单的执行语句_START
 Base.metadata.create_all(engine)
 

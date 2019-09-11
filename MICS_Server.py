@@ -15,6 +15,7 @@ from handlers.SystemManagement.systemlog import systemlog
 from flask_bootstrap import Bootstrap
 from handlers.batchmanager.batch_manager import batch
 from tools.common import insert, delete, update, select, accurateSelect
+from handlers.energymanager.energy_manager import energy
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
@@ -46,8 +47,10 @@ app.register_blueprint(produce)
 app.register_blueprint(systemlog)
 # 批次管理
 app.register_blueprint(batch)
-# 批次管理
+# 日历管理
 app.register_blueprint(calender)
+#能耗管理
+app.register_blueprint(energy)
 
 @app.route('/')
 @login_required
