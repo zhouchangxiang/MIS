@@ -114,7 +114,6 @@
                     '</div>' +
                     '</div>' +
                     '</div>'
-                var ModalfieldHtml = ""
                 if(data.rows != []) {
                     $.each(data.rows, function (i, value) {
                         //生成列头对象
@@ -136,24 +135,6 @@
                             columnsField.visible = false
                         }
                         columns.push(columnsField)
-                        //渲染模态框
-                        if (data.rows[i].Isedit == "True") {
-                            if (columnsField.inputType == "输入框") {
-                                ModalfieldHtml += '<div class="form-group">' +
-                                    '<label for="' + data.rows[i].FieldName + '" class="col-sm-3 control-label">' + data.rows[i].TitleName + '</label>' +
-                                    '<div class="col-sm-9">' +
-                                    '<input type="text" class="form-control" name="' + data.rows[i].FieldName + '" placeholder="">' +
-                                    '</div>' +
-                                    '</div>'
-                            } else if (columnsField.inputType == "下拉框") {
-                                ModalfieldHtml += '<div class="form-group">' +
-                                    '<label for="' + data.rows[i].FieldName + 'selectField" class="col-sm-3 control-label">' + data.rows[i].TitleName + '</label>' +
-                                    '<div class="col-sm-9">' +
-                                    '<select id="' + data.rows[i].FieldName + 'selectField" class="selectpicker" data-live-search="true"></select>' +
-                                    '</div>' +
-                                    '</div>'
-                            }
-                        }
                     })
                 }
                 columns.sort(up);
@@ -161,6 +142,28 @@
                 function up(x,y){
                     return x.ID-y.ID
                 }
+                var ModalfieldHtml = ""
+                $.each(columns, function (i, value) {
+                    //渲染模态框里的表单
+                    if (columns[i].Isedit == "True") {
+                        if (columns[i].inputType == "输入框") {
+                            ModalfieldHtml += '<div class="form-group">' +
+                                '<label for="' + columns[i].field + '" class="col-sm-3 control-label">' + columns[i].title + '</label>' +
+                                '<div class="col-sm-9">' +
+                                '<input type="text" class="form-control" name="' + columns[i].field + '" placeholder="">' +
+                                '</div>' +
+                                '</div>'
+                        }
+                        if (columns[i].inputType == "下拉框") {
+                            ModalfieldHtml += '<div class="form-group">' +
+                                '<label for="' + columns[i].field + 'selectField" class="col-sm-3 control-label">' + columns[i].title + '</label>' +
+                                '<div class="col-sm-9">' +
+                                '<select id="' + columns[i].field + 'selectField" class="selectpicker" data-live-search="true"></select>' +
+                                '</div>' +
+                                '</div>'
+                        }
+                    }
+                })
                 $("body").prepend(ModalHtml)
                 $(ModalID).find(".form-horizontal").append(ModalfieldHtml)
             },

@@ -608,7 +608,17 @@
                                                 dialog.modal('hide');
                                             }, 2000);
                                         });
-                                        $this.bootstrapTable('refresh');
+                                        if(options.clickParentTableDom != ""){
+                                            var clickParentTableValue = $(options.clickParentTableDom).bootstrapTable("getAllSelections")
+                                            $this.bootstrapTable('refresh',{
+                                                query:{
+                                                    field: options.clickParentTableField,
+                                                    fieldvalue: clickParentTableValue[0][options.clickParentTableField]
+                                                }
+                                            });
+                                        }else{
+                                            $this.bootstrapTable('refresh');
+                                        }
                                     }
                                 }
                             });
