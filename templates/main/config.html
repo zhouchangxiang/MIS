@@ -1435,6 +1435,7 @@
                             $.each(res.rows, function (i, value) {
                                 queryData.tableName = res.rows[i].TableName
                                 var queryFieldItem = {}
+                                queryFieldItem.ID = res.rows[i].ID
                                 queryFieldItem.comment = res.rows[i].comment
                                 queryFieldItem.type = res.rows[i].type
                                 queryFieldItem.primarykey = res.rows[i].primarykey
@@ -1444,6 +1445,11 @@
                                 queryFieldItem.length = res.rows[i].length
                                 queryField.push(queryFieldItem)
                             })
+                            queryField.sort(up);
+                            //ID字段升序排列
+                            function up(x,y){
+                                return x.ID-y.ID
+                            }
                             queryField = JSON.stringify(queryField)
                             queryField = queryField.replace(/,{/g,";{") //全局将外层的，替换为；
                             queryData.Field = queryField
@@ -1466,7 +1472,7 @@
                                         bootbox.alert(res)
                                     }
                                 }
-                            })
+                             })
                         }
                     })
                 }else{
