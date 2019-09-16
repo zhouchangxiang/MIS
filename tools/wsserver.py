@@ -4,11 +4,19 @@ import socket
 import base64
 import hashlib
 import time
+import json
+import redis
+
 from dbset.database.db_operate import db_session
 from flask import Flask
 from flask_restful import reqparse, abort, Api, Resource
-from models.SystemManagement.core import User
+from dbset.database import constant
+from dbset.main.BSFramwork import AlchemyEncoder
+
 from flask_login import current_user
+
+from models.SystemManagement.core import RedisKey
+
 
 def get_headers(data):
     """
@@ -60,6 +68,7 @@ def run():
     sock.listen(5)
 
     conn, address = sock.accept()
+    print("aa")
     data = conn.recv(1024)
     print(data)
     headers = get_headers(data)
@@ -109,26 +118,26 @@ def run():
         # session_id = db_session.query(User.session_id).filter(User.WorkNumber == current_user.WorkNumber).frist()
         # if session_id:
         #     session_id = session_id[0]
-        bytes_list = ""
-        icount = icount + 1
-        strtmp = "My Websocket中文测试" + str(icount)
+
+        pool = redis.ConnectionPool(host=constant.REDIS_HOST, password=constant.REDIS_PASSWORD)
+        data_dict = {}
+        redis_conn = redis.Redis(connection_pool=pool)
+        keys = db_session.query(RedisKey.KEY).filter().all()
+        for key in keys:
+            data_dict[key] = redis_conn.hget(constant.REDIS_TABLENAME, key[0]).decode('utf-8')
+
+        # bytes_list = ""
+        # icount = icount + 1
+        # strtmp = "My Websocket中文测试" + str(icount)
         # str(bytes_list.encode('utf-8').strip() + b"\n")
         # body = str(bytes_list, encoding='utf-8')
         # print(session_id)
-        bytemsg = bytes(strtmp, encoding="utf8")
+
+        bytemsg = bytes(json.dumps(data_dict, cls=AlchemyEncoder, ensure_ascii=False), encoding="utf8")
         send_msg(conn, bytemsg)
         time.sleep(1)
 
     sock.close()
-
-app = Flask(__name__)
-api = Api(app)
-class REDIS(Resource):
-    def get(self):
-        return run()
-api.add_resource(REDIS, '/redis')
-
-
 
 if __name__ == '__main__':
     run()

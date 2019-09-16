@@ -22,7 +22,7 @@ def on_open(ws):  # 连接到服务器之后就会触发on_open事件，这里�
 
 while True:
     websocket.enableTrace(True)
-    ws = websocket.WebSocketApp("ws://127.0.0.1:9200",
+    ws = websocket.WebSocketApp("ws://127.0.0.1:5000",
                                 on_message=on_message,
                                 on_error=on_error,
                                 on_close=on_close)

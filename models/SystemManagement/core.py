@@ -571,6 +571,204 @@ class ElectricEnergy(Base):
 	
 #ElectricEnergy_END:
 
+
+#Unit_START:
+class Unit(Base):
+	__tablename__ = "Unit" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#单位名称:
+	UnitName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#单位编码:
+	UnitNameCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+#Unit_END:
+
+
+#WaterEnergy_START:
+class WaterEnergy(Base):
+	__tablename__ = "WaterEnergy" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#水能值:
+	WaterMeterValue = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#单位:
+	Unit = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#仪表ID:
+	DeviceID = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
+	
+	#价格ID:
+	PriceID = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集点ID:
+	CollectionPointID = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集时间:
+	CollectionDate = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集年:
+	CollectionYear = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集月:
+	CollectionMonth = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集天:
+	CollectionDay = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+#WaterEnergy_END:
+
+
+#SteamEnergy_START:
+class SteamEnergy(Base):
+	__tablename__ = "SteamEnergy" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#蒸汽值:
+	SteamValue = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#单位:
+	Unit = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#仪表ID:
+	DeviceID = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
+	
+	#价格ID:
+	PriceID = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集点ID:
+	CollectionPointID = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集时间:
+	CollectionDate = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集年:
+	CollectionYear = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集月:
+	CollectionMonth = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集天:
+	CollectionDay = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+#SteamEnergy_END:
+
+
+#PriceList_START:
+class PriceList(Base):
+	__tablename__ = "PriceList" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#价格名称:
+	PriceName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#价格编码:
+	PriceCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#价格类型:
+	PriceType = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#是否启用:
+	IsEnabled = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#开始时间:
+	StartTime = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#结束时间:
+	EndTime = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#备注:
+	Description = Column(Unicode(100), primary_key = False, autoincrement = False, nullable = True)
+	
+#PriceList_END:
+
+
+#DeviceList_START:
+class DeviceList(Base):
+	__tablename__ = "DeviceList" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#器件名称:
+	DeviceName = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
+	
+	#器件编码:
+	DeviceCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#器件类型:
+	DeviceType = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#规格型号:
+	SpecificationType = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#品牌:
+	Brand = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
+	
+	#单位:
+	Unit = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#备注:
+	Description = Column(Unicode(100), primary_key = False, autoincrement = False, nullable = True)
+	
+#DeviceList_END:
+
+
+#CollectionPoint_START:
+class CollectionPoint(Base):
+	__tablename__ = "CollectionPoint" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#采集点名称:
+	CollectionPointName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集点编码:
+	CollectionPointCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集位置:
+	CollectionPosition = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
+	
+	#厂区:
+	FactoryName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#车间:
+	Workshop = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#位置描述:
+	PositionDescription = Column(Unicode(100), primary_key = False, autoincrement = False, nullable = True)
+	
+#CollectionPoint_END:
+
+
+
+
+#RedisKey_START:
+class RedisKey(Base):
+	__tablename__ = "RedisKey" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#对应的键值:
+	KEY = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
+	
+	#描述:
+	Description = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
+	
+#RedisKey_END:
+
 # 生成表单的执行语句_START
 Base.metadata.create_all(engine)
 
