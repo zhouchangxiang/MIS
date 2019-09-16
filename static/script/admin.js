@@ -41,6 +41,8 @@ $(function () {
 		$(".sidebarRight .sidebarRightHead").each(function(){
 			if($(this).attr("data-menu-indet") == title){
 				$(this).removeClass("hidden").siblings(".sidebarRightHead").addClass("hidden")
+			}else{
+				$(this).addClass("hidden")
 			}
 		})
 	})

@@ -3,8 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <title>实时数据</title>
+    <link rel="stylesheet" href="../static/style/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/style/bootstrap/bootstrap-table.min.css">
+    <link rel="stylesheet" href="../static/style/bootstrap/bootstrap-select.min.css">
+    <link rel="stylesheet" href="../static/style/font-awesome.min.css">
+    <link rel="stylesheet" href="../static/style/base.css">
+    <script src="../static/script/jquery-3.3.1.min.js"></script>
+    <script src="../static/highcharts/highcharts.js"></script>
+    <script src="../static/script/bootstrap/bootstrap.min.js"></script>
+    <script src="../static/script/bootstrap/bootstrap-table.min.js"></script>
+    <script src="../static/script/bootstrap/bootstrap-table-zh-CN.min.js"></script>
+    <script src="../static/script/bootstrap/bootstrap-select.min.js"></script>
+    <script src="../static/script/bootstrap/bootbox.min.js"></script>
+    <script src="../static/script/jquery.select.js"></script>
+    <script src="../static/script/base.js"></script>
+    <script src="../static/script/bootstrapTableCommon.js"></script>
 </head>
 <body>
-
+    <div class="col-md-12" style="padding:66px 0 0;">
+        <div class="col-md-5">
+            <div class="mics-panel-head">
+                <div class="mics-panel-title pull-left">能耗趋势</div>
+                <div class="mics-form-select pull-right">
+                    <select name="" class="select" id="EnergyChartSelect">
+                        <option value="日">日</option>
+                        <option value="月">月</option>
+                        <option value="年">年</option>
+                    </select>
+                </div>
+            </div>
+            <div id="highchartsEnergy" style="min-width:400px;height:295px"></div>
+        </div>
+        <div class="col-md-3">
+            <div class="mics-panel-head">
+                <div class="mics-panel-title pull-left">分项能耗量</div>
+                <div class="mics-form-select pull-right">
+                    <select name="" class="select" id="EnergyDataSelect">
+                        <option value="日">日</option>
+                        <option value="月">月</option>
+                        <option value="年">年</option>
+                    </select>
+                </div>
+            </div>
+            <ul class="EnergyNode">
+                <li>
+                    <div class="clearfix">
+                        <div class="EnergyItemTitle pull-left">电能耗量 <span class="glyphicon glyphicon-arrow-down"></span></div>
+                        <div class="EnergyItemData pull-right">65716457</div>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%;"></div>
+                    </div>
+                </li>
+                <li>
+                    <div class="clearfix">
+                        <div class="EnergyItemTitle pull-left">水能耗量 <span class="glyphicon glyphicon-arrow-down"></span></div>
+                        <div class="EnergyItemData pull-right">65716457</div>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%;"></div>
+                    </div>
+                </li>
+                <li>
+                    <div class="clearfix">
+                        <div class="EnergyItemTitle pull-left">汽能耗量 <span class="glyphicon glyphicon-arrow-down"></span></div>
+                        <div class="EnergyItemData pull-right">65716457</div>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%;"></div>
+                    </div>
+                </li>
+                <li>
+                    <div class="clearfix">
+                        <div class="EnergyItemTitle pull-left">其他能耗量 <span class="glyphicon glyphicon-arrow-down"></span></div>
+                        <div class="EnergyItemData pull-right">65716457</div>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%;"></div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-4">
+            <div class="mics-panel-head">
+                <div class="mics-panel-title pull-left">分项能耗趋势</div>
+                <div class="mics-form-select pull-right"></div>
+            </div>
+            <div class="trendsChartContent dragscroll">
+                <div class="trendsChartItem mics-bg-primary">
+                    <div class="form-group">电能</div>
+                    <div class="form-group">8975.53</div>
+                    <div class="form-group"><div class="row"><div id="highcharts-electricity" style="min-width:162px;height:74px"></div></div></div>
+                    <div class="form-group">+1.465%</div>
+                    <div class="form-group">87557.1</div>
+                </div>
+                <div class="trendsChartItem mics-bg-primary">
+                    <div class="form-group">水能</div>
+                    <div class="form-group">8975.53</div>
+                    <div class="form-group"><div class="row"><div id="highcharts-electricity" style="min-width:162px;height:74px"></div></div></div>
+                    <div class="form-group">+1.465%</div>
+                    <div class="form-group">87557.1</div>
+                </div>
+                <div class="trendsChartItem mics-bg-primary">
+                    <div class="form-group">汽能</div>
+                    <div class="form-group">8975.53</div>
+                    <div class="form-group"><div class="row"><div id="highcharts-electricity" style="min-width:162px;height:74px"></div></div></div>
+                    <div class="form-group">+1.465%</div>
+                    <div class="form-group">87557.1</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12" style="padding:66px 0 0;height: 425px;">
+        <div class="col-md-5">
+            <div class="mics-panel-head">
+                <div class="mics-form-select pull-left">
+                    <select name="" class="select" id="EnergyAreaSelect">
+                        <option value="生活区域能耗量">生活区域能耗量</option>
+                        <option value="办公区域能耗量">办公区域能耗量</option>
+                        <option value="其他区域能耗量">其他区域能耗量</option>
+                    </select>
+                </div>
+                <div class="mics-form-select pull-right">
+                    <select name="" class="select" id="EnergyAreaDateSelect">
+                        <option value="日">日</option>
+                        <option value="月">月</option>
+                        <option value="年">年</option>
+                    </select>
+                </div>
+            </div>
+            <div class="EnergyAreaTable">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td><div class="fontBlock"><span class="fa fa-flash"></span></div></td>
+                            <td>电能耗量</td>
+                            <td><span>45678964644</span></td>
+                            <td><span>+1.2%</span></td>
+                        </tr>
+                        <tr>
+                            <td><div class="fontBlock"><span class="fa fa-tint"></span></div></td>
+                            <td>水能耗量</td>
+                            <td><span>45678964644</span></td>
+                            <td><span>+1.2%</span></td>
+                        </tr>
+                        <tr>
+                            <td><div class="fontBlock"><span class="fa fa-tachometer"></span></div></td>
+                            <td>汽能耗量</td>
+                            <td><span>45678964644</span></td>
+                            <td><span>+1.2%</span></td>
+                        </tr>
+                        <tr>
+                            <td><div class="fontBlock"><span class="fa fa-ellipsis-h"></span></div></td>
+                            <td>其他能耗量</td>
+                            <td><span>45678964644</span></td>
+                            <td><span>+1.2%</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="mics-panel-head">
+                <div class="mics-panel-title pull-left">成本展示</div>
+                <div class="mics-form-select pull-right">
+                    <select name="" class="select" id="EnergyNumberSelect">
+                        <option value="水能">水能</option>
+                        <option value="电能">电能</option>
+                        <option value="汽能">汽能</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="costData mics-bg-primary">
+                    <ul class="costDataHead">
+                        <li class="pull-left">成本</li>
+                        <li class="pull-right">89757.12</li>
+                    </ul>
+                    <ul class="costDataContent">
+                        <li class="bottomLeft">转化比</li>
+                        <li class="bottomRight"><h3>32.45%</h3></li>
+                    </ul>
+                </div>
+                <div class="costData mics-bg-primary">
+                    <ul class="costDataHead">
+                        <li class="pull-left">能耗成本</li>
+                        <li class="pull-right">89757.12</li>
+                    </ul>
+                    <ul class="costDataContent">
+                        <li id="costChart"></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="mics-panel-head">
+                <div class="mics-panel-title pull-left">区域数据在线采集</div>
+                <div class="mics-panel-title pull-right">All</div>
+            </div>
+            <div class="areaCollect">
+                <table id="areaCollectTable"></table>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(function(){
+            $('select.select').select();
+            //$("#EnergyChartSelect").siblings(".select").find(".select_ul li").on('click',function(){
+            //    console.log($(this).html())
+            //})
+        })
+    </script>
 </body>
 </html>
