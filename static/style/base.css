@@ -1,5 +1,5 @@
 *{padding:0;margin:0;}
-div,dl,dt,dd,form,h1,h2,h3,h4,h5,h6,img,ol,ul,li,table,th,td,p,span,a{border:0;}
+div,dl,dt,dd,form,h1,h2,h3,h4,h5,h6,img,ol,ul,li,table,th,td,p,span,a{border:0;margin:0;}
 img,input{border:none;vertical-align:middle;}
 body{
     width: 100%;
@@ -125,4 +125,120 @@ a:focus{text-decoration: none}
     padding: 20px;
     clear: both;
     overflow: hidden;
+}
+
+.mics-bg-primary{
+    background: #8A8F97;
+    color: #fff;
+}
+.mics-bg-primary:hover{
+    background: #07488E;
+}
+/* 面板 */
+.mics-panel-head{
+    padding: 10px 15px;
+    display: flow-root;
+}
+.mics-panel-head:before{
+    display: table;
+    content: " ";
+}
+.mics-panel-title{
+    font-size: 18px;
+    font-weight: bold;
+}
+/* 表单 */
+.mics-form-select{
+    position: relative;
+    font-size: 12px;
+    color: #8A8F97;
+    z-index: 2;
+}
+.select{position:relative;min-width:50px;border:none;cursor:pointer;}
+.select:after{content:"";position:absolute;top:50%;left:0;margin-top:-2px;border-top:5px solid #666;border-right:5px solid transparent;border-left:5px solid transparent;transition:all 0.3s linear;transform: rotate(0deg);}
+.select.select_down:after{transform: rotate(180deg);}
+.select .select_text{padding-left:20px;line-height:26px;text-align: right;}
+.select_ul{display:none;position:absolute;top:34px;left:-1px;min-width:50px;border:1px solid #D4D4D4;border-bottom-right-radius:3px;border-bottom-left-radius:3px;background:#fff;}
+.select_ul li{line-height:36px;text-indent:10px;}
+.select_ul li:hover{color:#fff;background:#6AA7EA;}
+.select_ul li.cur{color:#fff;background:#195DA3;}
+/* 进度条 */
+.EnergyNode{
+    padding: 0 15px;
+    color: #8A8F97;
+}
+.EnergyNode li{
+    margin-top: 35px;
+}
+.EnergyNode .progress{
+    width: 100%;
+    height: 4px;
+    margin-top: 15px;
+}
+/* 实时数据 */
+.trendsChartContent{
+    height: 300px;
+    display: flex;
+    overflow: hidden;
+}
+.trendsChartItem{
+    width: 162px;
+    height: 276px;
+    margin:20px 15px 0;
+    padding: 15px;
+    border-radius: 8px;
+}
+/*区域能耗量表格*/
+.EnergyAreaTable{
+    padding: 15px;
+}
+.EnergyAreaTable table{
+    width: 100%;
+}
+.EnergyAreaTable table tr{
+    color: #8A8F97;
+    font-weight: bold;
+}
+.EnergyAreaTable table tr:hover{
+    color: #07488E;
+}
+.EnergyAreaTable table td{
+    padding: 15px 0;
+    text-align: center;
+}
+.fontBlock{
+    width: 42px;
+    height: 42px;
+    line-height: 42px;
+    background: #f4f4f4;
+    border-radius: 50%;
+}
+/*成本展示*/
+.costData{
+    padding: 15px;
+    height: 130px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+.bottomLeft{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+.bottomRight{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+.costData .costDataHead{
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    height: 30px;
+}
+.costData .costDataContent{
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    height: 70px;
 }
