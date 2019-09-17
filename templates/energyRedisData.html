@@ -213,9 +213,9 @@
             //    console.log($(this).html())
             //})
             if ("WebSocket" in window){
-                var ws = new WebSocket("ws://127.0.0.1:9200?area='生活区域能耗量'");
+                var ws = new WebSocket("ws://127.0.0.1:9200");
                 ws.onopen = function(){
-                    ws.send();
+                    ws.send('生活区域能耗量');
                     console.log("数据发送中...");
                 };
                 ws.onmessage = function (evt){
