@@ -14,7 +14,7 @@ from flask_bootstrap import Bootstrap
 from handlers.batchmanager.batch_manager import batch
 from tools.common import insert, delete, update, select, accurateSelect
 from handlers.energymanager.energy_manager import energy
-from handlers.energymanager.wsserver import run
+from wsserver import run
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
@@ -164,9 +164,10 @@ class CUIDList(Resource):
 api.add_resource(CUIDList, '/CUID')
 api.add_resource(CUID, '/CUID/<cuid_id>')
 
-class REDIS(Resource):
-    run()
-api.add_resource(REDIS, '/redis')
+# class REDIS(Resource):
+#     def get(self):
+#         return run()
+# api.add_resource(REDIS, '/redis')
 
 if __name__ == '__main__':
     app.run(debug=True)
