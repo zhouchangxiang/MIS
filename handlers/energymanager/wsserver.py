@@ -4,19 +4,21 @@ import socket
 import base64
 import hashlib
 import time
-import json
 import redis
-
-from dbset.database.db_operate import db_session
-from flask import Flask
-from flask_restful import reqparse, abort, Api, Resource
-from dbset.database import constant
+from flask import Blueprint, render_template, request, make_response
+import json
+import datetime
+from sqlalchemy import desc
+from dbset.database.db_operate import db_session,pool
 from dbset.main.BSFramwork import AlchemyEncoder
-
-from flask_login import current_user
+from flask_login import login_required, logout_user, login_user,current_user,LoginManager
 
 from models.SystemManagement.core import RedisKey
+from tools.common import insert,delete,update
+from dbset.database import constant
+from dbset.log.BK2TLogger import logger,insertSyslog
 
+pool = redis.ConnectionPool(host=constant.REDIS_HOST, password=constant.REDIS_PASSWORD)
 
 def get_headers(data):
     """
@@ -61,6 +63,7 @@ def send_msg(conn, msg_bytes):
     conn.send(msg)
     return True
 
+
 def run():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -68,7 +71,6 @@ def run():
     sock.listen(5)
 
     conn, address = sock.accept()
-    print("aa")
     data = conn.recv(1024)
     print(data)
     headers = get_headers(data)
@@ -115,29 +117,26 @@ def run():
     # body = str(bytes_list, encoding='utf-8')
     icount = 0
     while True:
-        # session_id = db_session.query(User.session_id).filter(User.WorkNumber == current_user.WorkNumber).frist()
-        # if session_id:
-        #     session_id = session_id[0]
+        # bytes_list = ""
+        # icount = icount + 1
+        # strtmp = "My Websocket中文测试" + str(icount)
+        # # str(bytes_list.encode('utf-8').strip() + b"\n")
+        # # body = str(bytes_list, encoding='utf-8')
+        # bytemsg = bytes(strtmp, encoding="utf8")
 
-        pool = redis.ConnectionPool(host=constant.REDIS_HOST, password=constant.REDIS_PASSWORD)
         data_dict = {}
         redis_conn = redis.Redis(connection_pool=pool)
         keys = db_session.query(RedisKey.KEY).filter().all()
         for key in keys:
-            data_dict[key] = redis_conn.hget(constant.REDIS_TABLENAME, key[0]).decode('utf-8')
+            data_dict[key[0]] = redis_conn.hget(constant.REDIS_TABLENAME, key[0]).decode('utf-8')
+        json_data = json.dumps(data_dict, cls=AlchemyEncoder, ensure_ascii=False)
+        bytemsg = bytes(json_data, encoding="utf8")
 
-        # bytes_list = ""
-        # icount = icount + 1
-        # strtmp = "My Websocket中文测试" + str(icount)
-        # str(bytes_list.encode('utf-8').strip() + b"\n")
-        # body = str(bytes_list, encoding='utf-8')
-        # print(session_id)
-
-        bytemsg = bytes(json.dumps(data_dict, cls=AlchemyEncoder, ensure_ascii=False), encoding="utf8")
         send_msg(conn, bytemsg)
         time.sleep(1)
 
     sock.close()
+
 
 if __name__ == '__main__':
     run()

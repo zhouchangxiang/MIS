@@ -1,12 +1,10 @@
-from flask import Flask, abort, request, jsonify, render_template
+from flask import Flask, abort, request, render_template
 from flask_restful import reqparse, abort, Api, Resource
-import json
 from flask_login import login_required
 from dbset.account import auth_lib
 from handlers.SystemManagement.calendar import calender
 from handlers.account import account_auth
 from handlers.SystemManagement import user_management, PermissionAssignment,Role_management
-from handlers.QualityManagement import ProcessContinuousData
 from handlers.main import system_manage
 from handlers.SystemManagement.organization_model import organiza
 from handlers.EquipmentModel.euipment_model import equip
@@ -16,7 +14,7 @@ from flask_bootstrap import Bootstrap
 from handlers.batchmanager.batch_manager import batch
 from tools.common import insert, delete, update, select, accurateSelect
 from handlers.energymanager.energy_manager import energy
-from tools.wsserver import run
+from handlers.energymanager.wsserver import run
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
@@ -167,8 +165,7 @@ api.add_resource(CUIDList, '/CUID')
 api.add_resource(CUID, '/CUID/<cuid_id>')
 
 class REDIS(Resource):
-    def get(self):
-        return run()
+    run()
 api.add_resource(REDIS, '/redis')
 
 if __name__ == '__main__':
