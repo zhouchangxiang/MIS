@@ -23,7 +23,19 @@
                         <h3 class="indetNav">系统管理</h3>
                     </div>
                     <div class="sidebarRightHead hidden" data-menu-indet="能耗管理">
-                        <h3 class="indetNav">能耗管理</h3>
+                        <div class="sideLogo">
+                            <div class="sideLogoOuter">
+                                <div class="sideLogoCore"></div>
+                            </div>
+                            <span>MICS</span>
+                        </div>
+                        <div class="mics-form-select">
+                            <select name="" class="select" id="sidebarSelect">
+                                <option value="电">电</option>
+                                <option value="水">水</option>
+                                <option value="汽">汽</option>
+                            </select>
+                        </div>
                     </div>
                     <ul class="sidebarRightNav"></ul>
                     <div class="sidebarMoveBtn"><i class="glyphicon glyphicon-menu-left"></i></div>
@@ -82,8 +94,14 @@
     <script src="../../static/script/bootstrap/bootbox.min.js"></script>
     <script src="../../static/script/jquery.scrollbar.min.js"></script>
     <script src="../../static/script/jquery.cookie.js"></script>
+    <script src="../../static/script/jquery.select.js"></script>
     <script src="../../static/layui/layui.js"></script>
     <script src="../../static/script/base.js"></script>
     <script src="../../static/script/admin.js"></script>
+    <script>
+        $(function(){
+            $('select.select').select();
+        })
+    </script>
 </body>
 </html>
