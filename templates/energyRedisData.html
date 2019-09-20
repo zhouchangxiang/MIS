@@ -25,7 +25,7 @@
             <div class="mics-panel-head">
                 <div class="mics-panel-title pull-left">能耗趋势</div>
                 <div class="mics-form-select pull-right">
-                    <select name="" class="select" id="EnergyChartSelect">
+                    <select name="" class="select selectFontKeepLeft" id="EnergyChartSelect">
                         <option value="日">日</option>
                         <option value="月">月</option>
                         <option value="年">年</option>
@@ -38,7 +38,7 @@
             <div class="mics-panel-head">
                 <div class="mics-panel-title pull-left">分项能耗量</div>
                 <div class="mics-form-select pull-right">
-                    <select name="" class="select" id="EnergyDataSelect">
+                    <select name="" class="select selectFontKeepLeft" id="EnergyDataSelect">
                         <option value="日">日</option>
                         <option value="月">月</option>
                         <option value="年">年</option>
@@ -89,27 +89,31 @@
                 <div class="mics-panel-title pull-left">分项能耗趋势</div>
                 <div class="mics-form-select pull-right"></div>
             </div>
-            <div class="trendsChartContent dragscroll">
-                <div class="trendsChartItem mics-bg-primary">
-                    <div class="form-group">电能</div>
-                    <div class="form-group">8975.53</div>
-                    <div class="form-group"><div class="row"><div id="highcharts-electricity" style="min-width:162px;height:74px"></div></div></div>
-                    <div class="form-group">+1.465%</div>
-                    <div class="form-group">87557.1</div>
-                </div>
-                <div class="trendsChartItem mics-bg-primary">
-                    <div class="form-group">水能</div>
-                    <div class="form-group">8975.53</div>
-                    <div class="form-group"><div class="row"><div id="highcharts-electricity" style="min-width:162px;height:74px"></div></div></div>
-                    <div class="form-group">+1.465%</div>
-                    <div class="form-group">87557.1</div>
-                </div>
-                <div class="trendsChartItem mics-bg-primary">
-                    <div class="form-group">汽能</div>
-                    <div class="form-group">8975.53</div>
-                    <div class="form-group"><div class="row"><div id="highcharts-electricity" style="min-width:162px;height:74px"></div></div></div>
-                    <div class="form-group">+1.465%</div>
-                    <div class="form-group">87557.1</div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="trendsChartContent dragscroll">
+                        <div class="trendsChartItem mics-bg-primary">
+                            <div class="form-group">电能</div>
+                            <div class="form-group">8975.53</div>
+                            <div class="form-group"><div class="row"><div id="highcharts-electricity" style="min-width:162px;height:74px"></div></div></div>
+                            <div class="form-group">+1.465%</div>
+                            <div class="form-group">87557.1</div>
+                        </div>
+                        <div class="trendsChartItem mics-bg-primary">
+                            <div class="form-group">水能</div>
+                            <div class="form-group">8975.53</div>
+                            <div class="form-group"><div class="row"><div id="highcharts-electricity" style="min-width:162px;height:74px"></div></div></div>
+                            <div class="form-group">+1.465%</div>
+                            <div class="form-group">87557.1</div>
+                        </div>
+                        <div class="trendsChartItem mics-bg-primary">
+                            <div class="form-group">汽能</div>
+                            <div class="form-group">8975.53</div>
+                            <div class="form-group"><div class="row"><div id="highcharts-electricity" style="min-width:162px;height:74px"></div></div></div>
+                            <div class="form-group">+1.465%</div>
+                            <div class="form-group">87557.1</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -125,7 +129,7 @@
                     </select>
                 </div>
                 <div class="mics-form-select pull-right">
-                    <select name="" class="select" id="EnergyAreaDateSelect">
+                    <select name="" class="select selectFontKeepLeft" id="EnergyAreaDateSelect">
                         <option value="日">日</option>
                         <option value="月">月</option>
                         <option value="年">年</option>
@@ -167,7 +171,7 @@
             <div class="mics-panel-head">
                 <div class="mics-panel-title pull-left">成本展示</div>
                 <div class="mics-form-select pull-right">
-                    <select name="" class="select" id="EnergyNumberSelect">
+                    <select name="" class="select selectFontKeepLeft" id="EnergyNumberSelect">
                         <option value="水能">水能</option>
                         <option value="电能">电能</option>
                         <option value="汽能">汽能</option>
@@ -215,7 +219,7 @@
             if ("WebSocket" in window){
                 var ws = new WebSocket("ws://127.0.0.1:9200");
                 ws.onopen = function(){
-                    ws.send('生活区域能耗量');
+                    ws.send("hello");
                     console.log("数据发送中...");
                 };
                 ws.onmessage = function (evt){
