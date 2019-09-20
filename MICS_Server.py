@@ -14,7 +14,6 @@ from flask_bootstrap import Bootstrap
 from handlers.batchmanager.batch_manager import batch
 from tools.common import insert, delete, update, select, accurateSelect
 from handlers.energymanager.energy_manager import energy
-from wsserver import run
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)

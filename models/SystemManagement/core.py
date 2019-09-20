@@ -769,6 +769,25 @@ class RedisKey(Base):
 	
 #RedisKey_END:
 
+
+#AreaMaintain_START:
+class AreaMaintain(Base):
+	__tablename__ = "AreaMaintain" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#区域编码:
+	AreaCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#区域名称:
+	AreaName = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
+	
+	#所属厂区:
+	FactoryName = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
+	
+#AreaMaintain_END:
+
 # 生成表单的执行语句_START
 Base.metadata.create_all(engine)
 
