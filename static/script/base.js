@@ -221,6 +221,12 @@ function highchartsRender(id,xAxisArray,seriesData){
         chart: {
             type: 'column'
         },
+        title: {
+            text: ''
+        },
+        subtitle: {
+            text: ''
+        },
         credits: {
             enabled: false//不显示LOGO
         },

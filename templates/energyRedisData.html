@@ -31,6 +31,13 @@
                         <option value="年">年</option>
                     </select>
                 </div>
+                <div class="mics-form-select pull-right">
+                    <select name="" class="select selectFontKeepLeft" id="EnergyChartSelect_Item">
+                        <option value="电">电</option>
+                        <option value="水">水</option>
+                        <option value="汽">汽</option>
+                    </select>
+                </div>
             </div>
             <div id="highchartsEnergy" style="min-width:400px;height:295px"></div>
         </div>
@@ -236,12 +243,13 @@
                 url:"/energyTrend",
                 type:"get",
                 data:{
-                    currenttime:$("#EnergyChartSelect_Time").val()
+                    currenttime:$("#EnergyChartSelect_Time").val(),
+                    classparam:$("#EnergyChartSelect_Item").val()
                 },
                 success:function(res){
-                    res = JSON.parse(res)
                     console.log(res)
-                    highchartsRender("highchartsEnergy",res.X,res.Y)
+                    res = JSON.parse(res)
+                    highchartsRender()
                 }
             })
             $("#EnergyChartSelect_Time").siblings(".select").find(".select_ul li").on('click',function(){
@@ -251,6 +259,19 @@
                     data:{
                         currenttime:$(this).html(),
                         classparam:$("#EnergyChartSelect_Item").val()
+                    },
+                    success:function(res){
+                        console.log(res)
+                    }
+                })
+            })
+            $("#EnergyChartSelect_Item").siblings(".select").find(".select_ul li").on('click',function(){
+                $.ajax({
+                    url:"/energyTrend",
+                    type:"get",
+                    data:{
+                        currenttime:$("#EnergyChartSelect_Time").val(),
+                        classparam:$(this).html()
                     },
                     success:function(res){
                         console.log(res)
