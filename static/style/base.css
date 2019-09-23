@@ -226,8 +226,16 @@ a:focus{text-decoration: none}
 .realDataCharts{
     height: 166px;
     background: #F9F9F9;
+    border-radius: 8px;
+    margin-bottom: 15px;
 }
 /*实时数据显示数字*/
+.groupLabel{
+    font-size: 18px;
+    color: #07488E;
+    white-space: nowrap;
+    line-height: 40px;
+}
 @font-face {
     font-family: unidreamLED;
     src: url("../fonts/UnidreamLED.ttf");
@@ -235,8 +243,13 @@ a:focus{text-decoration: none}
 }
 .roll_number{
     font-family: unidreamLED;
-    font-size: 32px;
-    color : #000;
+    font-size: 24px;
+    color : #fff;
+    background: #060f1a;
+    letter-spacing:5px;
+    border-radius: 4px;
+    text-align: right;
+    padding: 5px;
 }
 .to__led-number {
     position: relative;
