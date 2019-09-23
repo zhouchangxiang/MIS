@@ -81,7 +81,7 @@ def energyTrend():
                     elif classparam == "水":
                         EnergyValues = db_session.query(WaterEnergy.WaterMeterValue).filter(
                             WaterEnergy.CollectionMonth == mon).all()
-                    elif classparam == "气":
+                    elif classparam == "汽":
                         EnergyValues = db_session.query(SteamEnergy.SteamValue).filter(
                             SteamEnergy.CollectionMonth == mon).all()
                     diyz.append(accumulation(EnergyValues))
@@ -96,7 +96,7 @@ def energyTrend():
                     elif classparam == "水":
                         EnergyValues = db_session.query(WaterEnergy.WaterMeterValue).filter(
                             WaterEnergy.CollectionDay == day).all()
-                    elif classparam == "气":
+                    elif classparam == "汽":
                         EnergyValues = db_session.query(SteamEnergy.SteamValue).filter(
                             SteamEnergy.CollectionDay == day).all()
                     diyz.append(accumulation(EnergyValues))
@@ -110,7 +110,7 @@ def energyTrend():
                     elif classparam == "水":
                         EnergyValues = db_session.query(WaterEnergy.WaterMeterValue).filter(
                             WaterEnergy.CollectionDate.like("%"+hour+"%")).all()
-                    elif classparam == "气":
+                    elif classparam == "汽":
                         EnergyValues = db_session.query(SteamEnergy.SteamValue).filter(
                             SteamEnergy.CollectionDate.like("%"+hour+"%")).all()
                     diyz.append(accumulation(EnergyValues))
