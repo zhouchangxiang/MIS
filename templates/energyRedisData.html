@@ -25,10 +25,17 @@
             <div class="mics-panel-head">
                 <div class="mics-panel-title pull-left">能耗趋势</div>
                 <div class="mics-form-select pull-right">
-                    <select name="" class="select selectFontKeepLeft" id="EnergyChartSelect">
+                    <select name="" class="select selectFontKeepLeft" id="EnergyChartSelect_Time">
                         <option value="日">日</option>
                         <option value="月">月</option>
                         <option value="年">年</option>
+                    </select>
+                </div>
+                <div class="mics-form-select pull-right">
+                    <select name="" class="select selectFontKeepLeft" id="EnergyDataSelect_Item">
+                        <option value="电">电</option>
+                        <option value="水">水</option>
+                        <option value="汽">汽</option>
                     </select>
                 </div>
             </div>
@@ -216,6 +223,7 @@
             //$("#EnergyChartSelect").siblings(".select").find(".select_ul li").on('click',function(){
             //    console.log($(this).html())
             //})
+            //实时数据
             if ("WebSocket" in window){
                 var ws = new WebSocket("ws://127.0.0.1:9200");
                 ws.onopen = function(){
@@ -232,6 +240,19 @@
             }else{
                bootbox.alert("您的浏览器不支持 WebSocket！无法查看实时数据。");
             }
+
+            //能耗趋势图表
+            $.ajax({
+                url:"/energyTrend",
+                type:"get",
+                data:{
+                    currenttime:$("#EnergyChartSelect_Time").val(),
+                    classparam:$("#EnergyChartSelect_Item").val()
+                },
+                success:function(res){
+                    console.log(res)
+                }
+            })
         })
     </script>
 </body>

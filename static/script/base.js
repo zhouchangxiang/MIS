@@ -163,3 +163,15 @@ window.addEventListener("load", function() {
          })(elems[i++]);
     }
 }, 0);
+function highchartsRender(id,xAxisArray,seriesData){
+    var chart = Highcharts.chart(id,{
+        chart: {
+            type: 'column'
+        },
+        xAxis: {
+            categories: xAxisArray,
+            crosshair: true
+        },
+        series:seriesData
+    });
+}
