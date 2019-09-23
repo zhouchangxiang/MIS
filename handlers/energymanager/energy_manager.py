@@ -47,6 +47,11 @@ def addzero(j):
         return "0" + str(j)
     else:
         return str(j)
+def accumulation(EnergyValues):
+    eleY = 0.0
+    for EnergyValue in EnergyValues:
+        eleY = eleY + float(EnergyValue[0])
+    return eleY
 @energy.route('/energyTrend', methods=['POST', 'GET'])
 def energyTrend():
     '''
@@ -65,28 +70,24 @@ def energyTrend():
             dir = {}
             dix = []
             diy = []
+            diyr = {}
+            diyz = []
             if currenttime == "年":
                 for j in range(1,currentmonth+1):
                     mon = str(currentyear) + "-" + addzero(j)
-                    print(mon)
                     dix.append(str(j))
                     if classparam == "电":
                         EnergyValues = db_session.query(ElectricEnergy.ElectricEnergyValue).filter(ElectricEnergy.CollectionMonth == mon).all()
-
                     elif classparam == "水":
                         EnergyValues = db_session.query(WaterEnergy.WaterMeterValue).filter(
                             WaterEnergy.CollectionMonth == mon).all()
                     elif classparam == "气":
                         EnergyValues = db_session.query(SteamEnergy.SteamValue).filter(
                             SteamEnergy.CollectionMonth == mon).all()
-                    eleY = 0.0
-                    for EnergyValue in EnergyValues:
-                        eleY = eleY + float(EnergyValue[0])
-                    diy.append(str(eleY))
+                    diyz.append(str(accumulation(EnergyValues)))
             elif currenttime == "月":#2019-9-22
                 for j in range(1, currentday+1):
                     day = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(j)
-                    print(day)
                     dix.append(str(j))
                     if classparam == "电":
                         EnergyValues = db_session.query(ElectricEnergy.ElectricEnergyValue).filter(
@@ -98,14 +99,10 @@ def energyTrend():
                     elif classparam == "气":
                         EnergyValues = db_session.query(SteamEnergy.SteamValue).filter(
                             SteamEnergy.CollectionDay == day).all()
-                    eleY = 0.0
-                    for EnergyValue in EnergyValues:
-                        eleY = eleY + float(EnergyValue[0])
-                    diy.append(str(eleY))
+                    diyz.append(str(accumulation(EnergyValues)))
             elif currenttime == "日":
                 for j in range(0, currenthour):
                     hour = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(currentday) + " " + addzero(j)
-                    print(hour)
                     dix.append(str(j))
                     if classparam == "电":
                         EnergyValues = db_session.query(ElectricEnergy.ElectricEnergyValue).filter(
@@ -116,12 +113,13 @@ def energyTrend():
                     elif classparam == "气":
                         EnergyValues = db_session.query(SteamEnergy.SteamValue).filter(
                             SteamEnergy.CollectionDate.like("%"+hour+"%")).all()
-                    eleY = 0.0
-                    for EnergyValue in EnergyValues:
-                        eleY = eleY + float(EnergyValue[0])
-                    diy.append(str(eleY))
+                    diyz.append(str(accumulation(EnergyValues)))
+            diyr["name"] = classparam
+            diyr["data"] = diyz
             dir["X"] = dix
+            diy.append(diyr)
             dir["Y"] = diy
+            print(dir)
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
