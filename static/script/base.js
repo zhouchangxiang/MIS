@@ -230,8 +230,16 @@ function highchartsRender(id,xAxisArray,seriesData){
         credits: {
             enabled: false//不显示LOGO
         },
+        legend: {
+			enabled: false //不显示图例
+		},
         xAxis: {
             categories: xAxisArray
+        },
+        yAxis: {
+            title: {
+                text: ''
+            }
         },
         series:seriesData
     });

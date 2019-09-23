@@ -239,45 +239,28 @@
             }
 
             //能耗趋势图表
-            $.ajax({
-                url:"/energyTrend",
-                type:"get",
-                data:{
-                    currenttime:$("#EnergyChartSelect_Time").val(),
-                    classparam:$("#EnergyChartSelect_Item").val()
-                },
-                success:function(res){
-                    console.log(res)
-                    res = JSON.parse(res)
-                    highchartsRender()
-                }
-            })
+            ajaxEnergyTrend($("#EnergyChartSelect_Time").val(),$("#EnergyChartSelect_Item").val())
             $("#EnergyChartSelect_Time").siblings(".select").find(".select_ul li").on('click',function(){
-                $.ajax({
-                    url:"/energyTrend",
-                    type:"get",
-                    data:{
-                        currenttime:$(this).html(),
-                        classparam:$("#EnergyChartSelect_Item").val()
-                    },
-                    success:function(res){
-                        console.log(res)
-                    }
-                })
+                ajaxEnergyTrend($(this).html(),$("#EnergyChartSelect_Item").val())
             })
             $("#EnergyChartSelect_Item").siblings(".select").find(".select_ul li").on('click',function(){
+                ajaxEnergyTrend($("#EnergyChartSelect_Time").val(),$(this).html())
+            })
+            function ajaxEnergyTrend(currenttime,classparam){
                 $.ajax({
                     url:"/energyTrend",
                     type:"get",
                     data:{
-                        currenttime:$("#EnergyChartSelect_Time").val(),
-                        classparam:$(this).html()
+                        currenttime:currenttime,
+                        classparam:classparam
                     },
                     success:function(res){
-                        console.log(res)
+                        res = JSON.parse(res)
+                        var y = JSON.stringify(res.Y)
+                        highchartsRender("highchartsEnergy",res.X,res.Y)
                     }
                 })
-            })
+            }
         })
     </script>
 </body>
