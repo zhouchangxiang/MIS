@@ -222,6 +222,42 @@ a:focus{text-decoration: none}
 .select.selectFontKeepLeft:after{left:0;right:inherit}
 .select.selectFontKeepLeft .select_text{padding-left:20px;padding-right:0;text-align: right;}
 
+/*实时数据图表*/
+.realDataCharts{
+    height: 166px;
+    background: #F9F9F9;
+}
+/*实时数据显示数字*/
+@font-face {
+    font-family: unidreamLED;
+    src: url("../fonts/UnidreamLED.ttf");
+    /* IE9+  HTML节点的lang="en" 记得去掉，不然会谷歌浏览器会自动翻译导致字体不正确 */
+}
+.roll_number{
+    font-family: unidreamLED;
+    font-size: 32px;
+    color : #000;
+}
+.to__led-number {
+    position: relative;
+    margin-right: 9px;
+    font-size: 50px;
+    width: 38px;
+    height: 70px;
+    padding: 0.25rem 0;
+    text-align: center;
+    border: 2px solid rgba(105, 123, 148, 0.5);
+    background-color: rgba(0, 0, 0, 0.5);
+    display: inline-block;
+    vertical-align: middle;
+    box-sizing: border-box;
+}
+
+.to__led-number--no {
+    width: 19px;
+    background: unset;
+    border: none;
+}
 /* 进度条 */
 .EnergyNode{
     padding: 0 15px;
@@ -235,7 +271,7 @@ a:focus{text-decoration: none}
     height: 4px;
     margin-top: 15px;
 }
-/* 实时数据 */
+/* 实时数据页面 */
 .trendsChartContent{
     height: 300px;
     white-space: nowrap;

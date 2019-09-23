@@ -32,7 +32,7 @@
                     </select>
                 </div>
                 <div class="mics-form-select pull-right">
-                    <select name="" class="select selectFontKeepLeft" id="EnergyDataSelect_Item">
+                    <select name="" class="select selectFontKeepLeft" id="EnergyChartSelect_Item">
                         <option value="电">电</option>
                         <option value="水">水</option>
                         <option value="汽">汽</option>
@@ -238,6 +238,8 @@
                bootbox.alert("您的浏览器不支持 WebSocket！无法查看实时数据。");
             }
 
+            console.log($("#EnergyChartSelect_Time").val())
+            console.log($("#EnergyChartSelect_Item").val())
             //能耗趋势图表
             $.ajax({
                 url:"/energyTrend",

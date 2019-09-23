@@ -163,6 +163,59 @@ window.addEventListener("load", function() {
          })(elems[i++]);
     }
 }, 0);
+// 数字滚动效果
+function Digit(a) {
+    function b(a, b) {
+        var f, g, c = d(b),
+            e = c.toString().length;
+        for (f = 0; e > f; f++) g = document.createElement("div"), g.className = "," != c[f] && "." != c[f] ? "to__led-number" : "to__led-number to__led-number--no", g.innerHTML = c[f], a.appendChild(g)
+    }
+
+    function c(a, b, c) {
+        function i() {
+            return 9 == h ? h = 0 : h++, h
+        }
+        var e, f, g, h, j, k, d = a.childNodes.length - 1;
+        for (e = 0; e < a.childNodes.length; e++) f = {}, f = "left" == c ? a.childNodes[e] : a.childNodes[d], g = f.innerHTML, h = 0, f.innerHTML = "", "," != g && "." != g && (b.timerTemp += b.single), j = .5 * b.timerTemp / b.speed, k = b.timerTemp - j, ! function(a, b) {
+            setTimeout(function() {
+                if (a.innerHTML = b, "," != b && "." != b) {
+                    a.innerHTML = b;
+                    var c = setInterval(function() {
+                        a.innerHTML = i()
+                    }, 50);
+                    setTimeout(function() {
+                        clearInterval(c), a.innerHTML = b
+                    }, 1e3 * k)
+                } else a.innerHTML = b
+            }, 1e3 * j)
+        }(f, g), d--
+    }
+
+    function d(a) {
+        var c, d, f, g, h;
+        for (a = a.toString(), c = a.split("."), d = c[0], f = "." + c[1], g = d, h = 1; h <= Math.floor((d.length - 1) / 3); h++) g = e(g, d.length - 3 * h, ",");
+        return c[1] && (g += f), g
+    }
+
+    function e(a, b, c) {
+        return a.slice(0, b) + c + a.slice(b)
+    }
+    Digit.prototype.render = function() {
+        var d = a.direction,
+            e = a.finish,
+            f = a.speed,
+            g = a.number.toString().replace(".", "").length - 1,
+            h = Number((e / g).toFixed(2)),
+            i = {
+                number: g,
+                single: h,
+                speed: f,
+                timerTemp: 0
+            };
+        i.timerTemp -= i.single, b(a.dom, a.number), c(a.dom, i, d)
+    }
+}
+//highchart图表渲染方法
 function highchartsRender(id,xAxisArray,seriesData){
     var chart = Highcharts.chart(id,{
         chart: {
