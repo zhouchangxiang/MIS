@@ -238,8 +238,6 @@
                bootbox.alert("您的浏览器不支持 WebSocket！无法查看实时数据。");
             }
 
-            console.log($("#EnergyChartSelect_Time").val())
-            console.log($("#EnergyChartSelect_Item").val())
             //能耗趋势图表
             $.ajax({
                 url:"/energyTrend",
@@ -249,7 +247,9 @@
                     classparam:$("#EnergyChartSelect_Item").val()
                 },
                 success:function(res){
+                    res = JSON.parse(res)
                     console.log(res)
+                    highchartsRender("highchartsEnergy",res.X,res.Y)
                 }
             })
             $("#EnergyChartSelect_Time").siblings(".select").find(".select_ul li").on('click',function(){
