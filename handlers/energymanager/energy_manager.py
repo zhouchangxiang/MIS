@@ -42,7 +42,11 @@ def getMonthFirstDayAndLastDay(year, month):
     firstDay = datetime.date(year=year, month=month, day=1)
     lastDay = datetime.date(year=year, month=month, day=monthRange)
     return firstDay, lastDay
-
+def addzero(j):
+    if j < 10:
+        return "0" + str(j)
+    else:
+        return str(j)
 @energy.route('/energyTrend', methods=['POST', 'GET'])
 def energyTrend():
     '''
@@ -62,8 +66,8 @@ def energyTrend():
             dix = []
             diy = []
             if currenttime == "年":
-                for j in range(1,currentmonth):
-                    mon = str(currentyear+"-"+currentmonth)
+                for j in range(1,currentmonth+1):
+                    mon = str(currentyear) + "-" + addzero(j)
                     print(mon)
                     dix.append(str(j))
                     if classparam == "电":
@@ -80,8 +84,8 @@ def energyTrend():
                         eleY = eleY + float(EnergyValue[0])
                     diy.append(str(eleY))
             elif currenttime == "月":#2019-9-22
-                for j in range(1, currentday):
-                    day = str(currentyear + "-" + currentmonth + currentday)
+                for j in range(1, currentday+1):
+                    day = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(j)
                     print(day)
                     dix.append(str(j))
                     if classparam == "电":
@@ -99,8 +103,8 @@ def energyTrend():
                         eleY = eleY + float(EnergyValue[0])
                     diy.append(str(eleY))
             elif currenttime == "日":
-                for j in range(1, currenthour):
-                    hour = str(currentyear + "-" + currentmonth + "-" + currentday + " " + currenthour)
+                for j in range(0, currenthour):
+                    hour = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(currentday) + " " + addzero(j)
                     print(hour)
                     dix.append(str(j))
                     if classparam == "电":
