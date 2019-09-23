@@ -220,9 +220,6 @@
     <script>
         $(function(){
             $('select.select').select();
-            //$("#EnergyChartSelect").siblings(".select").find(".select_ul li").on('click',function(){
-            //    console.log($(this).html())
-            //})
             //实时数据
             if ("WebSocket" in window){
                 var ws = new WebSocket("ws://127.0.0.1:9200");
@@ -252,6 +249,32 @@
                 success:function(res){
                     console.log(res)
                 }
+            })
+            $("#EnergyChartSelect_Time").siblings(".select").find(".select_ul li").on('click',function(){
+                $.ajax({
+                    url:"/energyTrend",
+                    type:"get",
+                    data:{
+                        currenttime:$(this).html(),
+                        classparam:$("#EnergyChartSelect_Item").val()
+                    },
+                    success:function(res){
+                        console.log(res)
+                    }
+                })
+            })
+            $("#EnergyChartSelect_Item").siblings(".select").find(".select_ul li").on('click',function(){
+                $.ajax({
+                    url:"/energyTrend",
+                    type:"get",
+                    data:{
+                        currenttime:$("#EnergyChartSelect_Time").val(),
+                        classparam:$(this).html()
+                    },
+                    success:function(res){
+                        console.log(res)
+                    }
+                })
             })
         })
     </script>
