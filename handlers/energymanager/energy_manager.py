@@ -84,7 +84,7 @@ def energyTrend():
                     elif classparam == "气":
                         EnergyValues = db_session.query(SteamEnergy.SteamValue).filter(
                             SteamEnergy.CollectionMonth == mon).all()
-                    diyz.append(str(accumulation(EnergyValues)))
+                    diyz.append(accumulation(EnergyValues))
             elif currenttime == "月":#2019-9-22
                 for j in range(1, currentday+1):
                     day = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(j)
@@ -99,7 +99,7 @@ def energyTrend():
                     elif classparam == "气":
                         EnergyValues = db_session.query(SteamEnergy.SteamValue).filter(
                             SteamEnergy.CollectionDay == day).all()
-                    diyz.append(str(accumulation(EnergyValues)))
+                    diyz.append(accumulation(EnergyValues))
             elif currenttime == "日":
                 for j in range(0, currenthour):
                     hour = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(currentday) + " " + addzero(j)
@@ -113,7 +113,7 @@ def energyTrend():
                     elif classparam == "气":
                         EnergyValues = db_session.query(SteamEnergy.SteamValue).filter(
                             SteamEnergy.CollectionDate.like("%"+hour+"%")).all()
-                    diyz.append(str(accumulation(EnergyValues)))
+                    diyz.append(accumulation(EnergyValues))
             diyr["name"] = classparam
             diyr["data"] = diyz
             dir["X"] = dix
