@@ -36,8 +36,6 @@ a:focus{text-decoration: none}
 }
 .wrap{
     padding: 15px;
-    clear: both;
-    overflow: hidden;
 }
 
 /*登录*/
@@ -236,6 +234,12 @@ a:focus{text-decoration: none}
     white-space: nowrap;
     line-height: 40px;
 }
+.groupMutedLabel{
+    font-size: 18px;
+    color: #000;
+    white-space: nowrap;
+    line-height: 40px;
+}
 @font-face {
     font-family: unidreamLED;
     src: url("../fonts/UnidreamLED.ttf");
@@ -270,6 +274,150 @@ a:focus{text-decoration: none}
     width: 19px;
     background: unset;
     border: none;
+}
+/* 首页右侧时域日历 */
+#calendar-input {
+    height: 38px;
+    width: 100%;
+    display: block;
+    margin: auto;
+    border-radius: 5px;
+    padding: 0 10px;
+    font-size: 14px;
+}
+.calendar-con {
+    width: 100%;
+    margin: auto;
+    position: relative;
+}
+.calendar {
+    background: #fff;
+    width: 100%;
+    border-radius: 5px;
+    margin: auto;
+    position: relative;
+    top: -38px;
+    left: 0;
+}
+.calendar .dateTimeInput {
+    width: 100%;
+    height: 38px;
+    width: calc(100% - 20px);
+    padding: 0 10px;
+}
+.calendar .dateTimeInput input {
+    border: none;
+    width: calc(100% - 2px);
+    height: 38px;
+    font-size: 14px;
+    outline: none;
+}
+.calendar .calendar-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    height: 41px;
+    border-bottom: 1px solid #D3D3D3;
+}
+.calendar .calendar-btn a {
+    text-decoration: none;
+    color: #333;
+    font-size: 12px;
+    display: inline-block;
+    text-align: center;
+    padding: 5px;
+    border: 1px solid #fff;
+    background: #f1f1f1;
+}
+.calendar .title {
+    display: flex;
+    margin: 0 10px;
+    color: #07488E;
+    font-weight: bold;
+}
+.calendar .title li {
+    flex: 1;
+    text-align: center;
+    height: 40px;
+    line-height: 40px;
+    width: calc((100% - 20px)/7);
+}
+.calendar .content .list ul {
+    display: flex;
+    flex-wrap: wrap;
+}
+.calendar .content {
+    margin: 0 10px;
+    padding-bottom: 10px;
+}
+.calendar .content .list ul li {
+    text-align: center;
+    height: 30px;
+    line-height: 30px;
+    width: calc((100%/7));
+    cursor: pointer;
+    font-size: 13px;
+    transition: all .3s;
+    margin: 5px 0;
+    color: #000;
+}
+.calendar .content .list ul li i {
+    display: block;
+    font-size: 8px;
+    margin-top: -17px;
+    font-style: normal;
+}
+.calendar .content .list ul li.disabled {
+    /*background: #f0f0f0;*/
+    color: #f0f0f0;
+}
+.calendar .content .list ul li.active {
+    background: #07488E;
+    color: #fff;
+}
+.calendar .content .list ul li:hover {
+    background: #07488E;
+    color: #fff;
+}
+.calendar .content .list ul li.hover {
+    background: #f1f1f1;
+    color: #000;
+}
+.calendar .content .list ul li.closure {
+    color: #c9c9c9;
+}
+.calendar .content .list ul li.startDate {
+    color: #ffffff;
+    background: #07488E;
+    border-radius: 8px;
+    margin: 5px;
+    width: calc((100%/7) - 10px);
+}
+.calendar .content .list ul li.endDate {
+    color: #ffffff;
+    background: #07488E;
+    border-radius: 8px;
+    margin: 5px;
+    width: calc((100%/7) - 10px);
+}
+.calendar .bottom-btn {
+    border-top: 1px solid #f0f0f0;
+    padding: 10px;
+    text-align: right;
+}
+
+.calendar .bottom-btn a {
+    display: inline-block;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 3px;
+    background: #07488E;
+    font-size: 12px;
+    text-decoration: none;
+}
+.calendar .bottom-btn a.disabled {
+    background: #999;
+    cursor: no-drop;
 }
 /* 进度条 */
 .EnergyNode{
