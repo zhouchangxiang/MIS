@@ -7,11 +7,12 @@ from dbset.database.db_operate import db_session,pool
 from dbset.main.BSFramwork import AlchemyEncoder
 from flask_login import login_required, logout_user, login_user,current_user,LoginManager
 import calendar
-from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy
+from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable
 from tools.common import insert,delete,update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger,insertSyslog
 import datetime
+import arrow
 
 energy = Blueprint('energy', __name__, template_folder='templates')
 @energy.route('/energyRedisData')
@@ -92,7 +93,6 @@ def energyTrend():
                     if classparam == "电":
                         EnergyValues = db_session.query(ElectricEnergy.ElectricEnergyValue).filter(
                             ElectricEnergy.CollectionDay == day).all()
-
                     elif classparam == "水":
                         EnergyValues = db_session.query(WaterEnergy.WaterMeterValue).filter(
                             WaterEnergy.CollectionDay == day).all()
@@ -125,3 +125,106 @@ def energyTrend():
             print(e)
             logger.error(e)
             insertSyslog("error", "能耗趋势查询报错Error：" + str(e), current_user.Name)
+
+def limitappend(currEnergyValues,lastEnergyValues,name,tim):
+    '''
+    :param EnergyValues: 能耗数组
+    :param name: 水电汽
+    :param tim: 年月日
+    :return:
+    '''
+    curr = accumulation(currEnergyValues)
+    last = accumulation(lastEnergyValues)
+    trend = ""
+    if curr>last:
+        trend = "上升"
+    elif curr==last:
+        trend = "相等"
+    else:
+        trend = "下降"
+    Ywatlimit = db_session.query(LimitTable.LimitValue).filter(LimitTable.LimitName.like("%"+name+"%")).first()[0]
+    limit = float(Ywatlimit)
+    if tim == "月":
+        limit = limit/12
+    elif tim == "日":
+        limit = limit/365
+    ews = {}
+    ews["name"] = name
+    ews["upperLimit"] = str(limit)
+    ews["percent"] = str(curr/limit) + "%"
+    ews["value"] = str(curr)
+    ews["trend"] = trend
+    return ews
+@energy.route('/energySumPercent', methods=['POST', 'GET'])
+def energySumPercent():
+    '''
+    分项能耗量
+    :return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            currenttime = data.get("currenttime")
+            dir = {}
+            a = arrow.now()
+            currentyear = str(a.shift(years=0))[0:4]
+            currentmonth = str(a.shift(years=0))[0:7]
+            currentday = str(a.shift(days=0))[0:10]
+            lastyear = str(a.shift(years=-1))[0:4]
+            lastmonth = str(a.shift(months=-1))[0:7]
+            lastday = str(a.shift(days=-1))[0:10]#a.shift(weeks=1)
+            dic = []
+            if currenttime == "年":
+                curreleEnergyValues = db_session.query(ElectricEnergy.ElectricEnergyValue).filter(
+                    ElectricEnergy.CollectionYear == currentyear).all()
+                lasteleEnergyValues = db_session.query(ElectricEnergy.ElectricEnergyValue).filter(
+                    ElectricEnergy.CollectionYear == lastyear).all()
+                dic.append(limitappend(curreleEnergyValues,lasteleEnergyValues,"电",currenttime))
+                currwatEnergyValues = db_session.query(WaterEnergy.WaterMeterValue).filter(
+                    WaterEnergy.CollectionYear == currentyear).all()
+                lastwatEnergyValues = db_session.query(WaterEnergy.WaterMeterValue).filter(
+                    WaterEnergy.CollectionYear == lastyear).all()
+                dic.append(limitappend(currwatEnergyValues, lastwatEnergyValues, "水", currenttime))
+                currsteEnergyValues = db_session.query(SteamEnergy.SteamValue).filter(
+                    SteamEnergy.CollectionYear == currentyear).all()
+                laststeEnergyValues = db_session.query(SteamEnergy.SteamValue).filter(
+                    SteamEnergy.CollectionYear == lastyear).all()
+                dic.append(limitappend(currsteEnergyValues, laststeEnergyValues, "汽", currenttime))
+            elif currenttime == "月":
+                curreleEnergyValues = db_session.query(ElectricEnergy.ElectricEnergyValue).filter(
+                    ElectricEnergy.CollectionMonth == currentmonth).all()
+                lasteleEnergyValues = db_session.query(ElectricEnergy.ElectricEnergyValue).filter(
+                    ElectricEnergy.CollectionMonth == lastmonth).all()
+                dic.append(limitappend(curreleEnergyValues, lasteleEnergyValues, "电", currenttime))
+                currwatEnergyValues = db_session.query(WaterEnergy.WaterMeterValue).filter(
+                    WaterEnergy.CollectionMonth == currentmonth).all()
+                lastwatEnergyValues = db_session.query(WaterEnergy.WaterMeterValue).filter(
+                    WaterEnergy.CollectionMonth == lastmonth).all()
+                dic.append(limitappend(currwatEnergyValues, lastwatEnergyValues, "水", currenttime))
+                currsteEnergyValues = db_session.query(SteamEnergy.SteamValue).filter(
+                    SteamEnergy.CollectionMonth == currentmonth).all()
+                laststeEnergyValues = db_session.query(SteamEnergy.SteamValue).filter(
+                    SteamEnergy.CollectionMonth == lastmonth).all()
+                dic.append(limitappend(currsteEnergyValues, laststeEnergyValues, "汽", currenttime))
+            elif currenttime == "日":
+                curreleEnergyValues = db_session.query(ElectricEnergy.ElectricEnergyValue).filter(
+                    ElectricEnergy.CollectionDay == currentday).all()
+                lasteleEnergyValues = db_session.query(ElectricEnergy.ElectricEnergyValue).filter(
+                    ElectricEnergy.CollectionDay == lastday).all()
+                dic.append(limitappend(curreleEnergyValues, lasteleEnergyValues, "电", currenttime))
+                currwatEnergyValues = db_session.query(WaterEnergy.WaterMeterValue).filter(
+                    WaterEnergy.CollectionDay == currentday).all()
+                lastwatEnergyValues = db_session.query(WaterEnergy.WaterMeterValue).filter(
+                    WaterEnergy.CollectionDay == lastday).all()
+                dic.append(limitappend(currwatEnergyValues, lastwatEnergyValues, "水", currenttime))
+                currsteEnergyValues = db_session.query(SteamEnergy.SteamValue).filter(
+                    SteamEnergy.CollectionDay == currentday).all()
+                laststeEnergyValues = db_session.query(SteamEnergy.SteamValue).filter(
+                    SteamEnergy.CollectionDay == lastday).all()
+                dic.append(limitappend(currsteEnergyValues, laststeEnergyValues, "汽", currenttime))
+            print(dic)
+            return json.dumps(dic, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "分项能耗量查询报错Error：" + str(e), current_user.Name)
