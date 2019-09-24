@@ -14,7 +14,7 @@
 
             </div>
             <div class="col-md-3">
-                <div class="mics-panel-head">
+                <div class="mics-panel-head row">
                     <div class="mics-panel-title pull-left">成本展示</div>
                     <div class="mics-form-select pull-right">
                         <select name="" class="select selectFontKeepLeft" id="EnergyAreaDateSelect">
@@ -44,17 +44,37 @@
                             </div>
                         </form>
                     </div>
+                    <div class="col-md-12">
+                        <div class="calendar-con">
+                            <input type="text" id="calendar-input" placeholder="请输入日期" />
+                            <div class="calendar"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <label for="" class="col-md-5 groupMutedLabel">时域耗量：</label>
+                                <label for="" class="col-md-7 groupLabel timeDomain">1545454.15</label>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <script src="../../static/script/jquery-3.3.1.min.js"></script>
     <script src="../../static/script/jquery.select.js"></script>
+    <script src="../../static/script/Rangecalendar.js"></script>
     <script src="../../static/script/base.js"></script>
     <script>
         $(function(){
             $('select.select').select();
 
+            //选择日期范围
+            new calendar(".calendar", {
+                checkCalender: true, //可多选
+                afterToday: true  //今日之后不可选
+            });
         })
     </script>
 </body>

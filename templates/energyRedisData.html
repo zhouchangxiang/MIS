@@ -39,13 +39,13 @@
                     </select>
                 </div>
             </div>
-            <div id="highchartsEnergy" style="min-width:400px;height:295px"></div>
+            <div id="highchartsEnergy" style="min-width:400px;height:295px;margin-top: 15px;"></div>
         </div>
         <div class="col-md-3">
             <div class="mics-panel-head">
                 <div class="mics-panel-title pull-left">分项能耗量</div>
                 <div class="mics-form-select pull-right">
-                    <select name="" class="select selectFontKeepLeft" id="EnergyDataSelect">
+                    <select name="" class="select selectFontKeepLeft" id="EnergyProgressSelect_Time">
                         <option value="日">日</option>
                         <option value="月">月</option>
                         <option value="年">年</option>
@@ -59,7 +59,7 @@
                         <div class="EnergyItemData pull-right">65716457</div>
                     </div>
                     <div class="progress">
-                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%;"></div>
+                        <div class="progress-bar progress-bar-danger" role="progressbar"></div>
                     </div>
                 </li>
                 <li>
@@ -68,7 +68,7 @@
                         <div class="EnergyItemData pull-right">65716457</div>
                     </div>
                     <div class="progress">
-                        <div class="progress-bar" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%;"></div>
+                        <div class="progress-bar" role="progressbar"></div>
                     </div>
                 </li>
                 <li>
@@ -77,7 +77,7 @@
                         <div class="EnergyItemData pull-right">65716457</div>
                     </div>
                     <div class="progress">
-                        <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%;"></div>
+                        <div class="progress-bar progress-bar-info" role="progressbar"></div>
                     </div>
                 </li>
                 <li>
@@ -86,7 +86,7 @@
                         <div class="EnergyItemData pull-right">65716457</div>
                     </div>
                     <div class="progress">
-                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%;"></div>
+                        <div class="progress-bar progress-bar-success" role="progressbar"></div>
                     </div>
                 </li>
             </ul>
@@ -256,8 +256,25 @@
                     },
                     success:function(res){
                         res = JSON.parse(res)
-                        var y = JSON.stringify(res.Y)
                         highchartsRender("highchartsEnergy",res.X,res.Y)
+                    }
+                })
+            }
+            //进度条
+            ajaxEnergyProgress(($("#EnergyProgressSelect_Time").val())
+            $("#EnergyProgressSelect_Time").siblings(".select").find(".select_ul li").on('click',function(){
+                ajaxEnergyProgress($(this).html())
+            })
+            function ajaxEnergyProgress(currenttime){
+                $.ajax({
+                    url:"/energySumPercent",
+                    type:"get",
+                    data:{
+                        currenttime:currenttime,
+                    },
+                    success:function(res){
+                        res = JSON.parse(res)
+                        console.log(res)
                     }
                 })
             }
