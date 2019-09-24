@@ -799,7 +799,7 @@ class Equipment(Base):
 	SuperVisor = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
 	
 	#操作时间:
-	OperationDate = Column(Unicode(OperationDate), primary_key = False, autoincrement = False, nullable = True)
+	OperationDate = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
 	
 	#车间:
 	WorkShop = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
