@@ -303,7 +303,6 @@ a:focus{text-decoration: none}
     width: 100%;
     height: 38px;
     width: calc(100% - 20px);
-    padding: 0 10px;
 }
 .calendar .dateTimeInput input {
     border: none;
@@ -331,7 +330,6 @@ a:focus{text-decoration: none}
 }
 .calendar .title {
     display: flex;
-    margin: 0 10px;
     color: #07488E;
     font-weight: bold;
 }
@@ -345,10 +343,6 @@ a:focus{text-decoration: none}
 .calendar .content .list ul {
     display: flex;
     flex-wrap: wrap;
-}
-.calendar .content {
-    margin: 0 10px;
-    padding-bottom: 10px;
 }
 .calendar .content .list ul li {
     text-align: center;
@@ -445,6 +439,7 @@ a:focus{text-decoration: none}
     margin:20px 15px 0;
     padding: 15px;
     border-radius: 8px;
+    cursor: pointer;
 }
 /*区域能耗量表格*/
 .EnergyAreaTable{
@@ -499,4 +494,46 @@ a:focus{text-decoration: none}
     position: relative;
     width: 100%;
     height: 70px;
+}
+/* 模态框 */
+.mics-modal .modal-dialog{
+    width: 90%;
+    margin: 40px auto;
+}
+.mics-modal .modal-content{
+    border: 1px solid #07488E;
+    box-shadow: none;
+}
+.modal-backdrop{
+    background: #D8D8D8;
+}
+.mics-modal .modal-header{
+    display: table;
+    position: relative;
+    top: -26px;
+    padding: 10px 50px;
+    background: #07488E;
+    margin: 0 auto;
+    color: #fff;
+    border-radius: 12px;
+}
+.mics-modal .modal-footer{
+    display: table;
+    position: relative;
+    bottom: -24px;
+    width: 48px;
+    height: 48px;
+    line-height: 48px;
+    text-align: center;
+    background: #07488E;
+    margin: 0 auto;
+    padding: 0;
+    color: #fff;
+    font-size: 26px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+.mics-modal .modal-body .datetimepicker{
+    width: 160px;
+    border: 1px solid #F4F4F4;
 }

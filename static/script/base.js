@@ -222,10 +222,7 @@ function highchartsRender(id,xAxisArray,seriesData){
             type: 'column'
         },
         title: {
-            text: ''
-        },
-        subtitle: {
-            text: ''
+            text: null
         },
         credits: {
             enabled: false//不显示LOGO
@@ -243,4 +240,9 @@ function highchartsRender(id,xAxisArray,seriesData){
         },
         series:seriesData
     });
+}
+//highchart实时数据 激活最后一个点的提示框
+function activeLastPointToolip(chart) {
+    var points = chart.series[0].points;
+    chart.tooltip.refresh(points[points.length -1]);
 }
