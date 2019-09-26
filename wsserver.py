@@ -2,15 +2,14 @@ import redis
 import json
 from dbset.database import constant
 import time
-
 from tools.MESLogger import MESLogger
-
 logger = MESLogger('../logs', 'log')
 import socket
 import struct
 import hashlib
 import base64
 import threading
+import random
 
 
 def get_headers(data):
@@ -121,6 +120,7 @@ def handler_msg(conn):
                 data_dict['WB_MD'] = redis_conn.hget(constant.REDIS_TABLENAME, 't|WB_MD').decode('utf-8')
                 data_dict['ZGY_Temp'] = redis_conn.hget(constant.REDIS_TABLENAME, "t|ZGY_Temp").decode('utf-8')
                 data_dict['ZGY_ZGL'] = redis_conn.hget(constant.REDIS_TABLENAME, "t|ZGY_ZGL").decode('utf-8')
+                data_dict['random'] = random.randint(1,100)
                 json_data = json.dumps(data_dict)
                 # bytemsg = bytes(json_data, encoding="utf8")
                 # send_msg(c, bytes("recv: {}".format(data_parse), encoding="utf-8"))
