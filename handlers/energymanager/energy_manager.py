@@ -222,7 +222,6 @@ def energySumPercent():
                 laststeEnergyValues = db_session.query(SteamEnergy.SteamValue).filter(
                     SteamEnergy.CollectionDay == lastday).all()
                 dic.append(limitappend(currsteEnergyValues, laststeEnergyValues, "汽", currenttime))
-            print(dic)
             return json.dumps(dic, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)

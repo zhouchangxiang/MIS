@@ -806,6 +806,22 @@ class Equipment(Base):
 	
 #Equipment_END:
 
+
+#TagClassType_START:
+class TagClassType(Base):
+	__tablename__ = "TagClassType" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#Tag类型名称:
+	TagClassName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#Tag对应值:
+	TagClassValue = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+#TagClassType_END:
+
 # 生成表单的执行语句_START
 Base.metadata.create_all(engine)
 
