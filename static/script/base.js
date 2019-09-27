@@ -418,7 +418,4 @@ function highchartsRealTimeNoTickRender(url,id,xData,yData){
     function changeBackgroundColor(){
         chart.chart.backgroundColor = "#07488E"
     }
-    $(".trendsChartItem").hover(function(){
-        changeBackgroundColor()
-    })
 }
