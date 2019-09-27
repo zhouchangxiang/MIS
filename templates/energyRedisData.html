@@ -111,14 +111,14 @@
                         <div class="trendsChartItem mics-bg-primary">
                             <div class="form-group">水能</div>
                             <div class="form-group">8975.53</div>
-                            <div class="form-group"><div class="row"><div id="highcharts-electricity" style="min-width:162px;height:74px"></div></div></div>
+                            <div class="form-group"><div class="row"><div id="highcharts-water" style="min-width:162px;height:74px"></div></div></div>
                             <div class="form-group">+1.465%</div>
                             <div class="form-group">87557.1</div>
                         </div>
                         <div class="trendsChartItem mics-bg-primary">
                             <div class="form-group">汽能</div>
                             <div class="form-group">8975.53</div>
-                            <div class="form-group"><div class="row"><div id="highcharts-electricity" style="min-width:162px;height:74px"></div></div></div>
+                            <div class="form-group"><div class="row"><div id="highcharts-steam" style="min-width:162px;height:74px"></div></div></div>
                             <div class="form-group">+1.465%</div>
                             <div class="form-group">87557.1</div>
                         </div>
@@ -332,88 +332,14 @@
             {#    })#}
             {# }#}
 
-            //获取实时数据
-            var ws = new WebSocket("ws://127.0.0.1:5003");
-            websocket()
-            function websocket(){
-                ws.onopen = function(){
-                    ws.send("hello");
-                    console.log("数据发送中...");
-                };
-                ws.onclose = function(){
-                    console.log("连接已关闭...");
-                };
-            }
+            highchartsRealTimeNoTickRender("ws://127.0.0.1:5003","highcharts-electricity","randomtime","random")
+            highchartsRealTimeNoTickRender("ws://127.0.0.1:5003","highcharts-water","randomtime","random")
+            highchartsRealTimeNoTickRender("ws://127.0.0.1:5003","highcharts-steam","randomtime","random")
+
             //实时数据弹框
             $(".trendsChartItem").on("click",function(){
                 $("#realTimeModal").modal('show')
-                Highcharts.setOptions({
-                    global: {
-                        useUTC: false
-                    }
-                });
-                var chart = Highcharts.chart('modalRealTimeChart', {
-                    chart: {
-                        type: 'spline',
-                        marginRight: 10,
-                        events: {
-                            load: function () {
-                                var series = this.series[0],
-                                    chart = this;
-                                activeLastPointToolip(chart);
-                                ws.onmessage = function (evt){
-                                    var received_msg = evt.data;
-                                    received_msg = JSON.parse(received_msg)
-                                    var x = new Date(received_msg.randomtime).getTime(),   // 返回时间
-                                        y = received_msg.random;       // 返回值
-                                    series.addPoint([x, y], true, true);
-                                    activeLastPointToolip(chart);
-                                };
-                            }
-                        }
-                    },
-                    title: {
-                        text: null
-                    },
-                    xAxis: {
-                        type: 'datetime',
-                        tickPixelInterval: 150
-                    },
-                    yAxis: {
-                        title: {
-                            text: null
-                        }
-                    },
-                    tooltip: {
-                        formatter: function () {
-                            return '<b>' + this.series.name + '</b><br/>' +
-                                Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
-                                Highcharts.numberFormat(this.y, 2);
-                        }
-                    },
-                    credits: {
-                        enabled: false//不显示LOGO
-                    },
-                    legend: {
-                        enabled: false //不显示图例
-                    },
-                    series: [{
-                        name: '随机数据',
-                        data: (function () {
-                            // 生成随机值
-                            var data = [],
-                                i;
-                            for (i = -19; i <= 0; i += 1) {
-                                data.push({
-                                    x: null,
-                                    y: 0
-                                });
-                            }
-                            return data;
-                        }())
-                    }]
-                });
-                websocket()
+                highchartsRealTimeRender("ws://127.0.0.1:5003","modalRealTimeChart","randomtime","random")
             })
         })
     </script>

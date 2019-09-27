@@ -215,7 +215,7 @@ function Digit(a) {
         i.timerTemp -= i.single, b(a.dom, a.number), c(a.dom, i, d)
     }
 }
-//highchart图表渲染方法
+//highchart静态图表渲染方法
 function highchartsRender(id,xAxisArray,seriesData){
     var chart = Highcharts.chart(id,{
         chart: {
@@ -245,4 +245,174 @@ function highchartsRender(id,xAxisArray,seriesData){
 function activeLastPointToolip(chart) {
     var points = chart.series[0].points;
     chart.tooltip.refresh(points[points.length -1]);
+}
+//highchart 实时数据趋势图
+function highchartsRealTimeRender(url,id,xData,yData){
+    var ws = new WebSocket(url);
+    websocket()
+    function websocket(){
+        ws.onopen = function(){
+            ws.send("hello");
+            console.log("数据发送中...");
+        };
+        ws.onclose = function(){
+            console.log("连接已关闭...");
+        };
+    }
+    Highcharts.setOptions({
+        global: {
+            useUTC: false
+        }
+    });
+    var chart = Highcharts.chart(id, {
+        chart: {
+            type: 'spline',
+            marginRight: 10,
+            events: {
+                load: function () {
+                    var series = this.series[0],
+                        chart = this;
+                    activeLastPointToolip(chart);
+                    ws.onmessage = function (evt){
+                        var received_msg = evt.data;
+                        received_msg = JSON.parse(received_msg)
+                        var x = new Date(received_msg[xData]).getTime(),   // 返回时间
+                            y = received_msg[yData];       // 返回值
+                        series.addPoint([x, y], true, true);
+                        activeLastPointToolip(chart);
+                    };
+                }
+            }
+        },
+        title: {
+            text: null
+        },
+        xAxis: {
+            type: 'datetime',
+            tickPixelInterval: 150
+        },
+        yAxis: {
+            title: {
+                text: null
+            }
+        },
+        tooltip: {
+            formatter: function () {
+                return '<b>' + this.series.name + '</b><br/>' +
+                    Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
+                    Highcharts.numberFormat(this.y, 2);
+            }
+        },
+        credits: {
+            enabled: false//不显示LOGO
+        },
+        legend: {
+            enabled: false //不显示图例
+        },
+        series: [{
+            name: '随机数据',
+            data: (function () {
+                // 生成随机值
+                var data = [],
+                    i;
+                for (i = -19; i <= 0; i += 1) {
+                    data.push({
+                        x: null,
+                        y: 0
+                    });
+                }
+                return data;
+            }())
+        }]
+    });
+}
+//highchart 实时数据趋势图 无x y轴线
+function highchartsRealTimeNoTickRender(url,id,xData,yData){
+    var ws = new WebSocket(url);
+    websocket()
+    function websocket(){
+        ws.onopen = function(){
+            ws.send("hello");
+            console.log("数据发送中...");
+        };
+        ws.onclose = function(){
+            console.log("连接已关闭...");
+        };
+    }
+    Highcharts.setOptions({
+        global: {
+            useUTC: false
+        }
+    });
+    var chart = Highcharts.chart(id, {
+        chart: {
+            type: 'spline',
+            marginRight: 10,
+            backgroundColor:'#8A8F97',
+            events: {
+                load: function () {
+                    var series = this.series[0],
+                        chart = this;
+                    ws.onmessage = function (evt){
+                        var received_msg = evt.data;
+                        received_msg = JSON.parse(received_msg)
+                        var x = new Date(received_msg[xData]).getTime(),   // 返回时间
+                            y = received_msg[yData];       // 返回值
+                        series.addPoint([x, y], true, true);
+                    };
+                }
+            }
+        },
+        colors:["#ffffff"],
+        title: {
+            text: null
+        },
+        xAxis: {
+            lineWidth :0,//去掉x轴线
+            tickWidth:0,//去掉刻度
+            labels: {
+                enabled: false
+            },//去掉刻度数字
+            type: 'datetime',
+            tickPixelInterval: 150
+        },
+        yAxis: {
+            tickWidth:0,//去掉刻度
+            gridLineWidth: 0,//去掉y轴方向的横线
+            labels: {
+                enabled: false
+            },//去掉刻度数字
+            title: {
+                text: null
+            }
+        },
+        credits: {
+            enabled: false//不显示LOGO
+        },
+        legend: {
+            enabled: false //不显示图例
+        },
+        plotOptions: {
+            series: {
+                marker: {
+                    enabled: false  //关闭数据点
+                }
+            }
+        },
+        series: [{
+            name: '随机数据',
+            data: (function () {
+                // 生成随机值
+                var data = [],
+                    i;
+                for (i = -19; i <= 0; i += 1) {
+                    data.push({
+                        x: null,
+                        y: 0
+                    });
+                }
+                return data;
+            }())
+        }]
+    });
 }
