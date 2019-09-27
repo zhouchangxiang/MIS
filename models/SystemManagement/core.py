@@ -807,6 +807,8 @@ class Equipment(Base):
 #Equipment_END:
 
 
+
+
 #TagClassType_START:
 class TagClassType(Base):
 	__tablename__ = "TagClassType" 
@@ -819,6 +821,9 @@ class TagClassType(Base):
 	
 	#Tag对应值:
 	TagClassValue = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#设备ID:
+	EquipmnetID = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
 	
 #TagClassType_END:
 
