@@ -90,7 +90,7 @@
 				'<a class="leftbtn ml5" href="javascript:;">&lt;</a>' +
 				'</p>';
 		}
-		calendarList += '<h3>' + newYears + '-' + newMonths + '</h3>';
+		calendarList += '<h4>' + newYears + '-' + newMonths + '</h4>';
 		calendarList +=
 			'<p>' +
 			'<a class="rightbtn" href="javascript:;">&gt;</a>' +
@@ -155,7 +155,7 @@
 				'<a  class="sure-btn disabled" href="javascript:;">确定</a>' +
 				'</div>';
 		}
-		$(".calendar .calendar-btn h3").html(newYears + "," + newMonths)
+		$(".calendar .calendar-btn h4").html(newYears + "-" + newMonths)
 		return calendarList;
 	};
 

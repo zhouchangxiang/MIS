@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="../static/style/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="../static/style/bootstrap/bootstrap-table.min.css">
     <link rel="stylesheet" href="../static/style/bootstrap/bootstrap-select.min.css">
+    <link rel="stylesheet" href="../static/style/bootstrap/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" href="../static/style/font-awesome.min.css">
     <link rel="stylesheet" href="../static/style/base.css">
     <script src="../static/script/jquery-3.3.1.min.js"></script>
@@ -14,6 +15,7 @@
     <script src="../static/script/bootstrap/bootstrap-table.min.js"></script>
     <script src="../static/script/bootstrap/bootstrap-table-zh-CN.min.js"></script>
     <script src="../static/script/bootstrap/bootstrap-select.min.js"></script>
+    <script src="../static/script/bootstrap/bootstrap-datetimepicker.min.js"></script>
     <script src="../static/script/bootstrap/bootbox.min.js"></script>
     <script src="../static/script/jquery.select.js"></script>
     <script src="../static/script/base.js"></script>
@@ -217,26 +219,77 @@
             </div>
         </div>
     </div>
+    <div id="realTimeModal" class="modal mics-modal fade">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">实时数据</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12">
+                        <div class="col-md-7">
+                            <form class="form-inline">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control datetimepicker" id="startTime" readonly>
+                                    </div>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control datetimepicker" id="endTime" readonly>
+                                    </div>
+                                    <button type="button" class="btn btn-primary" id="SearchData">查询</button>
+                                    <button type="button" class="btn btn-primary" id="seeRealTimeData">查看实时</button>
+                                </div>
+                            </form>
+                            <div id="modalRealTimeChart" style="width: 100%;height: 410px;margin-top: 20px;"></div>
+                            <div class="mics-panel-head">
+                                <div class="mics-panel-title pull-left">累计能耗量:</div>
+                            </div>
+                            <div class="mics-panel-head">
+                                <label for="" class="groupLabel">415461.13</label>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="mics-panel-head">
+                                <div class="mics-panel-title pull-left">区域能耗排名:</div>
+                            </div>
+                            <div id="rankingChart" style="width: 100%;height: 200px;margin-top: 20px;">
+
+                            </div>
+                            <div class="mics-panel-head">
+                                <div class="mics-panel-title pull-left">能耗数据统计:</div>
+                            </div>
+                            <div id="rankingChart" style="width: 100%;height: 200px;margin-top: 20px;">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" class="close" data-dismiss="modal">
+                    <span class="fa fa-times"></span>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
         $(function(){
+            //时间选择控件
+            $.fn.datetimepicker.dates['zh'] = {
+                days:       ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六","星期日"],
+                daysShort:  ["日", "一", "二", "三", "四", "五", "六","日"],
+                daysMin:    ["日", "一", "二", "三", "四", "五", "六","日"],
+                months:     ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月","十二月"],
+                monthsShort:  ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"],
+                meridiem:    ["上午", "下午"],
+                today:       "今天"
+            };
+            $('#startTime,#endTime').datetimepicker({
+                format: 'yyyy-mm-dd hh:ii', // 标签上可用data-date-format="hh:ii" data-link-format="hh:ii"
+                autoclose: true, //选择完成自动关闭下拉框
+                startView : 2,
+                minView:0, //0到分钟结束，1到小时，2到日
+                language: 'zh-CN'
+            })
             $('select.select').select();
-            //实时数据
-            if ("WebSocket" in window){
-                var ws = new WebSocket("ws://127.0.0.1:9200");
-                ws.onopen = function(){
-                    ws.send("hello");
-                    console.log("数据发送中...");
-                };
-                ws.onmessage = function (evt){
-                    var received_msg = evt.data;
-                    console.log(evt)
-                };
-                ws.onclose = function(){
-                    console.log("连接已关闭...");
-                };
-            }else{
-               bootbox.alert("您的浏览器不支持 WebSocket！无法查看实时数据。");
-            }
 
             //能耗趋势图表
             ajaxEnergyTrend($("#EnergyChartSelect_Time").val(),$("#EnergyChartSelect_Item").val())
@@ -261,23 +314,107 @@
                 })
             }
             //进度条
-            ajaxEnergyProgress($("#EnergyProgressSelect_Time").val())
-            $("#EnergyProgressSelect_Time").siblings(".select").find(".select_ul li").on('click',function(){
-                ajaxEnergyProgress($(this).html())
-            })
-            function ajaxEnergyProgress(currenttime){
-                $.ajax({
-                    url:"/energySumPercent",
-                    type:"get",
-                    data:{
-                        currenttime:currenttime,
-                    },
-                    success:function(res){
-                        res = JSON.parse(res)
-                        console.log(res)
-                    }
-                })
+            {#ajaxEnergyProgress($("#EnergyProgressSelect_Time").val())#}
+            {#$("#EnergyProgressSelect_Time").siblings(".select").find(".select_ul li").on('click',function(){#}
+            {#    ajaxEnergyProgress($(this).html())#}
+            {# })#}
+            {#function ajaxEnergyProgress(currenttime){#}
+            {#    $.ajax({#}
+            {#        url:"/energySumPercent",#}
+            {#        type:"get",#}
+            {#        data:{#}
+            {#            currenttime:currenttime,#}
+            {#        },#}
+            {#        success:function(res){#}
+            {#            res = JSON.parse(res)#}
+            {#            console.log(res)#}
+            {#        }#}
+            {#    })#}
+            {# }#}
+
+            //获取实时数据
+            var ws = new WebSocket("ws://127.0.0.1:5003");
+            websocket()
+            function websocket(){
+                ws.onopen = function(){
+                    ws.send("hello");
+                    console.log("数据发送中...");
+                };
+                ws.onclose = function(){
+                    console.log("连接已关闭...");
+                };
             }
+            //实时数据弹框
+            $(".trendsChartItem").on("click",function(){
+                $("#realTimeModal").modal('show')
+                Highcharts.setOptions({
+                    global: {
+                        useUTC: false
+                    }
+                });
+                var chart = Highcharts.chart('modalRealTimeChart', {
+                    chart: {
+                        type: 'spline',
+                        marginRight: 10,
+                        events: {
+                            load: function () {
+                                var series = this.series[0],
+                                    chart = this;
+                                activeLastPointToolip(chart);
+                                ws.onmessage = function (evt){
+                                    var received_msg = evt.data;
+                                    received_msg = JSON.parse(received_msg)
+                                    var x = new Date(received_msg.randomtime).getTime(),   // 返回时间
+                                        y = received_msg.random;       // 返回值
+                                    series.addPoint([x, y], true, true);
+                                    activeLastPointToolip(chart);
+                                };
+                            }
+                        }
+                    },
+                    title: {
+                        text: null
+                    },
+                    xAxis: {
+                        type: 'datetime',
+                        tickPixelInterval: 150
+                    },
+                    yAxis: {
+                        title: {
+                            text: null
+                        }
+                    },
+                    tooltip: {
+                        formatter: function () {
+                            return '<b>' + this.series.name + '</b><br/>' +
+                                Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
+                                Highcharts.numberFormat(this.y, 2);
+                        }
+                    },
+                    credits: {
+                        enabled: false//不显示LOGO
+                    },
+                    legend: {
+                        enabled: false //不显示图例
+                    },
+                    series: [{
+                        name: '随机数据',
+                        data: (function () {
+                            // 生成随机值
+                            var data = [],
+                                i;
+                            for (i = -19; i <= 0; i += 1) {
+                                data.push({
+                                    x: null,
+                                    y: 0
+                                });
+                            }
+                            return data;
+                        }())
+                    }]
+                });
+                websocket()
+            })
         })
     </script>
 </body>

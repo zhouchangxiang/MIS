@@ -60,9 +60,13 @@
             }
             $("#loginForm").on("submit",function(){
                 if($("#remember").prop("checked")){
-                    $.cookie("name",$("input[name=WorkNumber]").val(), { expires: 7 })
-	                $.cookie("Password",Base64.encode($("input[name=password]").val()), { expires: 7 })
-	                $.cookie("rememberPassword","true", { expires: 7 })
+                    if($.cookie("rememberPassword")){
+
+                    }else{
+                        $.cookie("name",$("input[name=WorkNumber]").val(), { expires: 7 })
+                        $.cookie("Password",Base64.encode($("input[name=password]").val()), { expires: 7 })
+                        $.cookie("rememberPassword","true", { expires: 7 })
+                    }
                 }else{
                     $.removeCookie("name")
                     $.removeCookie("Password")
