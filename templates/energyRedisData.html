@@ -347,6 +347,11 @@
             //实时数据弹框
             $(".trendsChartItem").on("click",function(){
                 $("#realTimeModal").modal('show')
+                Highcharts.setOptions({
+                    global: {
+                        useUTC: false
+                    }
+                });
                 var chart = Highcharts.chart('modalRealTimeChart', {
                     chart: {
                         type: 'spline',
@@ -359,7 +364,7 @@
                                 ws.onmessage = function (evt){
                                     var received_msg = evt.data;
                                     received_msg = JSON.parse(received_msg)
-                                    var x = received_msg.randomtime,   // 返回时间
+                                    var x = new Date(received_msg.randomtime).getTime(),   // 返回时间
                                         y = received_msg.random;       // 返回值
                                     series.addPoint([x, y], true, true);
                                     activeLastPointToolip(chart);
@@ -401,7 +406,7 @@
                             for (i = -19; i <= 0; i += 1) {
                                 data.push({
                                     x: null,
-                                    y: null
+                                    y: 0
                                 });
                             }
                             return data;
