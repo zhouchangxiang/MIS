@@ -13,7 +13,7 @@ from dbset.database.db_operate import db_session,pool
 from dbset.main.BSFramwork import AlchemyEncoder
 from flask_login import login_required, logout_user, login_user,current_user,LoginManager
 
-from models.SystemManagement.core import RedisKey
+from models.SystemManagement.core import RedisKey, TagClassType
 from tools.common import insert,delete,update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger,insertSyslog
@@ -21,18 +21,13 @@ from dbset.log.BK2TLogger import logger,insertSyslog
 pool = redis.ConnectionPool(host=constant.REDIS_HOST, password=constant.REDIS_PASSWORD)
 def run():
     while True:
-        # bytes_list = ""
-        # icount = icount + 1
-        # strtmp = "My Websocket中文测试" + str(icount)
-        # # str(bytes_list.encode('utf-8').strip() + b"\n")
-        # # body = str(bytes_list, encoding='utf-8')
-        # bytemsg = bytes(strtmp, encoding="utf8")
-
         data_dict = {}
         redis_conn = redis.Redis(connection_pool=pool)
-        keys = db_session.query(RedisKey.KEY).filter().all()
+        keys = db_session.query(TagClassType.TagClassValue).filter().all()
         for key in keys:
-            data_dict[key[0]] = redis_conn.hget(constant.REDIS_TABLENAME, key[0]).decode('utf-8')
+            value = redis_conn.hget(constant.REDIS_TABLENAME, key[0]).decode('utf-8')
+            db_session.query()
+
         time.sleep(1)
 
     sock.close()
