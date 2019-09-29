@@ -31,20 +31,20 @@ def run():
         keys = db_session.query(TagClassType.TagClassValue).filter().all()
         for key in keys:
             value = redis_conn.hget(constant.REDIS_TABLENAME, key[0]).decode('utf-8')
-            k = key[0:1]
+            k = key[0][0:1]
             if k == "E":
-                ele = db_session.query(ElectricEnergy).filter(ElectricEnergy.CollectionPointID == key).first()
+                ele = db_session.query(ElectricEnergy).filter(ElectricEnergy.TagClassValue == key[0]).first()
                 unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "电").first()
                 equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key).first()
                 price = db_session.query(PriceList.PriceValue).filter(PriceList.PriceName == "电",PriceList.IsEnabled == "是").first()
                 if ele == None:
                     el = ElectricEnergy()
-                    el.CollectionPointID = key
+                    el.TagClassValue = key[0]
                     el.CollectionYear = currentyear
                     el.CollectionMonth = currentmonth
                     el.CollectionDay = currentday
                     el.ElectricEnergyValue = value
-                    el.CollectionDate = a
+                    el.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                     el.Unit = unit[0]
                     el.EquipmnetID = equip[0]
                     el.PriceID =price[0]
@@ -52,31 +52,31 @@ def run():
                     db_session.commit()
                 elif ele.ElectricEnergyValue != value:
                     el = ElectricEnergy()
-                    el.CollectionPointID = key
+                    el.TagClassValue = key[0]
                     el.CollectionYear = currentyear
                     el.CollectionMonth = currentmonth
                     el.CollectionDay = currentday
                     el.ElectricEnergyValue = value
-                    el.CollectionDate = a
+                    el.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                     el.Unit = unit[0]
                     el.EquipmnetID = equip[0]
                     el.PriceID = price[0]
                     db_session.add(el)
                     db_session.commit()
             elif k == "S":
-                ste = db_session.query(SteamEnergy).filter(SteamEnergy.CollectionPointID == key).first()
+                ste = db_session.query(SteamEnergy).filter(SteamEnergy.TagClassValue == key).first()
                 unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽").first()
                 equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key).first()
                 price = db_session.query(PriceList.PriceValue).filter(PriceList.PriceName == "汽",
                                                                       PriceList.IsEnabled == "是").first()
                 if ste == None:
                     sl = SteamEnergy()
-                    sl.CollectionPointID = key
+                    sl.TagClassValue = key[0]
                     sl.CollectionYear = currentyear
                     sl.CollectionMonth = currentmonth
                     sl.CollectionDay = currentday
                     sl.SteamValue = value
-                    sl.CollectionDate = a
+                    sl.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                     sl.Unit = unit[0]
                     sl.EquipmnetID = equip[0]
                     sl.PriceID = price[0]
@@ -84,44 +84,44 @@ def run():
                     db_session.commit()
                 elif ste.SteamValue != value:
                     sl = SteamEnergy()
-                    sl.CollectionPointID = key
+                    sl.TagClassValue = key[0]
                     sl.CollectionYear = currentyear
                     sl.CollectionMonth = currentmonth
                     sl.CollectionDay = currentday
                     sl.SteamValue = value
-                    sl.CollectionDate = a
+                    sl.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                     sl.Unit = unit[0]
                     sl.EquipmnetID = equip[0]
                     sl.PriceID = price[0]
                     db_session.add(sl)
                     db_session.commit()
             elif k == "W":
-                wat = db_session.query(WaterEnergy).filter(WaterEnergy.CollectionPointID == key).first()
+                wat = db_session.query(WaterEnergy).filter(WaterEnergy.TagClassValue == key).first()
                 unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "水").first()
                 equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key).first()
                 price = db_session.query(PriceList.PriceValue).filter(PriceList.PriceName == "水",
                                                                       PriceList.IsEnabled == "是").first()
-                if ele == None:
+                if wat == None:
                     wa = WaterEnergy()
-                    wa.CollectionPointID = key
+                    wa.TagClassValue = key[0]
                     wa.CollectionYear = currentyear
                     wa.CollectionMonth = currentmonth
                     wa.CollectionDay = currentday
                     wa.WaterMeterValue = value
-                    wa.CollectionDate = a
+                    wa.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                     wa.Unit = unit[0]
                     wa.EquipmnetID = equip[0]
                     wa.PriceID = price[0]
                     db_session.add(wa)
                     db_session.commit()
-                elif ele.ElectricEnergyValue != value:
+                elif wat.WaterMeterValue != value:
                     wa = WaterEnergy()
-                    wa.CollectionPointID = key
+                    wa.TagClassValue = key[0]
                     wa.CollectionYear = currentyear
                     wa.CollectionMonth = currentmonth
                     wa.CollectionDay = currentday
                     wa.WaterMeterValue = value
-                    wa.CollectionDate = a
+                    wa.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                     wa.Unit = unit[0]
                     wa.EquipmnetID = equip[0]
                     wa.PriceID = price[0]
