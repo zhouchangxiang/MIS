@@ -415,4 +415,21 @@ function highchartsRealTimeNoTickRender(url,id,xData,yData){
             }())
         }]
     });
+    $(".trendsChartItem").hover(function(){
+        if($(this).find(".highcharts-item").attr("id") == id){
+            chart.update({
+                chart:{
+                      backgroundColor:'#07488E'
+                }
+            });
+        }
+    },function(){
+        if($(this).find(".highcharts-item").attr("id") == id){
+            chart.update({
+                chart:{
+                      backgroundColor:'#8A8F97'
+                }
+            });
+        }
+    })
 }
