@@ -7,7 +7,7 @@ from dbset.database.db_operate import db_session,pool
 from dbset.main.BSFramwork import AlchemyEncoder
 from flask_login import login_required, logout_user, login_user,current_user,LoginManager
 import calendar
-from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable
+from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable,  Equipment
 from tools.common import insert,delete,update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger,insertSyslog
@@ -18,6 +18,9 @@ energy = Blueprint('energy', __name__, template_folder='templates')
 @energy.route('/energyRedisData')
 def energyRedisData():
     return render_template('./energyRedisData.html')
+@energy.route('/energyDataChart')
+def energyDataChart():
+    return render_template('./energyDataChart.html')
 
 def getMonthFirstDayAndLastDay(year, month):
     """
@@ -227,3 +230,42 @@ def energySumPercent():
             print(e)
             logger.error(e)
             insertSyslog("error", "分项能耗量查询报错Error：" + str(e), current_user.Name)
+
+def energyselect(data):
+    if request.method == 'GET':
+        try:
+            print(data)
+            data = request.values
+            Area = data.get("Area")
+            DateTime = data.get("DateTime")
+            EnergyClass = data.get("EnergyClass")
+            if Area is not None and DateTime is not None and EnergyClass is None:
+                eqps = db_session.query(Equipment.ID).filter(Equipment.Area == Area).all()
+                str = ""
+                for eq in eqps:
+                    str.append(eq[0])
+                ElectricEnergyValues = db_session.query(ElectricEnergy.ElectricEnergyValue).filter(ElectricEnergy.EquipmnetID.in_((str))).all()
+                elecount = 0.0
+                for ele in ElectricEnergyValues:
+                    elecount = elecount + float(ele[0])
+                WaterMeterValues = db_session.query(WaterEnergy.WaterMeterValue).filter(
+                    WaterEnergy.EquipmnetID.in_((str))).all()
+                watcount = 0.0
+                for wat in WaterMeterValues:
+                    watcount = watcount + float(wat[0])
+                SteamEnergys = db_session.query(SteamEnergy.SteamValue).filter(
+                    SteamEnergy.EquipmnetID.in_((str))).all()
+                stecount = 0.0
+                for ste in SteamEnergys:
+                    stecount = stecount + float(ste[0])
+                dir = {}
+                dir["电能耗量"] = elecount
+                dir["水能耗量"] = watcount
+                dir["汽能耗量"] = stecount
+            elif EnergyClass is not None and Area is None and DateTime is None:
+                aa = ""
+            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            insertSyslog("error", "能耗查询报错Error：" + str(e), current_user.Name)
+            return json.dumps([{"status": "Error：" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
