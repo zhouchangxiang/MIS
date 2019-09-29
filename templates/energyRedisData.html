@@ -23,7 +23,7 @@
 </head>
 <body>
     <div class="col-md-12" style="padding:66px 0 0;">
-        <div class="col-md-5">
+        <div class="col-md-8">
             <div class="mics-panel-head">
                 <div class="mics-panel-title pull-left">能耗趋势</div>
                 <div class="mics-form-select pull-right">
@@ -43,56 +43,6 @@
             </div>
             <div id="highchartsEnergy" style="min-width:400px;height:295px;margin-top: 15px;"></div>
         </div>
-        <div class="col-md-3">
-            <div class="mics-panel-head">
-                <div class="mics-panel-title pull-left">分项能耗量</div>
-                <div class="mics-form-select pull-right">
-                    <select name="" class="select selectFontKeepLeft" id="EnergyProgressSelect_Time">
-                        <option value="日">日</option>
-                        <option value="月">月</option>
-                        <option value="年">年</option>
-                    </select>
-                </div>
-            </div>
-            <ul class="EnergyNode">
-                <li>
-                    <div class="clearfix">
-                        <div class="EnergyItemTitle pull-left">电能耗量 <span class="glyphicon glyphicon-arrow-down"></span></div>
-                        <div class="EnergyItemData pull-right">65716457</div>
-                    </div>
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-danger" role="progressbar"></div>
-                    </div>
-                </li>
-                <li>
-                    <div class="clearfix">
-                        <div class="EnergyItemTitle pull-left">水能耗量 <span class="glyphicon glyphicon-arrow-down"></span></div>
-                        <div class="EnergyItemData pull-right">65716457</div>
-                    </div>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar"></div>
-                    </div>
-                </li>
-                <li>
-                    <div class="clearfix">
-                        <div class="EnergyItemTitle pull-left">汽能耗量 <span class="glyphicon glyphicon-arrow-down"></span></div>
-                        <div class="EnergyItemData pull-right">65716457</div>
-                    </div>
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-info" role="progressbar"></div>
-                    </div>
-                </li>
-                <li>
-                    <div class="clearfix">
-                        <div class="EnergyItemTitle pull-left">其他能耗量 <span class="glyphicon glyphicon-arrow-down"></span></div>
-                        <div class="EnergyItemData pull-right">65716457</div>
-                    </div>
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-success" role="progressbar"></div>
-                    </div>
-                </li>
-            </ul>
-        </div>
         <div class="col-md-4">
             <div class="mics-panel-head">
                 <div class="mics-panel-title pull-left">分项能耗趋势</div>
@@ -104,21 +54,21 @@
                         <div class="trendsChartItem mics-bg-primary">
                             <div class="form-group">电能</div>
                             <div class="form-group">8975.53</div>
-                            <div class="form-group"><div class="row"><div id="highcharts-electricity" style="min-width:162px;height:74px"></div></div></div>
+                            <div class="form-group"><div class="row"><div class="highcharts-item" id="highcharts-electricity" style="min-width:162px;height:74px"></div></div></div>
                             <div class="form-group">+1.465%</div>
                             <div class="form-group">87557.1</div>
                         </div>
                         <div class="trendsChartItem mics-bg-primary">
                             <div class="form-group">水能</div>
                             <div class="form-group">8975.53</div>
-                            <div class="form-group"><div class="row"><div id="highcharts-water" style="min-width:162px;height:74px"></div></div></div>
+                            <div class="form-group"><div class="row"><div class="highcharts-item" id="highcharts-water" style="min-width:162px;height:74px"></div></div></div>
                             <div class="form-group">+1.465%</div>
                             <div class="form-group">87557.1</div>
                         </div>
                         <div class="trendsChartItem mics-bg-primary">
                             <div class="form-group">汽能</div>
                             <div class="form-group">8975.53</div>
-                            <div class="form-group"><div class="row"><div id="highcharts-steam" style="min-width:162px;height:74px"></div></div></div>
+                            <div class="form-group"><div class="row"><div class="highcharts-item" id="highcharts-steam" style="min-width:162px;height:74px"></div></div></div>
                             <div class="form-group">+1.465%</div>
                             <div class="form-group">87557.1</div>
                         </div>
@@ -313,25 +263,8 @@
                     }
                 })
             }
-            //进度条
-            {#ajaxEnergyProgress($("#EnergyProgressSelect_Time").val())#}
-            {#$("#EnergyProgressSelect_Time").siblings(".select").find(".select_ul li").on('click',function(){#}
-            {#    ajaxEnergyProgress($(this).html())#}
-            {# })#}
-            {#function ajaxEnergyProgress(currenttime){#}
-            {#    $.ajax({#}
-            {#        url:"/energySumPercent",#}
-            {#        type:"get",#}
-            {#        data:{#}
-            {#            currenttime:currenttime,#}
-            {#        },#}
-            {#        success:function(res){#}
-            {#            res = JSON.parse(res)#}
-            {#            console.log(res)#}
-            {#        }#}
-            {#    })#}
-            {# }#}
 
+            //实时数据趋势图
             highchartsRealTimeNoTickRender("ws://127.0.0.1:5003","highcharts-electricity","randomtime","random")
             highchartsRealTimeNoTickRender("ws://127.0.0.1:5003","highcharts-water","randomtime","random")
             highchartsRealTimeNoTickRender("ws://127.0.0.1:5003","highcharts-steam","randomtime","random")
