@@ -850,6 +850,97 @@ class Equipment(Base):
 	
 #Equipment_END:
 
+
+#BrandAreaTable_START:
+class BrandAreaTable(Base):
+	__tablename__ = "BrandAreaTable" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#区域:
+	AreaName = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
+	
+	#品名:
+	BrandName = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
+	
+#BrandAreaTable_END:
+
+
+#BatchMaintain_START:
+class BatchMaintain(Base):
+	__tablename__ = "BatchMaintain" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#批次号:
+	BatchID = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
+	
+	#品名:
+	BrandName = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
+	
+	#品名ID:
+	BrandID = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
+	
+	#开始时间:
+	StartTime = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#结束时间:
+	EndTime = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+#BatchMaintain_END:
+
+
+#WorkShop_START:
+class WorkShop(Base):
+	__tablename__ = "WorkShop" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#车间名称:
+	WorkShopName = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
+	
+	#车间编码:
+	WorkShopCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#所属厂区:
+	FactoryName = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
+	
+	#描述:
+	Desc = Column(Unicode(100), primary_key = False, autoincrement = False, nullable = True)
+	
+#WorkShop_END:
+
+
+#AreaTable_START:
+class AreaTable(Base):
+	__tablename__ = "AreaTable" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#区域名称:
+	AreaName = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
+	
+	#区域编码:
+	AreaCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#区域:
+	AreaName = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
+	
+	#品名:
+	BrandName = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
+	
+	#所属车间:
+	WorkShopName = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
+	
+	#描述:
+	Desc = Column(Unicode(100), primary_key = False, autoincrement = False, nullable = True)
+	
+#AreaTable_END:
+
 # 生成表单的执行语句_START
 Base.metadata.create_all(engine)
 

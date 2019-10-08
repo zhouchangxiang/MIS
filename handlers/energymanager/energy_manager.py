@@ -7,7 +7,8 @@ from dbset.database.db_operate import db_session,pool
 from dbset.main.BSFramwork import AlchemyEncoder
 from flask_login import login_required, logout_user, login_user,current_user,LoginManager
 import calendar
-from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable,  Equipment
+from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable, Equipment, \
+    PriceList
 from tools.common import insert,delete,update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger,insertSyslog
@@ -235,6 +236,7 @@ def energyselect(data):
     if request.method == 'GET':
         try:
             print(data)
+            dir = {}
             data = request.values
             Area = data.get("Area")
             DateTime = data.get("DateTime")
@@ -258,14 +260,37 @@ def energyselect(data):
                 stecount = 0.0
                 for ste in SteamEnergys:
                     stecount = stecount + float(ste[0])
-                dir = {}
                 dir["电能耗量"] = elecount
                 dir["水能耗量"] = watcount
                 dir["汽能耗量"] = stecount
             elif EnergyClass is not None and Area is None and DateTime is None:
-                aa = ""
+                if EnergyClass is "电":
+                    ElectricEnergyValues = db_session.query(ElectricEnergy.ElectricEnergyValue).all()
+                    elecount = 0.0
+                    for ele in ElectricEnergyValues:
+                        elecount = elecount + float(ele[0])
+                    dir["电能耗量"] = energymoney(elecount, "电")
+                elif EnergyClass is "电":
+                    WaterMeterValues = db_session.query(WaterEnergy.WaterMeterValue).all()
+                    watcount = 0.0
+                    for wat in WaterMeterValues:
+                        watcount = watcount + float(wat[0])
+                    dir["水能耗量"] = energymoney(watcount, "水")
+                elif EnergyClass is "电":
+                    SteamEnergys = db_session.query(SteamEnergy.SteamValue).all()
+                    stecount = 0.0
+                    for ste in SteamEnergys:
+                        stecount = stecount + float(ste[0])
+                    dir["汽能耗量"] = energymoney(stecount,"汽")
+                elif EnergyClass == "":
+                    aa = ""
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
             insertSyslog("error", "能耗查询报错Error：" + str(e), current_user.Name)
             return json.dumps([{"status": "Error：" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
+def energymoney(count,name):
+    prices = db_session.query(PriceList).filter(PriceList.IsEnabled == "是").all()
+    for pr in prices:
+        if pr.PriceName == name:
+            return float(count)*float(pr.PriceValue)
