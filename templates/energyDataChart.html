@@ -3,8 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <title>数据报表</title>
+    <link rel="stylesheet" href="../static/style/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/style/base.css">
+    <script src="../static/script/jquery-3.3.1.min.js"></script>
+    <script src="../static/highcharts/highcharts.js"></script>
+    <script src="../static/highcharts/drilldown.js"></script>
+    <script src="../static/script/base.js"></script>
+    <style>
+        .chart{
+            height: 230px;
+        }
+    </style>
 </head>
 <body>
+    <div class="wrap">
+        <div class="col-md-8">
+            <div id="container" style="width: 100%;"></div>
+        </div>
+        <div class="col-md-4">
 
+        </div>
+    </div>
+    <script>
+        $(function () {
+            var dataJSON = {
+                    "xData":["生活区域","办公区域","a车间","b车间","c车间","d车间","e车间","f车间","g车间","h车间","i车间","j车间"],
+                    "datasets":[{
+                        "name":"电",
+                        "unit":"kW·h",
+                        "type":"column",
+                        "data":[546,164,646,564,494,411,761,661,641,453,489,354]
+                    },{
+                        "name":"水",
+                        "unit":"L",
+                        "type":"column",
+                        "data":[546,164,646,564,494,411,761,661,641,453,489,354]
+                    },{
+                        "name":"汽",
+                        "unit":"L/h",
+                        "type":"column",
+                        "data":[546,164,646,564,494,411,761,661,641,453,489,354]
+                    }]
+                }
+            $('#container').bind('mousemove touchmove touchstart', function (e) {
+                var chart,
+                    point,
+                    i,
+                    event;
+                for (i = 0; i < Highcharts.charts.length; i = i + 1) {
+                    chart = Highcharts.charts[i];
+                    event = chart.pointer.normalize(e.originalEvent); // Find coordinates within the chart
+                    point = chart.series[0].searchPoint(event, true); // Get the hovered point
+                    if (point) {
+                        point.highlight(e);
+                    }
+                }
+            });
+            /**
+             * 重写内部的方法， 这里是将提示框即十字准星的隐藏函数关闭
+             */
+            Highcharts.Pointer.prototype.reset = function () {
+                return undefined;
+            };
+            /**
+             * 高亮当前的数据点，并设置鼠标滑动状态及绘制十字准星线
+             */
+            Highcharts.Point.prototype.highlight = function (event) {
+                this.onMouseOver(); // 显示鼠标激活标识
+                this.series.chart.tooltip.refresh(this); // 显示提示框
+                this.series.chart.xAxis[0].drawCrosshair(event, this); // 显示十字准星线
+            };
+            /**
+             * 同步缩放效果，即当一个图表进行了缩放效果，其他图表也进行缩放
+             */
+            function syncExtremes(e) {
+                var thisChart = this.chart;
+                if (e.trigger !== 'syncExtremes') {
+                    Highcharts.each(Highcharts.charts, function (chart) {
+                        if (chart !== thisChart) {
+                            if (chart.xAxis[0].setExtremes) {
+                                chart.xAxis[0].setExtremes(e.min, e.max, undefined, false, { trigger: 'syncExtremes' });
+                            }
+                        }
+                    });
+                }
+            }
+            // 获取 JSON 数据，数据文件地址：
+
+            $.each(dataJSON.datasets, function (i, dataset) {
+                // 添加 X 数据
+                $('<div class="chart">')
+                    .appendTo('#container')
+                    .highcharts({
+                    chart: {
+                        marginLeft: 40, // Keep all charts left aligned
+                        spacingTop: 20,
+                        spacingBottom: 20,
+                        zoomType: 'x'
+                    },
+                    title: {
+                        text: dataset.name,
+                        align: 'left',
+                        margin: 0,
+                        x: 30
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    legend: {
+                        enabled: false
+                    },
+                    xAxis: {
+                        crosshair: true,
+                        categories:dataJSON.xData,
+                        labels: {
+                            format: '{value}'
+                        }
+                    },
+                    yAxis: {
+                        title: {
+                            text: null
+                        }
+                    },
+                    tooltip: {
+                        positioner: function () {
+                            return {
+                                x: this.chart.chartWidth - this.label.width, // right aligned
+                                y: -1 // align to title
+                            };
+                        },
+                        borderWidth: 0,
+                        backgroundColor: 'none',
+                        pointFormat: '{point.y}',
+                        headerFormat: '',
+                        shadow: false,
+                        style: {
+                            fontSize: '18px'
+                        },
+                        valueDecimals: dataset.valueDecimals
+                    },
+                    series: [{
+                        data: dataset.data,
+                        name: dataset.name,
+                        type: dataset.type,
+                        color: Highcharts.getOptions().colors[i],
+                        fillOpacity: 0.3,
+                        tooltip: {
+                            valueSuffix: ' ' + dataset.unit
+                        }
+                    }]
+                });
+            });
+        })
+    </script>
 </body>
 </html>
