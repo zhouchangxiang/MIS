@@ -4,14 +4,32 @@
     <meta charset="UTF-8">
     <title>数据报表</title>
     <link rel="stylesheet" href="../static/style/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/style/bootstrap/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" href="../static/style/base.css">
     <script src="../static/script/jquery-3.3.1.min.js"></script>
+    <script src="../static/script/bootstrap/bootstrap.min.js"></script>
+    <script src="../static/script/bootstrap/bootstrap-datetimepicker.min.js"></script>
     <script src="../static/highcharts/highcharts.js"></script>
     <script src="../static/highcharts/drilldown.js"></script>
     <script src="../static/script/base.js"></script>
     <style>
         .chart{
             height: 230px;
+        }
+        .table-condensed{
+            width: 100%;
+        }
+        .datetimepicker.datetimepicker-dropdown-bottom-right.dropdown-menu{
+            -webkit-box-shadow: none;
+            box-shadow: none;
+            border: none;
+            margin-top: 15px;
+        }
+        .datetimepicker.datetimepicker-dropdown-bottom-right.dropdown-menu:before{
+            display: none;
+        }
+        .datetimepicker.datetimepicker-dropdown-bottom-right.dropdown-menu:after{
+            display: none;
         }
     </style>
 </head>
@@ -21,11 +39,84 @@
             <div id="container" style="width: 100%;"></div>
         </div>
         <div class="col-md-3">
-
+            <div class="form-group">
+                <div class="mics-btn-group btn-group btn-group-xs" role="group" id="datetimepickerBtnGroup" style="width: 100%;">
+                    <button type="button" class="btn" style="width: 33.3%;">年</button>
+                    <button type="button" class="btn" style="width: 33.3%;">月</button>
+                    <button type="button" class="btn" style="width: 33.3%;">日</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control input-sm datetimepicker" readonly>
+            </div>
         </div>
     </div>
     <script>
         $(function () {
+            //时间选择控件
+            $.fn.datetimepicker.dates['zh'] = {
+                days:       ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六","星期日"],
+                daysShort:  ["日", "一", "二", "三", "四", "五", "六","日"],
+                daysMin:    ["日", "一", "二", "三", "四", "五", "六","日"],
+                months:     ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月","十二月"],
+                monthsShort:  ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"],
+                meridiem:    ["上午", "下午"],
+                today:       "今天"
+            };
+            $("#datetimepickerBtnGroup").on("click",".btn",function(){
+                $(this).addClass("active").siblings().removeClass("active")
+                if($(this).html() == "年"){
+                    $(".datetimepicker").datetimepicker('remove');
+                    $(".datetimepicker").datetimepicker({
+                        format: 'yyyy', // 标签上可用data-date-format="hh:ii" data-link-format="hh:ii"
+                        startView : 4,
+                        minView:4, //0到分钟结束，1到小时，2到日
+                        todayBtn : true,
+                        language: 'zh-CN'
+                    }).on('changeDate', function (e) {
+                        console.log(e)
+                    })
+                    $(".datetimepicker").focus();
+                    $(".datetimepicker.datetimepicker-dropdown-bottom-right.dropdown-menu").css("width",$(".form-control.datetimepicker").width() + 10)
+                    $(".datetimepicker").val(myYearformatter(new Date()));
+                }else if($(this).html() == "月"){
+                    $(".datetimepicker").datetimepicker('remove');
+                    $(".datetimepicker").datetimepicker({
+                        format: 'yyyy-mm', // 标签上可用data-date-format="hh:ii" data-link-format="hh:ii"
+                        startView : 3,
+                        minView:3, //0到分钟结束，1到小时，2到日
+                        todayBtn : true,
+                        language: 'zh-CN'
+                    }).on('changeDate', function (e) {
+                        console.log(e)
+                    })
+                    $(".datetimepicker").focus()
+                    $(".datetimepicker.datetimepicker-dropdown-bottom-right.dropdown-menu").css("width",$(".form-control.datetimepicker").width() + 10)
+                    $(".datetimepicker").val(myMonthformatter(new Date()));
+                }else if($(this).html() == "日"){
+                    $(".datetimepicker").datetimepicker('remove');
+                    $(".datetimepicker").datetimepicker({
+                        format: 'yyyy-mm-dd', // 标签上可用data-date-format="hh:ii" data-link-format="hh:ii"
+                        startView : 2,
+                        minView:2, //0到分钟结束，1到小时，2到日
+                        todayBtn : true,
+                        language: 'zh-CN'
+                    }).on('changeDate', function (e) {
+                        console.log(e)
+                    })
+                    $(".datetimepicker").focus();
+                    $(".datetimepicker.datetimepicker-dropdown-bottom-right.dropdown-menu").css("width",$(".form-control.datetimepicker").width() + 10)
+                    $(".datetimepicker").val(myDayformatter(new Date()));
+                }
+            })
+            $("#datetimepickerBtnGroup button:eq(0)").click()
+            $("body").on("click",function(){
+                $(".datetimepicker").show();
+            })
+            $(window).resize(function () {
+                $(".datetimepicker.datetimepicker-dropdown-bottom-right.dropdown-menu").css("width",$(".form-control.datetimepicker").width() + 10)
+            })
+
             var dataJSON = {
                     "xData":["生活区域","办公区域","a车间","b车间","c车间","d车间","e车间","f车间","g车间","h车间","i车间","j车间"],
                     "datasets":[{
