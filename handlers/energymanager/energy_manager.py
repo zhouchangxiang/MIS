@@ -246,20 +246,17 @@ def energyselect(data):
             EnergyClass = data.get("EnergyClass")
             if Area is not None and DateTime is not None and EnergyClass is None:
                 eqps = db_session.query(Equipment.ID).filter(Equipment.Area == Area).all()
-                str = ""
-                for eq in eqps:
-                    str.append(eq[0])
-                ElectricEnergyValues = db_session.query(ElectricEnergy.ElectricEnergyValue).filter(ElectricEnergy.EquipmnetID.in_((str))).all()
+                ElectricEnergyValues = db_session.query(ElectricEnergy.ElectricEnergyValue).filter(ElectricEnergy.EquipmnetID.in_((eqps))).all()
                 elecount = 0.0
                 for ele in ElectricEnergyValues:
                     elecount = elecount + float(ele[0])
                 WaterMeterValues = db_session.query(WaterEnergy.WaterMeterValue).filter(
-                    WaterEnergy.EquipmnetID.in_((str))).all()
+                    WaterEnergy.EquipmnetID.in_((eqps))).all()
                 watcount = 0.0
                 for wat in WaterMeterValues:
                     watcount = watcount + float(wat[0])
                 SteamEnergys = db_session.query(SteamEnergy.SteamValue).filter(
-                    SteamEnergy.EquipmnetID.in_((str))).all()
+                    SteamEnergy.EquipmnetID.in_((eqps))).all()
                 stecount = 0.0
                 for ste in SteamEnergys:
                     stecount = stecount + float(ste[0])
@@ -267,19 +264,19 @@ def energyselect(data):
                 dir["WaterValue"] = watcount
                 dir["SteamValue"] = stecount
             elif EnergyClass is not None and Area is None and DateTime is None:
-                if EnergyClass is "电":
+                if EnergyClass == "电":
                     ElectricEnergyValues = db_session.query(ElectricEnergy.ElectricEnergyValue).all()
                     elecount = 0.0
                     for ele in ElectricEnergyValues:
                         elecount = elecount + float(ele[0])
                     dir["ElectricValue"] = energymoney(elecount, "电")
-                elif EnergyClass is "电":
+                elif EnergyClass == "水":
                     WaterMeterValues = db_session.query(WaterEnergy.WaterMeterValue).all()
                     watcount = 0.0
                     for wat in WaterMeterValues:
                         watcount = watcount + float(wat[0])
                     dir["WaterValue"] = energymoney(watcount, "水")
-                elif EnergyClass is "电":
+                elif EnergyClass == "汽":
                     SteamEnergys = db_session.query(SteamEnergy.SteamValue).all()
                     stecount = 0.0
                     for ste in SteamEnergys:
@@ -329,7 +326,7 @@ def energyselect(data):
                 lisdata.append(diw)
                 lisdata.append(dis)
                 dir["datasets"] = lisdata
-                print(dir)
+            print(dir)
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
