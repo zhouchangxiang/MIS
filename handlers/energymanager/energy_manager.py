@@ -263,28 +263,28 @@ def energyselect(data):
                 stecount = 0.0
                 for ste in SteamEnergys:
                     stecount = stecount + float(ste[0])
-                dir["电能耗量"] = elecount
-                dir["水能耗量"] = watcount
-                dir["汽能耗量"] = stecount
+                dir["ElectricValue"] = elecount
+                dir["WaterValue"] = watcount
+                dir["SteamValue"] = stecount
             elif EnergyClass is not None and Area is None and DateTime is None:
                 if EnergyClass is "电":
                     ElectricEnergyValues = db_session.query(ElectricEnergy.ElectricEnergyValue).all()
                     elecount = 0.0
                     for ele in ElectricEnergyValues:
                         elecount = elecount + float(ele[0])
-                    dir["电能耗量"] = energymoney(elecount, "电")
+                    dir["ElectricValue"] = energymoney(elecount, "电")
                 elif EnergyClass is "电":
                     WaterMeterValues = db_session.query(WaterEnergy.WaterMeterValue).all()
                     watcount = 0.0
                     for wat in WaterMeterValues:
                         watcount = watcount + float(wat[0])
-                    dir["水能耗量"] = energymoney(watcount, "水")
+                    dir["WaterValue"] = energymoney(watcount, "水")
                 elif EnergyClass is "电":
                     SteamEnergys = db_session.query(SteamEnergy.SteamValue).all()
                     stecount = 0.0
                     for ste in SteamEnergys:
                         stecount = stecount + float(ste[0])
-                    dir["汽能耗量"] = energymoney(stecount,"汽")
+                    dir["SteamValue"] = energymoney(stecount,"汽")
                 elif EnergyClass == "":
                     aa = ""
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
