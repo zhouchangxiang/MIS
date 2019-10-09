@@ -128,17 +128,17 @@
                 <div class="costData mics-bg-primary">
                     <ul class="costDataHead">
                         <li class="pull-left">成本</li>
-                        <li class="pull-right">89757.12</li>
+                        <li class="pull-right" id="costValue"></li>
                     </ul>
-                    <ul class="costDataContent">
-                        <li class="bottomLeft">转化比</li>
-                        <li class="bottomRight"><h3>32.45%</h3></li>
-                    </ul>
+{#                    <ul class="costDataContent">#}
+{#                        <li class="bottomLeft">转化比</li>#}
+{#                        <li class="bottomRight"><h3>32.45%</h3></li>#}
+{#                    </ul>#}
                 </div>
                 <div class="costData mics-bg-primary">
                     <ul class="costDataHead">
                         <li class="pull-left">能耗成本</li>
-                        <li class="pull-right">89757.12</li>
+{#                        <li class="pull-right">89757.12</li>#}
                     </ul>
                     <ul class="costDataContent">
                         <li id="costChart"></li>
@@ -295,7 +295,7 @@
             })
             function EnergyAreaRender(Area,DateTime,EnergyClass){
                 $.ajax({
-                    url:"energyall",
+                    url:"/energyall",
                     type:"get",
                     data:{
                         Area: Area,
@@ -304,6 +304,7 @@
                     },
                     success:function (res) {
                         res = JSON.parse(res)
+                        console.log(res)
                         $("#ElectricValue").html(res.ElectricValue)
                         $("#WaterValue").html(res.WaterValue)
                         $("#SteamValue").html(res.SteamValue)
@@ -316,14 +317,14 @@
             })
             function EnergyCostRender(EnergyClass){
                 $.ajax({
-                    url:"energyall",
+                    url:"/energyall",
                     type:"get",
                     data:{
                         EnergyClass : EnergyClass,
                     },
                     success:function (res) {
                         res = JSON.parse(res)
-                        console.log(res)
+                        $("#costValue").html()
                     }
                 })
             }

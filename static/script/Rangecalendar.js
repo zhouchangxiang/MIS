@@ -28,7 +28,6 @@
 	//默认加载
 	calendar.prototype.init = function() {
 		var _this = this;
-		console.log(this._element)
 		_this._element.html('');
 		//月超12，年加1，月归0;
 		for(var i = 0; i < 1; i++) {
@@ -57,7 +56,6 @@
 	calendar.prototype.calendarCon = function(newYears, newMonths) {
 		var _this = this;
 
-		console.log(newYears, newMonths)
 		var oldDate = new Date(newYears, newMonths);
 		var calendarList;
 		oldDate.setMonth(newMonths);
