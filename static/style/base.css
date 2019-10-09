@@ -218,7 +218,7 @@ a:focus{text-decoration: none}
 .select.select_down:after{transform: rotate(180deg);}
 .select .select_text{padding-left:0;padding-right:20px;line-height:26px;text-align: left;}
 .select_ul{display:none;position:absolute;top:34px;left:-1px;min-width:40px;border:1px solid #D4D4D4;border-bottom-right-radius:3px;border-bottom-left-radius:3px;background:#fff;}
-.select_ul li{line-height:36px;text-indent:10px;text-align: center;}
+.select_ul li{line-height:36px;text-align: center;}
 .select_ul li:hover{color:#fff;background:#6AA7EA;}
 .select_ul li.cur{color:#fff;background:#195DA3;}
 .select.selectFontKeepLeft{margin-left:15px;}
