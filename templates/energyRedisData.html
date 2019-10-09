@@ -286,15 +286,12 @@
                 }
             })
             //区域能耗量
-            EnergyAreaRender($("#EnergyAreaSelect").val(),$("#EnergyAreaDateSelect").val(),$("#EnergyClassSelect").val())
+            EnergyAreaRender($("#EnergyAreaSelect").val(),$("#EnergyAreaDateSelect").val())
             $(".EnergyAreaSelect").bind('DOMNodeInserted',"#EnergyAreaSelect",function(e){
-                EnergyAreaRender(e.target.innerHTML,$("#EnergyAreaDateSelect").val(),$("#EnergyClassSelect").val())
+                EnergyAreaRender(e.target.innerHTML,$("#EnergyAreaDateSelect").val())
             })
             $('.EnergyAreaDateSelect').bind('DOMNodeInserted','#EnergyAreaDateSelect',function(e){
-                EnergyAreaRender($("#EnergyAreaSelect").val(),e.target.innerHTML,$("#EnergyClassSelect").val())
-            })
-            $('.EnergyClassSelect').bind('DOMNodeInserted','#EnergyClassSelect',function(e){
-                EnergyAreaRender($("#EnergyAreaSelect").val(),$("#EnergyAreaDateSelect").val(),e.target.innerHTML)
+                EnergyAreaRender($("#EnergyAreaSelect").val(),e.target.innerHTML)
             })
             function EnergyAreaRender(Area,DateTime,EnergyClass){
                 $.ajax({
@@ -307,10 +304,26 @@
                     },
                     success:function (res) {
                         res = JSON.parse(res)
-                        console.log(res)
                         $("#ElectricValue").html(res.ElectricValue)
                         $("#WaterValue").html(res.WaterValue)
                         $("#SteamValue").html(res.SteamValue)
+                    }
+                })
+            }
+            EnergyCostRender($("#EnergyClassSelect").val())
+            $('.EnergyClassSelect').bind('DOMNodeInserted','#EnergyClassSelect',function(e){
+                EnergyCostRender(e.target.innerHTML)
+            })
+            function EnergyCostRender(EnergyClass){
+                $.ajax({
+                    url:"energyall",
+                    type:"get",
+                    data:{
+                        EnergyClass : EnergyClass,
+                    },
+                    success:function (res) {
+                        res = JSON.parse(res)
+                        console.log(res)
                     }
                 })
             }
