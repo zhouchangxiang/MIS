@@ -22,6 +22,9 @@ def energyRedisData():
 @energy.route('/energyDataChart')
 def energyDataChart():
     return render_template('./energyDataChart.html')
+@energy.route('/energyAreaTable')
+def energyAreaTable():
+    return render_template('./energyAreaTable.html')
 
 def getMonthFirstDayAndLastDay(year, month):
     """
