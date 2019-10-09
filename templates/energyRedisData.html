@@ -26,14 +26,14 @@
         <div class="col-md-8">
             <div class="mics-panel-head">
                 <div class="mics-panel-title pull-left">能耗趋势</div>
-                <div class="mics-form-select pull-right">
+                <div class="mics-form-select EnergyChartSelect_Time pull-right">
                     <select name="" class="select selectFontKeepLeft" id="EnergyChartSelect_Time">
                         <option value="日">日</option>
                         <option value="月">月</option>
                         <option value="年">年</option>
                     </select>
                 </div>
-                <div class="mics-form-select pull-right">
+                <div class="mics-form-select EnergyChartSelect_Item pull-right">
                     <select name="" class="select selectFontKeepLeft" id="EnergyChartSelect_Item">
                         <option value="电">电</option>
                         <option value="水">水</option>
@@ -80,14 +80,10 @@
     <div class="col-md-12" style="padding:66px 0 0;height: 425px;">
         <div class="col-md-5">
             <div class="mics-panel-head">
-                <div class="mics-form-select pull-left">
-                    <select name="" class="select" id="EnergyAreaSelect">
-                        <option value="生活区域能耗量">生活区域能耗量</option>
-                        <option value="办公区域能耗量">办公区域能耗量</option>
-                        <option value="其他区域能耗量">其他区域能耗量</option>
-                    </select>
+                <div class="mics-form-select EnergyAreaSelect pull-left">
+                    <select name="" class="select" id="EnergyAreaSelect"></select>
                 </div>
-                <div class="mics-form-select pull-right">
+                <div class="mics-form-select EnergyAreaDateSelect pull-right">
                     <select name="" class="select selectFontKeepLeft" id="EnergyAreaDateSelect">
                         <option value="日">日</option>
                         <option value="月">月</option>
@@ -100,27 +96,18 @@
                     <tbody>
                         <tr>
                             <td><div class="fontBlock"><span class="fa fa-flash"></span></div></td>
-                            <td>电能耗量</td>
-                            <td><span>45678964644</span></td>
-                            <td><span>+1.2%</span></td>
+                            <td class="text-left">电能耗量</td>
+                            <td><span id="ElectricValue"></span></td>
                         </tr>
                         <tr>
                             <td><div class="fontBlock"><span class="fa fa-tint"></span></div></td>
-                            <td>水能耗量</td>
-                            <td><span>45678964644</span></td>
-                            <td><span>+1.2%</span></td>
+                            <td class="text-left">水能耗量</td>
+                            <td><span id="WaterValue"></span></td>
                         </tr>
                         <tr>
                             <td><div class="fontBlock"><span class="fa fa-tachometer"></span></div></td>
-                            <td>汽能耗量</td>
-                            <td><span>45678964644</span></td>
-                            <td><span>+1.2%</span></td>
-                        </tr>
-                        <tr>
-                            <td><div class="fontBlock"><span class="fa fa-ellipsis-h"></span></div></td>
-                            <td>其他能耗量</td>
-                            <td><span>45678964644</span></td>
-                            <td><span>+1.2%</span></td>
+                            <td class="text-left">汽能耗量</td>
+                            <td><span id="SteamValue"></span></td>
                         </tr>
                     </tbody>
                 </table>
@@ -129,11 +116,11 @@
         <div class="col-md-3">
             <div class="mics-panel-head">
                 <div class="mics-panel-title pull-left">成本展示</div>
-                <div class="mics-form-select pull-right">
-                    <select name="" class="select selectFontKeepLeft" id="EnergyNumberSelect">
-                        <option value="水能">水能</option>
-                        <option value="电能">电能</option>
-                        <option value="汽能">汽能</option>
+                <div class="mics-form-select EnergyClassSelect pull-right">
+                    <select name="" class="select selectFontKeepLeft" id="EnergyClassSelect">
+                        <option value="电">电</option>
+                        <option value="水">水</option>
+                        <option value="汽">汽</option>
                     </select>
                 </div>
             </div>
@@ -222,6 +209,11 @@
     </div>
     <script>
         $(function(){
+            $("#EnergyChartSelect_Time").select();
+            $("#EnergyChartSelect_Item").select();
+            $("#EnergyAreaDateSelect").select();
+            $("#EnergyClassSelect").select();
+
             //时间选择控件
             $.fn.datetimepicker.dates['zh'] = {
                 days:       ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六","星期日"],
@@ -239,15 +231,14 @@
                 minView:0, //0到分钟结束，1到小时，2到日
                 language: 'zh-CN'
             })
-            $('select.select').select();
 
             //能耗趋势图表
             ajaxEnergyTrend($("#EnergyChartSelect_Time").val(),$("#EnergyChartSelect_Item").val())
-            $("#EnergyChartSelect_Time").siblings(".select").find(".select_ul li").on('click',function(){
-                ajaxEnergyTrend($(this).html(),$("#EnergyChartSelect_Item").val())
+            $('.EnergyChartSelect_Time').bind('DOMNodeInserted',"#EnergyChartSelect_Time",function(e){
+                ajaxEnergyTrend(e.target.innerHTML,$("#EnergyChartSelect_Item").val())
             })
-            $("#EnergyChartSelect_Item").siblings(".select").find(".select_ul li").on('click',function(){
-                ajaxEnergyTrend($("#EnergyChartSelect_Time").val(),$(this).html())
+            $('.EnergyChartSelect_Item').bind('DOMNodeInserted',"#EnergyChartSelect_Item",function(e){
+                ajaxEnergyTrend($("#EnergyChartSelect_Time").val(),e.target.innerHTML)
             })
             function ajaxEnergyTrend(currenttime,classparam){
                 $.ajax({
@@ -275,8 +266,54 @@
                 highchartsRealTimeRender("ws://127.0.0.1:5003","modalRealTimeChart","randomtime","random")
             })
 
+            //区域下拉框
+            $.ajax({
+                url:"http://127.0.0.1:5000/CUID",
+                type:"get",
+                data:{
+                    tableName: "AreaTable",
+                    limit : 100000000,
+                    offset : 0
+                },
+                success:function (res) {
+                    res = JSON.parse(res)
+                    var option = ''
+                    $.each(res.rows,function(i,value){
+                        option += `<option value="${ res.rows[i].AreaName }">${ res.rows[i].AreaName }</option>`
+                    })
+                    $("#EnergyAreaSelect").html(option)
+                    $("#EnergyAreaSelect").select();
+                }
+            })
             //区域能耗量
-
+            EnergyAreaRender($("#EnergyAreaSelect").val(),$("#EnergyAreaDateSelect").val(),$("#EnergyClassSelect").val())
+            $(".EnergyAreaSelect").bind('DOMNodeInserted',"#EnergyAreaSelect",function(e){
+                EnergyAreaRender(e.target.innerHTML,$("#EnergyAreaDateSelect").val(),$("#EnergyClassSelect").val())
+            })
+            $('.EnergyAreaDateSelect').bind('DOMNodeInserted','#EnergyAreaDateSelect',function(e){
+                EnergyAreaRender($("#EnergyAreaSelect").val(),e.target.innerHTML,$("#EnergyClassSelect").val())
+            })
+            $('.EnergyClassSelect').bind('DOMNodeInserted','#EnergyClassSelect',function(e){
+                EnergyAreaRender($("#EnergyAreaSelect").val(),$("#EnergyAreaDateSelect").val(),e.target.innerHTML)
+            })
+            function EnergyAreaRender(Area,DateTime,EnergyClass){
+                $.ajax({
+                    url:"energyall",
+                    type:"get",
+                    data:{
+                        Area: Area,
+                        DateTime : DateTime,
+                        EnergyClass : EnergyClass,
+                    },
+                    success:function (res) {
+                        res = JSON.parse(res)
+                        console.log(res)
+                        $("#ElectricValue").html(res.ElectricValue)
+                        $("#WaterValue").html(res.WaterValue)
+                        $("#SteamValue").html(res.SteamValue)
+                    }
+                })
+            }
         })
     </script>
 </body>
