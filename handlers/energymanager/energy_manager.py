@@ -8,7 +8,7 @@ from dbset.main.BSFramwork import AlchemyEncoder
 from flask_login import login_required, logout_user, login_user,current_user,LoginManager
 import calendar
 from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable, Equipment, \
-    PriceList
+    PriceList, AreaTable, Unit, TagClassType
 from tools.common import insert,delete,update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger,insertSyslog
@@ -285,8 +285,51 @@ def energyselect(data):
                     for ste in SteamEnergys:
                         stecount = stecount + float(ste[0])
                     dir["SteamValue"] = energymoney(stecount,"汽")
-                elif EnergyClass == "":
-                    aa = ""
+            elif EnergyClass is None and Area is None and DateTime is not None:
+                areas = db_session.query(AreaTable).filter().all()
+                lis = []
+                lisdata = []
+                die = {}
+                die["name"] = "电"
+                die["unit"] = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "电").first()[0]
+                die["type"] = "column"
+                datae = []
+                die["data"] = datae
+                diw = {}
+                diw["name"] = "水"
+                diw["unit"] = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "水").first()[0]
+                diw["type"] = "column"
+                dataw = []
+                diw["data"] = dataw
+                dis = {}
+                dis["name"] = "汽"
+                dis["unit"] = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽").first()[0]
+                dis["type"] = "column"
+                datas = []
+                dis["data"] = datas
+                for area in areas:
+                    AreaName = area.AreaName
+                    lis.append(AreaName)
+                    TagClassValues = db_session.query(TagClassType.TagClassValue).filter(TagClassType.TagClassValue.like("%"+area.AreaCode+"%")).all()
+                    ElectricValue = 0.0
+                    WaterValue = 0.0
+                    SteamValue = 0.0
+                    for tag in TagClassValues:
+                        ElectricEnergyValue = getO(db_session.query(ElectricEnergy.ElectricEnergyValue).filter(ElectricEnergy.TagClassValue == tag, ElectricEnergy.CollectionDate.like("%"+DateTime+"%")).order_by(desc("ID")).first())
+                        ElectricValue = ElectricValue + ElectricEnergyValue
+                        WaterMeterValue = getO(db_session.query(WaterEnergy.WaterMeterValue).filter(WaterEnergy.TagClassValue == tag, WaterEnergy.CollectionDate.like("%"+DateTime+"%")).order_by(desc("ID")).first())
+                        WaterValue = WaterValue + WaterMeterValue
+                        Steam = getO(db_session.query(SteamEnergy.SteamValue).filter(SteamEnergy.SteamValue == tag, SteamEnergy.CollectionDate.like("%"+DateTime+"%")).order_by(desc("ID")).first())
+                        SteamValue = SteamValue + Steam
+                    datae.append(ElectricValue)
+                    dataw.append(WaterValue)
+                    datas.append(SteamValue)
+                dir["xData"] = lis
+                lisdata.append(die)
+                lisdata.append(diw)
+                lisdata.append(dis)
+                dir["datasets"] = lisdata
+                print(dir)
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
@@ -297,3 +340,8 @@ def energymoney(count,name):
     for pr in prices:
         if pr.PriceName == name:
             return float(count)*float(pr.PriceValue)
+def getO(sum):
+    if sum is not None:
+        return float(sum[0])
+    else:
+        return 0
