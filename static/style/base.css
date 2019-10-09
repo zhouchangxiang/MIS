@@ -538,7 +538,23 @@ a:focus{text-decoration: none}
     border-radius: 50%;
     cursor: pointer;
 }
-.mics-modal .modal-body .datetimepicker{
+.datetimepicker.form-control{
+    background: #ffffff;
+}
+.form-inline .datetimepicker.form-control{
     width: 160px;
-    border: 1px solid #F4F4F4;
+}
+/* 按钮组 */
+.mics-btn-group.btn-group .btn{
+    color: #333;
+    background-color: #F2F4FE;
+    border-radius: 4px;
+    margin-left: 0;
+}
+.mics-btn-group.btn-group .btn.active{
+    color: #fff;
+    background-color: #07488E;
+}
+.mics-btn-group.btn-group .btn:focus{
+    outline: none;
 }
