@@ -127,6 +127,6 @@ def run():
                     wa.PriceID = price[0]
                     db_session.add(wa)
                     db_session.commit()
-        time.sleep(1)
+        time.sleep(3)
 if __name__ == '__main__':
     run()
