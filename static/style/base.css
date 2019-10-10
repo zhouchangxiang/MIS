@@ -191,6 +191,37 @@ a:focus{text-decoration: none}
 .mics-bg-primary:hover{
     background: #07488E;
 }
+/* 导航栏滚动数字 */
+@font-face {
+    font-family: unidreamLED;
+    src: url("../../static/fonts/UnidreamLED.ttf");
+}
+.number{
+    font-family: unidreamLED;
+    font-size: 21px;
+    margin: 15px 0;
+    text-align: center;
+    white-space: nowrap;
+    color : #fff;
+}
+.to__led-number {
+    position: relative;
+    margin-right: 8px;
+    font-size: 20px;
+    width: 18px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    background-color: #07488E;
+    border-radius: 4px;
+    display: inline-block;
+    vertical-align: middle;
+    box-sizing: border-box;
+}
+.to__led-number--no {
+    width: 18px;
+    background-color: #07488E;
+}
 /* 面板 */
 .mics-panel-head{
     padding: 10px 15px;
@@ -217,6 +248,7 @@ a:focus{text-decoration: none}
 .select:after{content:"";position:absolute;top:50%;right:0;left:inherit;margin-top:-2px;border-top:5px solid #666;border-right:5px solid transparent;border-left:5px solid transparent;transition:all 0.3s linear;transform: rotate(0deg);}
 .select.select_down:after{transform: rotate(180deg);}
 .select .select_text{padding-left:0;padding-right:20px;line-height:26px;text-align: left;}
+.EnergyAreaSelect .select .select_text{font-size: 18px;font-weight: bold;color: #333;}
 .select_ul{display:none;position:absolute;top:34px;left:-1px;min-width:40px;border:1px solid #D4D4D4;border-bottom-right-radius:3px;border-bottom-left-radius:3px;background:#fff;}
 .select_ul li{line-height:36px;text-align: center;}
 .select_ul li:hover{color:#fff;background:#6AA7EA;}
@@ -225,199 +257,7 @@ a:focus{text-decoration: none}
 .select.selectFontKeepLeft:after{left:0;right:inherit}
 .select.selectFontKeepLeft .select_text{padding-left:20px;padding-right:0;text-align: right;}
 
-/*实时数据图表*/
-.realDataCharts{
-    height: 166px;
-    background: #F9F9F9;
-    border-radius: 8px;
-    margin-bottom: 15px;
-}
-/*实时数据显示数字*/
-.groupLabel{
-    font-size: 18px;
-    color: #07488E;
-    white-space: nowrap;
-    line-height: 40px;
-}
-.groupMutedLabel{
-    font-size: 18px;
-    color: #000;
-    white-space: nowrap;
-    line-height: 40px;
-}
-@font-face {
-    font-family: unidreamLED;
-    src: url("../fonts/UnidreamLED.ttf");
-    /* IE9+  HTML节点的lang="en" 记得去掉，不然会谷歌浏览器会自动翻译导致字体不正确 */
-}
-.roll_number{
-    font-family: unidreamLED;
-    font-size: 24px;
-    color : #fff;
-    background: #060f1a;
-    letter-spacing:5px;
-    border-radius: 4px;
-    text-align: right;
-    padding: 5px;
-}
-.to__led-number {
-    position: relative;
-    margin-right: 9px;
-    font-size: 50px;
-    width: 38px;
-    height: 70px;
-    padding: 0.25rem 0;
-    text-align: center;
-    border: 2px solid rgba(105, 123, 148, 0.5);
-    background-color: rgba(0, 0, 0, 0.5);
-    display: inline-block;
-    vertical-align: middle;
-    box-sizing: border-box;
-}
 
-.to__led-number--no {
-    width: 19px;
-    background: unset;
-    border: none;
-}
-/* 首页右侧时域日历 */
-#calendar-input {
-    height: 38px;
-    width: 100%;
-    display: block;
-    margin: auto;
-    border-radius: 5px;
-    padding: 0 10px;
-    font-size: 14px;
-}
-.calendar-con {
-    width: 100%;
-    margin: auto;
-    position: relative;
-}
-.calendar {
-    background: #fff;
-    width: 100%;
-    border-radius: 5px;
-    margin: auto;
-    position: relative;
-    top: -38px;
-    left: 0;
-}
-.calendar .dateTimeInput {
-    width: 100%;
-    height: 38px;
-    width: calc(100% - 20px);
-}
-.calendar .dateTimeInput input {
-    border: none;
-    width: calc(100% - 2px);
-    height: 38px;
-    font-size: 14px;
-    outline: none;
-}
-.calendar .calendar-btn {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    height: 41px;
-    border-bottom: 1px solid #D3D3D3;
-}
-.calendar .calendar-btn a {
-    text-decoration: none;
-    color: #333;
-    font-size: 12px;
-    display: inline-block;
-    text-align: center;
-    padding: 5px;
-    border: 1px solid #fff;
-    background: #f1f1f1;
-}
-.calendar .title {
-    display: flex;
-    color: #07488E;
-    font-weight: bold;
-}
-.calendar .title li {
-    flex: 1;
-    text-align: center;
-    height: 40px;
-    line-height: 40px;
-    width: calc((100% - 20px)/7);
-}
-.calendar .content .list ul {
-    display: flex;
-    flex-wrap: wrap;
-}
-.calendar .content .list ul li {
-    text-align: center;
-    height: 30px;
-    line-height: 30px;
-    width: calc((100%/7));
-    cursor: pointer;
-    font-size: 13px;
-    transition: all .3s;
-    margin: 5px 0;
-    color: #000;
-}
-.calendar .content .list ul li i {
-    display: block;
-    font-size: 8px;
-    margin-top: -17px;
-    font-style: normal;
-}
-.calendar .content .list ul li.disabled {
-    /*background: #f0f0f0;*/
-    color: #f0f0f0;
-}
-.calendar .content .list ul li.active {
-    background: #07488E;
-    color: #fff;
-}
-.calendar .content .list ul li:hover {
-    background: #07488E;
-    color: #fff;
-}
-.calendar .content .list ul li.hover {
-    background: #f1f1f1;
-    color: #000;
-}
-.calendar .content .list ul li.closure {
-    color: #c9c9c9;
-}
-.calendar .content .list ul li.startDate {
-    color: #ffffff;
-    background: #07488E;
-    border-radius: 8px;
-    margin: 5px;
-    width: calc((100%/7) - 10px);
-}
-.calendar .content .list ul li.endDate {
-    color: #ffffff;
-    background: #07488E;
-    border-radius: 8px;
-    margin: 5px;
-    width: calc((100%/7) - 10px);
-}
-.calendar .bottom-btn {
-    border-top: 1px solid #f0f0f0;
-    padding: 10px;
-    text-align: right;
-}
-
-.calendar .bottom-btn a {
-    display: inline-block;
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 3px;
-    background: #07488E;
-    font-size: 12px;
-    text-decoration: none;
-}
-.calendar .bottom-btn a.disabled {
-    background: #999;
-    cursor: no-drop;
-}
 /* 进度条 */
 .EnergyNode{
     padding: 0 15px;
