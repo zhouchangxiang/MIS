@@ -103,10 +103,10 @@
                     $(".datetimepicker").val(myDayformatter(new Date()));
                 }
             })
-            chartRender($("#dateTime").val())
+            //chartRender($("#dateTime").val())
             $("#dateTime").on('changeDate', function (e) {
                 var dateTime = $("#dateTime").val()
-                chartRender(dateTime)
+                //chartRender(dateTime)
             })
             $("#datetimepickerBtnGroup button:eq(0)").click()
             $("body").on("click",function(){
@@ -154,20 +154,18 @@
                 }
             }
             // 渲染方法
-            function chartRender(DateTime){
+            //function chartRender(DateTime){
                 $.ajax({
                     url:"/energyall",
                     type:"get",
                     data:{
-                        DateTime:DateTime
+                        DateTime:$("#dateTime").val()
                     },
                     success:function(res){
                         res = JSON.parse(res)
                         $.each(res.datasets, function (i, dataset) {
                             // 添加 X 数据
-                            $('<div class="chart">')
-                                .appendTo('#container')
-                                .highcharts({
+                            $('<div class="chart">').appendTo('#container').highcharts({
                                 chart: {
                                     marginLeft: 40, // Keep all charts left aligned
                                     spacingTop: 20,
@@ -229,7 +227,7 @@
                         });
                     }
                 })
-            }
+            //}
 
         })
     </script>
