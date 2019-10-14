@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <title>MICS</title>
@@ -36,6 +36,7 @@
                                 <option value="汽">汽</option>
                             </select>
                         </div>
+                        <div class="number"></div>
                     </div>
                     <ul class="sidebarRightNav"></ul>
                     <div class="sidebarMoveBtn"><i class="glyphicon glyphicon-menu-left"></i></div>
@@ -101,6 +102,16 @@
     <script>
         $(function(){
             $('select.select').select();
+
+            var dom = document.querySelector(".number")
+            var digit = new Digit({
+                number : 7258906, // 到达指定数值停止滚动
+                finish : 3, // 整体完成时间
+                speed : 1, // 数值越大，越多数字同时进行翻滚，取值范围（1 ~ 10）
+                direction : "left", // 动画方向
+                dom : dom, // 在指定dom节点插入动画
+            })
+            digit.render() // 执行
         })
     </script>
 </body>

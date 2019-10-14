@@ -211,7 +211,8 @@ function Digit(a) {
 
     function d(a) {
         var c, d, f, g, h;
-        for (a = a.toString(), c = a.split("."), d = c[0], f = "." + c[1], g = d, h = 1; h <= Math.floor((d.length - 1) / 3); h++) g = e(g, d.length - 3 * h, ",");
+        for (a = a.toString(), c = a.split("."), d = c[0], f = "." + c[1], g = d, h = 1; h <= Math.floor((d.length - 1) / 3); h++)
+            //g = e(g, d.length - 3 * h, ",");
         return c[1] && (g += f), g
     }
 
@@ -369,7 +370,7 @@ function highchartsRealTimeRender(url,id,xData,yData){
     });
 }
 //highchart 实时数据趋势图 无x y轴线
-function highchartsRealTimeNoTickRender(url,id,xData,yData){
+function highchartsRealTimeNoTickRender(url,id,xData,yData,domID){
     var ws = new WebSocket(url);
     websocket()
     function websocket(){
@@ -401,6 +402,7 @@ function highchartsRealTimeNoTickRender(url,id,xData,yData){
                         var x = new Date(received_msg[xData]).getTime(),   // 返回时间
                             y = received_msg[yData];       // 返回值
                         series.addPoint([x, y], true, true);
+                        $("#"+ domID).html(y)
                     };
                 }
             }

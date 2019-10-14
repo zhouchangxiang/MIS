@@ -278,10 +278,10 @@ $(function () {
 			tab.tabChange(index);
 		});
 		//选项卡右侧导航栏效果
-		$(".layadmin-tabs-select").on("mouseover",function () {
+		$(".layadmin-tabs-select").bind("mouseenter",function () {
 			$(this).find(".layui-nav-child").addClass("layui-show")
         })
-		$(".layadmin-tabs-select .layui-nav-child").on("mouseout",function () {
+		$(".layadmin-tabs-select").bind("mouseleave",function () {
 			$(this).find(".layui-nav-child").removeClass("layui-show")
         })
 	});
