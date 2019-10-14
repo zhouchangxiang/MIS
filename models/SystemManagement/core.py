@@ -851,6 +851,8 @@ class AreaTable(Base):
 
 
 
+
+
 #Equipment_START:
 class Equipment(Base):
 	__tablename__ = "Equipment" 
@@ -882,60 +884,6 @@ class Equipment(Base):
 	#备注说明:
 	Desc = Column(Unicode(100), primary_key = False, autoincrement = False, nullable = True)
 	
-	#设备维修计划单号:
-	FailureNumber = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#工序:
-	PUIDName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#故障时间:
-	FailureDate = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#早晚班:
-	Shift = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#设备名称:
-	EQPName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#故障描述:
-	FailureReportingDesc = Column(Unicode(120), primary_key = False, autoincrement = False, nullable = True)
-	
-	#原因分析:
-	AnalysisFailure = Column(Unicode(120), primary_key = False, autoincrement = False, nullable = True)
-	
-	#解决措施:
-	Precautions = Column(Unicode(100), primary_key = False, autoincrement = False, nullable = True)
-	
-	#不影响生产:
-	UnAffectingProduction = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#影响生产:
-	AffectingProduction = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#维修人:
-	Repairman = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#备件更换情况:
-	ReplacementOfSpareParts = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#设备型号:
-	EquipmentType = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#设备名称:
-	EquipentName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#设备编号:
-	EquipmentNumber = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#操作内容:
-	Content = Column(Unicode(120), primary_key = False, autoincrement = False, nullable = True)
-	
-	#保养责任人:
-	PersonLiable = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#督导人:
-	SuperVisor = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
 	#操作时间:
 	OperationDate = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
 	
@@ -943,6 +891,52 @@ class Equipment(Base):
 	AreaName = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
 	
 #Equipment_END:
+
+
+#Instrumentation_START:
+class Instrumentation(Base):
+	__tablename__ = "Instrumentation" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#仪表编码:
+	InstrumentationCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#仪表名称:
+	InstrumentationName = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
+	
+	#检定周期:
+	VerificationCycle = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#检定次数:
+	NumberVerification = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#提醒时间:
+	ReminderTime = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#状态:
+	Status = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#录入时间:
+	CreateTime = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#处理人:
+	Handler = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#处理状态:
+	HandleStatus = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#审核人:
+	Reviewer = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#审核状态:
+	ReviewStatus = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#更新时间:
+	UpdateTime = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+#Instrumentation_END:
 
 # 生成表单的执行语句_START
 Base.metadata.create_all(engine)

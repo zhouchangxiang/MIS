@@ -244,6 +244,7 @@ def energyselect(data):
             Area = data.get("Area")
             DateTime = data.get("DateTime")
             EnergyClass = data.get("EnergyClass")
+            ModelFlag = data.get("ModelFlag")
             if Area is not None and DateTime is not None and EnergyClass is None:
                 eqps = db_session.query(Equipment.ID).filter(Equipment.Area == Area).all()
                 ElectricEnergyValues = db_session.query(ElectricEnergy.ElectricEnergyValue).filter(ElectricEnergy.EquipmnetID.in_((eqps))).all()
@@ -282,8 +283,7 @@ def energyselect(data):
                     for ste in SteamEnergys:
                         stecount = stecount + float(ste[0])
                     dir["SteamValue"] = energymoney(stecount,"汽")
-            elif EnergyClass is None and Area is None and DateTime is not None:
-                areas = db_session.query(AreaTable).filter().all()
+            elif EnergyClass is None and Area is None and DateTime is not None and ModelFlag is None:
                 lis = []
                 lisdata = []
                 die = {}
@@ -304,6 +304,7 @@ def energyselect(data):
                 dis["type"] = "column"
                 datas = []
                 dis["data"] = datas
+                areas = db_session.query(AreaTable).filter().all()
                 for area in areas:
                     AreaName = area.AreaName
                     lis.append(AreaName)
@@ -326,6 +327,31 @@ def energyselect(data):
                 lisdata.append(diw)
                 lisdata.append(dis)
                 dir["datasets"] = lisdata
+            elif EnergyClass == "成本展示":
+                areas = db_session.query(AreaTable).filter().all()
+                for area in areas:
+                    AreaName = area.AreaName
+                    TagClassValues = db_session.query(TagClassType.TagClassValue).filter(
+                        TagClassType.TagClassValue.like("%" + area.AreaCode + "%")).all()
+                    ElectricValue = 0.0
+                    WaterValue = 0.0
+                    SteamValue = 0.0
+                    for tag in TagClassValues:
+                        ElectricEnergyValue = getO(db_session.query(ElectricEnergy.ElectricEnergyValue).filter(
+                            ElectricEnergy.TagClassValue == tag,
+                            ElectricEnergy.CollectionDate.like("%" + DateTime + "%")).order_by(desc("ID")).first())
+                        ElectricValue = ElectricValue + ElectricEnergyValue
+                        WaterMeterValue = getO(
+                            db_session.query(WaterEnergy.WaterMeterValue).filter(WaterEnergy.TagClassValue == tag,
+                                                                                 WaterEnergy.CollectionDate.like(
+                                                                                     "%" + DateTime + "%")).order_by(
+                                desc("ID")).first())
+                        WaterValue = WaterValue + WaterMeterValue
+                        Steam = getO(db_session.query(SteamEnergy.SteamValue).filter(SteamEnergy.SteamValue == tag,
+                                                                                     SteamEnergy.CollectionDate.like(
+                                                                                         "%" + DateTime + "%")).order_by(
+                            desc("ID")).first())
+                        SteamValue = SteamValue + Steam
             print(dir)
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
