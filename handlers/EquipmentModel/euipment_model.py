@@ -17,8 +17,9 @@ from dbset.database import db_operate
 from dbset.log.BK2TLogger import logger,insertSyslog
 from tools.common import insert,delete,update
 from dbset.database.db_operate import db_session
+from models.SystemManagement.core import Equipment, Instrumentation
 
- # 创建蓝图 第一个参数为蓝图的名字
+# 创建蓝图 第一个参数为蓝图的名字
 equip = Blueprint('equip', __name__, template_folder='templates')
 
 # 设备建模
@@ -26,49 +27,30 @@ equip = Blueprint('equip', __name__, template_folder='templates')
 def equipment():
     return render_template('./Equipment/sysEquipment.html')
 
-# 设备建模查询
-@equip.route('/EquipmentSearch', methods=['POST', 'GET'])
-def EquipmentSearch():
+# 器仪仪表周期诊定功能
+@equip.route('/InstrumentationReminderTimeSelect', methods=['GET', 'POST'])
+def InstrumentationReminderTimeSelect():
     if request.method == 'GET':
-        data = request.values  # 返回请求中的参数和form
+        data = request.values
         try:
-            jsonstr = json.dumps(data.to_dict())
-            if len(jsonstr) > 10:
-                pages = int(data.get("offset"))  # 页数
-                rowsnumber = int(data.get("limit"))  # 行数
-                inipage = pages * rowsnumber + 0  # 起始页
-                endpage = pages * rowsnumber + rowsnumber  # 截止页
-                EQPName = data.get('EQPName')  # 设备名称
-                if(EQPName == "" or EQPName == None):
-                    total = db_session.query(Equipment).order_by(desc("ID")).count()
-                    oclass = db_session.query(Equipment).order_by(desc("ID")).all()[inipage:endpage]
-                else:
-                    total = db_session.query(Equipment).filter(Equipment.EQPName.like("%" + EQPName + "%")).order_by(desc("ID")).count()
-                    oclass = db_session.query(Equipment).filter(Equipment.EQPName.like("%" + EQPName + "%")).order_by(desc("ID")).all()[inipage:endpage]
-                jsonoclass = json.dumps(oclass, cls=AlchemyEncoder, ensure_ascii=False)
-                return '{"total"' + ":" + str(total) + ',"rows"' + ":\n" + jsonoclass + "}"
+            # pages = int(data.get("offset"))  # 页数
+            # rowsnumber = int(data.get("limit"))  # 行数
+            # inipage = pages * rowsnumber + 0  # 起始页
+            # endpage = pages * rowsnumber + rowsnumber  # 截止页
+            oclass = db_session.query(Instrumentation).all()
+            nowTime = datetime.datetime.now().strftime('%Y-%m-%d')
+            dic = []
+            for oc in oclass:
+                if oc != None:
+                    # aa = (datetime.datetime.now() - datetime.datetime.strptime(oc.CreateTime[0:10],"%Y-%m-%d")).days
+                    # bb = aa/int(oc.NumberVerification)
+                    # cc = int(oc.VerificationCycle) - int(oc.ReminderTime)
+                    if (datetime.datetime.now() - datetime.datetime.strptime(oc.CreateTime[0:10],"%Y-%m-%d")).days / int(oc.NumberVerification) >= (int(oc.VerificationCycle) - int(oc.ReminderTime)):
+                        dic.append(oc)
+            jsonoclass = json.dumps(dic, cls=AlchemyEncoder, ensure_ascii=False)
+            return '{"total"' + ":" + str(len(dic)) + ',"rows"' + ":\n" + jsonoclass + "}"
         except Exception as e:
             print(e)
             logger.error(e)
-            insertSyslog("error", "设备建模查询报错Error：" + str(e), current_user.Name)
-
-# 设备建模增加
-@equip.route('/EquipmentCreate', methods=['POST', 'GET'])
-def equipmentCreate():
-    if request.method == 'POST':
-        data = request.values  # 返回请求中的参数和form
-        return insert(Equipment, data)
-
-# 设备建模修改
-@equip.route('/EquipmentUpdate', methods=['POST', 'GET'])
-def equipmentUpdate():
-    if request.method == 'POST':
-        data = request.values  # 返回请求中的参数和form
-        return update(Equipment, data)
-
-# 设备建模删除
-@equip.route('/EquipmentDelete', methods=['POST', 'GET'])
-def equipmentDelete():
-    if request.method == 'POST':
-        data = request.values  # 返回请求中的参数和form
-        return delete(Equipment, data)
+            insertSyslog("error", "仪器仪表查询报错Error：" + str(e), current_user.Name)
+            return json.dumps("仪器仪表查询报错")
