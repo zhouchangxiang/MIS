@@ -100,11 +100,12 @@ $(function () {
 	$("#seeUserMessage").on('click',function(){
 		var html= ''
 		$.ajax({
-			url:'/user_manage/MyUser/Select',
+			url:'http://127.0.0.1:5000/CUID',
 			method: 'get',
 			data:{
-				id: '',
-				Name:$(".navUserName").html(),
+				tableName:'User',
+				field:"WorkNumber",
+				fieldvalue:$("#userInfo").attr("data-job-number"),
 				limit : 1,
                 offset : 0
 			},
@@ -116,7 +117,10 @@ $(function () {
             	'<tr><td>创建用户</td><td>'+ res.rows[0].Creater +'</td></tr>'+
             	'<tr><td>创建时间</td><td>'+ res.rows[0].CreateTime +'</td></tr>'+
             	'<tr><td>上次登录时间</td><td>'+ res.rows[0].LastLoginTime +'</td></tr></table>'
-				bootbox.alert(html)
+				bootbox.alert({
+					title: "个人信息",
+					message:html
+				})
 			},
 			error:function (data) {
 				bootbox.alert("请求失败")

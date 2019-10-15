@@ -391,7 +391,7 @@ function highchartsRealTimeNoTickRender(url,id,xData,yData,domID){
         chart: {
             type: 'spline',
             marginRight: 10,
-            backgroundColor:'#8A8F97',
+            backgroundColor:'#EFF5FB',
             events: {
                 load: function () {
                     var series = this.series[0],
@@ -407,7 +407,7 @@ function highchartsRealTimeNoTickRender(url,id,xData,yData,domID){
                 }
             }
         },
-        colors:["#ffffff"],
+        colors:["#8A8F97"],
         title: {
             text: null
         },
@@ -463,16 +463,18 @@ function highchartsRealTimeNoTickRender(url,id,xData,yData,domID){
         if($(this).find(".highcharts-item").attr("id") == id){
             chart.update({
                 chart:{
-                      backgroundColor:'#07488E'
-                }
+                    backgroundColor:'#07488E'
+                },
+                colors:["#ffffff"],
             });
         }
     },function(){
         if($(this).find(".highcharts-item").attr("id") == id){
             chart.update({
                 chart:{
-                      backgroundColor:'#8A8F97'
-                }
+                    backgroundColor:'#EFF5FB'
+                },
+                colors:["#8A8F97"],
             });
         }
     })

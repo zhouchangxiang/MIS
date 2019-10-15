@@ -23,7 +23,7 @@
     <script src="../../static/script/bootstrapTableCommon.js"></script>
 </head>
 <body>
-    <div class="col-md-12" style="padding:66px 0 0;">
+    <div class="col-md-12" style="padding:32px 0 0;">
         <div class="col-md-8">
             <div class="mics-panel-head">
                 <div class="mics-panel-title pull-left">能耗趋势</div>
@@ -56,23 +56,26 @@
                             <div class="form-group">电能</div>
                             <div class="form-group" id="ElectricRealTimeData">0</div>
                             <div class="form-group"><div class="row"><div class="highcharts-item" id="highcharts-electricity" style="min-width:162px;height:74px"></div></div></div>
+                            <div class="form-group">31654</div>
                         </div>
                         <div class="trendsChartItem mics-bg-primary">
                             <div class="form-group">水能</div>
                             <div class="form-group" id="WaterRealTimeData">0</div>
                             <div class="form-group"><div class="row"><div class="highcharts-item" id="highcharts-water" style="min-width:162px;height:74px"></div></div></div>
+                            <div class="form-group">66254</div>
                         </div>
                         <div class="trendsChartItem mics-bg-primary">
                             <div class="form-group">汽能</div>
                             <div class="form-group" id="SteamRealTimeData">0</div>
                             <div class="form-group"><div class="row"><div class="highcharts-item" id="highcharts-steam" style="min-width:162px;height:74px"></div></div></div>
+                            <div class="form-group">3751</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-md-12" style="padding:66px 0 0;height: 425px;">
+    <div class="col-md-12" style="padding:32px 0 0;height: 425px;">
         <div class="col-md-5">
             <div class="mics-panel-head">
                 <div class="mics-form-select EnergyAreaSelect pull-left">
@@ -120,24 +123,12 @@
                 </div>
             </div>
             <div class="col-md-12">
-                <div class="costData mics-bg-primary">
-                    <ul class="costDataHead">
-                        <li class="pull-left">成本</li>
-                        <li class="pull-right" id="costValue"></li>
-                    </ul>
-{#                    <ul class="costDataContent">#}
-{#                        <li class="bottomLeft">转化比</li>#}
-{#                        <li class="bottomRight"><h3>32.45%</h3></li>#}
-{#                    </ul>#}
+                <div class="costHead mics-bg-primary">
+                    <span class="pull-left" id="costData">16452.17</span>
+                    <span class="pull-right">RMB</span>
                 </div>
-                <div class="costData mics-bg-primary">
-                    <ul class="costDataHead">
-                        <li class="pull-left">能耗成本</li>
-{#                        <li class="pull-right">89757.12</li>#}
-                    </ul>
-                    <ul class="costDataContent">
-                        <li id="costChart"></li>
-                    </ul>
+                <div class="costPieChart mics-bg-primary">
+
                 </div>
             </div>
         </div>
@@ -256,7 +247,7 @@
             highchartsRealTimeNoTickRender("ws://127.0.0.1:5003","highcharts-steam","randomtime","random","SteamRealTimeData")
 
             //实时数据弹框
-            $(".trendsChartItem").on("click",function(){
+            $(".trendsChartItem").on("dblclick",function(){
                 $("#realTimeModal").modal('show')
                 highchartsRealTimeRender("ws://127.0.0.1:5003","modalRealTimeChart","randomtime","random")
             })
