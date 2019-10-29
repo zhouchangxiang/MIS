@@ -169,6 +169,13 @@ $(function () {
 			$(".contentRight").css("marginLeft","0")
 			$(".body-shade").css("display","none")
 			$(".flexibleCon").css("display","block")
+		}else if($(window).width() > 992 && $(".contentRight").css("marginLeft") == "60px"){
+
+		}else if($(window).width() > 992 && $(".sidebarRight").css("left") == "-226px"){
+			$(".contentLeft").css("left","0")
+			$(".contentRight").css("marginLeft","60px")
+			$(".body-shade").css("display","none")
+			$(".flexibleCon").css("display","none")
 		}else{
 			$(".contentLeft").css("left","0")
 			$(".contentRight").css("marginLeft","346px")
