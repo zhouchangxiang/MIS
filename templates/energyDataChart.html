@@ -16,21 +16,6 @@
         .chart{
             height: 230px;
         }
-        .table-condensed{
-            width: 100%;
-        }
-        .datetimepicker.datetimepicker-dropdown-bottom-right.dropdown-menu{
-            -webkit-box-shadow: none;
-            box-shadow: none;
-            border: none;
-            margin-top: 15px;
-        }
-        .datetimepicker.datetimepicker-dropdown-bottom-right.dropdown-menu:before{
-            display: none;
-        }
-        .datetimepicker.datetimepicker-dropdown-bottom-right.dropdown-menu:after{
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -40,14 +25,14 @@
         </div>
         <div class="col-md-3">
             <div class="form-group">
+                <input type="text" class="form-control input-sm datetimepicker" id="dateTime" readonly>
+            </div>
+            <div class="form-group">
                 <div class="mics-btn-group btn-group btn-group-xs" role="group" id="datetimepickerBtnGroup" style="width: 100%;">
                     <button type="button" class="btn" style="width: 33.3%;">年</button>
                     <button type="button" class="btn" style="width: 33.3%;">月</button>
                     <button type="button" class="btn" style="width: 33.3%;">日</button>
                 </div>
-            </div>
-            <div class="form-group">
-                <input type="text" class="form-control input-sm datetimepicker" id="dateTime" readonly>
             </div>
         </div>
     </div>
@@ -63,64 +48,34 @@
                 meridiem:    ["上午", "下午"],
                 today:       "今天"
             };
+
+            $('#dateTime').datetimepicker({
+                format: 'yyyy-mm-dd', // 标签上可用data-date-format="hh:ii" data-link-format="hh:ii"
+                autoclose: true, //选择完成自动关闭下拉框
+                startView : 2,
+                minView:2, //0到分钟结束，1到小时，2到日
+                language: 'zh-CN'
+            })
+            $("#dateTime").val(myDayformatter(new Date()))
+
             $("#datetimepickerBtnGroup").on("click",".btn",function(){
                 $(this).addClass("active").siblings().removeClass("active")
+                var time = ""
                 if($(this).html() == "年"){
-                    $(".datetimepicker").datetimepicker('remove');
-                    $(".datetimepicker").datetimepicker({
-                        format: 'yyyy', // 标签上可用data-date-format="hh:ii" data-link-format="hh:ii"
-                        startView : 4,
-                        minView:4, //0到分钟结束，1到小时，2到日
-                        todayBtn : true,
-                        language: 'zh-CN'
-                    })
-                    $(".datetimepicker").focus();
-                    $(".datetimepicker.datetimepicker-dropdown-bottom-right.dropdown-menu").css("width",$(".form-control.datetimepicker").width() + 10)
-                    $(".datetimepicker").val(myYearformatter(new Date()));
+                    time = myYearformatter(new Date($("#dateTime").val()))
+                    chartRender(time)
                 }else if($(this).html() == "月"){
-                    $(".datetimepicker").datetimepicker('remove');
-                    $(".datetimepicker").datetimepicker({
-                        format: 'yyyy-mm', // 标签上可用data-date-format="hh:ii" data-link-format="hh:ii"
-                        startView : 3,
-                        minView:3, //0到分钟结束，1到小时，2到日
-                        todayBtn : true,
-                        language: 'zh-CN'
-                    })
-                    $(".datetimepicker").focus()
-                    $(".datetimepicker.datetimepicker-dropdown-bottom-right.dropdown-menu").css("width",$(".form-control.datetimepicker").width() + 10)
-                    $(".datetimepicker").val(myMonthformatter(new Date()));
+                    time = myMonthformatter(new Date($("#dateTime").val()))
+                    chartRender(time)
                 }else if($(this).html() == "日"){
-                    $(".datetimepicker").datetimepicker('remove');
-                    $(".datetimepicker").datetimepicker({
-                        format: 'yyyy-mm-dd', // 标签上可用data-date-format="hh:ii" data-link-format="hh:ii"
-                        startView : 2,
-                        minView:2, //0到分钟结束，1到小时，2到日
-                        todayBtn : true,
-                        language: 'zh-CN'
-                    })
-                    $(".datetimepicker").focus();
-                    $(".datetimepicker.datetimepicker-dropdown-bottom-right.dropdown-menu").css("width",$(".form-control.datetimepicker").width() + 10)
-                    $(".datetimepicker").val(myDayformatter(new Date()));
+                    time = myDayformatter(new Date($("#dateTime").val()))
+                    chartRender(time)
                 }
             })
-            //chartRender($("#dateTime").val())
-            $("#dateTime").on('changeDate', function (e) {
-                var dateTime = $("#dateTime").val()
-                //chartRender(dateTime)
-            })
-            $("#datetimepickerBtnGroup button:eq(0)").click()
-            $("body").on("click",function(){
-                $(".datetimepicker").show();
-            })
-            $(window).resize(function () {
-                $(".datetimepicker.datetimepicker-dropdown-bottom-right.dropdown-menu").css("width",$(".form-control.datetimepicker").width() + 10)
-            })
+            $("#datetimepickerBtnGroup .btn").eq(0).click()
 
             $('#container').bind('mousemove touchmove touchstart', function (e) {
-                var chart,
-                    point,
-                    i,
-                    event;
+                var chart,point,i,event;
                 for (i = 0; i < Highcharts.charts.length; i = i + 1) {
                     chart = Highcharts.charts[i];
                     event = chart.pointer.normalize(e.originalEvent); // Find coordinates within the chart
@@ -154,18 +109,18 @@
                 }
             }
             // 渲染方法
-            //function chartRender(DateTime){
+            function chartRender(DateTime){
+                $("#container").html("")
                 $.ajax({
                     url:"/energyall",
                     type:"get",
                     data:{
-                        DateTime:$("#dateTime").val()
+                        DateTime:DateTime
                     },
                     success:function(res){
                         res = JSON.parse(res)
-                        $.each(res.datasets, function (i, dataset) {
-                            // 添加 X 数据
-                            $('<div class="chart">').appendTo('#container').highcharts({
+                        $.each(res.datasets,function(i,dataset){
+                            $('<div class="chart"></div>').appendTo("#container").highcharts({
                                 chart: {
                                     marginLeft: 40, // Keep all charts left aligned
                                     spacingTop: 20,
@@ -199,8 +154,8 @@
                                 tooltip: {
                                     positioner: function () {
                                         return {
-                                            x: this.chart.chartWidth - this.label.width, // right aligned
-                                            y: -1 // align to title
+                                            x: this.chart.chartWidth - this.label.width,
+                                            y: -1
                                         };
                                     },
                                     borderWidth: 0,
@@ -210,25 +165,32 @@
                                     shadow: false,
                                     style: {
                                         fontSize: '18px'
-                                    },
-                                    valueDecimals: dataset.valueDecimals
+                                    }
+                                },
+                                plotOptions: {
+                                    series: {
+                                        cursor: 'pointer',
+                                        events: {
+                                            click: function(e) {
+                                                console.log(e)
+                                            }
+                                        }
+                                    }
                                 },
                                 series: [{
                                     data: dataset.data,
                                     name: dataset.name,
                                     type: dataset.type,
-                                    color: Highcharts.getOptions().colors[i],
                                     fillOpacity: 0.3,
                                     tooltip: {
                                         valueSuffix: ' ' + dataset.unit
                                     }
                                 }]
                             });
-                        });
+                        })
                     }
                 })
-            //}
-
+            }
         })
     </script>
 </body>
