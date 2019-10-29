@@ -569,23 +569,6 @@ class LimitTable(Base):
 
 
 
-#TagClassType_START:
-class TagClassType(Base):
-	__tablename__ = "TagClassType" 
-	
-	#ID:
-	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
-	
-	#Tag类型名称:
-	TagClassName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#Tag对应值:
-	TagClassValue = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#设备ID:
-	EquipmnetID = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
-	
-#TagClassType_END:
 
 
 #Unit_START:
@@ -819,32 +802,6 @@ class WorkShop(Base):
 #WorkShop_END:
 
 
-#AreaTable_START:
-class AreaTable(Base):
-	__tablename__ = "AreaTable" 
-	
-	#ID:
-	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
-	
-	#区域名称:
-	AreaName = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
-	
-	#区域编码:
-	AreaCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#区域:
-	AreaName = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
-	
-	#品名:
-	BrandName = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
-	
-	#所属车间:
-	WorkShopName = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
-	
-	#描述:
-	Desc = Column(Unicode(100), primary_key = False, autoincrement = False, nullable = True)
-	
-#AreaTable_END:
 
 
 
@@ -937,6 +894,50 @@ class Instrumentation(Base):
 	UpdateTime = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
 	
 #Instrumentation_END:
+
+
+#TagClassType_START:
+class TagClassType(Base):
+	__tablename__ = "TagClassType" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#Tag类型名称:
+	TagClassName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#Tag对应值:
+	TagClassValue = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#设备ID:
+	EquipmnetID = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
+	
+	#所属区域:
+	所属区域 = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+#TagClassType_END:
+
+
+#AreaTable_START:
+class AreaTable(Base):
+	__tablename__ = "AreaTable" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#区域名称:
+	AreaName = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
+	
+	#区域编码:
+	AreaCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#所属车间:
+	WorkShopName = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
+	
+	#描述:
+	Desc = Column(Unicode(100), primary_key = False, autoincrement = False, nullable = True)
+	
+#AreaTable_END:
 
 # 生成表单的执行语句_START
 Base.metadata.create_all(engine)
