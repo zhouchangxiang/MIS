@@ -369,8 +369,8 @@ def getO(sum):
     else:
         return 0
 
-@energy.route('/energySumPercent', methods=['POST', 'GET'])
-def energySumPercent():
+@energy.route('/energyHistory', methods=['POST', 'GET'])
+def energyHistory():
     '''
     能源历史数据
     :return:
