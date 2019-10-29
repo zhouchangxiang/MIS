@@ -238,7 +238,6 @@ def energySumPercent():
 def energyselect(data):
     if request.method == 'GET':
         try:
-            print(data)
             dir = {}
             data = request.values
             Area = data.get("Area")
@@ -352,7 +351,6 @@ def energyselect(data):
                                                                                          "%" + DateTime + "%")).order_by(
                             desc("ID")).first())
                         SteamValue = SteamValue + Steam
-            print(dir)
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
@@ -382,15 +380,27 @@ def energyHistory():
             EndTime = data.get("EndTime")
             Energy = data.get("Energy")
             dir = {}
-            dic = []
+            diy = []
+            dix = []
             if Energy == "水":
-                currwatEnergyValues = db_session.query(WaterEnergy.WaterMeterValue).filter().order_by(desc("CollectionDate")).all()
+                watEnergyValues = db_session.query(WaterEnergy).filter(WaterEnergy.CollectionDate.between(StartTime,EndTime)).order_by(("CollectionDate")).all()
+                for wa in watEnergyValues:
+                    diy.append(wa.WaterMeterValue)
+                    dix.append(wa.CollectionDate)
             elif Energy == "电":
-                curreleEnergyValues = db_session.query(ElectricEnergy.ElectricEnergyValue).filter().order_by(desc("CollectionDate")).all()
+                eleEnergyValues = db_session.query(ElectricEnergy).filter(ElectricEnergy.CollectionDate.between(StartTime,EndTime)).order_by(("CollectionDate")).all()
+                for el in eleEnergyValues:
+                    diy.append(el.ElectricEnergyValue)
+                    dix.append(el.CollectionDate)
             elif Energy == "汽":
-                currsteEnergyValues = db_session.query(SteamEnergy.SteamValue).filter().order_by(desc("CollectionDate")).all()
-            return json.dumps(dic, cls=AlchemyEncoder, ensure_ascii=False)
+                steEnergyValues = db_session.query(SteamEnergy).filter(SteamEnergy.CollectionDate.between(StartTime,EndTime)).order_by(("CollectionDate")).all()
+                for st in steEnergyValues:
+                    diy.append(st.SteamValue)
+                    dix.append(st.CollectionDate)
+            dir["X"] = dix
+            dir["Y"] = diy
+            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
             logger.error(e)
-            insertSyslog("error", "分项能耗量查询报错Error：" + str(e), current_user.Name)
+            insertSyslog("error", "能源历史数据查询报错Error：" + str(e), current_user.Name)
