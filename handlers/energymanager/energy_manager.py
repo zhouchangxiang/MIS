@@ -368,3 +368,29 @@ def getO(sum):
         return float(sum[0])
     else:
         return 0
+
+@energy.route('/energyHistory', methods=['POST', 'GET'])
+def energyHistory():
+    '''
+    能源历史数据
+    :return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            StartTime = data.get("StartTime")
+            EndTime = data.get("EndTime")
+            Energy = data.get("Energy")
+            dir = {}
+            dic = []
+            if Energy == "水":
+                currwatEnergyValues = db_session.query(WaterEnergy.WaterMeterValue).filter().order_by(desc("CollectionDate")).all()
+            elif Energy == "电":
+                curreleEnergyValues = db_session.query(ElectricEnergy.ElectricEnergyValue).filter().order_by(desc("CollectionDate")).all()
+            elif Energy == "汽":
+                currsteEnergyValues = db_session.query(SteamEnergy.SteamValue).filter().order_by(desc("CollectionDate")).all()
+            return json.dumps(dic, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "分项能耗量查询报错Error：" + str(e), current_user.Name)
