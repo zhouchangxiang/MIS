@@ -48,7 +48,7 @@
                 <nav class="navHead">
                     <div class="navHead-item flexibleCon"><a href="javascript:;" class="flexible"><i class="glyphicon glyphicon-list"></i></a></div>
                     <div class="navLogo"><a href="/"><img src="../../static/images/logo.png" alt=""></a></div>
-                    <ul class="navHead-riht">
+                    <ul class="navHead-right">
                         <li class="navHead-item">
                             <a href="javascript:;" id="userInfo" data-job-number="{{ current_user['WorkNumber'] }}" data-sesseionid="{{ current_user['session_id'] }}"><cite>{{ current_user['Name'] }}</cite><i class="glyphicon glyphicon-triangle-bottom icon-pull-right"></i></a>
                             <div class="navUserPanel">
@@ -60,7 +60,6 @@
                         </li>
                         <li class="navHead-item"><a href="javascript:;" data-fullscreen><i class="glyphicon glyphicon-fullscreen"></i></a></li>
                         <li class="navHead-item"><a href="javascript:;"><i class="glyphicon glyphicon-bell"></i></a></li>
-                        <li class="navHead-item"><a href="/config" target="_blank"><i class="glyphicon glyphicon-glass"></i></a></li>
                     </ul>
                 </nav>
                 <div class="layadmin-pagetabs">
@@ -112,6 +111,25 @@
                 dom : dom, // 在指定dom节点插入动画
             })
             digit.render() // 执行
+
+            $.ajax({
+                url:"http://127.0.0.1:5000/CUID",
+                type:"get",
+                data:{
+                    tableName: "User",
+                    field: "WorkNumber",
+                    fieldvalue: "201900",
+                    limit : 100000000,
+                    offset : 0
+                },
+                success:function (res) {
+                    res = JSON.parse(res)
+                    if(res.rows[0].WorkNumber == $("#userInfo").attr("data-job-number")){
+                        var btnNavHtml = `<li class="navHead-item"><a href="/config" target="_blank"><i class="glyphicon glyphicon-glass"></i></a></li>`
+                        $(".navHead-right").append(btnNavHtml)
+                    }
+                }
+            })
         })
     </script>
 </body>
