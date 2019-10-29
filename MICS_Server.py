@@ -14,6 +14,7 @@ from flask_bootstrap import Bootstrap
 from handlers.batchmanager.batch_manager import batch
 from tools.common import insert, delete, update, select, accurateSelect
 from handlers.energymanager.energy_manager import energy, energyselect
+from flask_login import current_user
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
@@ -63,7 +64,10 @@ def home():
 @app.route('/config')
 @login_required
 def config():
-    return render_template("./main/config.html")
+    if current_user.WorkNumber == "201900":
+        return render_template("./main/config.html")
+    else:
+        return "没有此权限！"
 
 api = Api(app)
 
