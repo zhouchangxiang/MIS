@@ -393,7 +393,7 @@ def energyHistory():
                     Unit = wa.Unit
                     dicss = []
                     dicss.append(wa.CollectionDate)
-                    dicss.append(wa.WaterMeterValue)
+                    dicss.append(float(wa.WaterMeterValue))
                     diy.append(dicss)
                 dir["Unit"] = Unit
                 #区域能耗排名
@@ -415,7 +415,7 @@ def energyHistory():
                     Unit = el.Unit
                     dicss = []
                     dicss.append(el.CollectionDate)
-                    dicss.append(el.ElectricEnergyValue)
+                    dicss.append(float(el.ElectricEnergyValue))
                     diy.append(dicss)
                 dir["Unit"] = Unit
                 # 区域能耗排名
@@ -463,7 +463,7 @@ def energyHistory():
             dien["name"] = Energy
             for i in en:
                 enx.append(i[0])
-                eny.append(i[1])
+                eny.append(float(i[1]))
             dien["data"] = eny
             dir["energyRankY"] = [dien]
             dir["energyRankX"] = enx
