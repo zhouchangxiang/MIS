@@ -380,15 +380,22 @@ def energyHistory():
             EndTime = data.get("EndTime")
             Energy = data.get("Energy")
             dir = {}
+            dire = {}
+            dire["name"] = Energy
             diy = []
             dix = []
             eng = {}
             if Energy == "水":
                 #能耗历史数据
                 watEnergyValues = db_session.query(WaterEnergy).filter(WaterEnergy.CollectionDate.between(StartTime,EndTime)).order_by(("CollectionDate")).all()
+                Unit = ""
                 for wa in watEnergyValues:
-                    diy.append(wa.WaterMeterValue)
-                    dix.append(wa.CollectionDate)
+                    Unit = wa.Unit
+                    dicss = []
+                    dicss.append(wa.CollectionDate)
+                    dicss.append(wa.WaterMeterValue)
+                    diy.append(dicss)
+                dir["Unit"] = Unit
                 #区域能耗排名
                 AreaNames = db_session.query(AreaTable.AreaName).filter().all()
                 for AreaName in AreaNames:
@@ -403,10 +410,14 @@ def energyHistory():
                 dir["total"] = accumulation(watEnergyValues)
             elif Energy == "电":
                 eleEnergyValues = db_session.query(ElectricEnergy).filter(ElectricEnergy.CollectionDate.between(StartTime,EndTime)).order_by(("CollectionDate")).all()
+                Unit = ""
                 for el in eleEnergyValues:
-                    diy.append(el.ElectricEnergyValue)
-                    dix.append(el.CollectionDate)
-
+                    Unit = el.Unit
+                    dicss = []
+                    dicss.append(el.CollectionDate)
+                    dicss.append(el.ElectricEnergyValue)
+                    diy.append(dicss)
+                dir["Unit"] = Unit
                 # 区域能耗排名
                 AreaNames = db_session.query(AreaTable.AreaName).filter().all()
                 for AreaName in AreaNames:
@@ -423,10 +434,14 @@ def energyHistory():
                 dir["total"] = accumulation(eleEnergyValues)
             elif Energy == "汽":
                 steEnergyValues = db_session.query(SteamEnergy).filter(SteamEnergy.CollectionDate.between(StartTime,EndTime)).order_by(("CollectionDate")).all()
+                Unit = ""
                 for st in steEnergyValues:
-                    diy.append(st.SteamValue)
-                    dix.append(st.CollectionDate)
-
+                    Unit = st.Unit
+                    dicss = []
+                    dicss.append(st.CollectionDate)
+                    dicss.append(st.SteamValue)
+                    diy.append(dicss)
+                dir["Unit"] = Unit
                 # 区域能耗排名
                 AreaNames = db_session.query(AreaTable.AreaName).filter().all()
                 for AreaName in AreaNames:
@@ -441,18 +456,20 @@ def energyHistory():
                     eng[AreaName[0]] = str(engsum)
                 # 累积量
                 dir["total"] = accumulation(steEnergyValues)
-            dir["X"] = dix
-            dir["Y"] = diy
             en = sorted(eng.items(), key=lambda x: float(x[1]), reverse=True)
-            print(en)
             eny = []
             enx = []
+            dien = {}
+            dien["name"] = Energy
             for i in en:
                 enx.append(i[0])
                 eny.append(i[1])
-            dir["energyRankY"] = eny
+            dien["data"] = eny
+            dir["energyRankY"] = [dien]
             dir["energyRankX"] = enx
-            print(dir)
+            dire["data"] = diy
+            dix.append(dire)
+            dir["HistorySeries"] = dix
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
