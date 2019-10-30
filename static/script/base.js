@@ -260,7 +260,7 @@ function HighchartsGlobalSettings(){
 }
 //highchart柱状图表渲染方法
 function highchartsRender(id,xAxisArray,seriesData){
-    var chart = Highcharts.chart(id,{
+    Highcharts.chart(id,{
         chart: {
             type: 'column'
         },
@@ -398,7 +398,7 @@ function highchartsRealTimeNoTickRender(url,id,xData,yData,domID){
 
 //highchart历史数据折线图渲染方法
 function highchartsEnergyHistoryRender(id,seriesData){
-    var chart = Highcharts.chart(id,{
+    Highcharts.chart(id,{
         chart: {
             type: 'spline'
         },
@@ -426,7 +426,7 @@ function highchartsEnergyHistoryRender(id,seriesData){
 }
 //highchart区域排名柱状图渲染方法
 function highchartsAreaBarRender(id,xAxisArray,seriesData,Unit){
-    var chart = Highcharts.chart(id,{
+    Highcharts.chart(id,{
         chart: {
             type: 'bar'
         },
