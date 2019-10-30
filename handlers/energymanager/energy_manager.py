@@ -382,23 +382,72 @@ def energyHistory():
             dir = {}
             diy = []
             dix = []
+            eny = []
+            eng = {}
             if Energy == "水":
+                #能耗历史数据
                 watEnergyValues = db_session.query(WaterEnergy).filter(WaterEnergy.CollectionDate.between(StartTime,EndTime)).order_by(("CollectionDate")).all()
                 for wa in watEnergyValues:
                     diy.append(wa.WaterMeterValue)
                     dix.append(wa.CollectionDate)
+                #区域能耗排名
+                AreaNames = db_session.query(AreaTable.AreaName).filter().all()
+                for AreaName in AreaNames:
+                    TagClassValues = db_session.query(TagClassType.TagClassValue).filter(TagClassType.AreaName == AreaName).all()
+                    engsum = 0.0
+                    for TagClassValue in TagClassValues:
+                        watEnergyValues = db_session.query(WaterEnergy.WaterMeterValue).filter(WaterEnergy.TagClassValue == TagClassValue,
+                            WaterEnergy.CollectionDate.between(StartTime, EndTime)).all()
+                        engsum = engsum + accumulation(watEnergyValues)
+                    eng[AreaName] = str(engsum)
+                    eny.append(eng)
+                # 累积量
+                dir["total"] = accumulation(watEnergyValues)
             elif Energy == "电":
                 eleEnergyValues = db_session.query(ElectricEnergy).filter(ElectricEnergy.CollectionDate.between(StartTime,EndTime)).order_by(("CollectionDate")).all()
                 for el in eleEnergyValues:
                     diy.append(el.ElectricEnergyValue)
                     dix.append(el.CollectionDate)
+
+                # 区域能耗排名
+                AreaNames = db_session.query(AreaTable.AreaName).filter().all()
+                for AreaName in AreaNames:
+                    TagClassValues = db_session.query(TagClassType.TagClassValue).filter(
+                        TagClassType.AreaName == AreaName).all()
+                    engsum = 0.0
+                    for TagClassValue in TagClassValues:
+                        eleEnergyValues = db_session.query(ElectricEnergy.ElectricEnergyValue).filter(
+                            ElectricEnergy.TagClassValue == TagClassValue,
+                            ElectricEnergy.CollectionDate.between(StartTime, EndTime)).all()
+                        engsum = engsum + accumulation(eleEnergyValues)
+                    eng[AreaName] = str(engsum)
+                    eny.append(eng)
+                # 累积量
+                dir["total"] = accumulation(eleEnergyValues)
             elif Energy == "汽":
                 steEnergyValues = db_session.query(SteamEnergy).filter(SteamEnergy.CollectionDate.between(StartTime,EndTime)).order_by(("CollectionDate")).all()
                 for st in steEnergyValues:
                     diy.append(st.SteamValue)
                     dix.append(st.CollectionDate)
+
+                # 区域能耗排名
+                AreaNames = db_session.query(AreaTable.AreaName).filter().all()
+                for AreaName in AreaNames:
+                    TagClassValues = db_session.query(TagClassType.TagClassValue).filter(
+                        TagClassType.AreaName == AreaName).all()
+                    engsum = 0.0
+                    for TagClassValue in TagClassValues:
+                        steEnergyValues = db_session.query(SteamEnergy.SteamValue).filter(
+                            WaterEnergy.TagClassValue == TagClassValue,
+                            WaterEnergy.CollectionDate.between(StartTime, EndTime)).all()
+                        engsum = engsum + accumulation(steEnergyValues)
+                    eng[AreaName] = str(engsum)
+                    eny.append(eng)
+                # 累积量
+                dir["total"] = accumulation(steEnergyValues)
             dir["X"] = dix
             dir["Y"] = diy
+            dir["energyRank"] = eny
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
