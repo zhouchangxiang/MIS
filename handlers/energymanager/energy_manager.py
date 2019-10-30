@@ -382,7 +382,6 @@ def energyHistory():
             dir = {}
             diy = []
             dix = []
-            eny = []
             eng = {}
             if Energy == "水":
                 #能耗历史数据
@@ -444,7 +443,16 @@ def energyHistory():
                 dir["total"] = accumulation(steEnergyValues)
             dir["X"] = dix
             dir["Y"] = diy
-            dir["energyRank"] = sorted(eng.items(),key=lambda x:float(x[1]), reverse=True)
+            en = sorted(eng.items(), key=lambda x: float(x[1]), reverse=True)
+            print(en)
+            eny = []
+            enx = []
+            for i in en:
+                enx.append(i[0])
+                eny.append(i[1])
+            dir["energyRankY"] = eny
+            dir["energyRankX"] = enx
+            print(dir)
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
