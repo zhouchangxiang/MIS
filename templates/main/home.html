@@ -160,24 +160,21 @@
                                     <div class="input-group">
                                         <input type="text" class="form-control datetimepicker" id="endTime" readonly>
                                     </div>
-                                    <button type="button" class="btn btn-primary" id="SearchData">查询</button>
                                 </div>
                             </form>
-                            <div id="modalRealTimeChart" style="width: 100%;height: 410px;margin-top: 20px;"></div>
+                            <div id="modalEnergyHistoryChart" style="width: 100%;height: 410px;margin-top: 20px;"></div>
                             <div class="mics-panel-head">
                                 <div class="mics-panel-title pull-left">累计能耗量:</div>
                             </div>
                             <div class="mics-panel-head">
-                                <label for="" class="groupLabel">415461.13</label>
+                                <label for="" class="groupLabel" id="EnergyHistoryDataTotal">0</label>
                             </div>
                         </div>
                         <div class="col-md-5">
                             <div class="mics-panel-head">
                                 <div class="mics-panel-title pull-left">区域能耗排名:</div>
                             </div>
-                            <div id="rankingChart" style="width: 100%;height: 200px;margin-top: 20px;">
-
-                            </div>
+                            <div id="rankingChart" style="width: 100%;margin-top: 20px;"></div>
                         </div>
                     </div>
                 </div>
@@ -204,13 +201,49 @@
                 meridiem:    ["上午", "下午"],
                 today:       "今天"
             };
+
             $('#startTime,#endTime').datetimepicker({
                 format: 'yyyy-mm-dd hh:ii', // 标签上可用data-date-format="hh:ii" data-link-format="hh:ii"
                 autoclose: true, //选择完成自动关闭下拉框
                 startView : 2,
                 minView:0, //0到分钟结束，1到小时，2到日
                 language: 'zh-CN'
+            }).on('changeDate',function(ev){
+                var dffDate = (new Date($('#endTime').val())).getTime() -  (new Date($('#startTime').val())).getTime()
+                if(dffDate <= 0){
+                    bootbox.alert('截止时间不能小于开始时间')
+                }else{
+                    getEnergyHistory()
+                }
+            });
+            //实时数据弹框
+            $(".trendsChartItem").on("dblclick",function(){
+                $("#realTimeModal").modal('show')
+                var Energy = $(this).attr("data-Energy")
+                $("#realTimeModal").find(".modal-title").html(Energy+"能数据")
+                $("#realTimeModal").find("#EnergyInd").val(Energy)
+                $("#startTime").val(myformatter(new Date(new Date().getTime() - 1*24*60*60*1000)))
+                $("#endTime").val(myformatter(new Date()))
+                getEnergyHistory()
             })
+            function getEnergyHistory(){
+                $.ajax({
+                    url:"/energyHistory",
+                    type:"get",
+                    data:{
+                        StartTime: $("#startTime").val(),
+                        EndTime : $("#endTime").val(),
+                        Energy : $("#EnergyInd").val(),
+                    },
+                    success:function (res) {
+                        res = JSON.parse(res)
+                        console.log(res)
+                        $("#EnergyHistoryDataTotal").html(res.total)
+                        highchartsEnergyHistoryRender("modalEnergyHistoryChart",res.HistorySeries)
+                        highchartsAreaBarRender("rankingChart",res.energyRankX,res.energyRankY,res.Unit)
+                    }
+                })
+            }
 
             //能耗趋势图表
             ajaxEnergyTrend($("#EnergyChartSelect_Time").val(),$("#EnergyChartSelect_Item").val())
@@ -239,33 +272,6 @@
             highchartsRealTimeNoTickRender("ws://127.0.0.1:5003","highcharts-electricity","randomtime","random","ElectricRealTimeData ")
             highchartsRealTimeNoTickRender("ws://127.0.0.1:5003","highcharts-water","randomtime","random","WaterRealTimeData ")
             highchartsRealTimeNoTickRender("ws://127.0.0.1:5003","highcharts-steam","randomtime","random","SteamRealTimeData")
-
-            //实时数据弹框
-            $(".trendsChartItem").on("dblclick",function(){
-                $("#realTimeModal").modal('show')
-                var Energy = $(this).attr("data-Energy")
-                $("#realTimeModal").find(".modal-title").html(Energy+"能数据")
-                $("#realTimeModal").find("#EnergyInd").val(Energy)
-                $("#startTime").val(myformatter(new Date(new Date().getTime() - 1*24*60*60*1000)))
-                $("#endTime").val(myformatter(new Date()))
-            })
-            //查询历史数据趋势
-            $("#SearchData").on("click",function(){
-                var Energy = $("#EnergyInd").val()
-                $.ajax({
-                    url:"/energyHistory",
-                    type:"get",
-                    data:{
-                        StartTime: $("#startTime").val(),
-                        EndTime : $("#endTime").val(),
-                        Energy : Energy,
-                    },
-                    success:function (res) {
-                        res = JSON.parse(res)
-                        console.log(res)
-                    }
-                })
-            })
 
             //区域下拉框
             $.ajax({

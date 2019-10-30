@@ -258,7 +258,7 @@ function HighchartsGlobalSettings(){
         }
     });
 }
-//highchart静态图表渲染方法
+//highchart柱状图表渲染方法
 function highchartsRender(id,xAxisArray,seriesData){
     var chart = Highcharts.chart(id,{
         chart: {
@@ -394,4 +394,62 @@ function highchartsRealTimeNoTickRender(url,id,xData,yData,domID){
             });
         }
     })
+}
+
+//highchart历史数据折线图渲染方法
+function highchartsEnergyHistoryRender(id,seriesData){
+    var chart = Highcharts.chart(id,{
+        chart: {
+            type: 'spline'
+        },
+        title: {
+            text: null
+        },
+        credits: {
+            enabled: false//不显示LOGO
+        },
+        legend: {
+			enabled: false //不显示图例
+		},
+        xAxis: {
+            title: {
+                text: null
+            }
+        },
+        yAxis: {
+            title: {
+                text: ''
+            }
+        },
+        series:seriesData
+    });
+}
+//highchart区域排名柱状图渲染方法
+function highchartsAreaBarRender(id,xAxisArray,seriesData,Unit){
+    var chart = Highcharts.chart(id,{
+        chart: {
+            type: 'bar'
+        },
+        title: {
+            text: null
+        },
+        credits: {
+            enabled: false//不显示LOGO
+        },
+        legend: {
+			enabled: false //不显示图例
+		},
+        xAxis: {
+            categories: xAxisArray
+        },
+        yAxis: {
+            title: {
+                text: ''
+            }
+        },
+        tooltip: {
+            valueSuffix: Unit
+        },
+        series:seriesData
+    });
 }
