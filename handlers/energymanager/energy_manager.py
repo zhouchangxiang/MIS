@@ -245,7 +245,7 @@ def energyselect(data):
             EnergyClass = data.get("EnergyClass")
             ModelFlag = data.get("ModelFlag")
             if Area is not None and DateTime is not None and EnergyClass is None:
-                eqps = db_session.query(Equipment.ID).filter(Equipment.Area == Area).all()
+                eqps = db_session.query(Equipment.ID).filter(Equipment.AreaName == Area).all()
                 ElectricEnergyValues = db_session.query(ElectricEnergy.ElectricEnergyValue).filter(ElectricEnergy.EquipmnetID.in_((eqps))).all()
                 elecount = 0.0
                 for ele in ElectricEnergyValues:
@@ -393,14 +393,13 @@ def energyHistory():
                 #区域能耗排名
                 AreaNames = db_session.query(AreaTable.AreaName).filter().all()
                 for AreaName in AreaNames:
-                    TagClassValues = db_session.query(TagClassType.TagClassValue).filter(TagClassType.AreaName == AreaName).all()
+                    TagClassValues = db_session.query(TagClassType.TagClassValue).filter(TagClassType.AreaName == AreaName[0]).all()
                     engsum = 0.0
                     for TagClassValue in TagClassValues:
                         watEnergyValues = db_session.query(WaterEnergy.WaterMeterValue).filter(WaterEnergy.TagClassValue == TagClassValue,
                             WaterEnergy.CollectionDate.between(StartTime, EndTime)).all()
                         engsum = engsum + accumulation(watEnergyValues)
-                    eng[AreaName] = str(engsum)
-                    eny.append(eng)
+                    eng[AreaName[0]] = str(engsum)
                 # 累积量
                 dir["total"] = accumulation(watEnergyValues)
             elif Energy == "电":
@@ -413,15 +412,14 @@ def energyHistory():
                 AreaNames = db_session.query(AreaTable.AreaName).filter().all()
                 for AreaName in AreaNames:
                     TagClassValues = db_session.query(TagClassType.TagClassValue).filter(
-                        TagClassType.AreaName == AreaName).all()
+                        TagClassType.AreaName == AreaName[0]).all()
                     engsum = 0.0
                     for TagClassValue in TagClassValues:
                         eleEnergyValues = db_session.query(ElectricEnergy.ElectricEnergyValue).filter(
                             ElectricEnergy.TagClassValue == TagClassValue,
                             ElectricEnergy.CollectionDate.between(StartTime, EndTime)).all()
                         engsum = engsum + accumulation(eleEnergyValues)
-                    eng[AreaName] = str(engsum)
-                    eny.append(eng)
+                    eng[AreaName[0]] = str(engsum)
                 # 累积量
                 dir["total"] = accumulation(eleEnergyValues)
             elif Energy == "汽":
@@ -434,20 +432,19 @@ def energyHistory():
                 AreaNames = db_session.query(AreaTable.AreaName).filter().all()
                 for AreaName in AreaNames:
                     TagClassValues = db_session.query(TagClassType.TagClassValue).filter(
-                        TagClassType.AreaName == AreaName).all()
+                        TagClassType.AreaName == AreaName[0]).all()
                     engsum = 0.0
                     for TagClassValue in TagClassValues:
                         steEnergyValues = db_session.query(SteamEnergy.SteamValue).filter(
                             WaterEnergy.TagClassValue == TagClassValue,
                             WaterEnergy.CollectionDate.between(StartTime, EndTime)).all()
                         engsum = engsum + accumulation(steEnergyValues)
-                    eng[AreaName] = str(engsum)
-                    eny.append(eng)
+                    eng[AreaName[0]] = str(engsum)
                 # 累积量
                 dir["total"] = accumulation(steEnergyValues)
             dir["X"] = dix
             dir["Y"] = diy
-            dir["energyRank"] = eny
+            dir["energyRank"] = sorted(eng.items(),key=lambda x:float(x[1]), reverse=True)
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
