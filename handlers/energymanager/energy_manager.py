@@ -14,6 +14,7 @@ from dbset.database import constant
 from dbset.log.BK2TLogger import logger,insertSyslog
 import datetime
 import arrow
+import time
 
 energy = Blueprint('energy', __name__, template_folder='templates')
 @energy.route('/energyRedisData')
@@ -392,7 +393,12 @@ def energyHistory():
                 for wa in watEnergyValues:
                     Unit = wa.Unit
                     dicss = []
-                    dicss.append(wa.CollectionDate)
+                    if wa.CollectionDate != None:
+                        timeArray = time.strptime(wa.CollectionDate, "%Y-%m-%d %H:%M:%S")
+                        timeStamp = int(time.mktime(timeArray))
+                        dicss.append(timeStamp)
+                    else:
+                        dicss.append(0)
                     dicss.append(float(wa.WaterMeterValue))
                     diy.append(dicss)
                 dir["Unit"] = Unit
@@ -414,7 +420,12 @@ def energyHistory():
                 for el in eleEnergyValues:
                     Unit = el.Unit
                     dicss = []
-                    dicss.append(el.CollectionDate)
+                    if el.CollectionDate != None:
+                        timeArray = time.strptime(el.CollectionDate, "%Y-%m-%d %H:%M:%S")
+                        timeStamp = int(time.mktime(timeArray))
+                        dicss.append(timeStamp)
+                    else:
+                        dicss.append(0)
                     dicss.append(float(el.ElectricEnergyValue))
                     diy.append(dicss)
                 dir["Unit"] = Unit
@@ -438,7 +449,12 @@ def energyHistory():
                 for st in steEnergyValues:
                     Unit = st.Unit
                     dicss = []
-                    dicss.append(st.CollectionDate)
+                    if st.CollectionDate != None:
+                        timeArray = time.strptime(st.CollectionDate, "%Y-%m-%d %H:%M:%S")
+                        timeStamp = int(time.mktime(timeArray))
+                        dicss.append(timeStamp)
+                    else:
+                        dicss.append(0)
                     dicss.append(st.SteamValue)
                     diy.append(dicss)
                 dir["Unit"] = Unit
