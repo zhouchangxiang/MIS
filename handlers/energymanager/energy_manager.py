@@ -396,7 +396,7 @@ def energyHistory():
                     if wa.CollectionDate != None:
                         timeArray = time.strptime(wa.CollectionDate, "%Y-%m-%d %H:%M:%S")
                         timeStamp = int(time.mktime(timeArray))
-                        dicss.append(timeStamp)
+                        dicss.append(1000*timeStamp)
                     else:
                         dicss.append(0)
                     dicss.append(float(wa.WaterMeterValue))
@@ -423,7 +423,7 @@ def energyHistory():
                     if el.CollectionDate != None:
                         timeArray = time.strptime(el.CollectionDate, "%Y-%m-%d %H:%M:%S")
                         timeStamp = int(time.mktime(timeArray))
-                        dicss.append(timeStamp)
+                        dicss.append(1000*timeStamp)
                     else:
                         dicss.append(0)
                     dicss.append(float(el.ElectricEnergyValue))
@@ -451,7 +451,7 @@ def energyHistory():
                     dicss = []
                     if st.CollectionDate != None:
                         timeArray = time.strptime(st.CollectionDate, "%Y-%m-%d %H:%M:%S")
-                        timeStamp = int(time.mktime(timeArray))
+                        timeStamp = int(1000*time.mktime(timeArray))
                         dicss.append(timeStamp)
                     else:
                         dicss.append(0)
