@@ -234,30 +234,6 @@ function Digit(a) {
         i.timerTemp -= i.single, b(a.dom, a.number), c(a.dom, i, d)
     }
 }
-//highchart全局配置
-function HighchartsGlobalSettings(){
-    Highcharts.setOptions({
-        lang:{
-           contextButtonTitle:"图表导出菜单",
-           decimalPoint:".",
-           downloadJPEG:"下载JPEG图片",
-           downloadPDF:"下载PDF文件",
-           downloadPNG:"下载PNG文件",
-           downloadSVG:"下载SVG文件",
-           drillUpText:"返回 {series.name}",
-           loading:"加载中",
-           months:["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"],
-           noData:"没有数据",
-           numericSymbols: [ "千" , "兆" , "G" , "T" , "P" , "E"],
-           printChart:"打印图表",
-           resetZoom:"恢复缩放",
-           resetZoomTitle:"恢复图表",
-           shortMonths: [ "Jan" , "Feb" , "Mar" , "Apr" , "May" , "Jun" , "Jul" , "Aug" , "Sep" , "Oct" , "Nov" , "Dec"],
-           thousandsSep:",",
-           weekdays: ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六","星期天"]
-        }
-    });
-}
 //highchart柱状图表渲染方法
 function highchartsRender(id,xAxisArray,seriesData){
     Highcharts.chart(id,{
@@ -397,10 +373,10 @@ function highchartsRealTimeNoTickRender(url,id,xData,yData,domID){
 }
 
 //highchart历史数据折线图渲染方法
-function highchartsEnergyHistoryRender(id,seriesData){
+function highchartsEnergyHistoryRender(id,seriesData,Unit){
     Highcharts.chart(id,{
         chart: {
-            type: 'spline'
+            zoomType: 'x'
         },
         title: {
             text: null
@@ -408,19 +384,35 @@ function highchartsEnergyHistoryRender(id,seriesData){
         credits: {
             enabled: false//不显示LOGO
         },
-        legend: {
-			enabled: false //不显示图例
+        plotOptions: {
+			series: {
+				showInLegend: true
+			}
 		},
-        xAxis: {
-            title: {
-                text: null
+        xAxis:{
+            type: 'datetime',
+            dateTimeLabelFormats: {
+                millisecond: '%H:%M:%S.%L',
+                second: '%H:%M:%S',
+                minute: '%H:%M',
+                hour: '%H:%M',
+                day: '%m-%d',
+                week: '%m-%d',
+                month: '%Y-%m',
+                year: '%Y'
             }
         },
-        yAxis: {
+        yAxis:{
             title: {
                 text: ''
-            }
+            },
         },
+        tooltip: {
+            valueSuffix: Unit,
+            formatter: function () {
+                return myTimeformatter(new Date(this.x)) + "<br>" + this.series.name + ":" + this.y + Unit
+            }
+		},
         series:seriesData
     });
 }
