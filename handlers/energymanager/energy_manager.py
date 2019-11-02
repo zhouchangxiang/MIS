@@ -26,6 +26,14 @@ def energyDataChart():
 @energy.route('/energyAreaTable')
 def energyAreaTable():
     return render_template('./energyAreaTable.html')
+@energy.route('/costCenter')
+def costCenter():
+    return render_template('./costCenter.html')
+#成本管理的维护表页面
+@energy.route('/costManage')
+def costManage():
+    return render_template('./costManage.html')
+
 
 def getMonthFirstDayAndLastDay(year, month):
     """
