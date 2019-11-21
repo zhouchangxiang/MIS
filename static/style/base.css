@@ -37,6 +37,9 @@ a:focus{text-decoration: none}
 .wrap{
     padding: 15px;
 }
+.block-separate{
+    margin-top:20px;
+}
 
 /*登录*/
 .loginContent{
@@ -46,22 +49,69 @@ a:focus{text-decoration: none}
     background: url("../images/loginBg.jpg") no-repeat;
     background-size: cover;
 }
-.enterInfo{
-    position: absolute;
-    left: 0;
-    top: 0;
+.loginImg-shade{
+    width: 100%;
     height: 100%;
+    background: #07488E;
+    opacity: 0.5;
 }
-.enterInfo img{
-    height: 100%;
-}
-.loginInfo{
+.login-modal-box{
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 50%;
+    left: 50%;
+    width: 560px;
+    height: 500px;
+    margin-left: -280px;
+    margin-top: -250px;
+}
+.login-modal{
+    position: relative;
+}
+.login-modal-shade{
+    position: absolute;
+    width: 100%;
     height: 100%;
-    display: flex;
-    align-items: center;
+    background: #ffffff;
+    opacity: 0.3;
+    border-radius: 8px;
+}
+.login-modal-head{
+    position: relative;
+    top: -30px;
+    background: #07488E;
+    text-align: center;
+    height: 60px;
+    line-height: 60px;
+    padding: 0 30px;
+    border-radius: 8px;
+    font-size: 20px;
+    display: table;
+    margin: 0 auto;
+    z-index: 1;
+}
+.login-modal-body{
+    position: relative;
+    padding: 40px;
+}
+#submitBtn{
+    position: relative;
+    bottom: -30px;
+    height: 60px;
+    line-height: 60px;
+    width: 60px;
+    border-radius: 50%;
+    font-size: 16px;
+    text-align: center;
+    display: block;
+    margin: 0 auto;
+    padding: 0;
+    background: #07488E;
+    color: #fff;
+    outline: none;
+    z-index: 1;
+}
+#submitBtn:hover{
+    background: #0B76EA;
 }
 #loginForm{
     width: 100%;
@@ -100,19 +150,6 @@ a:focus{text-decoration: none}
 #loginForm .form-group .form-control:focus{
     opacity: 1;
     box-shadow: none;
-}
-#submitBtn{
-    background: #0859AF;
-    color: #ffffff;
-    border: none;
-    height: 61px;
-    outline:none;
-}
-#submitBtn:hover{
-    background: #0B76EA;
-}
-#submitBtn:focus{
-    background: #0B76EA;
 }
 /*侧边导航内样式*/
 .sideLogo{
@@ -388,4 +425,15 @@ a:focus{text-decoration: none}
 }
 .mics-btn-group.btn-group .btn:focus{
     outline: none;
+}
+
+/* 显示数值的模块 */
+.block-title{
+    font-size: 14px;
+    color:#8A8F97;
+    padding: 15px 0;
+}
+.block-show-data{
+    font-size:36px;
+    color: #07488E;
 }
