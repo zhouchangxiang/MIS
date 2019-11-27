@@ -119,6 +119,7 @@
                     },
                     success:function(res){
                         res = JSON.parse(res)
+                        console.log(res)
                         $.each(res.datasets,function(i,dataset){
                             $('<div class="chart"></div>').appendTo("#container").highcharts({
                                 chart: {
