@@ -941,6 +941,48 @@ class TagClassType(Base):
 	
 #TagClassType_END:
 
+
+
+
+#TagDetail_START:
+class TagDetail(Base):
+	__tablename__ = "TagDetail" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#区域名称:
+	AreaName = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
+	
+	#器件号:
+	DeviceNum = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#IP地址:
+	IP = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#端口:
+	Port = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#虚拟分配COM号:
+	COMNum = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#485站点地址:
+	FEFportIP = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
+	
+	#位置:
+	Area = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
+	
+	#备注:
+	Description = Column(Unicode(150), primary_key = False, autoincrement = False, nullable = True)
+	
+	#水电汽分类:
+	EnergyClass = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#Tag点:
+	TagClassValue = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+#TagDetail_END:
+
 # 生成表单的执行语句_START
 Base.metadata.create_all(engine)
 

@@ -14,119 +14,132 @@ from dbset.main.BSFramwork import AlchemyEncoder
 from flask_login import login_required, logout_user, login_user,current_user,LoginManager
 import arrow
 from models.SystemManagement.core import RedisKey, TagClassType, ElectricEnergy, Unit, PriceList, SteamEnergy, \
-    WaterEnergy
+    WaterEnergy, TagDetail
 from tools.common import insert,delete,update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger,insertSyslog
 
-pool = redis.ConnectionPool(host=constant.REDIS_HOST, password=constant.REDIS_PASSWORD)
+pool = redis.ConnectionPool(host=constant.REDIS_HOST)
 a = arrow.now()
 currentyear = str(a.shift(years=0))[0:4]
 currentmonth = str(a.shift(years=0))[0:7]
 currentday = str(a.shift(days=0))[0:10]
 def run():
     while True:
-        data_dict = {}
-        redis_conn = redis.Redis(connection_pool=pool)
-        keys = db_session.query(TagClassType.TagClassValue).filter().all()
-        for key in keys:
-            value = redis_conn.hget(constant.REDIS_TABLENAME, key[0]).decode('utf-8')
-            k = key[0][0:1]
-            if k == "E":
-                ele = db_session.query(ElectricEnergy).filter(ElectricEnergy.TagClassValue == key[0]).first()
-                unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "电").first()
-                equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key).first()
-                price = db_session.query(PriceList.PriceValue).filter(PriceList.PriceName == "电",PriceList.IsEnabled == "是").first()
-                if ele == None:
-                    el = ElectricEnergy()
-                    el.TagClassValue = key[0]
-                    el.CollectionYear = currentyear
-                    el.CollectionMonth = currentmonth
-                    el.CollectionDay = currentday
-                    el.ElectricEnergyValue = value
-                    el.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                    el.Unit = unit[0]
-                    el.EquipmnetID = equip[0]
-                    el.PriceID =price[0]
-                    db_session.add(el)
-                    db_session.commit()
-                elif ele.ElectricEnergyValue != value:
-                    el = ElectricEnergy()
-                    el.TagClassValue = key[0]
-                    el.CollectionYear = currentyear
-                    el.CollectionMonth = currentmonth
-                    el.CollectionDay = currentday
-                    el.ElectricEnergyValue = value
-                    el.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                    el.Unit = unit[0]
-                    el.EquipmnetID = equip[0]
-                    el.PriceID = price[0]
-                    db_session.add(el)
-                    db_session.commit()
-            elif k == "S":
-                ste = db_session.query(SteamEnergy).filter(SteamEnergy.TagClassValue == key).first()
-                unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽").first()
-                equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key).first()
-                price = db_session.query(PriceList.PriceValue).filter(PriceList.PriceName == "汽",
-                                                                      PriceList.IsEnabled == "是").first()
-                if ste == None:
-                    sl = SteamEnergy()
-                    sl.TagClassValue = key[0]
-                    sl.CollectionYear = currentyear
-                    sl.CollectionMonth = currentmonth
-                    sl.CollectionDay = currentday
-                    sl.SteamValue = value
-                    sl.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                    sl.Unit = unit[0]
-                    sl.EquipmnetID = equip[0]
-                    sl.PriceID = price[0]
-                    db_session.add(sl)
-                    db_session.commit()
-                elif ste.SteamValue != value:
-                    sl = SteamEnergy()
-                    sl.TagClassValue = key[0]
-                    sl.CollectionYear = currentyear
-                    sl.CollectionMonth = currentmonth
-                    sl.CollectionDay = currentday
-                    sl.SteamValue = value
-                    sl.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                    sl.Unit = unit[0]
-                    sl.EquipmnetID = equip[0]
-                    sl.PriceID = price[0]
-                    db_session.add(sl)
-                    db_session.commit()
-            elif k == "W":
-                wat = db_session.query(WaterEnergy).filter(WaterEnergy.TagClassValue == key).first()
-                unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "水").first()
-                equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key).first()
-                price = db_session.query(PriceList.PriceValue).filter(PriceList.PriceName == "水",
-                                                                      PriceList.IsEnabled == "是").first()
-                if wat == None:
-                    wa = WaterEnergy()
-                    wa.TagClassValue = key[0]
-                    wa.CollectionYear = currentyear
-                    wa.CollectionMonth = currentmonth
-                    wa.CollectionDay = currentday
-                    wa.WaterMeterValue = value
-                    wa.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                    wa.Unit = unit[0]
-                    wa.EquipmnetID = equip[0]
-                    wa.PriceID = price[0]
-                    db_session.add(wa)
-                    db_session.commit()
-                elif wat.WaterMeterValue != value:
-                    wa = WaterEnergy()
-                    wa.TagClassValue = key[0]
-                    wa.CollectionYear = currentyear
-                    wa.CollectionMonth = currentmonth
-                    wa.CollectionDay = currentday
-                    wa.WaterMeterValue = value
-                    wa.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                    wa.Unit = unit[0]
-                    wa.EquipmnetID = equip[0]
-                    wa.PriceID = price[0]
-                    db_session.add(wa)
-                    db_session.commit()
-        time.sleep(3)
+        try:
+            data_dict = {}
+            redis_conn = redis.Redis(connection_pool=pool)
+            keys = db_session.query(TagDetail).filter(TagDetail.TagClassValue != None).all()
+            for key in keys:
+                k = key.TagClassValue[0:1]
+                if k == "E":
+                    value = redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue)
+                    ele = db_session.query(ElectricEnergy).filter(ElectricEnergy.TagClassValue == key.TagClassValue).first()
+                    unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "电").first()
+                    # equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key.TagClassValue).first()
+                    price = db_session.query(PriceList.PriceValue).filter(PriceList.PriceName == "电",PriceList.IsEnabled == "是").first()
+                    if ele == None:
+                        el = ElectricEnergy()
+                        el.TagClassValue = key.TagClassValue
+                        el.CollectionYear = currentyear
+                        el.CollectionMonth = currentmonth
+                        el.CollectionDay = currentday
+                        el.ElectricEnergyValue = value
+                        el.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                        el.Unit = unit[0]
+                        # el.EquipmnetID = equip[0]
+                        el.PriceID =price[0]
+                        db_session.add(el)
+                        db_session.commit()
+                    elif ele.ElectricEnergyValue != value:
+                        el = ElectricEnergy()
+                        el.TagClassValue = key.TagClassValue
+                        el.CollectionYear = currentyear
+                        el.CollectionMonth = currentmonth
+                        el.CollectionDay = currentday
+                        el.ElectricEnergyValue = value
+                        el.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                        el.Unit = unit[0]
+                        # el.EquipmnetID = equip[0]
+                        el.PriceID = price[0]
+                        db_session.add(el)
+                        db_session.commit()
+                elif k == "S":
+                    valueWD = redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "WD")  # 蒸汽温度
+                    valueF = redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "F")  # 蒸汽瞬时流量
+                    valueS = redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "S")  # 蒸汽累计流量
+
+                    ste = db_session.query(SteamEnergy).filter(SteamEnergy.TagClassValue == key.TagClassValue).first()
+                    unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽").first()
+                    # equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key.TagClassValue).first()
+                    price = db_session.query(PriceList.PriceValue).filter(PriceList.PriceName == "汽",
+                                                                          PriceList.IsEnabled == "是").first()
+                    if ste == None:
+                        sl = SteamEnergy()
+                        sl.TagClassValue = key.TagClassValue
+                        sl.CollectionYear = currentyear
+                        sl.CollectionMonth = currentmonth
+                        sl.CollectionDay = currentday
+                        sl.SteamValue = value
+                        sl.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                        sl.Unit = unit[0]
+                        # sl.EquipmnetID = equip[0]
+                        sl.PriceID = price[0]
+                        db_session.add(sl)
+                        db_session.commit()
+                    elif ste.SteamValue != value:
+                        sl = SteamEnergy()
+                        sl.TagClassValue = key.TagClassValue
+                        sl.CollectionYear = currentyear
+                        sl.CollectionMonth = currentmonth
+                        sl.CollectionDay = currentday
+                        sl.SteamValue = value
+                        sl.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                        sl.Unit = unit[0]
+                        # sl.EquipmnetID = equip[0]
+                        sl.PriceID = price[0]
+                        db_session.add(sl)
+                        db_session.commit()
+                elif k == "W":
+                    valueS = redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "S")  # 水的累计流量
+                    valueF = redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "F")  # 水的瞬时流量
+                    wat = db_session.query(WaterEnergy).filter(WaterEnergy.TagClassValue == key.TagClassValue).first()
+                    unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "水").first()
+                    # equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key.TagClassValue).first()
+                    price = db_session.query(PriceList.PriceValue).filter(PriceList.PriceName == "水",
+                                                                          PriceList.IsEnabled == "是").first()
+                    if wat == None:
+                        wa = WaterEnergy()
+                        wa.TagClassValue = key.TagClassValue
+                        wa.CollectionYear = currentyear
+                        wa.CollectionMonth = currentmonth
+                        wa.CollectionDay = currentday
+                        wa.WaterMeterValue = value
+                        wa.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                        wa.Unit = unit[0]
+                        # wa.EquipmnetID = equip[0]
+                        wa.PriceID = price[0]
+                        db_session.add(wa)
+                        db_session.commit()
+                    elif wat.WaterMeterValue != value:
+                        wa = WaterEnergy()
+                        wa.TagClassValue = key.TagClassValue
+                        wa.CollectionYear = currentyear
+                        wa.CollectionMonth = currentmonth
+                        wa.CollectionDay = currentday
+                        wa.WaterMeterValue = value
+                        wa.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                        wa.Unit = unit[0]
+                        # wa.EquipmnetID = equip[0]
+                        wa.PriceID = price[0]
+                        db_session.add(wa)
+                        db_session.commit()
+            time.sleep(3)
+        except Exception as e:
+            print("报错IP："+key.IP+"  报错端口："+key.COMNum+"  错误："+str(e))
+            logger.error(e)
+            insertSyslog("error", "实时数据写入DB报错Error：" + str(e),"")
+        finally:
+            pass
 if __name__ == '__main__':
     run()
