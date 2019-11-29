@@ -79,7 +79,7 @@ $(function () {
 			},
 			error: function() {
 				isLoaded = false;
-				bootbox.alert('请求sessionid失败');
+				//bootbox.alert('请求sessionid失败');
 			}
 		});
 	}
@@ -129,7 +129,7 @@ $(function () {
 	})
 
 	//全屏
-	$(".navHead-riht").on("click","[data-fullscreen]",function(){
+	$(".navHead-right").on("click","[data-fullscreen]",function(){
 		var SCREEN_FULL = 'glyphicon-fullscreen',
       		SCREEN_REST = 'glyphicon-resize-small',
       		iconElem = $(this).find("i");
