@@ -11,6 +11,9 @@ import base64
 import threading
 import random
 import datetime
+from dbset.database.db_operate import db_session
+from models.SystemManagement.system import ElectricSiteURL
+from models.SystemManagement.core import TagDetail
 
 
 def get_headers(data):
@@ -108,22 +111,79 @@ def handler_msg(conn):
     with conn as c:
         data_recv = c.recv(1024)
         while True:
+            AreaName = ""
             if data_recv[0:1] == b"\x81":
                 data_parse = parse_payload(data_recv)
-                print(data_parse)
+                AreaName = data_parse
             data_dict = {}
-            pool = redis.ConnectionPool(host=constant.REDIS_HOST, password=constant.REDIS_PASSWORD)
+            pool = redis.ConnectionPool(host=constant.REDIS_HOST)
             redis_conn = redis.Redis(connection_pool=pool)
-            # data_dict['JHY_CPG'] = redis_conn.hget(constant.REDIS_TABLENAME, 't|JHY_Item01Result').decode('utf-8')
-            # data_dict['JHY_SF'] = redis_conn.hget(constant.REDIS_TABLENAME, 't|JHY_Item02Result').decode('utf-8')
-            # data_dict['JHY_LJ'] = redis_conn.hget(constant.REDIS_TABLENAME, 't|JHY_Item03Result').decode('utf-8')
-            # data_dict['WB_SF'] = redis_conn.hget(constant.REDIS_TABLENAME, 't|WB_Water').decode('utf-8')
-            # data_dict['WB_WD'] = redis_conn.hget(constant.REDIS_TABLENAME, 't|WB_Temp').decode('utf-8')
-            # data_dict['WB_MD'] = redis_conn.hget(constant.REDIS_TABLENAME, 't|WB_MD').decode('utf-8')
-            # data_dict['ZGY_Temp'] = redis_conn.hget(constant.REDIS_TABLENAME, "t|ZGY_Temp").decode('utf-8')
-            # data_dict['ZGY_ZGL'] = redis_conn.hget(constant.REDIS_TABLENAME, "t|ZGY_ZGL").decode('utf-8')
-            data_dict['random'] = random.randint(1,100)
-            data_dict['randomtime'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            Tags = db_session.query(TagDetail).filter(TagDetail.TagClassValue != None).all()
+            EtotalZGL = 0.0
+            StotalF = 0.0
+            StotalS = 0.0
+            WtotalF = 0.0
+            WtotalS = 0.0
+            for i in Tags:
+                S = tag.TagClassValue[0:1]
+                if S == "S":
+                    Sflow = redis_conn.hget(constant.REDIS_TABLENAME, tag.TagClassValue + "F")
+                    Ssum = redis_conn.hget(constant.REDIS_TABLENAME, tag.TagClassValue + "S")
+                    if Sflow == None:
+                        Sflow = 0.0
+                    StotalF = StotalF + float(Sflow)
+                    if Ssum == None:
+                        Ssum = 0.0
+                    StotalS = StotalS + float(Ssum)
+                elif S == "W":
+                    Wflow = redis_conn.hget(constant.REDIS_TABLENAME, tag.TagClassValue + "F")
+                    Wsum = redis_conn.hget(constant.REDIS_TABLENAME, tag.TagClassValue + "S")
+                    if Wflow == None:
+                        Wflow = 0.0
+                    WtotalF = WtotalF + float(Wflow)
+                    if Wsum == None:
+                        Wsum = 0.0
+                    WtotalS = WtotalS + float(Wsum)
+                elif S == "E":
+                    ZGL = redis_conn.hget(constant.REDIS_TABLENAME, tag.TagClassValue + "ZGL")
+                    if ZGL == None:
+                        ZGL = 0.0
+                    EtotalZGL = EtotalZGL + float(ZGL)
+            data_dict["EtotalZGL"] = str(EtotalZGL)
+            data_dict["StotalF"] = str(StotalF)
+            data_dict["StotalS"] = str(StotalS)
+            data_dict["WtotalF"] = str(WtotalF)
+            data_dict["WtotalS"] = str(WtotalS)
+            TagDetails = db_session.query(TagDetail).filter(TagDetail.TagClassValue != None, TagDetail.AreaName == AreaName).all()
+            for tag in TagDetails:
+                S = tag.TagClassValue[0:1]
+                if S == "S":
+                    data_dict[tag.TagClassValue + "WD"] = redis_conn.hget(constant.REDIS_TABLENAME, tag.TagClassValue + "WD")
+                    data_dict[tag.TagClassValue + "F"] = redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                          tag.TagClassValue + "F")
+                    data_dict[tag.TagClassValue + "S"] = redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                          tag.TagClassValue + "S")
+                elif S == "W":
+                    data_dict[tag.TagClassValue + "F"] = redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                         tag.TagClassValue + "F")
+                    data_dict[tag.TagClassValue + "S"] = redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                         tag.TagClassValue + "S")
+                elif S == "E":
+                    data_dict[tag.TagClassValue + "ZGL"] = redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                         tag.TagClassValue + "ZGL")
+                    data_dict[tag.TagClassValue + "AU"] = redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                         tag.TagClassValue + "AU")
+                    data_dict[tag.TagClassValue + "AI"] = redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                         tag.TagClassValue + "AI")
+                    data_dict[tag.TagClassValue + "BU"] = redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                         tag.TagClassValue + "BU")
+                    data_dict[tag.TagClassValue + "BI"] = redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                         tag.TagClassValue + "BI")
+                    data_dict[tag.TagClassValue + "CU"] = redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                         tag.TagClassValue + "CU")
+                    data_dict[tag.TagClassValue + "CI"] = redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                         tag.TagClassValue + "CI")
+                data_dict['currentTime'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             json_data = json.dumps(data_dict)
             # bytemsg = bytes(json_data, encoding="utf8")
             # send_msg(c, bytes("recv: {}".format(data_parse), encoding="utf-8"))
