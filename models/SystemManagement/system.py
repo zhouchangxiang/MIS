@@ -688,6 +688,28 @@ class User(Base):
 
 # User_END:
 
+# 电能对应485站点地址表
+class ElectricSiteURL(Base):
+    __tablename__ = 'ElectricSiteURL'
+    # ID
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # Tag站点:
+    TagSiteURL = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 站点地址:
+    SiteURL = Column(Unicode(65), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集点:
+    TagClassValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 区域名称:
+    AreaName = Column(Unicode(65), primary_key=False, autoincrement=False, nullable=True)
+
+    # 备注:
+    Description = Column(Unicode(150), primary_key=False, autoincrement=False, nullable=True)
+
+
 
 # 生成表单的执行语句
 Base.metadata.create_all(engine)
