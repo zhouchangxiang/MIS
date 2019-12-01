@@ -188,11 +188,7 @@ def handler_msg(conn):
             # bytemsg = bytes(json_data, encoding="utf8")
             # send_msg(c, bytes("recv: {}".format(data_parse), encoding="utf-8"))
             bytemsg = bytes(json_data, encoding="utf8")
-<<<<<<< HEAD
             print("aa"+bytemsg)
-=======
-            print(bytemsg)
->>>>>>> 74328a0d6a9997ebac54de92d66021bf7a90bad7
             send_msg(conn, bytemsg)
             time.sleep(2)
 
