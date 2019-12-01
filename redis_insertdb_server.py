@@ -26,20 +26,21 @@ currentmonth = str(a.shift(years=0))[0:7]
 currentday = str(a.shift(days=0))[0:10]
 def run():
     while True:
-        try:
-            data_dict = {}
-            redis_conn = redis.Redis(connection_pool=pool)
-            keys = db_session.query(TagDetail).filter(TagDetail.TagClassValue != None).all()
-            for key in keys:
+        time.sleep(10)
+        data_dict = {}
+        redis_conn = redis.Redis(connection_pool=pool)
+        keys = db_session.query(TagDetail).filter(TagDetail.TagClassValue == "E_Area_JK_28_1_16").all()
+        for key in keys:
+            try:
                 k = key.TagClassValue[0:1]
                 if k == "E":
-                    ZGL = redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "ZGL")
-                    AU = redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "AU")
-                    AI = redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "AI")
-                    BU = redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "BU")
-                    BI = redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "BI")
-                    CU = redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "CU")
-                    CI = redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "CI")
+                    ZGL = float(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_ZGL"))
+                    AU = float(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_AU"))
+                    AI = float(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_AI"))
+                    BU = float(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_BU"))
+                    BI = float(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_BI"))
+                    CU = float(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_CU"))
+                    CI = float(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_CI"))
                     ele = db_session.query(ElectricEnergy).filter(ElectricEnergy.TagClassValue == key.TagClassValue).first()
                     unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "电").first()
                     # equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key.TagClassValue).first()
@@ -85,9 +86,9 @@ def run():
                         db_session.add(el)
                         db_session.commit()
                 elif k == "S":
-                    valueWD = redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "WD")  # 蒸汽温度
-                    valueF = redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "F")  # 蒸汽瞬时流量
-                    valueS = redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "S")  # 蒸汽累计流量
+                    valueWD = float(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "WD"))  # 蒸汽温度
+                    valueF = float(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "F"))  # 蒸汽瞬时流量
+                    valueS = float(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "S"))  # 蒸汽累计流量
 
                     ste = db_session.query(SteamEnergy).filter(SteamEnergy.TagClassValue == key.TagClassValue).first()
                     unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽").first()
@@ -124,8 +125,8 @@ def run():
                         db_session.add(sl)
                         db_session.commit()
                 elif k == "W":
-                    valueS = redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "S")  # 水的累计流量
-                    valueF = redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "F")  # 水的瞬时流量
+                    valueS = float(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "S"))  # 水的累计流量
+                    valueF = float(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "F"))  # 水的瞬时流量
                     wat = db_session.query(WaterEnergy).filter(WaterEnergy.TagClassValue == key.TagClassValue).first()
                     unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "水").first()
                     # equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key.TagClassValue).first()
@@ -159,12 +160,11 @@ def run():
                         wa.PriceID = price[0]
                         db_session.add(wa)
                         db_session.commit()
-            time.sleep(3)
-        except Exception as e:
-            print("报错IP："+key.IP+"  报错端口："+key.COMNum+"  错误："+str(e))
-            logger.error(e)
-            insertSyslog("error", "实时数据写入DB报错Error：" + str(e),"")
-        finally:
-            pass
+            except Exception as e:
+                print("报错tag："+key.TagClassValue+" |报错IP："+key.IP+"  |报错端口："+key.COMNum+"  |错误："+str(e))
+                logger.error(e)
+                insertSyslog("error", "实时数据写入DB报错Error：" + str(e),"")
+            finally:
+                pass
 if __name__ == '__main__':
     run()
