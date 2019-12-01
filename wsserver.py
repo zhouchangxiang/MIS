@@ -125,10 +125,10 @@ def handler_msg(conn):
             WtotalF = 0.0
             WtotalS = 0.0
             for i in Tags:
-                S = tag.TagClassValue[0:1]
+                S = str(i.TagClassValue)[0:1]
                 if S == "S":
-                    Sflow = redis_conn.hget(constant.REDIS_TABLENAME, tag.TagClassValue + "F")
-                    Ssum = redis_conn.hget(constant.REDIS_TABLENAME, tag.TagClassValue + "S")
+                    Sflow = redis_conn.hget(constant.REDIS_TABLENAME, i.TagClassValue + "F")
+                    Ssum = redis_conn.hget(constant.REDIS_TABLENAME, i.TagClassValue + "S")
                     if Sflow == None:
                         Sflow = 0.0
                     StotalF = StotalF + float(Sflow)
@@ -136,8 +136,8 @@ def handler_msg(conn):
                         Ssum = 0.0
                     StotalS = StotalS + float(Ssum)
                 elif S == "W":
-                    Wflow = redis_conn.hget(constant.REDIS_TABLENAME, tag.TagClassValue + "F")
-                    Wsum = redis_conn.hget(constant.REDIS_TABLENAME, tag.TagClassValue + "S")
+                    Wsum = float(redis_conn.hget(constant.REDIS_TABLENAME, i.TagClassValue + "S"))  # 水的累计流量
+                    Wflow = float(redis_conn.hget(constant.REDIS_TABLENAME, i.TagClassValue + "F"))  # 水的瞬时流量
                     if Wflow == None:
                         Wflow = 0.0
                     WtotalF = WtotalF + float(Wflow)
@@ -145,7 +145,7 @@ def handler_msg(conn):
                         Wsum = 0.0
                     WtotalS = WtotalS + float(Wsum)
                 elif S == "E":
-                    ZGL = redis_conn.hget(constant.REDIS_TABLENAME, tag.TagClassValue + "ZGL")
+                    ZGL = redis_conn.hget(constant.REDIS_TABLENAME, i.TagClassValue + "ZGL")
                     if ZGL == None:
                         ZGL = 0.0
                     EtotalZGL = EtotalZGL + float(ZGL)
