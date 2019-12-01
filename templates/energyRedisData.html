@@ -4,10 +4,14 @@
     <meta charset="UTF-8">
     <title>实时数据</title>
     <link rel="stylesheet" href="../static/style/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="../../static/style/font-awesome.min.css">
     <link rel="stylesheet" href="../static/style/base.css">
     <script src="../static/script/jquery-3.3.1.min.js"></script>
     <script src="../static/script/jquery-ui.min.js"></script>
     <script src="../static/script/flowChart/jquery.jsPlumb-1.4.0-all.js"></script>
+    <script src="../static/script/bootstrap/bootstrap.min.js"></script>
+    <script src="../static/script/bootstrap/bootbox.min.js"></script>
+    <script src="../static/script/base.js"></script>
     <style>
         .aerialView{
             margin: 20px 0;
@@ -83,6 +87,56 @@
         }
         ._jsPlumb_endpoint,._jsPlumb_connector{
             z-index: 1;
+        }
+
+        .collectModel{
+            background: #EFF5FB;
+            color: #07488E;
+            font-size: 14px;
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .collectModel .collectModelData{
+            background: #07488E;
+            color: #ffffff;
+            letter-spacing:3px;
+            padding: 3px 5px;
+            text-align: right;
+            border-radius: 4px;
+            margin: 33px 0;
+        }
+        .collectModel .collectModelUnit{
+            font-size: 12px;
+            width: 100%;
+        }
+        .collectModel .collectModelTotal{
+            color: #07488E;
+            letter-spacing:3px;
+            margin-bottom: 0;
+            border-top: 2px solid #07488E;
+            padding-top: 5px;
+        }
+
+        .electricityData{
+            width: 100%;
+            height: 25px;
+            line-height: 25px;
+            text-align: center;
+            background: #07488E;
+            color: #ffffff;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .electricityData.electricityDataHead{
+            margin: 0;
+            background: none;
+            color: #07488E;
+        }
+        .electricityData .col-xs-4{
+            font-size: 12px;
+            transform : scale(0.83,0.83);
+            padding: 0;
         }
     </style>
 </head>
@@ -175,7 +229,69 @@
                     </div>
                 </div>
             </div>
-            <button id="save">保存连线</button>
+{#            <button id="save">保存连线</button>#}
+        </div>
+    </div>
+    <div id="realTimeModal" class="modal mics-modal fade">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">实时数据</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="clearfix">
+                        <div class="col-sm-12">
+                            <div class="col-sm-2">
+                                <div class="collectModel">
+                                    <div class="collectModelTitle">水表-1</div>
+                                    <div class="collectModelData number">32342</div>
+                                    <div class="collectModelUnit">单位：L</div>
+                                    <div class="collectModelTotal number">452234</div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="collectModel">
+                                    <div class="collectModelTitle">电表-1</div>
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <div class="electricityData electricityDataHead">
+                                                <div class="col-xs-4"> </div>
+                                                <div class="col-xs-4">U</div>
+                                                <div class="col-xs-4">A</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12">
+                                            <div class="electricityData">
+                                                <div class="col-xs-4">A相</div>
+                                                <div class="col-xs-4">253.55</div>
+                                                <div class="col-xs-4">253.55</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12">
+                                            <div class="electricityData">
+                                                <div class="col-xs-4">B相</div>
+                                                <div class="col-xs-4">253.55</div>
+                                                <div class="col-xs-4">253.55</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12">
+                                            <div class="electricityData" style="margin: 0;">
+                                                <div class="col-xs-4">C相</div>
+                                                <div class="col-xs-4">253.55</div>
+                                                <div class="col-xs-4">253.55</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="collectModelTotal number">452234</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" class="close" data-dismiss="modal">
+                    <span class="fa fa-times"></span>
+                </div>
+            </div>
         </div>
     </div>
     <script>
@@ -230,26 +346,31 @@
             })
 
             //默认连接线
-            $.each(customList,function(i,value){
-                jsPlumb.connect({
-                    source: customList[i].sourceId,
-                    target: customList[i].targetId
-                  }, common)
-            })
+            {#$.each(customList,function(i,value){#}
+            {#    jsPlumb.connect({#}
+            {#        source: customList[i].sourceId,#}
+            {#        target: customList[i].targetId#}
+            {#      }, common)#}
+            {# })#}
 
             list = jsPlumb.getAllConnections();//获取所有的链接
 
         })
         $(function(){
-            var listArr = []
-            $("#save").on('click',function(){
-                $.each(list.jsPlumb_DefaultScope,function(i,value){
-                    var str = {}
-                    str.sourceId = list.jsPlumb_DefaultScope[i].sourceId
-                    str.targetId = list.jsPlumb_DefaultScope[i].targetId
-                    listArr.push(str)
-                })
-                console.log(listArr)
+            {#var listArr = []#}
+            {#$("#save").on('click',function(){#}
+            {#    $.each(list.jsPlumb_DefaultScope,function(i,value){#}
+            {#        var str = {}#}
+            {#        str.sourceId = list.jsPlumb_DefaultScope[i].sourceId#}
+            {#        str.targetId = list.jsPlumb_DefaultScope[i].targetId#}
+            {#        listArr.push(str)#}
+            {#    })#}
+            {#    console.log(listArr)#}
+            {# })#}
+
+            //点击车间出现弹框
+            $(".area-use-bg").on("click",function(){
+                $("#realTimeModal").modal('show')
             })
         })
     </script>

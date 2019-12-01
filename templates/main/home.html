@@ -245,7 +245,7 @@
                 })
             }
 
-            //能耗趋势图表
+            //趋势图表
             ajaxEnergyTrend($("#EnergyChartSelect_Time").val(),$("#EnergyChartSelect_Item").val())
             $('.EnergyChartSelect_Time').bind('DOMNodeInserted',"#EnergyChartSelect_Time",function(e){
                 ajaxEnergyTrend(e.target.innerHTML,$("#EnergyChartSelect_Item").val())
@@ -268,7 +268,7 @@
                 })
             }
 
-            //实时数据趋势图
+            //水电气实时数据趋势图
             highchartsRealTimeNoTickRender("ws://127.0.0.1:5003","highcharts-electricity","randomtime","random","ElectricRealTimeData ")
             highchartsRealTimeNoTickRender("ws://127.0.0.1:5003","highcharts-water","randomtime","random","WaterRealTimeData ")
             highchartsRealTimeNoTickRender("ws://127.0.0.1:5003","highcharts-steam","randomtime","random","SteamRealTimeData")

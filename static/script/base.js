@@ -291,6 +291,7 @@ function highchartsRealTimeNoTickRender(url,id,xData,yData,domID){
                     ws.onmessage = function (evt){
                         var received_msg = evt.data;
                         received_msg = JSON.parse(received_msg)
+                        console.log(received_msg)
                         var x = new Date(received_msg[xData]).getTime(),   // 返回时间
                             y = received_msg[yData];       // 返回值
                         series.addPoint([x, y], true, true);
