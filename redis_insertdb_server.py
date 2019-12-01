@@ -29,7 +29,11 @@ def run():
         # time.sleep(10)
         data_dict = {}
         redis_conn = redis.Redis(connection_pool=pool, password=constant.REDIS_PASSWORD,decode_responses=True)
+<<<<<<< HEAD
         keys = db_session.query(TagDetail).filter(TagDetail.TagClassValue == "E_Area_JK_28_1_16").all()
+=======
+        keys = db_session.query(TagDetail).filter(TagDetail.TagClassValue != None).all()
+>>>>>>> 942ff2b1e0b26774f7453ebca74b067d9aaa33a6
         for key in keys:
             try:
                 k = key.TagClassValue[0:1]
