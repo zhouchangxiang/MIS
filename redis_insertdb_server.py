@@ -26,10 +26,10 @@ currentmonth = str(a.shift(years=0))[0:7]
 currentday = str(a.shift(days=0))[0:10]
 def run():
     while True:
-        time.sleep(10)
+        # time.sleep(10)
         data_dict = {}
-        redis_conn = redis.Redis(connection_pool=pool)
-        keys = db_session.query(TagDetail).filter(TagDetail.TagClassValue == "E_Area_JK_28_1_16").all()
+        redis_conn = redis.Redis(connection_pool=pool, password=constant.REDIS_PASSWORD,decode_responses=True)
+        keys = db_session.query(TagDetail).filter(TagDetail.TagClassValue != None).all()
         for key in keys:
             try:
                 k = key.TagClassValue[0:1]
