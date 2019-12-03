@@ -262,18 +262,15 @@ function highchartsRender(id,xAxisArray,seriesData){
 }
 
 //highchart 实时数据趋势图 无x y轴线
-function highchartsRealTimeNoTickRender(url,id,xData,yData,domID){
-    var ws = new WebSocket(url);
-    websocket()
-    function websocket(){
-        ws.onopen = function(){
-            ws.send("hello");
-            console.log("数据发送中...");
-        };
-        ws.onclose = function(){
-            console.log("连接已关闭...");
-        };
-    }
+function highchartsRealTimeNoTickRender(id,yKey,domID,totalKey,totalDom){
+    var ws = new WebSocket("ws://127.0.0.1:5003");
+    ws.onopen = function(){
+        ws.send("");
+        console.log("数据发送中...");
+    };
+    ws.onclose = function(){
+        console.log("连接已关闭...");
+    };
     Highcharts.setOptions({
         global: {
             useUTC: false
@@ -286,16 +283,16 @@ function highchartsRealTimeNoTickRender(url,id,xData,yData,domID){
             backgroundColor:'#EFF5FB',
             events: {
                 load: function () {
-                    var series = this.series[0],
-                        chart = this;
+                    var series = this.series[0];
                     ws.onmessage = function (evt){
                         var received_msg = evt.data;
                         received_msg = JSON.parse(received_msg)
                         console.log(received_msg)
-                        var x = new Date(received_msg[xData]).getTime(),   // 返回时间
-                            y = received_msg[yData];       // 返回值
+                        var x = new Date(received_msg.currentTime).getTime(),   // 返回时间
+                            y = (parseInt(received_msg[yKey] * 100 ) / 100 ).toFixed(2);       // 返回值
                         series.addPoint([x, y], true, true);
                         $("#"+ domID).html(y)
+                        $("#"+ totalDom).html((parseInt(received_msg[totalKey] * 100 ) / 100 ).toFixed(2))
                     };
                 }
             }
@@ -337,9 +334,8 @@ function highchartsRealTimeNoTickRender(url,id,xData,yData,domID){
             }
         },
         series: [{
-            name: '随机数据',
+            name: '实时数据',
             data: (function () {
-                // 生成随机值
                 var data = [],
                     i;
                 for (i = -19; i <= 0; i += 1) {

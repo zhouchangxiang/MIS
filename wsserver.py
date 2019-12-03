@@ -14,6 +14,7 @@ import datetime
 from dbset.database.db_operate import db_session
 from models.SystemManagement.system import ElectricSiteURL
 from models.SystemManagement.core import TagDetail
+from dbset.log.BK2TLogger import logger,insertSyslog
 
 
 def get_headers(data):
@@ -109,89 +110,85 @@ def handler_accept(sock):
 
 def handler_msg(conn):
     with conn as c:
-        data_recv = c.recv(1024)
+        # data_recv = c.recv(1024)
         while True:
-            AreaName = ""
-            if data_recv[0:1] == b"\x81":
-                data_parse = parse_payload(data_recv)
-                AreaName = data_parse
-            data_dict = {}
-            pool = redis.ConnectionPool(host=constant.REDIS_HOST)
-            redis_conn = redis.Redis(connection_pool=pool)
-            Tags = db_session.query(TagDetail).filter(TagDetail.TagClassValue != None).all()
-            EtotalZGL = 0.0
-            StotalF = 0.0
-            StotalS = 0.0
-            WtotalF = 0.0
-            WtotalS = 0.0
-            for i in Tags:
-                S = str(i.TagClassValue)[0:1]
-                if S == "S":
-                    Sflow = redis_conn.hget(constant.REDIS_TABLENAME, i.TagClassValue + "F")
-                    Ssum = redis_conn.hget(constant.REDIS_TABLENAME, i.TagClassValue + "S")
-                    if Sflow == None:
-                        Sflow = 0.0
-                    StotalF = StotalF + float(Sflow)
-                    if Ssum == None:
-                        Ssum = 0.0
-                    StotalS = StotalS + float(Ssum)
-                elif S == "W":
-                    Wsum = float(redis_conn.hget(constant.REDIS_TABLENAME, i.TagClassValue + "S"))  # 水的累计流量
-                    Wflow = float(redis_conn.hget(constant.REDIS_TABLENAME, i.TagClassValue + "F"))  # 水的瞬时流量
-                    if Wflow == None:
-                        Wflow = 0.0
-                    WtotalF = WtotalF + float(Wflow)
-                    if Wsum == None:
-                        Wsum = 0.0
-                    WtotalS = WtotalS + float(Wsum)
-                elif S == "E":
-                    ZGL = redis_conn.hget(constant.REDIS_TABLENAME, i.TagClassValue + "ZGL")
-                    if ZGL == None:
-                        ZGL = 0.0
-                    EtotalZGL = EtotalZGL + float(ZGL)
-            data_dict["EtotalZGL"] = str(EtotalZGL)
-            data_dict["StotalF"] = str(StotalF)
-            data_dict["StotalS"] = str(StotalS)
-            data_dict["WtotalF"] = str(WtotalF)
-            data_dict["WtotalS"] = str(WtotalS)
-            TagDetails = db_session.query(TagDetail).filter(TagDetail.TagClassValue != None, TagDetail.AreaName == AreaName).all()
-            for tag in TagDetails:
-                S = tag.TagClassValue[0:1]
-                if S == "S":
-                    data_dict[tag.TagClassValue + "WD"] = redis_conn.hget(constant.REDIS_TABLENAME, tag.TagClassValue + "WD")
-                    data_dict[tag.TagClassValue + "F"] = redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                          tag.TagClassValue + "F")
-                    data_dict[tag.TagClassValue + "S"] = redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                          tag.TagClassValue + "S")
-                elif S == "W":
-                    data_dict[tag.TagClassValue + "F"] = redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                         tag.TagClassValue + "F")
-                    data_dict[tag.TagClassValue + "S"] = redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                         tag.TagClassValue + "S")
-                elif S == "E":
-                    data_dict[tag.TagClassValue + "ZGL"] = redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                         tag.TagClassValue + "ZGL")
-                    data_dict[tag.TagClassValue + "AU"] = redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                         tag.TagClassValue + "AU")
-                    data_dict[tag.TagClassValue + "AI"] = redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                         tag.TagClassValue + "AI")
-                    data_dict[tag.TagClassValue + "BU"] = redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                         tag.TagClassValue + "BU")
-                    data_dict[tag.TagClassValue + "BI"] = redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                         tag.TagClassValue + "BI")
-                    data_dict[tag.TagClassValue + "CU"] = redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                         tag.TagClassValue + "CU")
-                    data_dict[tag.TagClassValue + "CI"] = redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                         tag.TagClassValue + "CI")
-                data_dict['currentTime'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            json_data = json.dumps(data_dict)
-            # bytemsg = bytes(json_data, encoding="utf8")
-            # send_msg(c, bytes("recv: {}".format(data_parse), encoding="utf-8"))
-            bytemsg = bytes(json_data, encoding="utf8")
-            send_msg(conn, bytemsg)
-            time.sleep(2)
-
-
+            try:
+                time.sleep(5)
+                # if data_recv[0:1] == b"\x81":
+                #     data_parse = parse_payload(data_recv)
+                data_dict = {}
+                pool = redis.ConnectionPool(host=constant.REDIS_HOST)
+                redis_conn = redis.Redis(connection_pool=pool)
+                Tags = db_session.query(TagDetail).filter().all()
+                EtotalZGL = 0.0
+                StotalF = 0.0
+                StotalS = 0.0
+                WtotalF = 0.0
+                WtotalS = 0.0
+                for tag in Tags:
+                    try:
+                        S = str(tag.TagClassValue)[0:1]
+                        if S == "S":
+                            data_dict[tag.TagClassValue + "WD"] = str(strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                                  tag.TagClassValue + "WD")))
+                            data_dict[tag.TagClassValue + "F"] = str(strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                                 tag.TagClassValue + "F")))
+                            data_dict[tag.TagClassValue + "S"] = str(strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                                 tag.TagClassValue + "S")))
+                            Sflow = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME, tag.TagClassValue + "F"))
+                            Ssum = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME, tag.TagClassValue + "S"))
+                            StotalF = StotalF +Sflow
+                            StotalS = StotalS + Ssum
+                        elif S == "W":
+                            data_dict[tag.TagClassValue + "F"] = str(strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                                 tag.TagClassValue + "F")))
+                            data_dict[tag.TagClassValue + "S"] = str(strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                                 tag.TagClassValue + "S")))
+                            Wsum = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME, tag.TagClassValue + "S"))  # 水的累计流量
+                            Wflow = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME, tag.TagClassValue + "F"))  # 水的瞬时流量
+                            WtotalF = WtotalF + Wflow
+                            WtotalS = WtotalS + Wsum
+                        elif S == "E":
+                            data_dict[tag.TagClassValue + "ZGL"] = str(strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                                   tag.TagClassValue + "ZGL")))
+                            data_dict[tag.TagClassValue + "AU"] = str(strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                                  tag.TagClassValue + "AU")))
+                            data_dict[tag.TagClassValue + "AI"] = str(strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                                  tag.TagClassValue + "AI")))
+                            data_dict[tag.TagClassValue + "BU"] = str(strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                                  tag.TagClassValue + "BU")))
+                            data_dict[tag.TagClassValue + "BI"] = str(strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                                  tag.TagClassValue + "BI")))
+                            data_dict[tag.TagClassValue + "CU"] = str(strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                                  tag.TagClassValue + "CU")))
+                            data_dict[tag.TagClassValue + "CI"] = str(strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                                  tag.TagClassValue + "CI")))
+                            ZGL = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME, tag.TagClassValue + "ZGL"))
+                            EtotalZGL = EtotalZGL + ZGL
+                    except Exception as ee:
+                        print("报错tag：" + tag.TagClassValue + " |报错IP：" + tag.IP + "  |报错端口：" + tag.COMNum + "  |错误：" + str(ee))
+                    finally:
+                        pass
+                data_dict["EtotalZGL"] = str(EtotalZGL)
+                data_dict["StotalF"] = str(StotalF)
+                data_dict["StotalS"] = str(StotalS)
+                data_dict["WtotalF"] = str(WtotalF)
+                data_dict["WtotalS"] = str(WtotalS)
+                data_dict['currentTime'] = str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+                json_data = json.dumps(data_dict)
+                # bytemsg = bytes(json_data, encoding="utf8")
+                # send_msg(c, bytes("recv: {}".format(data_parse), encoding="utf-8"))
+                bytemsg = bytes(json_data,encoding="utf-8")
+                send_msg(conn, bytemsg)
+            except Exception as e:
+                print(e)
+            finally:
+                pass
+def strtofloat(f):
+    if f == None or f == "" or f == "0.0":
+        return 0.0
+    else:
+        return float(f)
 
 
 def server_socket():
