@@ -380,19 +380,19 @@
                 var areaTitle = $(this).find(".area-name").html()
                 $("#realTimeModal").find(".modal-title").html(areaTitle)
 
-                var ws = new WebSocket("ws://127.0.0.1:5003");
-                    ws.onopen = function(){
-                        ws.send(areaTitle);
-                        console.log("数据发送中...");
-                    };
-                    ws.onclose = function(){
-                        console.log("连接已关闭...");
-                    };
-                    ws.onmessage = function (evt){
-                        var received_msg = evt.data;
-                        received_msg = JSON.parse(received_msg)
-                        console.log(received_msg)
-                    };
+                var ws = new WebSocket("ws://127.0.0.1:5002");
+                ws.onopen = function(){
+                    ws.send(areaTitle);
+                    console.log("数据发送中...");
+                };
+                ws.onclose = function(){
+                    console.log("连接已关闭...");
+                };
+                ws.onmessage = function (evt){
+                    var received_msg = evt.data;
+                    received_msg = JSON.parse(received_msg)
+                    console.log(received_msg)
+                };
             })
         })
     </script>
