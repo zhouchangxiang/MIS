@@ -110,16 +110,18 @@ def handler_accept(sock):
 
 def handler_msg(conn):
     with conn as c:
-        # data_recv = c.recv(1024)
+        data_recv = c.recv(1024)
         while True:
             try:
+                AreaName = ""
                 time.sleep(2)
-                # if data_recv[0:1] == b"\x81":
-                #     data_parse = parse_payload(data_recv)
+                if data_recv[0:1] == b"\x81":
+                    data_parse = parse_payload(data_recv)
+                    AreaName = str(data_parse)
                 data_dict = {}
                 pool = redis.ConnectionPool(host=constant.REDIS_HOST)
                 redis_conn = redis.Redis(connection_pool=pool)
-                Tags = db_session.query(TagDetail).filter().all()
+                Tags = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaName).all()
                 EtotalZGL = 0.0
                 StotalF = 0.0
                 StotalS = 0.0
