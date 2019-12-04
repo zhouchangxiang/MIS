@@ -262,8 +262,8 @@ function highchartsRender(id,xAxisArray,seriesData){
 }
 
 //highchart 实时数据趋势图 无x y轴线
-function highchartsRealTimeNoTickRender(id,yKey,domID,totalKey,totalDom){
-    var ws = new WebSocket("ws://127.0.0.1:5003");
+function highchartsRealTimeNoTickRender(url,id,yKey,domID,totalKey,totalDom){
+    var ws = new WebSocket(url);
     ws.onopen = function(){
         ws.send("");
         console.log("数据发送中...");
@@ -283,13 +283,13 @@ function highchartsRealTimeNoTickRender(id,yKey,domID,totalKey,totalDom){
             backgroundColor:'#EFF5FB',
             events: {
                 load: function () {
-                    var series = this.series[0];
+                    var series = this.series[0],
+                        chart = this;
                     ws.onmessage = function (evt){
                         var received_msg = evt.data;
                         received_msg = JSON.parse(received_msg)
-                        console.log(received_msg)
                         var x = new Date(received_msg.currentTime).getTime(),   // 返回时间
-                            y = (parseInt(received_msg[yKey] * 100 ) / 100 ).toFixed(2);       // 返回值
+                            y = Number((parseInt(received_msg[yKey] * 100 ) / 100 ).toFixed(2));       // 返回值
                         series.addPoint([x, y], true, true);
                         $("#"+ domID).html(y)
                         $("#"+ totalDom).html((parseInt(received_msg[totalKey] * 100 ) / 100 ).toFixed(2))

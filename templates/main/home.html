@@ -269,9 +269,9 @@
             }
 
             //水电气实时数据趋势图
-            highchartsRealTimeNoTickRender("highcharts-electricity","EtotalZGL","EtotalZGL")
-            highchartsRealTimeNoTickRender("highcharts-water","WtotalF","WtotalF","WtotalS","WtotalS")
-            highchartsRealTimeNoTickRender("highcharts-steam","StotalF","StotalF","StotalS","StotalS")
+            highchartsRealTimeNoTickRender("ws://127.0.0.1:5003","highcharts-electricity","EtotalZGL","EtotalZGL")
+            highchartsRealTimeNoTickRender("ws://127.0.0.1:5004","highcharts-water","WtotalF","WtotalF","WtotalS","WtotalS")
+            highchartsRealTimeNoTickRender("ws://127.0.0.1:5005","highcharts-steam","StotalF","StotalF","StotalS","StotalS")
 
             //区域下拉框
             $.ajax({
