@@ -133,35 +133,35 @@ def handler_msg(conn):
                     try:
                         S = str(tag.TagClassValue)[0:1]
                         if S == "S":
-                            tis[tag.TagClassValue + "WD"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            tis["WD"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                   tag.TagClassValue + "WD"))
-                            tis[tag.TagClassValue + "F"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            tis["Flow"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                  tag.TagClassValue + "F"))
-                            tis[tag.TagClassValue + "S"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            tis["Sum"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                  tag.TagClassValue + "S"))
                             dis.append(tis)
                             data_dict["S"] = dis
                         elif S == "W":
-                            tiw[tag.TagClassValue + "F"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            tiw["Flow"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                  tag.TagClassValue + "F"))
-                            tiw[tag.TagClassValue + "S"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            tiw["Sum"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                  tag.TagClassValue + "S"))
                             diw.append(tiw)
                             data_dict["W"] = diw
                         elif S == "E":
-                            tie[tag.TagClassValue + "ZGL"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            tie["ZGL"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                    tag.TagClassValue + "ZGL"))
-                            tie[tag.TagClassValue + "AU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            tie["AU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                   tag.TagClassValue + "AU"))
-                            tie[tag.TagClassValue + "AI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            tie["AI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                   tag.TagClassValue + "AI"))
-                            tie[tag.TagClassValue + "BU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            tie["BU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                   tag.TagClassValue + "BU"))
-                            tie[tag.TagClassValue + "BI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            tie["BI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                   tag.TagClassValue + "BI"))
-                            tie[tag.TagClassValue + "CU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            tie["CU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                   tag.TagClassValue + "CU"))
-                            tie[tag.TagClassValue + "CI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            tie["CI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                   tag.TagClassValue + "CI"))
                             die.append(tie)
                             data_dict["E"] = die
@@ -171,6 +171,7 @@ def handler_msg(conn):
                         pass
                 data_dict['currentTime'] = str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
                 dir.append(data_dict)
+                print(dir)
                 json_data = json.dumps(data_dict)
                 # bytemsg = bytes(json_data, encoding="utf8")
                 # send_msg(c, bytes("recv: {}".format(data_parse), encoding="utf-8"))
