@@ -120,8 +120,12 @@ def handler_msg(conn):
                     AreaName = str(data_parse)
                 data_dict = {}
                 dir = []
-                diri = []
-                dic = {}
+                dis = []
+                tis = {}
+                diw = []
+                tiw = {}
+                die = []
+                tie = {}
                 pool = redis.ConnectionPool(host=constant.REDIS_HOST)
                 redis_conn = redis.Redis(connection_pool=pool)
                 Tags = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaName).all()
@@ -129,44 +133,44 @@ def handler_msg(conn):
                     try:
                         S = str(tag.TagClassValue)[0:1]
                         if S == "S":
-                            dic[tag.TagClassValue + "WD"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            tis[tag.TagClassValue + "WD"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                   tag.TagClassValue + "WD"))
-                            dic[tag.TagClassValue + "F"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            tis[tag.TagClassValue + "F"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                  tag.TagClassValue + "F"))
-                            dic[tag.TagClassValue + "S"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            tis[tag.TagClassValue + "S"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                  tag.TagClassValue + "S"))
-                            diri.append(dic)
-                            data_dict["S"] = diri
+                            dis.append(tis)
+                            data_dict["S"] = dis
                         elif S == "W":
-                            dic[tag.TagClassValue + "F"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            tiw[tag.TagClassValue + "F"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                  tag.TagClassValue + "F"))
-                            dic[tag.TagClassValue + "S"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            tiw[tag.TagClassValue + "S"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                  tag.TagClassValue + "S"))
-                            diri.append(dic)
-                            data_dict["W"] = diri
+                            diw.append(tiw)
+                            data_dict["W"] = diw
                         elif S == "E":
-                            dic[tag.TagClassValue + "ZGL"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            tie[tag.TagClassValue + "ZGL"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                    tag.TagClassValue + "ZGL"))
-                            dic[tag.TagClassValue + "AU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            tie[tag.TagClassValue + "AU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                   tag.TagClassValue + "AU"))
-                            dic[tag.TagClassValue + "AI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            tie[tag.TagClassValue + "AI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                   tag.TagClassValue + "AI"))
-                            dic[tag.TagClassValue + "BU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            tie[tag.TagClassValue + "BU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                   tag.TagClassValue + "BU"))
-                            dic[tag.TagClassValue + "BI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            tie[tag.TagClassValue + "BI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                   tag.TagClassValue + "BI"))
-                            dic[tag.TagClassValue + "CU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            tie[tag.TagClassValue + "CU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                   tag.TagClassValue + "CU"))
-                            dic[tag.TagClassValue + "CI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            tie[tag.TagClassValue + "CI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                   tag.TagClassValue + "CI"))
-                            diri.append(dic)
-                            data_dict["E"] = diri
+                            die.append(tie)
+                            data_dict["E"] = die
                     except Exception as ee:
                         print("报错tag：" + tag.TagClassValue + " |报错IP：" + tag.IP + "  |报错端口：" + tag.COMNum + "  |错误：" + str(ee))
                     finally:
                         pass
                 data_dict['currentTime'] = str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-                dir.append()
+                dir.append(data_dict)
                 json_data = json.dumps(data_dict)
                 # bytemsg = bytes(json_data, encoding="utf8")
                 # send_msg(c, bytes("recv: {}".format(data_parse), encoding="utf-8"))
