@@ -140,6 +140,7 @@ def handler_msg(conn):
                                                                                  tag.TagClassValue + "F"))
                             tis["Sum"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                  tag.TagClassValue + "S"))
+                            dis.append(tis)
                             data_dict["S"] = dis
                         elif S == "W":
                             tiw["title"] = tag.FEFportIP
@@ -147,6 +148,7 @@ def handler_msg(conn):
                                                                                  tag.TagClassValue + "F"))
                             tiw["Sum"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                  tag.TagClassValue + "S"))
+                            diw.append(tiw)
                             data_dict["W"] = diw
                         elif S == "E":
                             tie["title"] = tag.FEFportIP
@@ -164,12 +166,12 @@ def handler_msg(conn):
                                                                                   tag.TagClassValue + "CU"))
                             tie["CI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                   tag.TagClassValue + "CI"))
+                            die.append(tie)
                             data_dict["E"] = die
                     except Exception as ee:
                         print("报错tag：" + tag.TagClassValue + " |报错IP：" + tag.IP + "  |报错端口：" + tag.COMNum + "  |错误：" + str(ee))
                     finally:
                         pass
-                data_dict['currentTime'] = str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
                 dir.append(data_dict)
                 print(dir)
                 json_data = json.dumps(data_dict)
