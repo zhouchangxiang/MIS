@@ -133,6 +133,7 @@ def handler_msg(conn):
                     try:
                         S = str(tag.TagClassValue)[0:1]
                         if S == "S":
+                            tis["title"] = tag.FEFportIP
                             tis["WD"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                   tag.TagClassValue + "WD"))
                             tis["Flow"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
@@ -141,12 +142,14 @@ def handler_msg(conn):
                                                                                  tag.TagClassValue + "S"))
                             data_dict["S"] = dis
                         elif S == "W":
+                            tiw["title"] = tag.FEFportIP
                             tiw["Flow"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                  tag.TagClassValue + "F"))
                             tiw["Sum"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                  tag.TagClassValue + "S"))
                             data_dict["W"] = diw
                         elif S == "E":
+                            tie["title"] = tag.FEFportIP
                             tie["ZGL"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                    tag.TagClassValue + "ZGL"))
                             tie["AU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
