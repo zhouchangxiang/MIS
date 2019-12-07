@@ -33,13 +33,13 @@ def run():
             try:
                 k = key.TagClassValue[0:1]
                 if k == "E":
-                    ZGL = float(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_ZGL"))
-                    AU = float(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_AU"))
-                    AI = float(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_AI"))
-                    BU = float(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_BU"))
-                    BI = float(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_BI"))
-                    CU = float(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_CU"))
-                    CI = float(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_CI"))
+                    ZGL = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_ZGL"))
+                    AU = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_AU"))
+                    AI = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_AI"))
+                    BU = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_BU"))
+                    BI = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_BI"))
+                    CU = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_CU"))
+                    CI = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_CI"))
                     ele = db_session.query(ElectricEnergy).filter(ElectricEnergy.TagClassValue == key.TagClassValue).first()
                     unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "电").first()
                     # equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key.TagClassValue).first()
@@ -85,9 +85,9 @@ def run():
                         db_session.add(el)
                         db_session.commit()
                 elif k == "S":
-                    valueWD = float(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "WD"))  # 蒸汽温度
-                    valueF = float(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "F"))  # 蒸汽瞬时流量
-                    valueS = float(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "S"))  # 蒸汽累计流量
+                    valueWD = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "WD"))  # 蒸汽温度
+                    valueF = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "F"))  # 蒸汽瞬时流量
+                    valueS = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "S"))  # 蒸汽累计流量
 
                     ste = db_session.query(SteamEnergy).filter(SteamEnergy.TagClassValue == key.TagClassValue).first()
                     unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽").first()
@@ -124,8 +124,8 @@ def run():
                         db_session.add(sl)
                         db_session.commit()
                 elif k == "W":
-                    valueS = float(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "S"))  # 水的累计流量
-                    valueF = float(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "F"))  # 水的瞬时流量
+                    valueS = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "S"))  # 水的累计流量
+                    valueF = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "F"))  # 水的瞬时流量
                     wat = db_session.query(WaterEnergy).filter(WaterEnergy.TagClassValue == key.TagClassValue).first()
                     unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "水").first()
                     # equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key.TagClassValue).first()
@@ -165,5 +165,11 @@ def run():
                 insertSyslog("error", "实时数据写入DB报错Error：" + str(e),"")
             finally:
                 pass
+
+def roundtwo(rod):
+    if rod == None or rod == "":
+        return 0.00
+    else:
+        return round(rod, 2)
 if __name__ == '__main__':
     run()
