@@ -17,6 +17,8 @@ import arrow
 import time
 
 energy = Blueprint('energy', __name__, template_folder='templates')
+
+arro = arrow.now()
 @energy.route('/energyRedisData')
 def energyRedisData():
     return render_template('./energyRedisData.html')
@@ -69,6 +71,23 @@ def accumulation(EnergyValues):
     for EnergyValue in EnergyValues:
         eleY = eleY + float(EnergyValue[0])
     return eleY
+def strlastMonth(currmonth):
+    curr = currmonth.split("-")
+    str0 = curr[0]
+    str1 = curr[1]
+    if "0" in str1:
+        str00 = str1[1]
+    else:
+        str00 = str1
+    if str00 == "1":
+        return str(int(str0)-1)+"-"+"12"
+    else:
+        las = int(str00) - 1
+        if las < 10:
+            la = "0" + str(las)
+        else:
+            la = str(las)
+        return str0 + "-" + la
 @energy.route('/energyTrend', methods=['POST', 'GET'])
 def energyTrend():
     '''
@@ -91,44 +110,80 @@ def energyTrend():
             diyz = []
             if currenttime == "年":
                 for j in range(1,currentmonth+1):
-                    mon = str(currentyear) + "-" + addzero(j)
+                    currM = str(currentyear) + "-" + addzero(j)
+                    lastM = strlastMonth(currM)
                     dix.append(str(j))
                     if classparam == "电":
-                        EnergyValues = db_session.query(ElectricEnergy.ZGL).filter(ElectricEnergy.CollectionMonth == mon).all()
+                        cur = \
+                        db_session.query(ElectricEnergy.ZGL).filter(ElectricEnergy.CollectionMonth == currM).order_by(
+                            desc("CollectionDate")).first()[0]
+                        las = db_session.query(ElectricEnergy.ZGL).filter(
+                            ElectricEnergy.CollectionMonth == lastM).order_by(desc("CollectionDate")).first()[0]
                     elif classparam == "水":
-                        EnergyValues = db_session.query(WaterEnergy.WaterSum).filter(
-                            WaterEnergy.CollectionMonth == mon).all()
-                    elif classparam == "汽":
-                        EnergyValues = db_session.query(SteamEnergy.SumValue).filter(
-                            SteamEnergy.CollectionMonth == mon).all()
+                        cur = \
+                        db_session.query(WaterEnergy.WaterSum).filter(WaterEnergy.CollectionMonth == currM).order_by(
+                            desc("CollectionDate")).first()[0]
+                        las = db_session.query(WaterEnergy.WaterSum).filter(
+                            WaterEnergy.CollectionMonth == lastM).order_by(desc("CollectionDate")).first()[0]
+                    else:  # classparam == "汽"
+                        cur = \
+                        db_session.query(SteamEnergy.SumValue).filter(SteamEnergy.CollectionMonth == currM).order_by(
+                            desc("CollectionDate")).first()[0]
+                        las = db_session.query(SteamEnergy.SumValue).filter(
+                            SteamEnergy.CollectionMonth == lastM).order_by(desc("CollectionDate")).first()[0]
+                    EnergyValues = round((round(float(cur), 2) - round(float(las), 2)),2)
                     diyz.append(accumulation(EnergyValues))
             elif currenttime == "月":#2019-9-22
                 for j in range(1, currentday+1):
-                    day = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(j)
+                    currday = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(j)
+                    vv = datetime.datetime.strptime(currday, "%Y-%m-%d")
+                    lastday = str(vv + datetime.timedelta(days=-1))[0:10]
                     dix.append(str(j))
                     if classparam == "电":
-                        EnergyValues = db_session.query(ElectricEnergy.ZGL).filter(
-                            ElectricEnergy.CollectionDay == day).all()
+                        cur = \
+                        db_session.query(ElectricEnergy.ZGL).filter(ElectricEnergy.CollectionDay == currday).order_by(
+                            desc("CollectionDate")).first()[0]
+                        las = db_session.query(ElectricEnergy.ZGL).filter(
+                            ElectricEnergy.CollectionDay == lastday).order_by(desc("CollectionDate")).first()[0]
                     elif classparam == "水":
-                        EnergyValues = db_session.query(WaterEnergy.WaterSum).filter(
-                            WaterEnergy.CollectionDay == day).all()
-                    elif classparam == "汽":
-                        EnergyValues = db_session.query(SteamEnergy.SumValue).filter(
-                            SteamEnergy.CollectionDay == day).all()
+                        cur = \
+                        db_session.query(WaterEnergy.WaterSum).filter(WaterEnergy.CollectionDay == currday).order_by(
+                            desc("CollectionDate")).first()[0]
+                        las = db_session.query(WaterEnergy.WaterSum).filter(
+                            WaterEnergy.CollectionDay == lastday).order_by(desc("CollectionDate")).first()[0]
+                    else:  # classparam == "汽"
+                        cur = \
+                        db_session.query(SteamEnergy.SumValue).filter(SteamEnergy.CollectionDay == currday).order_by(
+                            desc("CollectionDate")).first()[0]
+                        las = db_session.query(SteamEnergy.SumValue).filter(
+                            SteamEnergy.CollectionDay == lastday).order_by(desc("CollectionDate")).first()[0]
+                    EnergyValues = round((round(float(cur), 2) - round(float(las), 2)),2)
                     diyz.append(accumulation(EnergyValues))
             elif currenttime == "日":
                 for j in range(0, currenthour):
-                    hour = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(currentday) + " " + addzero(j)
+                    currhour = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(currentday) + " " + addzero(j)
+                    vv = datetime.datetime.strptime(currhour, "%Y-%m-%d %H")
+                    lasthour = str((vv + datetime.timedelta(hours=-1)).strftime("%Y-%m-%d %H:%M:%S"))[0:13]
                     dix.append(str(j))
                     if classparam == "电":
-                        EnergyValues = db_session.query(ElectricEnergy.ZGL).filter(
-                            ElectricEnergy.CollectionDate.like("%"+hour+"%")).all()
+                        cur = \
+                        db_session.query(ElectricEnergy.ZGL).filter(ElectricEnergy.CollectionDate.like("%"+currhour+"%")).order_by(
+                            desc("CollectionDate")).first()[0]
+                        las = db_session.query(ElectricEnergy.ZGL).filter(
+                            ElectricEnergy.CollectionDate.like("%" + lasthour + "%")).order_by(desc("CollectionDate")).first()[0]
                     elif classparam == "水":
-                        EnergyValues = db_session.query(WaterEnergy.WaterSum).filter(
-                            WaterEnergy.CollectionDate.like("%"+hour+"%")).all()
-                    elif classparam == "汽":
-                        EnergyValues = db_session.query(SteamEnergy.SumValue).filter(
-                            SteamEnergy.CollectionDate.like("%"+hour+"%")).all()
+                        cur = \
+                        db_session.query(WaterEnergy.WaterSum).filter(ElectricEnergy.CollectionDate.like("%"+currhour+"%")).order_by(
+                            desc("CollectionDate")).first()[0]
+                        las = db_session.query(WaterEnergy.WaterSum).filter(
+                            ElectricEnergy.CollectionDate.like("%" + lasthour + "%")).order_by(desc("CollectionDate")).first()[0]
+                    else:  # classparam == "汽"
+                        cur = \
+                        db_session.query(SteamEnergy.SumValue).filter(ElectricEnergy.CollectionDate.like("%"+currhour+"%")).order_by(
+                            desc("CollectionDate")).first()[0]
+                        las = db_session.query(SteamEnergy.SumValue).filter(
+                            ElectricEnergy.CollectionDate.like("%" + lasthour + "%")).order_by(desc("CollectionDate")).first()[0]
+                    EnergyValues = round((round(float(cur), 2) - round(float(las), 2)),2)
                     diyz.append(accumulation(EnergyValues))
             diyr["name"] = classparam
             diyr["data"] = diyz
@@ -142,155 +197,263 @@ def energyTrend():
             logger.error(e)
             insertSyslog("error", "能耗趋势查询报错Error：" + str(e), current_user.Name)
 
-def limitappend(currEnergyValues,lastEnergyValues,name,tim):
-    '''
-    :param EnergyValues: 能耗数组
-    :param name: 水电汽
-    :param tim: 年月日
-    :return:
-    '''
-    curr = accumulation(currEnergyValues)
-    last = accumulation(lastEnergyValues)
-    trend = ""
-    if curr>last:
-        trend = "上升"
-    elif curr==last:
-        trend = "相等"
-    else:
-        trend = "下降"
-    Ywatlimit = db_session.query(LimitTable.LimitValue).filter(LimitTable.LimitName.like("%"+name+"%")).first()[0]
-    limit = float(Ywatlimit)
-    if tim == "月":
-        limit = limit/12
-    elif tim == "日":
-        limit = limit/365
-    ews = {}
-    ews["name"] = name
-    ews["upperLimit"] = str(limit)
-    ews["percent"] = str(curr/limit) + "%"
-    ews["value"] = str(curr)
-    ews["trend"] = trend
-    return ews
-@energy.route('/energySumPercent', methods=['POST', 'GET'])
-def energySumPercent():
-    '''
-    分项能耗量
-    :return:
-    '''
-    if request.method == 'GET':
-        data = request.values
-        try:
-            currenttime = data.get("currenttime")
-            dir = {}
-            a = arrow.now()
-            currentyear = str(a.shift(years=0))[0:4]
-            currentmonth = str(a.shift(years=0))[0:7]
-            currentday = str(a.shift(days=0))[0:10]
-            lastyear = str(a.shift(years=-1))[0:4]
-            lastmonth = str(a.shift(months=-1))[0:7]
-            lastday = str(a.shift(days=-1))[0:10]#a.shift(weeks=1)
-            dic = []
-            if currenttime == "年":
-                curreleEnergyValues = db_session.query(ElectricEnergy.ZGL).filter(
-                    ElectricEnergy.CollectionYear == currentyear).all()
-                lasteleEnergyValues = db_session.query(ElectricEnergy.ZGL).filter(
-                    ElectricEnergy.CollectionYear == lastyear).all()
-                dic.append(limitappend(curreleEnergyValues,lasteleEnergyValues,"电",currenttime))
-                currwatEnergyValues = db_session.query(WaterEnergy.WaterSum).filter(
-                    WaterEnergy.CollectionYear == currentyear).all()
-                lastwatEnergyValues = db_session.query(WaterEnergy.WaterSum).filter(
-                    WaterEnergy.CollectionYear == lastyear).all()
-                dic.append(limitappend(currwatEnergyValues, lastwatEnergyValues, "水", currenttime))
-                currsteEnergyValues = db_session.query(SteamEnergy.SumValue).filter(
-                    SteamEnergy.CollectionYear == currentyear).all()
-                laststeEnergyValues = db_session.query(SteamEnergy.SumValue).filter(
-                    SteamEnergy.CollectionYear == lastyear).all()
-                dic.append(limitappend(currsteEnergyValues, laststeEnergyValues, "汽", currenttime))
-            elif currenttime == "月":
-                curreleEnergyValues = db_session.query(ElectricEnergy.ZGL).filter(
-                    ElectricEnergy.CollectionMonth == currentmonth).all()
-                lasteleEnergyValues = db_session.query(ElectricEnergy.ZGL).filter(
-                    ElectricEnergy.CollectionMonth == lastmonth).all()
-                dic.append(limitappend(curreleEnergyValues, lasteleEnergyValues, "电", currenttime))
-                currwatEnergyValues = db_session.query(WaterEnergy.WaterSum).filter(
-                    WaterEnergy.CollectionMonth == currentmonth).all()
-                lastwatEnergyValues = db_session.query(WaterEnergy.WaterSum).filter(
-                    WaterEnergy.CollectionMonth == lastmonth).all()
-                dic.append(limitappend(currwatEnergyValues, lastwatEnergyValues, "水", currenttime))
-                currsteEnergyValues = db_session.query(SteamEnergy.SumValue).filter(
-                    SteamEnergy.CollectionMonth == currentmonth).all()
-                laststeEnergyValues = db_session.query(SteamEnergy.SumValue).filter(
-                    SteamEnergy.CollectionMonth == lastmonth).all()
-                dic.append(limitappend(currsteEnergyValues, laststeEnergyValues, "汽", currenttime))
-            elif currenttime == "日":
-                curreleEnergyValues = db_session.query(ElectricEnergy.ZGL).filter(
-                    ElectricEnergy.CollectionDay == currentday).all()
-                lasteleEnergyValues = db_session.query(ElectricEnergy.ZGL).filter(
-                    ElectricEnergy.CollectionDay == lastday).all()
-                dic.append(limitappend(curreleEnergyValues, lasteleEnergyValues, "电", currenttime))
-                currwatEnergyValues = db_session.query(WaterEnergy.WaterSum).filter(
-                    WaterEnergy.CollectionDay == currentday).all()
-                lastwatEnergyValues = db_session.query(WaterEnergy.WaterSum).filter(
-                    WaterEnergy.CollectionDay == lastday).all()
-                dic.append(limitappend(currwatEnergyValues, lastwatEnergyValues, "水", currenttime))
-                currsteEnergyValues = db_session.query(SteamEnergy.SumValue).filter(
-                    SteamEnergy.CollectionDay == currentday).all()
-                laststeEnergyValues = db_session.query(SteamEnergy.SumValue).filter(
-                    SteamEnergy.CollectionDay == lastday).all()
-                dic.append(limitappend(currsteEnergyValues, laststeEnergyValues, "汽", currenttime))
-            return json.dumps(dic, cls=AlchemyEncoder, ensure_ascii=False)
-        except Exception as e:
-            print(e)
-            logger.error(e)
-            insertSyslog("error", "分项能耗量查询报错Error：" + str(e), current_user.Name)
-
 def energyselect(data):
     if request.method == 'GET':
         try:
+            currentyear = datetime.datetime.now().year
+            currentmonth = datetime.datetime.now().month
+            currentday = datetime.datetime.now().day
+            currenthour = datetime.datetime.now().hour
             dir = {}
             data = request.values
             Area = data.get("Area")
             DateTime = data.get("DateTime")
             EnergyClass = data.get("EnergyClass")
             ModelFlag = data.get("ModelFlag")
-            if Area is not None and DateTime is not None and EnergyClass is None:
-                eqps = db_session.query(Equipment.ID).filter(Equipment.AreaName == Area).all()
-                ElectricEnergyValues = db_session.query(ElectricEnergy.ZGL).filter(ElectricEnergy.EquipmnetID.in_((eqps))).all()
+            if ModelFlag == "区域能耗":
                 elecount = 0.0
-                for ele in ElectricEnergyValues:
-                    elecount = elecount + float(ele[0])
-                WaterMeterValues = db_session.query(WaterEnergy.WaterSum).filter(
-                    WaterEnergy.EquipmnetID.in_((eqps))).all()
                 watcount = 0.0
-                for wat in WaterMeterValues:
-                    watcount = watcount + float(wat[0])
-                SteamEnergys = db_session.query(SteamEnergy.SumValue).filter(
-                    SteamEnergy.EquipmnetID.in_((eqps))).all()
                 stecount = 0.0
-                for ste in SteamEnergys:
-                    stecount = stecount + float(ste[0])
+                oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == Area).all()
+                if DateTime == "年":
+                    curryear = str(currentyear)
+                    lastyear = str(int(curryear) - 1)
+                    for oc in oclass:
+                        Tag = oc.TagClassValue[0:1]
+                        if Tag == "E":
+                            cur = \
+                                db_session.query(ElectricEnergy.ZGL).filter(
+                                    ElectricEnergy.TagClassValue == oc.TagClassValue,
+                                    ElectricEnergy.CollectionYear == currentyear).order_by(
+                                    desc("CollectionDate")).first()[0]
+                            las = db_session.query(ElectricEnergy.ZGL).filter(
+                                ElectricEnergy.TagClassValue == oc.TagClassValue,
+                                ElectricEnergy.CollectionYear == lastyear).order_by(desc("CollectionDate")).first()[0]
+                            ElectricEnergyValues = round((round(float(cur), 2) - round(float(las), 2)), 2)
+                            elecount = elecount + ElectricEnergyValues
+                        elif Tag == "W":
+                            cur = \
+                                db_session.query(WaterEnergy.WaterSum).filter(
+                                    WaterEnergy.TagClassValue == oc.TagClassValue,
+                                    WaterEnergy.CollectionYear == currentyear).order_by(
+                                    desc("CollectionDate")).first()[0]
+                            las = db_session.query(WaterEnergy.WaterSum).filter(
+                                WaterEnergy.TagClassValue == oc.TagClassValue,
+                                WaterEnergy.CollectionYear == lastyear).order_by(desc("CollectionDate")).first()[0]
+                            WaterMeterValues = round((round(float(cur), 2) - round(float(las), 2)), 2)
+                            watcount = watcount + WaterMeterValues
+                        elif Tag == "S":
+                            cur = \
+                                db_session.query(SteamEnergy.SumValue).filter(
+                                    SteamEnergy.TagClassValue == oc.TagClassValue,
+                                    SteamEnergy.CollectionYear == currentyear).order_by(
+                                    desc("CollectionDate")).first()[0]
+                            las = db_session.query(SteamEnergy.SumValue).filter(
+                                SteamEnergy.TagClassValue == oc.TagClassValue,
+                                SteamEnergy.CollectionYear == lastyear).order_by(desc("CollectionDate")).first()[0]
+                            SteamEnergys = round((round(float(cur), 2) - round(float(las), 2)), 2)
+                            stecount = stecount + SteamEnergys
+                elif DateTime == "月":
+                    currmonth = str(currentyear) + "-" + addzero(str(currentmonth))
+                    lastmonth = strlastMonth(currmonth)
+                    for oc in oclass:
+                        Tag = oc.TagClassValue[0:1]
+                        if Tag == "E":
+                            cur = \
+                                db_session.query(ElectricEnergy.ZGL).filter(
+                                    ElectricEnergy.TagClassValue == oc.TagClassValue,
+                                    ElectricEnergy.CollectionMonth == currmonth).order_by(
+                                    desc("CollectionDate")).first()[0]
+                            las = db_session.query(ElectricEnergy.ZGL).filter(
+                                ElectricEnergy.TagClassValue == oc.TagClassValue,
+                                ElectricEnergy.CollectionMonth == lastmonth).order_by(desc("CollectionDate")).first()[0]
+                            ElectricEnergyValues = round((round(float(cur), 2) - round(float(las), 2)), 2)
+                            elecount = elecount + ElectricEnergyValues
+                        elif Tag == "W":
+                            cur = \
+                                db_session.query(WaterEnergy.WaterSum).filter(
+                                    WaterEnergy.TagClassValue == oc.TagClassValue,
+                                    WaterEnergy.CollectionMonth == currmonth).order_by(
+                                    desc("CollectionDate")).first()[0]
+                            las = db_session.query(WaterEnergy.WaterSum).filter(
+                                WaterEnergy.TagClassValue == oc.TagClassValue,
+                                WaterEnergy.CollectionMonth == lastmonth).order_by(desc("CollectionDate")).first()[0]
+                            WaterMeterValues = round((round(float(cur), 2) - round(float(las), 2)), 2)
+                            watcount = watcount + accumulation(WaterMeterValues)
+                        elif Tag == "S":
+                            cur = \
+                                db_session.query(SteamEnergy.SumValue).filter(
+                                    SteamEnergy.TagClassValue == oc.TagClassValue,
+                                    SteamEnergy.CollectionMonth == currmonth).order_by(
+                                    desc("CollectionDate")).first()[0]
+                            las = db_session.query(SteamEnergy.SumValue).filter(
+                                SteamEnergy.TagClassValue == oc.TagClassValue,
+                                SteamEnergy.CollectionMonth == lastmonth).order_by(desc("CollectionDate")).first()[0]
+                            SteamEnergys = round((round(float(cur), 2) - round(float(las), 2)), 2)
+                            stecount = stecount + accumulation(SteamEnergys)
+                elif DateTime == "日":
+                    currday = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(j)
+                    vv = datetime.datetime.strptime(currday, "%Y-%m-%d")
+                    lastday = str(vv + datetime.timedelta(days=-1))[0:10]
+                    for oc in oclass:
+                        Tag = oc.TagClassValue[0:1]
+                        if Tag == "E":
+                            cur = \
+                                db_session.query(ElectricEnergy.ZGL).filter(
+                                    ElectricEnergy.TagClassValue == oc.TagClassValue,
+                                    ElectricEnergy.CollectionDay == currday).order_by(
+                                    desc("CollectionDate")).first()[0]
+                            las = db_session.query(ElectricEnergy.ZGL).filter(
+                                ElectricEnergy.TagClassValue == oc.TagClassValue,
+                                ElectricEnergy.CollectionDay == lastday).order_by(desc("CollectionDate")).first()[0]
+                            ElectricEnergyValues = round((round(float(cur), 2) - round(float(las), 2)), 2)
+                            elecount = elecount + ElectricEnergyValues
+                        elif Tag == "W":
+                            cur = \
+                                db_session.query(WaterEnergy.WaterSum).filter(
+                                    WaterEnergy.TagClassValue == oc.TagClassValue,
+                                    WaterEnergy.CollectionDay == currday).order_by(
+                                    desc("CollectionDate")).first()[0]
+                            las = db_session.query(WaterEnergy.WaterSum).filter(
+                                WaterEnergy.TagClassValue == oc.TagClassValue,
+                                WaterEnergy.CollectionDay == lastday).order_by(desc("CollectionDate")).first()[0]
+                            WaterMeterValues = round((round(float(cur), 2) - round(float(las), 2)), 2)
+                            watcount = watcount + WaterMeterValues
+                        elif Tag == "S":
+                            cur = \
+                                db_session.query(SteamEnergys.SumValue).filter(
+                                    SteamEnergys.TagClassValue == oc.TagClassValue,
+                                    SteamEnergys.CollectionDay == currday).order_by(
+                                    desc("CollectionDate")).first()[0]
+                            las = db_session.query(SteamEnergys.SumValue).filter(
+                                SteamEnergys.TagClassValue == oc.TagClassValue,
+                                SteamEnergys.CollectionDay == lastday).order_by(desc("CollectionDate")).first()[0]
+                            SteamEnergys = round((round(float(cur), 2) - round(float(las), 2)), 2)
+                            stecount = stecount + SteamEnergys
                 dir["ElectricValue"] = elecount
                 dir["WaterValue"] = watcount
                 dir["SteamValue"] = stecount
-            elif EnergyClass is not None and Area is None and DateTime is None:
-                if EnergyClass == "电":
-                    ElectricEnergyValues = db_session.query(ElectricEnergy.ZGL).all()
-                    elecount = 0.0
-                    for ele in ElectricEnergyValues:
-                        elecount = elecount + float(ele[0])
-                    dir["ElectricValue"] = energymoney(elecount, "电")
-                elif EnergyClass == "水":
-                    WaterMeterValues = db_session.query(WaterEnergy.WaterSum).all()
-                    watcount = 0.0
-                    for wat in WaterMeterValues:
-                        watcount = watcount + float(wat[0])
-                    dir["WaterValue"] = energymoney(watcount, "水")
-                elif EnergyClass == "汽":
-                    SteamEnergys = db_session.query(SteamEnergy.SumValue).all()
-                    stecount = 0.0
-                    for ste in SteamEnergys:
-                        stecount = stecount + float(ste[0])
-                    dir["SteamValue"] = energymoney(stecount,"汽")
+            elif ModelFlag == "成本展示":
+                oclass = db_session.query(TagDetail).filter().all()
+                elecount = 0.0
+                watcount = 0.0
+                stecount = 0.0
+                if DateTime == "年":
+                    curryear = str(currentyear)
+                    lastyear = str(int(curryear) - 1)
+                    for oc in oclass:
+                        Tag = oc.TagClassValue[0:1]
+                        if Tag == "E":
+                            cur = \
+                                db_session.query(ElectricEnergy.ZGL).filter(
+                                    ElectricEnergy.TagClassValue == oc.TagClassValue,
+                                    ElectricEnergy.CollectionYear == currentyear).order_by(
+                                    desc("CollectionDate")).first()[0]
+                            las = db_session.query(ElectricEnergy.ZGL).filter(
+                                ElectricEnergy.TagClassValue == oc.TagClassValue,
+                                ElectricEnergy.CollectionYear == lastyear).order_by(desc("CollectionDate")).first()[0]
+                            ElectricEnergyValues = round((round(float(cur), 2) - round(float(las), 2)), 2)
+                            elecount = elecount + ElectricEnergyValues
+                        elif Tag == "W":
+                            cur = \
+                                db_session.query(WaterEnergy.WaterSum).filter(
+                                    WaterEnergy.TagClassValue == oc.TagClassValue,
+                                    WaterEnergy.CollectionYear == currentyear).order_by(
+                                    desc("CollectionDate")).first()[0]
+                            las = db_session.query(WaterEnergy.WaterSum).filter(
+                                WaterEnergy.TagClassValue == oc.TagClassValue,
+                                WaterEnergy.CollectionYear == lastyear).order_by(desc("CollectionDate")).first()[0]
+                            WaterMeterValues = round((round(float(cur), 2) - round(float(las), 2)), 2)
+                            watcount = watcount + WaterMeterValues
+                        elif Tag == "S":
+                            cur = \
+                                db_session.query(SteamEnergy.SumValue).filter(
+                                    SteamEnergy.TagClassValue == oc.TagClassValue,
+                                    SteamEnergy.CollectionYear == currentyear).order_by(
+                                    desc("CollectionDate")).first()[0]
+                            las = db_session.query(SteamEnergy.SumValue).filter(
+                                SteamEnergy.TagClassValue == oc.TagClassValue,
+                                SteamEnergy.CollectionYear == lastyear).order_by(desc("CollectionDate")).first()[0]
+                            SteamEnergys = round((round(float(cur), 2) - round(float(las), 2)), 2)
+                            stecount = stecount + SteamEnergys
+                elif DateTime == "月":
+                    currmonth = str(currentyear) + "-" + addzero(str(currentmonth))
+                    lastmonth = strlastMonth(currmonth)
+                    for oc in oclass:
+                        Tag = oc.TagClassValue[0:1]
+                        if Tag == "E":
+                            cur = \
+                                db_session.query(ElectricEnergy.ZGL).filter(
+                                    ElectricEnergy.TagClassValue == oc.TagClassValue,
+                                    ElectricEnergy.CollectionMonth == currmonth).order_by(
+                                    desc("CollectionDate")).first()[0]
+                            las = db_session.query(ElectricEnergy.ZGL).filter(
+                                ElectricEnergy.TagClassValue == oc.TagClassValue,
+                                ElectricEnergy.CollectionMonth == lastmonth).order_by(desc("CollectionDate")).first()[0]
+                            ElectricEnergyValues = round((round(float(cur), 2) - round(float(las), 2)), 2)
+                            elecount = elecount + ElectricEnergyValues
+                        elif Tag == "W":
+                            cur = \
+                                db_session.query(WaterEnergy.WaterSum).filter(
+                                    WaterEnergy.TagClassValue == oc.TagClassValue,
+                                    WaterEnergy.CollectionMonth == currmonth).order_by(
+                                    desc("CollectionDate")).first()[0]
+                            las = db_session.query(WaterEnergy.WaterSum).filter(
+                                WaterEnergy.TagClassValue == oc.TagClassValue,
+                                WaterEnergy.CollectionMonth == lastmonth).order_by(desc("CollectionDate")).first()[0]
+                            WaterMeterValues = round((round(float(cur), 2) - round(float(las), 2)), 2)
+                            watcount = watcount + accumulation(WaterMeterValues)
+                        elif Tag == "S":
+                            cur = \
+                                db_session.query(SteamEnergy.SumValue).filter(
+                                    SteamEnergy.TagClassValue == oc.TagClassValue,
+                                    SteamEnergy.CollectionMonth == currmonth).order_by(
+                                    desc("CollectionDate")).first()[0]
+                            las = db_session.query(SteamEnergy.SumValue).filter(
+                                SteamEnergy.TagClassValue == oc.TagClassValue,
+                                SteamEnergy.CollectionMonth == lastmonth).order_by(desc("CollectionDate")).first()[0]
+                            SteamEnergys = round((round(float(cur), 2) - round(float(las), 2)), 2)
+                            stecount = stecount + accumulation(SteamEnergys)
+                elif DateTime == "日":
+                    currday = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(j)
+                    vv = datetime.datetime.strptime(currday, "%Y-%m-%d")
+                    lastday = str(vv + datetime.timedelta(days=-1))[0:10]
+                    for oc in oclass:
+                        Tag = oc.TagClassValue[0:1]
+                        if Tag == "E":
+                            cur = \
+                                db_session.query(ElectricEnergy.ZGL).filter(
+                                    ElectricEnergy.TagClassValue == oc.TagClassValue,
+                                    ElectricEnergy.CollectionDay == currday).order_by(
+                                    desc("CollectionDate")).first()[0]
+                            las = db_session.query(ElectricEnergy.ZGL).filter(
+                                ElectricEnergy.TagClassValue == oc.TagClassValue,
+                                ElectricEnergy.CollectionDay == lastday).order_by(desc("CollectionDate")).first()[0]
+                            ElectricEnergyValues = round((round(float(cur), 2) - round(float(las), 2)), 2)
+                            elecount = elecount + ElectricEnergyValues
+                        elif Tag == "W":
+                            cur = \
+                                db_session.query(WaterEnergy.WaterSum).filter(
+                                    WaterEnergy.TagClassValue == oc.TagClassValue,
+                                    WaterEnergy.CollectionDay == currday).order_by(
+                                    desc("CollectionDate")).first()[0]
+                            las = db_session.query(WaterEnergy.WaterSum).filter(
+                                WaterEnergy.TagClassValue == oc.TagClassValue,
+                                WaterEnergy.CollectionDay == lastday).order_by(desc("CollectionDate")).first()[0]
+                            WaterMeterValues = round((round(float(cur), 2) - round(float(las), 2)), 2)
+                            watcount = watcount + WaterMeterValues
+                        elif Tag == "S":
+                            cur = \
+                                db_session.query(SteamEnergys.SumValue).filter(
+                                    SteamEnergys.TagClassValue == oc.TagClassValue,
+                                    SteamEnergys.CollectionDay == currday).order_by(
+                                    desc("CollectionDate")).first()[0]
+                            las = db_session.query(SteamEnergys.SumValue).filter(
+                                SteamEnergys.TagClassValue == oc.TagClassValue,
+                                SteamEnergys.CollectionDay == lastday).order_by(desc("CollectionDate")).first()[0]
+                            SteamEnergys = round((round(float(cur), 2) - round(float(las), 2)), 2)
+                            stecount = stecount + SteamEnergys
+                dir["ZCB"] = round(energymoney(elecount, "电") + energymoney(watcount, "水") + energymoney(stecount, "汽"), 2)
             elif EnergyClass is None and Area is None and DateTime is not None and ModelFlag is None:
                 lis = []
                 lisdata = []
@@ -335,37 +498,12 @@ def energyselect(data):
                 lisdata.append(diw)
                 lisdata.append(dis)
                 dir["datasets"] = lisdata
-            elif EnergyClass == "成本展示":
-                areas = db_session.query(AreaTable).filter().all()
-                for area in areas:
-                    AreaName = area.AreaName
-                    TagClassValues = db_session.query(TagDetail.TagClassValue).filter(
-                        TagDetail.AreaName.like("%" + AreaName + "%")).all()
-                    ElectricValue = 0.0
-                    WaterValue = 0.0
-                    SteamValue = 0.0
-                    for tag in TagClassValues:
-                        ElectricEnergyValue = getO(db_session.query(ElectricEnergy.ZGL).filter(
-                            ElectricEnergy.TagClassValue == tag,
-                            ElectricEnergy.CollectionDate.like("%" + DateTime + "%")).order_by(desc("ID")).first())
-                        ElectricValue = ElectricValue + ElectricEnergyValue
-                        WaterMeterValue = getO(
-                            db_session.query(WaterEnergy.WaterSum).filter(WaterEnergy.TagClassValue == tag,
-                                                                                 WaterEnergy.CollectionDate.like(
-                                                                                     "%" + DateTime + "%")).order_by(
-                                desc("ID")).first())
-                        WaterValue = WaterValue + WaterMeterValue
-                        Steam = getO(db_session.query(SteamEnergy.SumValue).filter(SteamEnergy.TagClassValue == tag,
-                                                                                     SteamEnergy.CollectionDate.like(
-                                                                                         "%" + DateTime + "%")).order_by(
-                            desc("ID")).first())
-                        SteamValue = SteamValue + Steam
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
             insertSyslog("error", "能耗查询报错Error：" + str(e), current_user.Name)
             return json.dumps([{"status": "Error：" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
-def energymoney(count,name):
+def energymoney(count, name):
     prices = db_session.query(PriceList).filter(PriceList.IsEnabled == "是").all()
     for pr in prices:
         if pr.PriceName == name:
