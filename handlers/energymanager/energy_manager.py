@@ -201,7 +201,8 @@ def energyTrend():
             dir["X"] = dix
             diy.append(diyr)
             dir["Y"] = diy
-            print(dir)
+            unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == classparam).first()[0]
+            dir["unit"] = unit
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
