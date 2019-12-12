@@ -145,7 +145,7 @@ def handler_msg(conn):
                         print("报错tag：" + tag.TagClassValue + " |报错IP：" + tag.IP + "  |报错端口：" + tag.COMNum + "  |错误：" + str(ee))
                     finally:
                         pass
-                unit = db_session.query(Unit).filter(Unit.UnitName == "电").first()[0]
+                unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "电").first()[0]
                 data_dict["unit"] = unit
                 data_dict["EtotalZGL"] = EtotalZGL
                 data_dict['currentTime'] = str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
