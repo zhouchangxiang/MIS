@@ -364,6 +364,7 @@
                     $("#realTimeModal").find(".modal-title").html(areaTitle)
                     var received_msg = evt.data;
                     received_msg = JSON.parse(received_msg)
+                    console.log(received_msg)
                     $("#realDataBody").html("")
                     if(received_msg.W) {
                         $.each(received_msg.W, function (i, value) {

@@ -338,10 +338,6 @@ def daytongji(oc, elecount, watcount, stecount):
 def energyselect(data):
     if request.method == 'GET':
         try:
-            currentyear = datetime.datetime.now().year
-            currentmonth = datetime.datetime.now().month
-            currentday = datetime.datetime.now().day
-            currenthour = datetime.datetime.now().hour
             dir = {}
             data = request.values
             Area = data.get("Area")
@@ -394,12 +390,9 @@ def energyselect(data):
                         elecount = daytj[0]
                         watcount = daytj[1]
                         stecount = daytj[2]
-                dir["ElectricValue"] = elecount
-                dir["WaterValue"] = watcount
-                dir["SteamValue"] = stecount
-                dir["电"] = round(energymoney(elecount, "电"), 2)
-                dir["水"] = round(energymoney(watcount, "水"), 2)
-                dir["汽"] = round(energymoney(stecount, "汽"), 2)
+                dir["ElectricValue"] = round(energymoney(elecount, "电"), 2)
+                dir["WaterValue"] = round(energymoney(watcount, "水"), 2)
+                dir["SteamValue"] = round(energymoney(stecount, "汽"), 2)
                 dir["ZCB"] = round(energymoney(elecount, "电") + energymoney(watcount, "水") + energymoney(stecount, "汽"), 2)
             elif EnergyClass is None and Area is None and DateTime is not None and ModelFlag is None:
                 lis = []
