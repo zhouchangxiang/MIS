@@ -13,7 +13,7 @@ import random
 import datetime
 from dbset.database.db_operate import db_session
 from models.SystemManagement.system import ElectricSiteURL
-from models.SystemManagement.core import TagDetail
+from models.SystemManagement.core import TagDetail, Unit
 from dbset.log.BK2TLogger import logger,insertSyslog
 
 
@@ -140,6 +140,8 @@ def handler_msg(conn):
                         print("报错tag：" + tag.TagClassValue + " |报错IP：" + tag.IP + "  |报错端口：" + tag.COMNum + "  |错误：" + str(ee))
                     finally:
                         pass
+                unit = db_session.query(Unit).filter(Unit.UnitName == "汽").first()[0]
+                data_dict["unit"] = unit
                 data_dict["StotalF"] = StotalF
                 data_dict["StotalS"] = StotalS
                 data_dict['currentTime'] = str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
