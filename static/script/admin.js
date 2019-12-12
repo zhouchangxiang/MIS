@@ -1,4 +1,6 @@
 $(function () {
+	var tableUrl = 'http://192.168.1.106:5000/CUID'
+
 	//获取主菜单导航内容
 	$.ajax({
         url: '/permission/PermissionsMenus',
@@ -55,7 +57,7 @@ $(function () {
 	var isLoaded = true;
 	function reqs() {
 		$.ajax({
-			url: 'http://127.0.0.1:5000/CUID',
+			url: tableUrl,
 			type: 'get',
 			data:{
 				tableName: 'User',
@@ -100,7 +102,7 @@ $(function () {
 	$("#seeUserMessage").on('click',function(){
 		var html= ''
 		$.ajax({
-			url:'http://127.0.0.1:5000/CUID',
+			url:tableUrl,
 			method: 'get',
 			data:{
 				tableName:'User',
