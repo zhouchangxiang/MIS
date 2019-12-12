@@ -167,9 +167,9 @@ def run():
                 pass
 
 def roundtwo(rod):
-    if rod == None or rod == "":
+    if rod == None or rod == "" or rod == "0.00":
         return 0.00
     else:
-        return round(rod, 2)
+        return round(float(rod), 2)
 if __name__ == '__main__':
     run()
