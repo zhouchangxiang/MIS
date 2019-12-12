@@ -125,20 +125,20 @@ def handler_msg(conn):
                     try:
                         S = str(tag.TagClassValue)[0:1]
                         if S == "E":
-                            data_dict[tag.TagClassValue + "ZGL"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                                              tag.TagClassValue + "_ZGL"))
-                            data_dict[tag.TagClassValue + "AU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                                             tag.TagClassValue + "_AU"))
-                            data_dict[tag.TagClassValue + "AI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                                             tag.TagClassValue + "_AI"))
-                            data_dict[tag.TagClassValue + "BU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                                             tag.TagClassValue + "_BU"))
-                            data_dict[tag.TagClassValue + "BI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                                             tag.TagClassValue + "_BI"))
-                            data_dict[tag.TagClassValue + "CU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                                             tag.TagClassValue + "_CU"))
-                            data_dict[tag.TagClassValue + "CI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                                             tag.TagClassValue + "_CI"))
+                            # data_dict[tag.TagClassValue + "ZGL"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            #                                                                   tag.TagClassValue + "_ZGL"))
+                            # data_dict[tag.TagClassValue + "AU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            #                                                                  tag.TagClassValue + "_AU"))
+                            # data_dict[tag.TagClassValue + "AI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            #                                                                  tag.TagClassValue + "_AI"))
+                            # data_dict[tag.TagClassValue + "BU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            #                                                                  tag.TagClassValue + "_BU"))
+                            # data_dict[tag.TagClassValue + "BI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            #                                                                  tag.TagClassValue + "_BI"))
+                            # data_dict[tag.TagClassValue + "CU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            #                                                                  tag.TagClassValue + "_CU"))
+                            # data_dict[tag.TagClassValue + "CI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            #                                                                  tag.TagClassValue + "_CI"))
                             ZGL = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME, tag.TagClassValue + "_ZGL"))
                             EtotalZGL = EtotalZGL + ZGL
                     except Exception as ee:
