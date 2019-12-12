@@ -88,6 +88,20 @@ def strlastMonth(currmonth):
         else:
             la = str(las)
         return str0 + "-" + la
+def appendcur(cur, las):
+    if cur is None:
+        return 0.0
+    else:
+        cur = cur[0]
+        if las is None:
+            las = 0.0
+        else:
+            las = las[0]
+        diff = float(cur) - float(las)
+        if diff < 0:
+            return 0.0
+        else:
+            return round(diff, 2)
 @energy.route('/energyTrend', methods=['POST', 'GET'])
 def energyTrend():
     '''
@@ -131,17 +145,7 @@ def energyTrend():
                             desc("CollectionDate")).first()
                         las = db_session.query(SteamEnergy.SumValue).filter(
                             SteamEnergy.CollectionMonth == lastM).order_by(desc("CollectionDate")).first()
-                    if cur is None:
-                        diyz.append(0.0)
-                    else:
-                        cur = cur[0]
-                        if las is None:
-                            las = 0.0
-                        else:
-                            las = las[0]
-                        EnergyValue = round((float(cur) - float(las)), 2)
-                        diyz.append(EnergyValue)
-
+                    diyz.append(appendcur(cur, las))
             elif currenttime == "月":
                 for j in range(1, currentday+1):
                     currday = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(j)
@@ -166,16 +170,7 @@ def energyTrend():
                             desc("CollectionDate")).first()
                         las = db_session.query(SteamEnergy.SumValue).filter(
                             SteamEnergy.CollectionDay == lastday).order_by(desc("CollectionDate")).first()
-                    if cur is None:
-                        diyz.append(0.0)
-                    else:
-                        cur = cur[0]
-                        if las is None:
-                            las = 0.0
-                        else:
-                            las = las[0]
-                        EnergyValue = round((float(cur) - float(las)), 2)
-                        diyz.append(EnergyValue)
+                    diyz.append(appendcur(cur, las))
             elif currenttime == "日":
                 for j in range(0, currenthour):
                     currhour = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(currentday) + " " + addzero(j)
@@ -200,16 +195,7 @@ def energyTrend():
                             desc("CollectionDate")).first()
                         las = db_session.query(SteamEnergy.SumValue).filter(
                             ElectricEnergy.CollectionDate.like("%" + lasthour + "%")).order_by(desc("CollectionDate")).first()
-                    if cur is None:
-                        diyz.append(0.0)
-                    else:
-                        cur = cur[0]
-                        if las is None:
-                            las = 0.0
-                        else:
-                            las = las[0]
-                        EnergyValue = round((float(cur) - float(las)), 2)
-                        diyz.append(EnergyValue)
+                    diyz.append(appendcur(cur, las))
             diyr["name"] = classparam
             diyr["data"] = diyz
             dir["X"] = dix
@@ -221,7 +207,133 @@ def energyTrend():
             print(e)
             logger.error(e)
             insertSyslog("error", "能耗趋势查询报错Error：" + str(e), current_user.Name)
-
+def curcutlas(cur, las, count):
+    if cur is None:
+        return count
+    else:
+        cur = cur[0]
+        if las is None:
+            las = 0.0
+        else:
+            las = las[0]
+        diff = round(float(cur) - float(las), 2)
+        if diff < 0:
+            return count
+        else:
+             return round(count + diff, 2)
+def yeartongji(oc, elecount, watcount, stecount):
+    currentyear = datetime.datetime.now().year
+    curryear = str(currentyear)
+    lastyear = str(int(curryear) - 1)
+    Tag = oc.TagClassValue[0:1]
+    if Tag == "E":
+        cur = \
+            db_session.query(ElectricEnergy.ZGL).filter(
+                ElectricEnergy.TagClassValue == oc.TagClassValue,
+                ElectricEnergy.CollectionYear == currentyear).order_by(
+                desc("CollectionDate")).first()
+        las = db_session.query(ElectricEnergy.ZGL).filter(
+            ElectricEnergy.TagClassValue == oc.TagClassValue,
+            ElectricEnergy.CollectionYear == lastyear).order_by(desc("CollectionDate")).first()
+        elecount = curcutlas(cur, las, elecount)
+    elif Tag == "W":
+        cur = \
+            db_session.query(WaterEnergy.WaterSum).filter(
+                WaterEnergy.TagClassValue == oc.TagClassValue,
+                WaterEnergy.CollectionYear == currentyear).order_by(
+                desc("CollectionDate")).first()
+        las = db_session.query(WaterEnergy.WaterSum).filter(
+            WaterEnergy.TagClassValue == oc.TagClassValue,
+            WaterEnergy.CollectionYear == lastyear).order_by(desc("CollectionDate")).first()
+        watcount = curcutlas(cur, las, watcount)
+    elif Tag == "S":
+        cur = \
+            db_session.query(SteamEnergy.SumValue).filter(
+                SteamEnergy.TagClassValue == oc.TagClassValue,
+                SteamEnergy.CollectionYear == currentyear).order_by(
+                desc("CollectionDate")).first()
+        las = db_session.query(SteamEnergy.SumValue).filter(
+            SteamEnergy.TagClassValue == oc.TagClassValue,
+            SteamEnergy.CollectionYear == lastyear).order_by(desc("CollectionDate")).first()
+        stecount = curcutlas(cur, las, stecount)
+    return elecount,watcount,stecount
+def monthtongji(oc, elecount, watcount, stecount):
+    currentyear = datetime.datetime.now().year
+    currentmonth = datetime.datetime.now().month
+    currmonth = str(currentyear) + "-" + addzero(str(currentmonth))
+    lastmonth = strlastMonth(currmonth)
+    Tag = oc.TagClassValue[0:1]
+    if Tag == "E":
+        cur = \
+            db_session.query(ElectricEnergy.ZGL).filter(
+                ElectricEnergy.TagClassValue == oc.TagClassValue,
+                ElectricEnergy.CollectionMonth == currmonth).order_by(
+                desc("CollectionDate")).first()
+        las = db_session.query(ElectricEnergy.ZGL).filter(
+            ElectricEnergy.TagClassValue == oc.TagClassValue,
+            ElectricEnergy.CollectionMonth == lastmonth).order_by(desc("CollectionDate")).first()
+        elecount = curcutlas(cur, las, elecount)
+    elif Tag == "W":
+        cur = \
+            db_session.query(WaterEnergy.WaterSum).filter(
+                WaterEnergy.TagClassValue == oc.TagClassValue,
+                WaterEnergy.CollectionMonth == currmonth).order_by(
+                desc("CollectionDate")).first()
+        las = db_session.query(WaterEnergy.WaterSum).filter(
+            WaterEnergy.TagClassValue == oc.TagClassValue,
+            WaterEnergy.CollectionMonth == lastmonth).order_by(desc("CollectionDate")).first()
+        watcount = curcutlas(cur, las, watcount)
+    elif Tag == "S":
+        cur = \
+            db_session.query(SteamEnergy.SumValue).filter(
+                SteamEnergy.TagClassValue == oc.TagClassValue,
+                SteamEnergy.CollectionMonth == currmonth).order_by(
+                desc("CollectionDate")).first()
+        las = db_session.query(SteamEnergy.SumValue).filter(
+            SteamEnergy.TagClassValue == oc.TagClassValue,
+            SteamEnergy.CollectionMonth == lastmonth).order_by(desc("CollectionDate")).first()
+        stecount = curcutlas(cur, las, stecount)
+    return elecount, watcount, stecount
+def daytongji(oc, elecount, watcount, stecount):
+    currentyear = datetime.datetime.now().year
+    currentmonth = datetime.datetime.now().month
+    currentday = datetime.datetime.now().day
+    currenthour = datetime.datetime.now().hour
+    currday = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(currentday)
+    vv = datetime.datetime.strptime(currday, "%Y-%m-%d")
+    lastday = str(vv + datetime.timedelta(days=-1))[0:10]
+    Tag = oc.TagClassValue[0:1]
+    if Tag == "E":
+        cur = \
+            db_session.query(ElectricEnergy.ZGL).filter(
+                ElectricEnergy.TagClassValue == oc.TagClassValue,
+                ElectricEnergy.CollectionDay == currday).order_by(
+                desc("CollectionDate")).first()
+        las = db_session.query(ElectricEnergy.ZGL).filter(
+            ElectricEnergy.TagClassValue == oc.TagClassValue,
+            ElectricEnergy.CollectionDay == lastday).order_by(desc("CollectionDate")).first()
+        elecount = curcutlas(cur, las, elecount)
+    elif Tag == "W":
+        cur = \
+            db_session.query(WaterEnergy.WaterSum).filter(
+                WaterEnergy.TagClassValue == oc.TagClassValue,
+                WaterEnergy.CollectionDay == currday).order_by(
+                desc("CollectionDate")).first()
+        las = db_session.query(WaterEnergy.WaterSum).filter(
+            WaterEnergy.TagClassValue == oc.TagClassValue,
+            WaterEnergy.CollectionDay == lastday).order_by(desc("CollectionDate")).first()
+        watcount = curcutlas(cur, las, watcount)
+    elif Tag == "S":
+        cur = \
+            db_session.query(SteamEnergy.SumValue).filter(
+                SteamEnergy.TagClassValue == oc.TagClassValue,
+                SteamEnergy.CollectionDay == currday).order_by(
+                desc("CollectionDate")).first()
+        las = db_session.query(SteamEnergy.SumValue).filter(
+            SteamEnergy.TagClassValue == oc.TagClassValue,
+            SteamEnergy.CollectionDay == lastday).order_by(desc("CollectionDate")).first()
+        stecount = curcutlas(cur, las, stecount)
+    return elecount, watcount, stecount
 def energyselect(data):
     if request.method == 'GET':
         try:
@@ -235,375 +347,55 @@ def energyselect(data):
             DateTime = data.get("DateTime")
             EnergyClass = data.get("EnergyClass")
             ModelFlag = data.get("ModelFlag")
+            elecount = 0.0
+            watcount = 0.0
+            stecount = 0.0
             if ModelFlag == "区域能耗":
-                elecount = 0.0
-                watcount = 0.0
-                stecount = 0.0
                 oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == Area).all()
                 if DateTime == "年":
-                    curryear = str(currentyear)
-                    lastyear = str(int(curryear) - 1)
                     for oc in oclass:
-                        Tag = oc.TagClassValue[0:1]
-                        if Tag == "E":
-                            cur = \
-                                db_session.query(ElectricEnergy.ZGL).filter(
-                                    ElectricEnergy.TagClassValue == oc.TagClassValue,
-                                    ElectricEnergy.CollectionYear == currentyear).order_by(
-                                    desc("CollectionDate")).first()
-                            las = db_session.query(ElectricEnergy.ZGL).filter(
-                                ElectricEnergy.TagClassValue == oc.TagClassValue,
-                                ElectricEnergy.CollectionYear == lastyear).order_by(desc("CollectionDate")).first()
-                            if cur is None:
-                                elecount = round(stecount + 0.0, 2)
-                            else:
-                                cur = cur[0]
-                                if las is None:
-                                    las = 0.0
-                                else:
-                                    las = las[0]
-                                elecount = round(elecount + (cur - las), 2)
-                        elif Tag == "W":
-                            cur = \
-                                db_session.query(WaterEnergy.WaterSum).filter(
-                                    WaterEnergy.TagClassValue == oc.TagClassValue,
-                                    WaterEnergy.CollectionYear == currentyear).order_by(
-                                    desc("CollectionDate")).first()
-                            las = db_session.query(WaterEnergy.WaterSum).filter(
-                                WaterEnergy.TagClassValue == oc.TagClassValue,
-                                WaterEnergy.CollectionYear == lastyear).order_by(desc("CollectionDate")).first()
-                            if cur is None:
-                                watcount = round(stecount + 0.0, 2)
-                            else:
-                                cur = cur[0]
-                                if las is None:
-                                    las = 0.0
-                                else:
-                                    las = las[0]
-                                watcount = round(watcount + (cur - las), 2)
-                        elif Tag == "S":
-                            cur = \
-                                db_session.query(SteamEnergy.SumValue).filter(
-                                    SteamEnergy.TagClassValue == oc.TagClassValue,
-                                    SteamEnergy.CollectionYear == currentyear).order_by(
-                                    desc("CollectionDate")).first()
-                            las = db_session.query(SteamEnergy.SumValue).filter(
-                                SteamEnergy.TagClassValue == oc.TagClassValue,
-                                SteamEnergy.CollectionYear == lastyear).order_by(desc("CollectionDate")).first()
-                            if cur is None:
-                                stecount = round(stecount + 0.0, 2)
-                            else:
-                                cur = cur[0]
-                                if las is None:
-                                    las = 0.0
-                                else:
-                                    las = las[0]
-                                stecount = round(stecount + (cur - las), 2)
+                        yeatj = yeartongji(oc, elecount, watcount, stecount)
+                        elecount = yeatj[0]
+                        watcount = yeatj[1]
+                        stecount = yeatj[2]
                 elif DateTime == "月":
-                    currmonth = str(currentyear) + "-" + addzero(str(currentmonth))
-                    lastmonth = strlastMonth(currmonth)
                     for oc in oclass:
-                        Tag = oc.TagClassValue[0:1]
-                        if Tag == "E":
-                            cur = \
-                                db_session.query(ElectricEnergy.ZGL).filter(
-                                    ElectricEnergy.TagClassValue == oc.TagClassValue,
-                                    ElectricEnergy.CollectionMonth == currmonth).order_by(
-                                    desc("CollectionDate")).first()
-                            las = db_session.query(ElectricEnergy.ZGL).filter(
-                                ElectricEnergy.TagClassValue == oc.TagClassValue,
-                                ElectricEnergy.CollectionMonth == lastmonth).order_by(desc("CollectionDate")).first()
-                            if cur is None:
-                                elecount = round(elecount + 0.0, 2)
-                            else:
-                                cur = cur[0]
-                                if las is None:
-                                    las = 0.0
-                                else:
-                                    las = las[0]
-                                elecount = round(elecount + (cur - las), 2)
-                        elif Tag == "W":
-                            cur = \
-                                db_session.query(WaterEnergy.WaterSum).filter(
-                                    WaterEnergy.TagClassValue == oc.TagClassValue,
-                                    WaterEnergy.CollectionMonth == currmonth).order_by(
-                                    desc("CollectionDate")).first()
-                            las = db_session.query(WaterEnergy.WaterSum).filter(
-                                WaterEnergy.TagClassValue == oc.TagClassValue,
-                                WaterEnergy.CollectionMonth == lastmonth).order_by(desc("CollectionDate")).first()
-                            if cur is None:
-                                watcount = round(watcount + 0.0, 2)
-                            else:
-                                cur = cur[0]
-                                if las is None:
-                                    las = 0.0
-                                else:
-                                    las = las[0]
-                                watcount = round(watcount + (cur - las), 2)
-                        elif Tag == "S":
-                            cur = \
-                                db_session.query(SteamEnergy.SumValue).filter(
-                                    SteamEnergy.TagClassValue == oc.TagClassValue,
-                                    SteamEnergy.CollectionMonth == currmonth).order_by(
-                                    desc("CollectionDate")).first()
-                            las = db_session.query(SteamEnergy.SumValue).filter(
-                                SteamEnergy.TagClassValue == oc.TagClassValue,
-                                SteamEnergy.CollectionMonth == lastmonth).order_by(desc("CollectionDate")).first()
-                            if cur is None:
-                                stecount = round(stecount + 0.0, 2)
-                            else:
-                                cur = cur[0]
-                                if las is None:
-                                    las = 0.0
-                                else:
-                                    las = las[0]
-                                stecount = round(stecount + (cur - las), 2)
+                        montj = monthtongji(oc, elecount, watcount, stecount)
+                        elecount = montj[0]
+                        watcount = montj[1]
+                        stecount = montj[2]
                 elif DateTime == "日":
-                    currday = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(currentday)
-                    vv = datetime.datetime.strptime(currday, "%Y-%m-%d")
-                    lastday = str(vv + datetime.timedelta(days=-1))[0:10]
                     for oc in oclass:
-                        Tag = oc.TagClassValue[0:1]
-                        if Tag == "E":
-                            cur = \
-                                db_session.query(ElectricEnergy.ZGL).filter(
-                                    ElectricEnergy.TagClassValue == oc.TagClassValue,
-                                    ElectricEnergy.CollectionDay == currday).order_by(
-                                    desc("CollectionDate")).first()
-                            las = db_session.query(ElectricEnergy.ZGL).filter(
-                                ElectricEnergy.TagClassValue == oc.TagClassValue,
-                                ElectricEnergy.CollectionDay == lastday).order_by(desc("CollectionDate")).first()
-                            if cur is None:
-                                elecount = round(elecount + 0.0, 2)
-                            else:
-                                cur = cur[0]
-                                if las is None:
-                                    las = 0.0
-                                else:
-                                    las = las[0]
-                                elecount = round(elecount + (cur - las), 2)
-                        elif Tag == "W":
-                            cur = \
-                                db_session.query(WaterEnergy.WaterSum).filter(
-                                    WaterEnergy.TagClassValue == oc.TagClassValue,
-                                    WaterEnergy.CollectionDay == currday).order_by(
-                                    desc("CollectionDate")).first()
-                            las = db_session.query(WaterEnergy.WaterSum).filter(
-                                WaterEnergy.TagClassValue == oc.TagClassValue,
-                                WaterEnergy.CollectionDay == lastday).order_by(desc("CollectionDate")).first()
-                            if cur is None:
-                                watcount = round(watcount + 0.0, 2)
-                            else:
-                                cur = cur[0]
-                                if las is None:
-                                    las = 0.0
-                                else:
-                                    las = las[0]
-                                watcount = round(watcount + (cur - las), 2)
-                        elif Tag == "S":
-                            cur = \
-                                db_session.query(SteamEnergy.SumValue).filter(
-                                    SteamEnergy.TagClassValue == oc.TagClassValue,
-                                    SteamEnergy.CollectionDay == currday).order_by(
-                                    desc("CollectionDate")).first()
-                            las = db_session.query(SteamEnergy.SumValue).filter(
-                                SteamEnergy.TagClassValue == oc.TagClassValue,
-                                SteamEnergy.CollectionDay == lastday).order_by(desc("CollectionDate")).first()
-                            if cur is None:
-                                stecount = round(stecount + 0.0, 2)
-                            else:
-                                cur = cur[0]
-                                if las is None:
-                                    las = 0.0
-                                else:
-                                    las = las[0]
-                                stecount = round(stecount + (cur - las), 2)
+                        daytj = daytongji(oc, elecount, watcount, stecount)
+                        elecount = daytj[0]
+                        watcount = daytj[1]
+                        stecount = daytj[2]
                 dir["ElectricValue"] = elecount
                 dir["WaterValue"] = watcount
                 dir["SteamValue"] = stecount
             elif ModelFlag == "成本展示":
                 oclass = db_session.query(TagDetail).filter().all()
-                elecount = 0.0
-                watcount = 0.0
-                stecount = 0.0
                 if DateTime == "年":
-                    curryear = str(currentyear)
-                    lastyear = str(int(curryear) - 1)
                     for oc in oclass:
-                        Tag = oc.TagClassValue[0:1]
-                        if Tag == "E":
-                            cur = \
-                                db_session.query(ElectricEnergy.ZGL).filter(
-                                    ElectricEnergy.TagClassValue == oc.TagClassValue,
-                                    ElectricEnergy.CollectionYear == currentyear).order_by(
-                                    desc("CollectionDate")).first()
-                            las = db_session.query(ElectricEnergy.ZGL).filter(
-                                ElectricEnergy.TagClassValue == oc.TagClassValue,
-                                ElectricEnergy.CollectionYear == lastyear).order_by(desc("CollectionDate")).first()
-                            if cur is None:
-                                elecount = round(elecount + 0.0, 2)
-                            else:
-                                cur = cur[0]
-                                if las is None:
-                                    las = 0.0
-                                else:
-                                    las = las[0]
-                                elecount = round(elecount + (cur - las), 2)
-                        elif Tag == "W":
-                            cur = \
-                                db_session.query(WaterEnergy.WaterSum).filter(
-                                    WaterEnergy.TagClassValue == oc.TagClassValue,
-                                    WaterEnergy.CollectionYear == currentyear).order_by(
-                                    desc("CollectionDate")).first()
-                            las = db_session.query(WaterEnergy.WaterSum).filter(
-                                WaterEnergy.TagClassValue == oc.TagClassValue,
-                                WaterEnergy.CollectionYear == lastyear).order_by(desc("CollectionDate")).first()
-                            if cur is None:
-                                watcount = round(watcount + 0.0, 2)
-                            else:
-                                cur = cur[0]
-                                if las is None:
-                                    las = 0.0
-                                else:
-                                    las = las[0]
-                                watcount = round(watcount + (cur - las), 2)
-                        elif Tag == "S":
-                            cur = \
-                                db_session.query(SteamEnergy.SumValue).filter(
-                                    SteamEnergy.TagClassValue == oc.TagClassValue,
-                                    SteamEnergy.CollectionYear == currentyear).order_by(
-                                    desc("CollectionDate")).first()
-                            las = db_session.query(SteamEnergy.SumValue).filter(
-                                SteamEnergy.TagClassValue == oc.TagClassValue,
-                                SteamEnergy.CollectionYear == lastyear).order_by(desc("CollectionDate")).first()
-                            if cur is None:
-                                stecount = round(stecount + 0.0, 2)
-                            else:
-                                cur = cur[0]
-                                if las is None:
-                                    las = 0.0
-                                else:
-                                    las = las[0]
-                                stecount = round(stecount + (cur - las), 2)
+                        yeatj = yeartongji(oc, elecount, watcount, stecount)
+                        elecount = yeatj[0]
+                        watcount = yeatj[1]
+                        stecount = yeatj[2]
                 elif DateTime == "月":
-                    currmonth = str(currentyear) + "-" + addzero(str(currentmonth))
-                    lastmonth = strlastMonth(currmonth)
                     for oc in oclass:
-                        Tag = oc.TagClassValue[0:1]
-                        if Tag == "E":
-                            cur = \
-                                db_session.query(ElectricEnergy.ZGL).filter(
-                                    ElectricEnergy.TagClassValue == oc.TagClassValue,
-                                    ElectricEnergy.CollectionMonth == currmonth).order_by(
-                                    desc("CollectionDate")).first()
-                            las = db_session.query(ElectricEnergy.ZGL).filter(
-                                ElectricEnergy.TagClassValue == oc.TagClassValue,
-                                ElectricEnergy.CollectionMonth == lastmonth).order_by(desc("CollectionDate")).first()
-                            if cur is None:
-                                elecount = round(elecount + 0.0, 2)
-                            else:
-                                cur = cur[0]
-                                if las is None:
-                                    las = 0.0
-                                else:
-                                    las = las[0]
-                                elecount = round(elecount + (cur - las), 2)
-                        elif Tag == "W":
-                            cur = \
-                                db_session.query(WaterEnergy.WaterSum).filter(
-                                    WaterEnergy.TagClassValue == oc.TagClassValue,
-                                    WaterEnergy.CollectionMonth == currmonth).order_by(
-                                    desc("CollectionDate")).first()
-                            las = db_session.query(WaterEnergy.WaterSum).filter(
-                                WaterEnergy.TagClassValue == oc.TagClassValue,
-                                WaterEnergy.CollectionMonth == lastmonth).order_by(desc("CollectionDate")).first()
-                            if cur is None:
-                                watcount = round(watcount + 0.0, 2)
-                            else:
-                                cur = cur[0]
-                                if las is None:
-                                    las = 0.0
-                                else:
-                                    las = las[0]
-                                watcount = round(watcount + (cur - las), 2)
-                        elif Tag == "S":
-                            cur = \
-                                db_session.query(SteamEnergy.SumValue).filter(
-                                    SteamEnergy.TagClassValue == oc.TagClassValue,
-                                    SteamEnergy.CollectionMonth == currmonth).order_by(
-                                    desc("CollectionDate")).first()
-                            las = db_session.query(SteamEnergy.SumValue).filter(
-                                SteamEnergy.TagClassValue == oc.TagClassValue,
-                                SteamEnergy.CollectionMonth == lastmonth).order_by(desc("CollectionDate")).first()
-                            if cur is None:
-                                stecount = round(stecount + 0.0, 2)
-                            else:
-                                cur = cur[0]
-                                if las is None:
-                                    las = 0.0
-                                else:
-                                    las = las[0]
-                                stecount = round(stecount + (cur - las), 2)
+                        montj = monthtongji(oc, elecount, watcount, stecount)
+                        elecount = montj[0]
+                        watcount = montj[1]
+                        stecount = montj[2]
                 elif DateTime == "日":
-                    currday = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(currentday)
-                    vv = datetime.datetime.strptime(currday, "%Y-%m-%d")
-                    lastday = str(vv + datetime.timedelta(days=-1))[0:10]
                     for oc in oclass:
-                        Tag = oc.TagClassValue[0:1]
-                        if Tag == "E":
-                            cur = \
-                                db_session.query(ElectricEnergy.ZGL).filter(
-                                    ElectricEnergy.TagClassValue == oc.TagClassValue,
-                                    ElectricEnergy.CollectionDay == currday).order_by(
-                                    desc("CollectionDate")).first()
-                            las = db_session.query(ElectricEnergy.ZGL).filter(
-                                ElectricEnergy.TagClassValue == oc.TagClassValue,
-                                ElectricEnergy.CollectionDay == lastday).order_by(desc("CollectionDate")).first()
-                            if cur is None:
-                                elecount = round(elecount + 0.0, 2)
-                            else:
-                                cur = cur[0]
-                                if las is None:
-                                    las = 0.0
-                                else:
-                                    las = las[0]
-                                elecount = round(elecount + (cur - las), 2)
-                        elif Tag == "W":
-                            cur = \
-                                db_session.query(WaterEnergy.WaterSum).filter(
-                                    WaterEnergy.TagClassValue == oc.TagClassValue,
-                                    WaterEnergy.CollectionDay == currday).order_by(
-                                    desc("CollectionDate")).first()
-                            las = db_session.query(WaterEnergy.WaterSum).filter(
-                                WaterEnergy.TagClassValue == oc.TagClassValue,
-                                WaterEnergy.CollectionDay == lastday).order_by(desc("CollectionDate")).first()
-                            if cur is None:
-                                watcount = round(watcount + 0.0, 2)
-                            else:
-                                cur = cur[0]
-                                if las is None:
-                                    las = 0.0
-                                else:
-                                    las = las[0]
-                                watcount = round(watcount + (cur - las), 2)
-                        elif Tag == "S":
-                            cur = \
-                                db_session.query(SteamEnergy.SumValue).filter(
-                                    SteamEnergy.TagClassValue == oc.TagClassValue,
-                                    SteamEnergy.CollectionDay == currday).order_by(
-                                    desc("CollectionDate")).first()
-                            las = db_session.query(SteamEnergy.SumValue).filter(
-                                SteamEnergy.TagClassValue == oc.TagClassValue,
-                                SteamEnergy.CollectionDay == lastday).order_by(desc("CollectionDate")).first()
-                            if cur is None:
-                                stecount = round(stecount + 0.0, 2)
-                            else:
-                                cur = cur[0]
-                                if las is None:
-                                    las = 0.0
-                                else:
-                                    las = las[0]
-                                stecount = round(stecount + (cur - las), 2)
+                        daytj = daytongji(oc, elecount, watcount, stecount)
+                        elecount = daytj[0]
+                        watcount = daytj[1]
+                        stecount = daytj[2]
+                dir["ElectricValue"] = elecount
+                dir["WaterValue"] = watcount
+                dir["SteamValue"] = stecount
                 dir["电"] = round(energymoney(elecount, "电"), 2)
                 dir["水"] = round(energymoney(watcount, "水"), 2)
                 dir["汽"] = round(energymoney(stecount, "汽"), 2)
