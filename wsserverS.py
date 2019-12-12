@@ -126,12 +126,12 @@ def handler_msg(conn):
                     try:
                         S = str(tag.TagClassValue)[0:1]
                         if S == "S":
-                            data_dict[tag.TagClassValue + "WD"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                                  tag.TagClassValue + "WD"))
-                            data_dict[tag.TagClassValue + "F"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                                 tag.TagClassValue + "F"))
-                            data_dict[tag.TagClassValue + "S"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                                 tag.TagClassValue + "S"))
+                            # data_dict[tag.TagClassValue + "WD"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            #                                                       tag.TagClassValue + "WD"))
+                            # data_dict[tag.TagClassValue + "F"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            #                                                      tag.TagClassValue + "F"))
+                            # data_dict[tag.TagClassValue + "S"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            #                                                      tag.TagClassValue + "S"))
                             Sflow = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME, tag.TagClassValue + "F"))
                             Ssum = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME, tag.TagClassValue + "S"))
                             StotalF = StotalF +Sflow
