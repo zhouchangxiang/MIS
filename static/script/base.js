@@ -289,7 +289,7 @@ function highchartsRealTimeNoTickRender(url,id,yKey,domID,totalKey,totalDom){
                         var received_msg = evt.data;
                         received_msg = JSON.parse(received_msg)
                         var x = new Date(received_msg.currentTime).getTime(),   // 返回时间
-                            y = Number((parseInt(received_msg[yKey] * 100 ) / 100 ).toFixed(2));       // 返回值
+                            y = Math.floor(received_msg[yKey] * 100) / 100;       // 返回值
                         series.addPoint([x, y], true, true);
                         $("#"+ domID).html(y)
                         $("#"+ totalDom).html((parseInt(received_msg[totalKey] * 100 ) / 100 ).toFixed(2))

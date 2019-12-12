@@ -72,10 +72,9 @@
             border-radius: 50%;
         }
         .connection-interchanger{
-            width: 100px;
-            height: 50px;
-            line-height: 50px;
-            margin: 100px auto;
+            display: table;
+            margin: 20px auto;
+            padding: 20px;
             text-align: center;
             border-radius: 8px;
             color: #fff;
@@ -351,7 +350,7 @@
             $(".area-use-bg").on("click",function(){
                 $("#realTimeModal").modal('show')
                 var areaTitle = $(this).find(".area-name").html()
-                var ws = new WebSocket("ws://http://192.168.1.106:5002");
+                var ws = new WebSocket("ws://192.168.1.106:5002");
                 ws.onopen = function(){
                     ws.send(areaTitle);
                     console.log("数据发送中...");
@@ -393,7 +392,7 @@
                 var Sum = (parseInt(value.Flow * 100 ) / 100 ).toFixed(2)
                 var str = `<div class="col-sm-3 realDataLi">
                     <div class="collectModel">
-                        <div class="collectModelTitle">水表</div>
+                        <div class="collectModelTitle">${ value.title }</div>
                         <div class="collectModelData number">${ Flow }</div>
                         <div class="collectModelUnit">单位：L</div>
                         <div class="collectModelTotal number">${ Sum }</div>
@@ -410,7 +409,7 @@
                 var ZGL = (parseInt(value.ZGL * 100 ) / 100 ).toFixed(2)
                 var str = `<div class="col-sm-3 realDataLi">
                     <div class="collectModel">
-                        <div class="collectModelTitle">电表</div>
+                        <div class="collectModelTitle">${ value.title }</div>
                         <div class="row">
                             <div class="col-xs-12">
                                 <div class="electricityData electricityDataHead">
@@ -451,7 +450,7 @@
                 var Sum = (parseInt(value.Sum * 100 ) / 100 ).toFixed(2)
                 var str = `<div class="col-sm-3 realDataLi">
                     <div class="collectModel">
-                        <div class="collectModelTitle">汽表</div>
+                        <div class="collectModelTitle">${ value.title }</div>
                         <div class="collectSteamModelData number">${ WD }</div>
                         <div class="collectModelUnit">单位：°C</div>
                         <div class="collectSteamModelData number">${ Flow }</div>

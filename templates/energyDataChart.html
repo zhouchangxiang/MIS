@@ -12,11 +12,6 @@
     <script src="../static/highcharts/highcharts.js"></script>
     <script src="../static/highcharts/drilldown.js"></script>
     <script src="../static/script/base.js"></script>
-    <style>
-        .chart{
-            height: 230px;
-        }
-    </style>
 </head>
 <body>
     <div class="wrap">
@@ -73,125 +68,6 @@
                 }
             })
             $("#datetimepickerBtnGroup .btn").eq(0).click()
-
-            $('#container').bind('mousemove touchmove touchstart', function (e) {
-                var chart,point,i,event;
-                for (i = 0; i < Highcharts.charts.length; i = i + 1) {
-                    chart = Highcharts.charts[i];
-                    event = chart.pointer.normalize(e.originalEvent); // Find coordinates within the chart
-                    point = chart.series[0].searchPoint(event, true); // Get the hovered point
-                    if (point) {
-                        point.highlight(e);
-                    }
-                }
-            });
-            //重写内部的方法， 这里是将提示框即十字准星的隐藏函数关闭
-            Highcharts.Pointer.prototype.reset = function () {
-                return undefined;
-            };
-            // 高亮当前的数据点，并设置鼠标滑动状态及绘制十字准星线
-            Highcharts.Point.prototype.highlight = function (event) {
-                this.onMouseOver(); // 显示鼠标激活标识
-                this.series.chart.tooltip.refresh(this); // 显示提示框
-                this.series.chart.xAxis[0].drawCrosshair(event, this); // 显示十字准星线
-            };
-            //同步缩放效果，即当一个图表进行了缩放效果，其他图表也进行缩放
-            function syncExtremes(e) {
-                var thisChart = this.chart;
-                if (e.trigger !== 'syncExtremes') {
-                    Highcharts.each(Highcharts.charts, function (chart) {
-                        if (chart !== thisChart) {
-                            if (chart.xAxis[0].setExtremes) {
-                                chart.xAxis[0].setExtremes(e.min, e.max, undefined, false, { trigger: 'syncExtremes' });
-                            }
-                        }
-                    });
-                }
-            }
-            // 渲染方法
-            function chartRender(DateTime){
-                $("#container").html("")
-                $.ajax({
-                    url:"/energyall",
-                    type:"get",
-                    data:{
-                        DateTime:DateTime
-                    },
-                    success:function(res){
-                        res = JSON.parse(res)
-                        console.log(res)
-                        $.each(res.datasets,function(i,dataset){
-                            $('<div class="chart"></div>').appendTo("#container").highcharts({
-                                chart: {
-                                    marginLeft: 40, // Keep all charts left aligned
-                                    spacingTop: 20,
-                                    spacingBottom: 20,
-                                    zoomType: 'x'
-                                },
-                                title: {
-                                    text: dataset.name,
-                                    align: 'left',
-                                    margin: 0,
-                                    x: 30
-                                },
-                                credits: {
-                                    enabled: false
-                                },
-                                legend: {
-                                    enabled: false
-                                },
-                                xAxis: {
-                                    crosshair: true,
-                                    categories:res.xData,
-                                    labels: {
-                                        format: '{value}'
-                                    }
-                                },
-                                yAxis: {
-                                    title: {
-                                        text: null
-                                    }
-                                },
-                                tooltip: {
-                                    positioner: function () {
-                                        return {
-                                            x: this.chart.chartWidth - this.label.width,
-                                            y: -1
-                                        };
-                                    },
-                                    borderWidth: 0,
-                                    backgroundColor: 'none',
-                                    pointFormat: '{point.y}',
-                                    headerFormat: '',
-                                    shadow: false,
-                                    style: {
-                                        fontSize: '18px'
-                                    }
-                                },
-                                plotOptions: {
-                                    series: {
-                                        cursor: 'pointer',
-                                        events: {
-                                            click: function(e) {
-                                                console.log(e)
-                                            }
-                                        }
-                                    }
-                                },
-                                series: [{
-                                    data: dataset.data,
-                                    name: dataset.name,
-                                    type: dataset.type,
-                                    fillOpacity: 0.3,
-                                    tooltip: {
-                                        valueSuffix: ' ' + dataset.unit
-                                    }
-                                }]
-                            });
-                        })
-                    }
-                })
-            }
         })
     </script>
 </body>

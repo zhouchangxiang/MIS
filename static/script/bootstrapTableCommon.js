@@ -6,7 +6,7 @@
             primaryKey:'ID', //主键
             parentTableID: '', //父表ID
             parentTableLinkField: '', //父表关联的字段
-            tableUrl: 'http://192.168.1.106:5000/CUID', //通用增删改查表格的请求接口
+            tableUrl: 'http://127.0.0.1:5000/CUID', //通用增删改查表格的请求接口
             toolbarBtnArr:[] //操作栏按钮
         };
         options = $.extend(defaluts, options);
@@ -213,7 +213,7 @@
         $(toolbarID).find(FieldSetSearchID).append(resfreshFieldSelectOptions)
         $(toolbarID).find(FieldSetSearchID).selectpicker("refresh")
         $(toolbarID).find(FieldSetSearchID).selectpicker("render")
-        $(toolbarID).find(FieldSetSearchID).selectpicker("val", columns[0].title); //赋默认值
+        $(toolbarID).find(FieldSetSearchID).selectpicker("val", ''); //赋默认值
         //搜索按钮
         $(toolbarID).on("click","[data-search-btn]",function(){
             $this.bootstrapTable('refresh',{

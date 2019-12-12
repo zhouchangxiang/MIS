@@ -144,6 +144,7 @@ def handler_msg(conn):
                 data_dict["StotalS"] = StotalS
                 data_dict['currentTime'] = str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
                 json_data = json.dumps(data_dict)
+                print(json_data)
                 # bytemsg = bytes(json_data, encoding="utf8")
                 # send_msg(c, bytes("recv: {}".format(data_parse), encoding="utf-8"))
                 bytemsg = bytes(json_data,encoding="utf-8")
