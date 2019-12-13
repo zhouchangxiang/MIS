@@ -31,10 +31,6 @@ def energyAreaTable():
 @energy.route('/costCenter')
 def costCenter():
     return render_template('./costCenter.html')
-#成本管理的维护表页面
-@energy.route('/costManage')
-def costManage():
-    return render_template('./costManage.html')
 #器件管理
 @energy.route('/DeviceManage')
 def DeviceManage():
