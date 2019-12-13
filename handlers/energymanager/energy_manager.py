@@ -35,6 +35,18 @@ def costCenter():
 @energy.route('/costManage')
 def costManage():
     return render_template('./costManage.html')
+#器件管理
+@energy.route('/DeviceManage')
+def DeviceManage():
+    return render_template('./DeviceManage.html')
+#价格管理
+@energy.route('/PriceManage')
+def PriceManage():
+    return render_template('./PriceManage.html')
+#单位管理
+@energy.route('/UnitManage')
+def UnitManage():
+    return render_template('./UnitManage.html')
 
 
 def getMonthFirstDayAndLastDay(year, month):
