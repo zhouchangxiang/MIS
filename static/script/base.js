@@ -235,7 +235,7 @@ function Digit(a) {
     }
 }
 //highchart柱状图表渲染方法
-function highchartsRender(id,xAxisArray,seriesData){
+function highchartsRender(id,xAxisArray,seriesData,unit){
     Highcharts.chart(id,{
         chart: {
             type: 'column'
@@ -251,6 +251,9 @@ function highchartsRender(id,xAxisArray,seriesData){
 		},
         xAxis: {
             categories: xAxisArray
+        },
+        tooltip: {
+            valueSuffix: " "+unit
         },
         yAxis: {
             title: {
@@ -292,7 +295,9 @@ function highchartsRealTimeNoTickRender(url,id,yKey,domID,totalKey,totalDom){
                             y = Math.floor(received_msg[yKey] * 100) / 100;       // 返回值
                         series.addPoint([x, y], true, true);
                         $("#"+ domID).html(y)
+                        $("#"+ domID).siblings(".unit").html(received_msg.unit)
                         $("#"+ totalDom).html((parseInt(received_msg[totalKey] * 100 ) / 100 ).toFixed(2))
+                        $("#"+ totalDom).siblings(".unit").html(received_msg.unit)
                     };
                 }
             }

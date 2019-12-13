@@ -121,57 +121,59 @@ def handler_msg(conn):
                 data_dict = {}
                 dir = []
                 dis = []
-                tis = {}
                 diw = []
-                tiw = {}
                 die = []
-                tie = {}
                 pool = redis.ConnectionPool(host=constant.REDIS_HOST)
                 redis_conn = redis.Redis(connection_pool=pool)
                 Tags = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaName).all()
+                i = 0
                 for tag in Tags:
                     try:
                         S = str(tag.TagClassValue)[0:1]
                         if S == "S":
-                            tis["title"] = tag.FEFportIP
-                            tis["WD"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                                  tag.TagClassValue + "WD"))
-                            tis["Flow"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                                 tag.TagClassValue + "F"))
-                            tis["Sum"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                                 tag.TagClassValue + "S"))
-                            dis.append(tis)
-                            data_dict["S"] = dis
+                            tis_i={}
+                            tis_i["title"] = tag.FEFportIP
+                            tis_i["WD"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                          tag.TagClassValue + "WD"))
+                            tis_i["Flow"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                            tag.TagClassValue + "F"))
+                            tis_i["Sum"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                           tag.TagClassValue + "S"))
+                            dis.append(tis_i)
                         elif S == "W":
-                            tiw["title"] = tag.FEFportIP
-                            tiw["Flow"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                                 tag.TagClassValue + "F"))
-                            tiw["Sum"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                                 tag.TagClassValue + "S"))
-                            diw.append(tiw)
-                            data_dict["W"] = diw
+                            tiw_i = {}
+                            tiw_i["title"] = tag.FEFportIP
+                            tiw_i["Flow"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                            tag.TagClassValue + "F"))
+                            tiw_i["Sum"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                           tag.TagClassValue + "S"))
+                            diw.append(tiw_i)
                         elif S == "E":
-                            tie["title"] = tag.FEFportIP
-                            tie["ZGL"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                                   tag.TagClassValue + "ZGL"))
-                            tie["AU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                                  tag.TagClassValue + "AU"))
-                            tie["AI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                                  tag.TagClassValue + "AI"))
-                            tie["BU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                                  tag.TagClassValue + "BU"))
-                            tie["BI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                                  tag.TagClassValue + "BI"))
-                            tie["CU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                                  tag.TagClassValue + "CU"))
-                            tie["CI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                                  tag.TagClassValue + "CI"))
-                            die.append(tie)
-                            data_dict["E"] = die
+                            tie_i = {}
+                            tie_i["title"] = tag.FEFportIP
+                            tie_i["ZGL"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                           tag.TagClassValue + "_ZGL"))
+                            tie_i["AU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                          tag.TagClassValue + "_AU"))
+                            tie_i["AI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                          tag.TagClassValue + "_AI"))
+                            tie_i["BU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                   tag.TagClassValue + "_BU"))
+                            tie_i["BI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                   tag.TagClassValue + "_BI"))
+                            tie_i["CU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                   tag.TagClassValue + "_CU"))
+                            tie_i["CI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                   tag.TagClassValue + "_CI"))
+                            die.append(tie_i)
                     except Exception as ee:
                         print("报错tag：" + tag.TagClassValue + " |报错IP：" + tag.IP + "  |报错端口：" + tag.COMNum + "  |错误：" + str(ee))
                     finally:
+                        i = i + 1
                         pass
+                data_dict["E"] = die
+                data_dict["S"] = dis
+                data_dict["W"] = diw
                 dir.append(data_dict)
                 print(dir)
                 json_data = json.dumps(data_dict)
@@ -187,7 +189,7 @@ def strtofloat(f):
     if f == None or f == "" or f == "0.0":
         return 0.0
     else:
-        return float(f)
+        return round(float(f), 2)
 
 
 def server_socket():

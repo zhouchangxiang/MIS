@@ -55,21 +55,21 @@
                     <div class="trendsChartContent dragscroll">
                         <div class="trendsChartItem mics-bg-primary" data-Energy="电">
                             <div class="form-group">电能</div>
-                            <div class="form-group"><span id="EtotalZGL">0</span></div>
+                            <div class="form-group"><span id="EtotalZGL">0</span> <span class="unit"></span></div>
                             <div class="form-group"><div class="row"><div class="highcharts-item" id="highcharts-electricity" style="min-width:162px;height:74px"></div></div></div>
                             <div class="form-group totalData"></div>
                         </div>
                         <div class="trendsChartItem mics-bg-primary" data-Energy="水">
                             <div class="form-group">水能</div>
-                            <div class="form-group"><span id="WtotalF">0</span></div>
+                            <div class="form-group"><span id="WtotalF">0</span> <span class="unit"></span></div>
                             <div class="form-group"><div class="row"><div class="highcharts-item" id="highcharts-water" style="min-width:162px;height:74px"></div></div></div>
-                            <div class="form-group totalData"><span id="WtotalS">0</span></div>
+                            <div class="form-group totalData"><span id="WtotalS">0</span> <span class="unit"></span></div>
                         </div>
                         <div class="trendsChartItem mics-bg-primary" data-Energy="汽">
                             <div class="form-group">汽能</div>
-                            <div class="form-group"><span id="StotalF">0</span></div>
+                            <div class="form-group"><span id="StotalF">0</span> <span class="unit"></span></div>
                             <div class="form-group"><div class="row"><div class="highcharts-item" id="highcharts-steam" style="min-width:162px;height:74px"></div></div></div>
-                            <div class="form-group totalData"><span id="StotalS">0</span></div>
+                            <div class="form-group totalData"><span id="StotalS">0</span> <span class="unit"></span></div>
                         </div>
                     </div>
                 </div>
@@ -263,8 +263,7 @@
                     },
                     success:function(res){
                         res = JSON.parse(res)
-                        console.log(res)
-                        highchartsRender("highchartsEnergy",res.X,res.Y)
+                        highchartsRender("highchartsEnergy",res.X,res.Y,res.unit)
                     }
                 })
             }
