@@ -44,7 +44,7 @@
                             SingleSelect = false
                         }
                     }else if(data.rows[0].ISFirstCheckBox == "False"){
-                        columns = [{checkbox: false}]
+
                     }
                     if(data.rows[0].IsAdd == "True"){
                         addbtn = '<button type="button" class="btn btn-info" data-add-btn>添加</button>'
