@@ -29,6 +29,8 @@
             <div class="radio"><input type="radio" name="energySelector" id="energySelector1" value="电" checked><label for="energySelector1">电</label></div>
             <div class="radio"><input type="radio" name="energySelector" id="energySelector2" value="水"><label for="energySelector2">水</label></div>
             <div class="radio"><input type="radio" name="energySelector" id="energySelector3" value="汽"><label for="energySelector3">汽</label></div>
+            <label for="" style="padding-left: 20px;">区域：</label>
+            <select id="sel_area" name="role" class="selectpicker" title="请选择" data-width="150px"></select>
             <label for="" style="padding-left: 20px;">时间：</label>
             <input type="text" class="form-control input-sm datetimepicker" id="dateTime" readonly>
             <label for="" style="padding-left: 20px;">范围：</label>
@@ -120,11 +122,47 @@
                 tableName:"SteamEnergy"
             })
 
+            //区域下拉框
+            $.ajax({
+                url:"http://127.0.0.1:5000/CUID",
+                type:"get",
+                data:{
+                    tableName: "AreaTable",
+                    limit : 100000000,
+                    offset : 0
+                },
+                success:function (res) {
+                    res = JSON.parse(res)
+                    var option = ''
+                    $.each(res.rows,function(i,value){
+                        option += `<option value="${ res.rows[i].AreaName }">${ res.rows[i].AreaName }</option>`
+                    })
+                    $("#sel_area").append(option)
+                    $("#sel_area").selectpicker("refresh")
+                    $("#sel_area").selectpicker("render")
+                }
+            });
+
             $("#chartView").on("click",function(){
                 $("#realTimeModal").modal('show')
                 var energy = $('input[name="energySelector"]:checked').val()
                 var dateTime = $("#dateTime").val()
-                var range = $('input[name="rangeSelector"]:checked').val()
+                var Area = $("#sel_area").val()
+                if($('input[name="rangeSelector"]:checked').val() == "")
+
+                $.ajax({
+                    url:"/energyall",
+                    type:"get",
+                    data:{
+                        EnergyClass:energy,
+                        DateTime:dateTime,
+                        Area:Area
+                    },
+                    success:function(res){
+                        res = JSON.parse(res)
+                        console.log(res)
+                    }
+                })
             })
         })
     </script>
