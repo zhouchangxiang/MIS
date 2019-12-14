@@ -110,112 +110,7 @@ def appendcur(cur, las):
             return 0.0
         else:
             return round(diff, 2)
-@energy.route('/energyTrend', methods=['POST', 'GET'])
-def energyTrend():
-    '''
-    能耗趋势
-    :return:
-    '''
-    if request.method == 'GET':
-        data = request.values
-        try:
-            currenttime = data.get("currenttime")
-            classparam = data.get("classparam")
-            currentyear = datetime.datetime.now().year
-            currentmonth = datetime.datetime.now().month
-            currentday = datetime.datetime.now().day
-            currenthour = datetime.datetime.now().hour
-            dir = {}
-            dix = []
-            diy = []
-            diyr = {}
-            diyz = []
-            if currenttime == "年":
-                for j in range(1,currentmonth+1):
-                    currM = str(currentyear) + "-" + addzero(j)
-                    lastM = strlastMonth(currM)
-                    dix.append(str(j))
-                    if classparam == "电":
-                        cur = \
-                        db_session.query(ElectricEnergy.ZGL).filter(ElectricEnergy.CollectionMonth == currM).order_by(
-                            desc("CollectionDate")).first()
-                        las = db_session.query(ElectricEnergy.ZGL).filter(
-                            ElectricEnergy.CollectionMonth == lastM).order_by(desc("CollectionDate")).first()
-                    elif classparam == "水":
-                        cur = \
-                        db_session.query(WaterEnergy.WaterSum).filter(WaterEnergy.CollectionMonth == currM).order_by(
-                            desc("CollectionDate")).first()
-                        las = db_session.query(WaterEnergy.WaterSum).filter(
-                            WaterEnergy.CollectionMonth == lastM).order_by(desc("CollectionDate")).first()
-                    else:  # classparam == "汽"
-                        cur = \
-                        db_session.query(SteamEnergy.SumValue).filter(SteamEnergy.CollectionMonth == currM).order_by(
-                            desc("CollectionDate")).first()
-                        las = db_session.query(SteamEnergy.SumValue).filter(
-                            SteamEnergy.CollectionMonth == lastM).order_by(desc("CollectionDate")).first()
-                    diyz.append(appendcur(cur, las))
-            elif currenttime == "月":
-                for j in range(1, currentday+1):
-                    currday = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(j)
-                    vv = datetime.datetime.strptime(currday, "%Y-%m-%d")
-                    lastday = str(vv + datetime.timedelta(days=-1))[0:10]
-                    dix.append(str(j))
-                    if classparam == "电":
-                        cur = \
-                        db_session.query(ElectricEnergy.ZGL).filter(ElectricEnergy.CollectionDay == currday).order_by(
-                            desc("CollectionDate")).first()
-                        las = db_session.query(ElectricEnergy.ZGL).filter(
-                            ElectricEnergy.CollectionDay == lastday).order_by(desc("CollectionDate")).first()
-                    elif classparam == "水":
-                        cur = \
-                        db_session.query(WaterEnergy.WaterSum).filter(WaterEnergy.CollectionDay == currday).order_by(
-                            desc("CollectionDate")).first()
-                        las = db_session.query(WaterEnergy.WaterSum).filter(
-                            WaterEnergy.CollectionDay == lastday).order_by(desc("CollectionDate")).first()
-                    else:  # classparam == "汽"
-                        cur = \
-                        db_session.query(SteamEnergy.SumValue).filter(SteamEnergy.CollectionDay == currday).order_by(
-                            desc("CollectionDate")).first()
-                        las = db_session.query(SteamEnergy.SumValue).filter(
-                            SteamEnergy.CollectionDay == lastday).order_by(desc("CollectionDate")).first()
-                    diyz.append(appendcur(cur, las))
-            elif currenttime == "日":
-                for j in range(0, currenthour):
-                    currhour = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(currentday) + " " + addzero(j)
-                    vv = datetime.datetime.strptime(currhour, "%Y-%m-%d %H")
-                    lasthour = str((vv + datetime.timedelta(hours=-1)).strftime("%Y-%m-%d %H:%M:%S"))[0:13]
-                    dix.append(str(j))
-                    if classparam == "电":
-                        cur = \
-                        db_session.query(ElectricEnergy.ZGL).filter(ElectricEnergy.CollectionDate.like("%"+currhour+"%")).order_by(
-                            desc("CollectionDate")).first()
-                        las = db_session.query(ElectricEnergy.ZGL).filter(
-                            ElectricEnergy.CollectionDate.like("%" + lasthour + "%")).order_by(desc("CollectionDate")).first()
-                    elif classparam == "水":
-                        cur = \
-                        db_session.query(WaterEnergy.WaterSum).filter(ElectricEnergy.CollectionDate.like("%"+currhour+"%")).order_by(
-                            desc("CollectionDate")).first()
-                        las = db_session.query(WaterEnergy.WaterSum).filter(
-                            ElectricEnergy.CollectionDate.like("%" + lasthour + "%")).order_by(desc("CollectionDate")).first()
-                    else:  # classparam == "汽"
-                        cur = \
-                        db_session.query(SteamEnergy.SumValue).filter(ElectricEnergy.CollectionDate.like("%"+currhour+"%")).order_by(
-                            desc("CollectionDate")).first()
-                        las = db_session.query(SteamEnergy.SumValue).filter(
-                            ElectricEnergy.CollectionDate.like("%" + lasthour + "%")).order_by(desc("CollectionDate")).first()
-                    diyz.append(appendcur(cur, las))
-            diyr["name"] = classparam
-            diyr["data"] = diyz
-            dir["X"] = dix
-            diy.append(diyr)
-            dir["Y"] = diy
-            unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == classparam).first()[0]
-            dir["unit"] = unit
-            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
-        except Exception as e:
-            print(e)
-            logger.error(e)
-            insertSyslog("error", "能耗趋势查询报错Error：" + str(e), current_user.Name)
+
 def curcutlas(cur, las, count):
     if cur is None:
         return count
@@ -280,10 +175,80 @@ def energyselect(data):
             datime = data.get("DateTime")
             EnergyClass = data.get("EnergyClass")
             ModelFlag = data.get("ModelFlag")
+            CurrentTime = data.get("CurrentTime")
             elecount = 0.0
             watcount = 0.0
             stecount = 0.0
-            if ModelFlag == "区域能耗":
+            if ModelFlag == "能耗趋势" or  ModelFlag == "数据报表":
+                dix = []
+                diy = []
+                diyr = {}
+                diyz = []
+                if ModelFlag == "数据报表":
+                    oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass, TagDetail.AreaName == Area).all()
+                    currentyear = CurrentTime[0:4]
+                    currentmonth = CurrentTime[0:7]
+                    currentday = CurrentTime[0:10]
+                elif ModelFlag == "能耗趋势":
+                    oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
+                if datime == "年":
+                    for j in range(1, currentmonth + 1):
+                        currM = str(currentyear) + "-" + addzero(j)
+                        lastM = strlastMonth(currM)
+                        dix.append(str(j))
+                        count = 0.0
+                        for oc in oclass:
+                            Tag = oc.TagClassValue[0:1]
+                            if Tag == "E":
+                                count = eletongji(oc, currM, lastM, count)
+                            elif Tag == "W":
+                                count = wattongji(oc, currM, lastM, count)
+                            elif Tag == "S":
+                                count = stetongji(oc, currM, lastM, count)
+                        diyz.append(count)
+                elif datime == "月":
+                    for j in range(1, currentday + 1):
+                        currday = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(j)
+                        vv = datetime.datetime.strptime(currday, "%Y-%m-%d")
+                        lastday = str(vv + datetime.timedelta(days=-1))[0:10]
+                        dix.append(str(j))
+                        count = 0.0
+                        for oc in oclass:
+                            Tag = oc.TagClassValue[0:1]
+                            if Tag == "E":
+                                count = eletongji(oc, currday, lastday, count)
+                            elif Tag == "W":
+                                count = wattongji(oc, currday, lastday, count)
+                            elif Tag == "S":
+                                count = stetongji(oc, currday, lastday, count)
+                        diyz.append(count)
+                elif datime == "日":
+                    for j in range(0, currenthour):
+                        currhour = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(
+                            currentday) + " " + addzero(j)
+                        if ModelFlag == "数据报表":
+                            currhour = CurrentTime[0:10]
+                        vv = datetime.datetime.strptime(currhour, "%Y-%m-%d %H")
+                        lasthour = str((vv + datetime.timedelta(hours=-1)).strftime("%Y-%m-%d %H:%M:%S"))[0:13]
+                        dix.append(str(j))
+                        count = 0.0
+                        for oc in oclass:
+                            Tag = oc.TagClassValue[0:1]
+                            if Tag == "E":
+                                count = eletongji(oc, currhour, lasthour, count)
+                            elif Tag == "W":
+                                count = wattongji(oc, currhour, lasthour, count)
+                            elif Tag == "S":
+                                count = stetongji(oc, currhour, lasthour, count)
+                        diyz.append(count)
+                diyr["name"] = EnergyClass
+                diyr["data"] = diyz
+                dir["X"] = dix
+                diy.append(diyr)
+                dir["Y"] = diy
+                unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == EnergyClass).first()[0]
+                dir["unit"] = unit
+            elif ModelFlag == "区域能耗":
                 oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == Area).all()
                 if datime == "年":
                     for oc in oclass:
@@ -348,36 +313,6 @@ def energyselect(data):
                 dir["WaterValue"] = round(energymoney(watcount, "水"), 2)
                 dir["SteamValue"] = round(energymoney(stecount, "汽"), 2)
                 dir["ZCB"] = round(energymoney(elecount, "电") + energymoney(watcount, "水") + energymoney(stecount, "汽"), 2)
-            elif ModelFlag == "数据报表":
-                lis = []
-                lisdata = []
-                die = {}
-                ewscount = 0.0
-                die["name"] = EnergyClass
-                die["unit"] = db_session.query(Unit.UnitValue).filter(Unit.UnitName == EnergyClass).first()[0]
-                die["type"] = "column"
-                datae = []
-                die["data"] = datae
-                if Area is None or Area == "":
-                    areas = db_session.query(AreaTable).filter().all()
-                else:
-                    areas = db_session.query(AreaTable).filter(AreaTable.AreaName == Area).all()
-                for area in areas:
-                    AreaName = area.AreaName
-                    lis.append(AreaName)
-                    oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == Area, TagDetail.EnergyClass == EnergyClass).all()
-                    for oc in oclass:
-                        Tag = oc.TagClassValue[0:1]
-                        if Tag == "E":
-                            ewscount = eletongji(oc, currday, lastday, elecount)
-                        elif Tag == "W":
-                            ewscount = wattongji(oc, currday, lastday, elecount)
-                        elif Tag == "S":
-                            ewscount = stetongji(oc, currday, lastday, elecount)
-                    datae.append(ewscount)
-                dir["xData"] = lis
-                lisdata.append(die)
-                dir["datasets"] = lisdata
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
