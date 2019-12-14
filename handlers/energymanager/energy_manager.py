@@ -270,7 +270,7 @@ def energyselect(data):
             currenthour = datetime.datetime.now().hour
             curryear = str(currentyear)
             lastyear = str(int(curryear) - 1)
-            currmonth = str(currentyear) + "-" + addzero(str(currentmonth))
+            currmonth = str(currentyear) + "-" + addzero(int(currentmonth))
             lastmonth = strlastMonth(currmonth)
             currday = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(currentday)
             vv = datetime.datetime.strptime(currday, "%Y-%m-%d")
