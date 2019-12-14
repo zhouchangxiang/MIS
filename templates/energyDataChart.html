@@ -37,8 +37,8 @@
             <div class="radio radio-primary"><input type="radio" name="rangeSelector" id="rangeSelector1" value="日" checked><label for="rangeSelector1">日</label></div>
             <div class="radio radio-primary"><input type="radio" name="rangeSelector" id="rangeSelector2" value="月"><label for="rangeSelector2">月</label></div>
             <div class="radio radio-primary"><input type="radio" name="rangeSelector" id="rangeSelector3" value="年"><label for="rangeSelector3">年</label></div>
-            <button type="button" class="btn btn-default" id="exportExcel">导出Excel</button>
-            <button type="button" class="btn btn-default" id="chartView">可视化图表</button>
+            <button type="button" class="btn btn-primary" id="chartView">可视化图表</button>
+            <button type="button" class="btn btn-primary" id="exportExcel">导出Excel</button>
         </form>
         <ul class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active"><a href="#Electric" aria-controls="Electric" role="tab" data-toggle="tab">电</a></li>
@@ -144,11 +144,17 @@
             });
 
             $("#chartView").on("click",function(){
-                $("#realTimeModal").modal('show')
+                $("#energyChartModal").modal('show')
                 var energy = $('input[name="energySelector"]:checked').val()
                 var dateTime = $("#dateTime").val()
                 var Area = $("#sel_area").val()
-                if($('input[name="rangeSelector"]:checked').val() == "")
+                if($('input[name="rangeSelector"]:checked').val() == "日"){
+                    dateTime = myDayformatter(new Date(dateTime))
+                }else if($('input[name="rangeSelector"]:checked').val() == "月"){
+                    dateTime = myMonthformatter(new Date(dateTime))
+                }else if($('input[name="rangeSelector"]:checked').val() == "年"){
+                    dateTime = myYearformatter(new Date(dateTime))
+                }
 
                 $.ajax({
                     url:"/energyall",
@@ -156,7 +162,8 @@
                     data:{
                         EnergyClass:energy,
                         DateTime:dateTime,
-                        Area:Area
+                        Area:Area,
+                        ModelFlag:"数据报表"
                     },
                     success:function(res){
                         res = JSON.parse(res)
