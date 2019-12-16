@@ -367,8 +367,8 @@ def energyHistory():
             diy = []
             dix = []
             eng = {}
-            Unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == Energy).first()[0]
-            dir["Unit"] = Unit
+            uni = db_session.query(Unit.UnitValue).filter(Unit.UnitName == Energy).first()[0]
+            dir["Unit"] = uni
             if Energy == "水":
                 # 能耗历史数据
                 CollectionDates = db_session.query(WaterEnergy.CollectionDate).distinct().filter(WaterEnergy.CollectionDate.between(StartTime,EndTime)).order_by(("CollectionDate")).all()
@@ -380,11 +380,12 @@ def energyHistory():
                     watEnergyValues = db_session.query(WaterEnergy.WaterFlow).filter(WaterEnergy.CollectionDate == CollectionDate[0]).all()
                     towatEnergyValue = 0.0
                     for watEnergyValue in watEnergyValues:
-                        towatEnergyValue = towatEnergyValue + watEnergyValue[0]
+                        towatEnergyValue = towatEnergyValue + float(watEnergyValue[0])
                     dicss.append(round(float(towatEnergyValue), 2))
                     diy.append(dicss)
                 #区域能耗排名
                 AreaNames = db_session.query(AreaTable.AreaName).filter().all()
+                totalflow = 0.0
                 for AreaName in AreaNames:
                     TagClassValues = db_session.query(TagDetail.TagClassValue).filter(TagDetail.AreaName == AreaName[0]).all()
                     engsum = 0.0
@@ -393,8 +394,9 @@ def energyHistory():
                             WaterEnergy.CollectionDate.between(StartTime, EndTime)).all()
                         engsum = engsum + accumulation(watEnergyValues)
                     eng[AreaName[0]] = str(round(engsum, 2))
+                    totalflow = totalflow + engsum
                 # 累积量
-                dir["total"] = engsum
+                dir["total"] = str(round(totalflow, 2))
             elif Energy == "电":
                 CollectionDates = db_session.query(ElectricEnergy.CollectionDate).distinct().filter(ElectricEnergy.CollectionDate.between(StartTime,EndTime)).order_by(("CollectionDate")).all()
                 for CollectionDate in CollectionDates:
@@ -403,7 +405,7 @@ def energyHistory():
                     timeStamp = int(time.mktime(timeArray))
                     dicss.append(1000 * timeStamp)
                     currhour = CollectionDate[0]
-                    vv = datetime.datetime.strptime(currhour, "%Y-%m-%d %H")
+                    vv = datetime.datetime.strptime(currhour, "%Y-%m-%d %H:%M:%S")
                     lasthour = str((vv + datetime.timedelta(hours=-1)).strftime("%Y-%m-%d %H:%M:%S"))[0:13]
                     oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == Energy).all()
                     eletotal = 0.0
@@ -413,6 +415,7 @@ def energyHistory():
                     diy.append(dicss)
                 # 区域能耗排名
                 AreaNames = db_session.query(AreaTable.AreaName).filter().all()
+                totalflow = 0.0
                 for AreaName in AreaNames:
                     TagClassValues = db_session.query(TagDetail.TagClassValue).filter(
                         TagDetail.AreaName == AreaName[0]).all()
@@ -420,13 +423,15 @@ def energyHistory():
                     for TagClassValue in TagClassValues:
                         cur = db_session.query(ElectricEnergy.ZGL).filter(
                             ElectricEnergy.TagClassValue == TagClassValue,
-                            ElectricEnergy.CollectionDate == StartTime).first()
+                            ElectricEnergy.CollectionDate == StartTime).order_by(desc("CollectionDate")).first()
                         las = db_session.query(ElectricEnergy.ZGL).filter(
                             ElectricEnergy.TagClassValue == TagClassValue,
-                            ElectricEnergy.CollectionDate == EndTime).first()
-                    eng[AreaName[0]] = appendcur(cur, las)
+                            ElectricEnergy.CollectionDate == EndTime).order_by(("CollectionDate")).first()
+                        engsum = engsum + appendcur(cur, las)
+                    eng[AreaName[0]] = round(engsum, 2)
+                    totalflow = totalflow + engsum
                 # 累积量
-                dir["total"] = engsum
+                dir["total"] = round(totalflow, 2)
             elif Energy == "汽":
                 CollectionDates = db_session.query(SteamEnergy.CollectionDate).distinct().filter(
                     SteamEnergy.CollectionDate.between(StartTime, EndTime)).order_by(("CollectionDate")).all()
@@ -439,11 +444,12 @@ def energyHistory():
                         SteamEnergy.CollectionDate == CollectionDate[0]).all()
                     tosteEnergyValue = 0.0
                     for steEnergyValue in steEnergyValues:
-                        tosteEnergyValue = tosteEnergyValue + steEnergyValue[0]
+                        tosteEnergyValue = tosteEnergyValue + float(steEnergyValue[0])
                     dicss.append(round(float(tosteEnergyValue), 2))
                     diy.append(dicss)
                 # 区域能耗排名
                 AreaNames = db_session.query(AreaTable.AreaName).filter().all()
+                totalflow = 0.0
                 for AreaName in AreaNames:
                     TagClassValues = db_session.query(TagDetail.TagClassValue).filter(
                         TagDetail.AreaName == AreaName[0]).all()
@@ -453,9 +459,10 @@ def energyHistory():
                             SteamEnergy.TagClassValue == TagClassValue,
                             SteamEnergy.CollectionDate.between(StartTime, EndTime)).all()
                         engsum = engsum + accumulation(steEnergyValues)
-                    eng[AreaName[0]] = str(engsum)
+                    eng[AreaName[0]] = str(round(totalflow, 2))
+                    totalflow = totalflow + engsum
                 # 累积量
-                dir["total"] = engsum
+                dir["total"] = str(round(totalflow, 2))
             en = sorted(eng.items(), key=lambda x: float(x[1]), reverse=True)
             eny = []
             enx = []
