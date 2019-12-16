@@ -102,6 +102,25 @@
         $(function(){
             $('select.select').select();
 
+            $('.sidebarSelect').bind('DOMNodeInserted','#EnergyClassSelect',function(e){
+                EnergyCostRender(e.target.innerHTML)
+            })
+            function EnergyCostRender(EnergyClass) {
+                $.ajax({
+                    url:"/energyall",
+                    type:"get",
+                    data:{
+                        EnergyClass : EnergyClass,
+                        ModelFlag:"成本展示"
+                    },
+                    success:function (res) {
+                        res = JSON.parse(res)
+                        console.log(res)
+                        $("#costValue").html(res.ZCB)
+                    }
+                })
+            }
+
             var dom = document.querySelector(".number")
             var digit = new Digit({
                 number : 7258906, // 到达指定数值停止滚动

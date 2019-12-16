@@ -146,28 +146,32 @@
             $("#chartView").on("click",function(){
                 $("#energyChartModal").modal('show')
                 var energy = $('input[name="energySelector"]:checked').val()
-                var dateTime = $("#dateTime").val()
+                var CurrentTime = $("#dateTime").val()
                 var Area = $("#sel_area").val()
-                if($('input[name="rangeSelector"]:checked').val() == "日"){
-                    dateTime = myDayformatter(new Date(dateTime))
-                }else if($('input[name="rangeSelector"]:checked').val() == "月"){
-                    dateTime = myMonthformatter(new Date(dateTime))
-                }else if($('input[name="rangeSelector"]:checked').val() == "年"){
-                    dateTime = myYearformatter(new Date(dateTime))
+                var dateTime = $('input[name="rangeSelector"]:checked').val()
+                if(dateTime == "日"){
+                    CurrentTime = myDayformatter(new Date(CurrentTime))
+                }else if(dateTime == "月"){
+                    CurrentTime = myMonthformatter(new Date(CurrentTime))
+                }else if(dateTime == "年"){
+                    CurrentTime = myYearformatter(new Date(CurrentTime))
                 }
-
+                $("#energyChartModal").find(".modal-title").html(energy+"能"+Area+CurrentTime+"数据图表")
+                console.log(Area)
                 $.ajax({
                     url:"/energyall",
                     type:"get",
                     data:{
                         EnergyClass:energy,
                         DateTime:dateTime,
+                        CurrentTime:CurrentTime,
                         Area:Area,
                         ModelFlag:"数据报表"
                     },
                     success:function(res){
                         res = JSON.parse(res)
                         console.log(res)
+                        highchartsRender("modalEnergyHistoryChart",res.X,res.Y,res.unit)
                     }
                 })
             })

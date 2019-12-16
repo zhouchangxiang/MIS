@@ -3,7 +3,7 @@ import arrow
 to = 0.0
 for i in range(1,3):
     to = to + 1.1
-print(to)
+print(int("05") + 1)
 aaa = None
 if aaa is None:
     print("aa")
@@ -14,7 +14,7 @@ if aaa == None:
 
 a = round((1.9 + (1.2 - 1.0)), 2)
 print(round(0.0, 2))
-print(datetime.datetime.now().month)
+print(datetime.datetime.now())
 now_time=datetime.datetime.now()
 aa = "2019-12-11 00"
 print(datetime.datetime.strptime(aa, "%Y-%m-%d %H"))

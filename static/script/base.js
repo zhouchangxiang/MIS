@@ -447,3 +447,52 @@ function highchartsAreaBarRender(id,xAxisArray,seriesData,Unit){
         series:seriesData
     });
 }
+
+//highchart成本饼图
+function highchartsPieRender(id,data){
+    var chart = Highcharts.chart(id, {
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            backgroundColor:'#EFF5FB',
+            type: 'pie'
+        },
+        credits: {
+            enabled: false//不显示LOGO
+        },
+        title: {
+            text: null
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    }
+                }
+            }
+        },
+        series: data
+    });
+    $(".costPieChart").hover(function(){
+        chart.update({
+            chart:{
+                backgroundColor:'#07488E'
+            }
+        });
+    },function(){
+        chart.update({
+            chart:{
+                backgroundColor:'#EFF5FB'
+            }
+        });
+    })
+}
