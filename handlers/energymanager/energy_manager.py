@@ -105,7 +105,7 @@ def appendcur(cur, las):
             las = 0.0
         else:
             las = las[0]
-        diff = float(cur) - float(las)
+        diff = round(float(cur) - float(las), 2)
         if diff < 0:
             return 0.0
         else:
@@ -367,49 +367,50 @@ def energyHistory():
             diy = []
             dix = []
             eng = {}
+            Unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == Energy).first()[0]
+            dir["Unit"] = Unit
             if Energy == "水":
-                #能耗历史数据
-                watEnergyValues = db_session.query(WaterEnergy).filter(WaterEnergy.CollectionDate.between(StartTime,EndTime)).order_by(("CollectionDate")).all()
-                Unit = ""
-                for wa in watEnergyValues:
-                    Unit = wa.Unit
+                # 能耗历史数据
+                CollectionDates = db_session.query(WaterEnergy.CollectionDate).distinct().filter(WaterEnergy.CollectionDate.between(StartTime,EndTime)).order_by(("CollectionDate")).all()
+                for CollectionDate in CollectionDates:
                     dicss = []
-                    if wa.CollectionDate != None:
-                        timeArray = time.strptime(wa.CollectionDate, "%Y-%m-%d %H:%M:%S")
-                        timeStamp = int(time.mktime(timeArray))
-                        dicss.append(1000*timeStamp)
-                    else:
-                        dicss.append(0)
-                    dicss.append(float(wa.WaterSum))
+                    timeArray = time.strptime(CollectionDate[0], "%Y-%m-%d %H:%M:%S")
+                    timeStamp = int(time.mktime(timeArray))
+                    dicss.append(1000 * timeStamp)
+                    watEnergyValues = db_session.query(WaterEnergy.WaterFlow).filter(WaterEnergy.CollectionDate == CollectionDate[0]).all()
+                    towatEnergyValue = 0.0
+                    for watEnergyValue in watEnergyValues:
+                        towatEnergyValue = towatEnergyValue + watEnergyValue[0]
+                    dicss.append(round(float(towatEnergyValue), 2))
                     diy.append(dicss)
-                dir["Unit"] = Unit
                 #区域能耗排名
                 AreaNames = db_session.query(AreaTable.AreaName).filter().all()
                 for AreaName in AreaNames:
                     TagClassValues = db_session.query(TagDetail.TagClassValue).filter(TagDetail.AreaName == AreaName[0]).all()
                     engsum = 0.0
                     for TagClassValue in TagClassValues:
-                        watEnergyValues = db_session.query(WaterEnergy.WaterSum).filter(WaterEnergy.TagClassValue == TagClassValue,
+                        watEnergyValues = db_session.query(WaterEnergy.WaterFlow).filter(WaterEnergy.TagClassValue == TagClassValue,
                             WaterEnergy.CollectionDate.between(StartTime, EndTime)).all()
                         engsum = engsum + accumulation(watEnergyValues)
-                    eng[AreaName[0]] = str(engsum)
+                    eng[AreaName[0]] = str(round(engsum, 2))
                 # 累积量
-                dir["total"] = accumulation(watEnergyValues)
+                dir["total"] = engsum
             elif Energy == "电":
-                eleEnergyValues = db_session.query(ElectricEnergy).filter(ElectricEnergy.CollectionDate.between(StartTime,EndTime)).order_by(("CollectionDate")).all()
-                Unit = ""
-                for el in eleEnergyValues:
-                    Unit = el.Unit
+                CollectionDates = db_session.query(ElectricEnergy.CollectionDate).distinct().filter(ElectricEnergy.CollectionDate.between(StartTime,EndTime)).order_by(("CollectionDate")).all()
+                for CollectionDate in CollectionDates:
                     dicss = []
-                    if el.CollectionDate != None:
-                        timeArray = time.strptime(el.CollectionDate, "%Y-%m-%d %H:%M:%S")
-                        timeStamp = int(time.mktime(timeArray))
-                        dicss.append(1000*timeStamp)
-                    else:
-                        dicss.append(0)
-                    dicss.append(float(el.ZGL))
+                    timeArray = time.strptime(CollectionDate[0], "%Y-%m-%d %H:%M:%S")
+                    timeStamp = int(time.mktime(timeArray))
+                    dicss.append(1000 * timeStamp)
+                    currhour = CollectionDate[0]
+                    vv = datetime.datetime.strptime(currhour, "%Y-%m-%d %H")
+                    lasthour = str((vv + datetime.timedelta(hours=-1)).strftime("%Y-%m-%d %H:%M:%S"))[0:13]
+                    oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == Energy).all()
+                    eletotal = 0.0
+                    for oc in oclass:
+                        eletotal = eletongji(oc, currhour, lasthour, eletotal)
+                    dicss.append(eletotal)
                     diy.append(dicss)
-                dir["Unit"] = Unit
                 # 区域能耗排名
                 AreaNames = db_session.query(AreaTable.AreaName).filter().all()
                 for AreaName in AreaNames:
@@ -417,28 +418,30 @@ def energyHistory():
                         TagDetail.AreaName == AreaName[0]).all()
                     engsum = 0.0
                     for TagClassValue in TagClassValues:
-                        eleEnergyValues = db_session.query(ElectricEnergy.ZGL).filter(
+                        cur = db_session.query(ElectricEnergy.ZGL).filter(
                             ElectricEnergy.TagClassValue == TagClassValue,
-                            ElectricEnergy.CollectionDate.between(StartTime, EndTime)).all()
-                        engsum = engsum + accumulation(eleEnergyValues)
-                    eng[AreaName[0]] = str(engsum)
+                            ElectricEnergy.CollectionDate == StartTime).first()
+                        las = db_session.query(ElectricEnergy.ZGL).filter(
+                            ElectricEnergy.TagClassValue == TagClassValue,
+                            ElectricEnergy.CollectionDate == EndTime).first()
+                    eng[AreaName[0]] = appendcur(cur, las)
                 # 累积量
-                dir["total"] = accumulation(eleEnergyValues)
+                dir["total"] = engsum
             elif Energy == "汽":
-                steEnergyValues = db_session.query(SteamEnergy).filter(SteamEnergy.CollectionDate.between(StartTime,EndTime)).order_by(("CollectionDate")).all()
-                Unit = ""
-                for st in steEnergyValues:
-                    Unit = st.Unit
+                CollectionDates = db_session.query(SteamEnergy.CollectionDate).distinct().filter(
+                    SteamEnergy.CollectionDate.between(StartTime, EndTime)).order_by(("CollectionDate")).all()
+                for CollectionDate in CollectionDates:
                     dicss = []
-                    if st.CollectionDate != None:
-                        timeArray = time.strptime(st.CollectionDate, "%Y-%m-%d %H:%M:%S")
-                        timeStamp = int(1000*time.mktime(timeArray))
-                        dicss.append(timeStamp)
-                    else:
-                        dicss.append(0)
-                    dicss.append(st.SumValue)
+                    timeArray = time.strptime(CollectionDate[0], "%Y-%m-%d %H:%M:%S")
+                    timeStamp = int(time.mktime(timeArray))
+                    dicss.append(1000 * timeStamp)
+                    steEnergyValues = db_session.query(SteamEnergy.FlowValue).filter(
+                        SteamEnergy.CollectionDate == CollectionDate[0]).all()
+                    tosteEnergyValue = 0.0
+                    for steEnergyValue in steEnergyValues:
+                        tosteEnergyValue = tosteEnergyValue + steEnergyValue[0]
+                    dicss.append(round(float(tosteEnergyValue), 2))
                     diy.append(dicss)
-                dir["Unit"] = Unit
                 # 区域能耗排名
                 AreaNames = db_session.query(AreaTable.AreaName).filter().all()
                 for AreaName in AreaNames:
@@ -446,13 +449,13 @@ def energyHistory():
                         TagDetail.AreaName == AreaName[0]).all()
                     engsum = 0.0
                     for TagClassValue in TagClassValues:
-                        steEnergyValues = db_session.query(SteamEnergy.SumValue).filter(
+                        steEnergyValues = db_session.query(SteamEnergy.FlowValue).filter(
                             SteamEnergy.TagClassValue == TagClassValue,
                             SteamEnergy.CollectionDate.between(StartTime, EndTime)).all()
                         engsum = engsum + accumulation(steEnergyValues)
                     eng[AreaName[0]] = str(engsum)
                 # 累积量
-                dir["total"] = accumulation(steEnergyValues)
+                dir["total"] = engsum
             en = sorted(eng.items(), key=lambda x: float(x[1]), reverse=True)
             eny = []
             enx = []
