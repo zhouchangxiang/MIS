@@ -327,6 +327,21 @@ def energyselect(data):
                 dir["WaterValue"] = round(energymoney(watcount, "水"), 2)
                 dir["SteamValue"] = round(energymoney(stecount, "汽"), 2)
                 dir["ZCB"] = round(energymoney(elecount, "电") + energymoney(watcount, "水") + energymoney(stecount, "汽"), 2)
+                #饼图
+                dice = {}
+                dice["name"] = "电"
+                dice["y"] = round(energymoney(elecount, "电"), 2)
+                dicw = {}
+                dicw["name"] = "水"
+                dicw["y"] = round(energymoney(watcount, "水"), 2)
+                dics = {}
+                dics["name"] = "汽"
+                dics["y"] = round(energymoney(stecount, "汽"), 2)
+                datadic = []
+                datadic.append(dice)
+                datadic.append(dicw)
+                datadic.append(dics)
+                dir["data"] = datadic
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
