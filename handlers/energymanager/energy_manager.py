@@ -331,13 +331,13 @@ def energyselect(data):
                 dice = {}
                 ztotal = round(energymoney(elecount, "电") + energymoney(watcount, "水") + energymoney(stecount, "汽"), 2)
                 dice["name"] = "电"
-                dice["y"] = '{:.2f}%'.format(round(energymoney(elecount, "电"), 2)/ztotal*100)
+                dice["y"] = float('{:.2f}'.format(round(energymoney(elecount, "电"), 2)/ztotal*100))
                 dicw = {}
                 dicw["name"] = "水"
-                dicw["y"] = '{:.2f}%'.format(round(energymoney(watcount, "水"), 2)/ztotal*100)
+                dicw["y"] = float('{:.2f}'.format(round(energymoney(watcount, "水"), 2)/ztotal*100))
                 dics = {}
                 dics["name"] = "汽"
-                dics["y"] = '{:.2f}%'.format(round(energymoney(stecount, "汽"), 2)/ztotal*100)
+                dics["y"] = float('{:.2f}'.format(round(energymoney(stecount, "汽"), 2)/ztotal*100))
                 datadic = []
                 datadic.append(dice)
                 datadic.append(dicw)
