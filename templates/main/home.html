@@ -238,6 +238,7 @@
                     },
                     success:function (res) {
                         res = JSON.parse(res)
+                        console.log(res)
                         $("#EnergyHistoryDataTotal").html(res.total)
                         highchartsEnergyHistoryRender("modalEnergyHistoryChart",res.HistorySeries,res.Unit)
                         highchartsAreaBarRender("rankingChart",res.energyRankX,res.energyRankY,res.Unit)
@@ -295,20 +296,19 @@
             })
             //区域能耗量
             EnergyAreaRender($("#EnergyAreaSelect").val(),$("#EnergyAreaDateSelect").val())
-            $(".EnergyAreaSelect").bind('DOMNodeInserted',"#EnergyAreaSelect",function(e){
+            $('.EnergyAreaSelect').bind('DOMNodeInserted','#EnergyAreaSelect',function(e){
                 EnergyAreaRender(e.target.innerHTML,$("#EnergyAreaDateSelect").val())
             })
             $('.EnergyAreaDateSelect').bind('DOMNodeInserted','#EnergyAreaDateSelect',function(e){
                 EnergyAreaRender($("#EnergyAreaSelect").val(),e.target.innerHTML)
             })
-            function EnergyAreaRender(Area,DateTime,EnergyClass){
+            function EnergyAreaRender(Area,DateTime){
                 $.ajax({
                     url:"/energyall",
                     type:"get",
                     data:{
                         Area: Area,
                         DateTime : DateTime,
-                        EnergyClass : EnergyClass,
                         ModelFlag:"区域能耗"
                     },
                     success:function (res) {
@@ -335,9 +335,8 @@
                     },
                     success:function (res) {
                         res = JSON.parse(res)
-                        console.log(res)
                         $("#costValue").html(res.ZCB)
-                        highchartsPieRender("costPieChart")
+                        highchartsPieRender("costPieChart",res.data)
                     }
                 })
             }

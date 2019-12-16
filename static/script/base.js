@@ -480,7 +480,11 @@ function highchartsPieRender(id,data){
                 }
             }
         },
-        series: data
+        series: [{
+            name: '总成本',
+		    colorByPoint: true,
+            data:data
+        }]
     });
     $(".costPieChart").hover(function(){
         chart.update({
