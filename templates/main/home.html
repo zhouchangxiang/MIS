@@ -125,11 +125,11 @@
             </div>
             <div class="col-md-12">
                 <div class="costHead mics-bg-primary">
-                    <span class="pull-left" id="costData">16452.17</span>
+                    <span class="pull-left" id="costValue">0</span>
                     <span class="pull-right">RMB</span>
                 </div>
                 <div class="costPieChart mics-bg-primary">
-
+                    <div style="width: 100%;height: 200px;" id="costPieChart"></div>
                 </div>
             </div>
         </div>
@@ -253,13 +253,14 @@
             $('.EnergyChartSelect_Item').bind('DOMNodeInserted',"#EnergyChartSelect_Item",function(e){
                 ajaxEnergyTrend($("#EnergyChartSelect_Time").val(),e.target.innerHTML)
             })
-            function ajaxEnergyTrend(currenttime,classparam){
+            function ajaxEnergyTrend(DateTime,EnergyClass){
                 $.ajax({
-                    url:"/energyTrend",
+                    url:"/energyall",
                     type:"get",
                     data:{
-                        currenttime:currenttime,
-                        classparam:classparam
+                        EnergyClass : EnergyClass,
+                        DateTime:DateTime,
+                        ModelFlag:"能耗趋势"
                     },
                     success:function(res){
                         res = JSON.parse(res)
@@ -312,29 +313,31 @@
                     },
                     success:function (res) {
                         res = JSON.parse(res)
-                        console.log(res)
                         $("#ElectricValue").html(res.ElectricValue)
                         $("#WaterValue").html(res.WaterValue)
                         $("#SteamValue").html(res.SteamValue)
                     }
                 })
             }
+
+            //成本中心
             EnergyCostRender($("#EnergyClassSelect").val())
             $('.EnergyClassSelect').bind('DOMNodeInserted','#EnergyClassSelect',function(e){
                 EnergyCostRender(e.target.innerHTML)
             })
-            function EnergyCostRender(EnergyClass){
+            function EnergyCostRender(DateTime){
                 $.ajax({
                     url:"/energyall",
                     type:"get",
                     data:{
-                        EnergyClass : EnergyClass,
+                        DateTime : DateTime,
                         ModelFlag:"成本展示"
                     },
                     success:function (res) {
                         res = JSON.parse(res)
                         console.log(res)
-                        $("#costValue").html()
+                        $("#costValue").html(res.ZCB)
+                        highchartsPieRender("costPieChart")
                     }
                 })
             }

@@ -125,6 +125,16 @@ def curcutlas(cur, las, count):
             return count
         else:
              return round(count + diff, 2)
+def energymoney(count, name):
+    prices = db_session.query(PriceList).filter(PriceList.IsEnabled == "是").all()
+    for pr in prices:
+        if pr.PriceName == name:
+            return float(count)*float(pr.PriceValue)
+def getO(sum):
+    if sum is not None:
+        return float(sum[0])
+    else:
+        return 0
 def eletongji(oc, currtime, lasttime, elecount):
     cur = \
         db_session.query(ElectricEnergy.ZGL).filter(
@@ -179,20 +189,19 @@ def energyselect(data):
             elecount = 0.0
             watcount = 0.0
             stecount = 0.0
-            if ModelFlag == "能耗趋势" or  ModelFlag == "数据报表":
+            if ModelFlag == "能耗趋势" or ModelFlag == "数据报表":
                 dix = []
                 diy = []
                 diyr = {}
                 diyz = []
-                if ModelFlag == "数据报表":
+                if Area is not None and Area != "":
                     oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass, TagDetail.AreaName == Area).all()
-                    currentyear = CurrentTime[0:4]
-                    currentmonth = CurrentTime[0:7]
-                    currentday = CurrentTime[0:10]
-                elif ModelFlag == "能耗趋势":
+                else:
                     oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
                 if datime == "年":
-                    for j in range(1, currentmonth + 1):
+                    if ModelFlag == "数据报表":
+                        currentyear = CurrentTime[0:4]
+                    for j in range(1, int(currentmonth) + 1):
                         currM = str(currentyear) + "-" + addzero(j)
                         lastM = strlastMonth(currM)
                         dix.append(str(j))
@@ -207,8 +216,11 @@ def energyselect(data):
                                 count = stetongji(oc, currM, lastM, count)
                         diyz.append(count)
                 elif datime == "月":
-                    for j in range(1, currentday + 1):
-                        currday = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(j)
+                    if ModelFlag == "数据报表":
+                        currentyear = CurrentTime[0:4]
+                        currentmonth = CurrentTime[5:7]
+                    for j in range(1, int(currentday) + 1):
+                        currday = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(j)
                         vv = datetime.datetime.strptime(currday, "%Y-%m-%d")
                         lastday = str(vv + datetime.timedelta(days=-1))[0:10]
                         dix.append(str(j))
@@ -223,11 +235,13 @@ def energyselect(data):
                                 count = stetongji(oc, currday, lastday, count)
                         diyz.append(count)
                 elif datime == "日":
+                    if ModelFlag == "数据报表":
+                        currentyear = CurrentTime[0:4]
+                        currentmonth = CurrentTime[5:7]
+                        currentday = CurrentTime[8:10]
                     for j in range(0, currenthour):
-                        currhour = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(
-                            currentday) + " " + addzero(j)
-                        if ModelFlag == "数据报表":
-                            currhour = CurrentTime[0:10]
+                        currhour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
+                            int(currentday)) + " " + addzero(j)
                         vv = datetime.datetime.strptime(currhour, "%Y-%m-%d %H")
                         lasthour = str((vv + datetime.timedelta(hours=-1)).strftime("%Y-%m-%d %H:%M:%S"))[0:13]
                         dix.append(str(j))
@@ -334,16 +348,6 @@ def energyselect(data):
             print(e)
             insertSyslog("error", "能耗查询报错Error：" + str(e), current_user.Name)
             return json.dumps([{"status": "Error：" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
-def energymoney(count, name):
-    prices = db_session.query(PriceList).filter(PriceList.IsEnabled == "是").all()
-    for pr in prices:
-        if pr.PriceName == name:
-            return float(count)*float(pr.PriceValue)
-def getO(sum):
-    if sum is not None:
-        return float(sum[0])
-    else:
-        return 0
 
 @energy.route('/energyHistory', methods=['POST', 'GET'])
 def energyHistory():
