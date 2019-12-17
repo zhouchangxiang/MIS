@@ -515,26 +515,49 @@ def exportx(Area,EnergyClass,CurrentTime):
         'border': 1,
         'align': 'center',
         'valign': 'vcenter',
-        'fg_color': '#f4cccc'})
+        'fg_color': '#006633'})
 
     col = 0
     row = 1
+    tag = []
+    tas = db_session.query(TagDetail).filter(TagDetail.AreaName == Area).all()
+    for ta in tas:
+        tag.append(ta.TagClassValue)
     # 写入列名
-    columns = ['A', 'B', 'C', 'D', 'E']
+    if EnergyClass == "水":
+        columns = ['单位', '仪表ID', '价格ID', '采集点', '采集时间', '采集年', '采集月', '采集天', '瞬时流量', '累计流量']
+        oclass = db_session.query(WaterEnergy).filter(WaterEnergy.TagClassValue.in_(tag), WaterEnergy.CollectionDate.like("%"+CurrentTime+"%")).all()
+    elif EnergyClass == "电":
+        columns = ['A', 'B', 'C', 'D', 'E']
+    else:
+        columns = ['A', 'B', 'C', 'D', 'E']
     for item in columns:
         worksheet.write(0, col, item, cell_format)
         col += 1
     # 写入数据
-    index = 0
-    while index < 10:
-        for co in columns:
-            worksheet.write(row, columns.index(co), index)
-        row += 1
-        index += 1
-        print('row===%s,index===%s' % (row, index))
-    # 设置A-E的宽
-    worksheet.set_column('A:E', 20)
-
+    for i in range(1,len(oclass)):
+        if EnergyClass == "水":
+            for cum in columns:
+                if cum == '单位':
+                    worksheet.write(i, columns.index(cum), oclass[i].Unit)
+                if cum == '仪表ID':
+                    worksheet.write(i, columns.index(cum), oclass[i].EquipmnetID)
+                if cum == '价格ID':
+                    worksheet.write(i, columns.index(cum), oclass[i].PriceID)
+                if cum == '采集点':
+                    worksheet.write(i, columns.index(cum), oclass[i].TagClassValue)
+                if cum == '采集时间':
+                    worksheet.write(i, columns.index(cum), oclass[i].CollectionDate)
+                if cum == '采集年':
+                    worksheet.write(i, columns.index(cum), oclass[i].CollectionYear)
+                if cum == '采集月':
+                    worksheet.write(i, columns.index(cum), oclass[i].CollectionMonth)
+                if cum == '采集天':
+                    worksheet.write(i, columns.index(cum), oclass[i].CollectionDay)
+                if cum == '瞬时流量':
+                    worksheet.write(i, columns.index(cum), oclass[i].WaterFlow)
+                if cum == '累计流量':
+                    worksheet.write(i, columns.index(cum), oclass[i].WaterSum)
     writer.close()
     output.seek(0)
     return output
