@@ -1,5 +1,5 @@
 import redis
-from flask import Blueprint, render_template, request, make_response
+from flask import Blueprint, render_template, request, make_response, send_file
 import json
 import datetime
 from sqlalchemy import desc
@@ -15,6 +15,7 @@ from dbset.log.BK2TLogger import logger,insertSyslog
 import datetime
 import arrow
 import time
+import excel
 
 energy = Blueprint('energy', __name__, template_folder='templates')
 
@@ -482,3 +483,38 @@ def energyHistory():
             print(e)
             logger.error(e)
             insertSyslog("error", "能源历史数据查询报错Error：" + str(e), current_user.Name)
+
+@energy.route('/excelout', methods=['POST', 'GET'])
+def excelout():
+    if request.method == 'GET':
+        data = request.values
+        try:
+            jsonstr = json.dumps(data.to_dict())
+            if len(jsonstr) > 10:
+                Area = data.get("Area")
+                EnergyClass = data.get("EnergyClass")
+                CurrentTime = data.get("CurrentTime")
+                oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == Area).all()
+                tag = []
+                for oc in oclass:
+                    tag.append(oc.TagClassValue)
+                if EnergyClass == "水":
+                    q = db_session.query(
+                        WaterEnergy.Unit.label('单位'),
+                        WaterEnergy.EquipmnetID.label('仪表'),
+                        WaterEnergy.PriceID.label('单价'),
+                        WaterEnergy.TagClassValue.label('采集点'),
+                        WaterEnergy.CollectionDate.label('采集时间'),
+                        WaterEnergy.CollectionYear.label('采集年'),
+                        WaterEnergy.CollectionMonth.label('采集月'),
+                        WaterEnergy.CollectionDay.label('采集天'),
+                        WaterEnergy.WaterFlow.label('瞬时流量'),
+                        WaterEnergy.WaterSum.label('累计流量')
+                    ).filter(WaterEnergy.CollectionDate.like("%"+CurrentTime+"%"), WaterEnergy.TagClassValue.in_(tag)).order_by(desc("ID"))
+                    query_sets = q.all()
+                    return excel.make_response_from_query_sets(query_sets,column_names=['单位','仪表','单价','采集点','采集时间','采集年','采集月','采集天','瞬时流量','累计流量'],file_type='xlsx',file_name='list.xlsx')
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "/excelout导出报错Error：" + str(e), current_user.Name)
+
