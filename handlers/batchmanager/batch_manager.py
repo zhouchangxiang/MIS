@@ -14,11 +14,30 @@ from dbset.database import constant
 
 batch = Blueprint('batch', __name__, template_folder='templates')
 
+@batch.route('/ZYPlanManage')
+def ZYPlanManage():
+    return render_template('./ZYPlanManage.html')
+@batch.route('/StapleProducts')
+def StapleProducts():
+    return render_template('./StapleProducts.html')
+@batch.route('/ZYPlan')
+def ZYPlan():
+    return render_template('./ZYPlan.html')
+@batch.route('/ZYTask')
+def ZYTask():
+    return render_template('./ZYTask.html')
+@batch.route('/ElectronicBatchRecord')
+def ElectronicBatchRecord():
+    return render_template('./ElectronicBatchRecord.html')
+@batch.route('/BatchMaterialTracing')
+def BatchMaterialTracing():
+    return render_template('./BatchMaterialTracing.html')
+
 @batch.route('/ElectronicBatchRecordNav')
 def electronicBatchRecord():
     return render_template('./ProductionManagement/electronicBatchRecordNav.html')
-@batch.route('/ElectronicBatchRecord', methods=['POST', 'GET'])
-def ElectronicBatchRecord():
+@batch.route('/ElectronicBatchRecordh', methods=['POST', 'GET'])
+def ElectronicBatchRecordh():
     if request.method == 'GET':
         data = request.values
         BatchNum = data.get('BatchID')
