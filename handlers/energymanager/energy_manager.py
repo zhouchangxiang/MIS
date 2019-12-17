@@ -15,7 +15,12 @@ from dbset.log.BK2TLogger import logger,insertSyslog
 import datetime
 import arrow
 import time
+import numpy as np
+import pandas as pd
+from io import BytesIO
+from flask import Flask, send_file,make_response
 import excel
+from excel import Excel
 
 energy = Blueprint('energy', __name__, template_folder='templates')
 
@@ -484,37 +489,49 @@ def energyHistory():
             logger.error(e)
             insertSyslog("error", "能源历史数据查询报错Error：" + str(e), current_user.Name)
 
-@energy.route('/excelout', methods=['POST', 'GET'])
-def excelout():
-    if request.method == 'GET':
-        data = request.values
-        try:
-            jsonstr = json.dumps(data.to_dict())
-            if len(jsonstr) > 10:
-                Area = data.get("Area")
-                EnergyClass = data.get("EnergyClass")
-                CurrentTime = data.get("CurrentTime")
-                oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == Area).all()
-                tag = []
-                for oc in oclass:
-                    tag.append(oc.TagClassValue)
-                if EnergyClass == "水":
-                    q = db_session.query(
-                        WaterEnergy.Unit.label('单位'),
-                        WaterEnergy.EquipmnetID.label('仪表'),
-                        WaterEnergy.PriceID.label('单价'),
-                        WaterEnergy.TagClassValue.label('采集点'),
-                        WaterEnergy.CollectionDate.label('采集时间'),
-                        WaterEnergy.CollectionYear.label('采集年'),
-                        WaterEnergy.CollectionMonth.label('采集月'),
-                        WaterEnergy.CollectionDay.label('采集天'),
-                        WaterEnergy.WaterFlow.label('瞬时流量'),
-                        WaterEnergy.WaterSum.label('累计流量')
-                    ).filter(WaterEnergy.CollectionDate.like("%"+CurrentTime+"%"), WaterEnergy.TagClassValue.in_(tag)).order_by(desc("ID"))
-                    query_sets = q.all()
-                    return excel.make_response_from_query_sets(query_sets,column_names=['单位','仪表','单价','采集点','采集时间','采集年','采集月','采集天','瞬时流量','累计流量'],file_type='xlsx',file_name='list.xlsx')
-        except Exception as e:
-            print(e)
-            logger.error(e)
-            insertSyslog("error", "/excelout导出报错Error：" + str(e), current_user.Name)
+@energy.route('/export', methods=['POST', 'GET'])
+def export():
+    output=Excel().export()
+    resp = make_response(output.getvalue())
+    resp.headers["Content-Disposition"] ="attachment; filename=testing.xlsx"
+    resp.headers['Content-Type'] = 'application/x-xlsx'
+    return resp
 
+
+def export(self):
+    # 创建数据流
+    output = BytesIO()
+    # 创建excel work book
+    writer = pd.ExcelWriter(output, engine='xlsxwriter')
+    workbook = writer.book
+    # 创建excel sheet
+    worksheet = workbook.add_worksheet('sheet1')
+    # cell 样式
+    cell_format = workbook.add_format({
+        'bold': 1,
+        'border': 1,
+        'align': 'center',
+        'valign': 'vcenter',
+        'fg_color': '#f4cccc'})
+
+    col = 0
+    row = 1
+    # 写入列名
+    columns = ['A', 'B', 'C', 'D', 'E']
+    for item in columns:
+        worksheet.write(0, col, item, cell_format)
+        col += 1
+    # 写入数据
+    index = 0
+    while index < 10:
+        for co in columns:
+            worksheet.write(row, columns.index(co), index)
+        row += 1
+        index += 1
+        print('row===%s,index===%s' % (row, index))
+    # 设置A-E的宽
+    worksheet.set_column('A:E', 20)
+
+    writer.close()
+    output.seek(0)
+    return output
