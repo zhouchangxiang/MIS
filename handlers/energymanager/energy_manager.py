@@ -19,7 +19,6 @@ import numpy as np
 import pandas as pd
 from io import BytesIO
 from flask import Flask, send_file,make_response
-import excel
 from excel import Excel
 
 energy = Blueprint('energy', __name__, template_folder='templates')
@@ -491,11 +490,16 @@ def energyHistory():
 
 @energy.route('/export', methods=['POST', 'GET'])
 def export():
-    output=Excel().export()
-    resp = make_response(output.getvalue())
-    resp.headers["Content-Disposition"] ="attachment; filename=testing.xlsx"
-    resp.headers['Content-Type'] = 'application/x-xlsx'
-    return resp
+    data = request.values
+    if request.method == 'GET':
+        Area = data.get("Area")
+        EnergyClass = data.get("EnergyClass")
+        CurrentTime = data.get("CurrentTime")
+        output=Excel().export(Area,EnergyClass,CurrentTime)
+        resp = make_response(output.getvalue())
+        resp.headers["Content-Disposition"] ="attachment; filename=testing.xlsx"
+        resp.headers['Content-Type'] = 'application/x-xlsx'
+        return resp
 
 
 def export(self):
