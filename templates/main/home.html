@@ -128,7 +128,7 @@
                     <span class="pull-left" id="costValue">0</span>
                     <span class="pull-right">RMB</span>
                 </div>
-                <div class="costPieChart mics-bg-primary">
+                <div class="costPieChart">
                     <div style="width: 100%;height: 200px;" id="costPieChart"></div>
                 </div>
             </div>
@@ -181,6 +181,15 @@
                 </div>
                 <div class="modal-footer" class="close" data-dismiss="modal">
                     <span class="fa fa-times"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="loadingModal" class="modal fade" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p class="text-center mb-0">正在加载...</p>
                 </div>
             </div>
         </div>
@@ -238,7 +247,6 @@
                     },
                     success:function (res) {
                         res = JSON.parse(res)
-                        console.log(res)
                         $("#EnergyHistoryDataTotal").html(res.total)
                         highchartsEnergyHistoryRender("modalEnergyHistoryChart",res.HistorySeries,res.Unit)
                         highchartsAreaBarRender("rankingChart",res.energyRankX,res.energyRankY,res.Unit)
@@ -263,7 +271,11 @@
                         DateTime:DateTime,
                         ModelFlag:"能耗趋势"
                     },
+                    beforeSend: function () {
+                        $("#loadingModal").modal("show")
+                    },
                     success:function(res){
+                        $("#loadingModal").modal("hide")
                         res = JSON.parse(res)
                         highchartsRender("highchartsEnergy",res.X,res.Y,res.unit)
                     }
@@ -333,7 +345,11 @@
                         DateTime : DateTime,
                         ModelFlag:"成本展示"
                     },
+                    beforeSend: function () {
+                        $("#loadingModal").modal("show")
+                    },
                     success:function (res) {
+                        $("#loadingModal").modal("hide")
                         res = JSON.parse(res)
                         $("#costValue").html(res.ZCB)
                         highchartsPieRender("costPieChart",res.data)

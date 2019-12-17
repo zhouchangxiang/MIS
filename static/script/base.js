@@ -450,7 +450,7 @@ function highchartsAreaBarRender(id,xAxisArray,seriesData,Unit){
 
 //highchart成本饼图
 function highchartsPieRender(id,data){
-    var chart = Highcharts.chart(id, {
+    Highcharts.chart(id, {
         chart: {
             plotBackgroundColor: null,
             plotBorderWidth: null,
@@ -486,17 +486,4 @@ function highchartsPieRender(id,data){
             data:data
         }]
     });
-    $(".costPieChart").hover(function(){
-        chart.update({
-            chart:{
-                backgroundColor:'#07488E'
-            }
-        });
-    },function(){
-        chart.update({
-            chart:{
-                backgroundColor:'#EFF5FB'
-            }
-        });
-    })
 }

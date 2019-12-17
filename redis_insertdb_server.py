@@ -26,9 +26,9 @@ currentmonth = str(a.shift(years=0))[0:7]
 currentday = str(a.shift(days=0))[0:10]
 def run():
     while True:
-        time.sleep(60)
+        time.sleep(120)
         redis_conn = redis.Redis(connection_pool=pool, password=constant.REDIS_PASSWORD,decode_responses=True)
-        keys = db_session.query(TagDetail).filter(TagDetail.TagClassValue != None).all()
+        keys = db_session.query(TagDetail).filter(TagDetail.TagClassValue == "E_Area_YTQ_38_1_28").all()
         for key in keys:
             try:
                 k = key.TagClassValue[0:1]
@@ -167,9 +167,11 @@ def run():
                 pass
 
 def roundtwo(rod):
-    if rod == None or rod == "" or rod == "0.00":
-        return 0.00
+    if rod == None or rod == "" or rod == b'':
+        return 0.0
     else:
+        if float(rod) < 0:
+            return 0.0
         return round(float(rod), 2)
 if __name__ == '__main__':
     run()
