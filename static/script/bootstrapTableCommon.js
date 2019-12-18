@@ -213,7 +213,7 @@
         $(toolbarID).find(FieldSetSearchID).append(resfreshFieldSelectOptions)
         $(toolbarID).find(FieldSetSearchID).selectpicker("refresh")
         $(toolbarID).find(FieldSetSearchID).selectpicker("render")
-        $(toolbarID).find(FieldSetSearchID).selectpicker("val", ''); //赋默认值
+        $(toolbarID).find(FieldSetSearchID).selectpicker("val", columns[0].field); //赋默认值
         //搜索按钮
         $(toolbarID).on("click","[data-search-btn]",function(){
             $this.bootstrapTable('refresh',{
