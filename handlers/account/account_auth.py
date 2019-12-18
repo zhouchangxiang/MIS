@@ -52,8 +52,8 @@ def login():
                 # user.Status = "1"
                 # db_session.commit()
                 use = db_session.query(User).filter_by(WorkNumber=WorkNumber).first()
-                return redirect('/')
-                # return render_template('./main/index.html',WorkNumber=use.WorkNumber,Name=use.Name,session_id=use.session_id)
+                # return redirect('/')
+                return render_template('heatmap.html')
             # 认证失败返回登录页面
             error = '用户名或密码错误'
             return render_template('./main/login.html', error=error)
