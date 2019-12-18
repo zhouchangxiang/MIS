@@ -528,9 +528,13 @@ def exportx(Area,EnergyClass,CurrentTime):
         columns = ['单位', '仪表ID', '价格ID', '采集点', '采集时间', '采集年', '采集月', '采集天', '瞬时流量', '累计流量']
         oclass = db_session.query(WaterEnergy).filter(WaterEnergy.TagClassValue.in_(tag), WaterEnergy.CollectionDate.like("%"+CurrentTime+"%")).all()
     elif EnergyClass == "电":
-        columns = ['A', 'B', 'C', 'D', 'E']
+        columns = ['单位', '仪表ID', '价格ID', '采集点', '采集时间', '采集年', '采集月', '采集天', '总功率', 'A相电压', 'A相电流', 'B相电压', 'B相电流', 'C相电压', 'C相电压']
+        oclass = db_session.query(ElectricEnergy).filter(ElectricEnergy.TagClassValue.in_(tag),
+                                                         ElectricEnergy.CollectionDate.like("%" + CurrentTime + "%")).all()
     else:
-        columns = ['A', 'B', 'C', 'D', 'E']
+        columns = ['蒸汽值', '单位', '仪表ID', '价格ID', '采集点', '采集时间', '采集年', '采集月', '采集天', '温度', '蒸汽瞬时值', '蒸汽累计值']
+        oclass = db_session.query(SteamEnergy).filter(SteamEnergy.TagClassValue.in_(tag),
+                                                      SteamEnergy.CollectionDate.like("%" + CurrentTime + "%")).all()
     for item in columns:
         worksheet.write(0, col, item, cell_format)
         col += 1
@@ -558,6 +562,64 @@ def exportx(Area,EnergyClass,CurrentTime):
                     worksheet.write(i, columns.index(cum), oclass[i].WaterFlow)
                 if cum == '累计流量':
                     worksheet.write(i, columns.index(cum), oclass[i].WaterSum)
+        elif EnergyClass == "电":
+            for cum in columns:
+                if cum == '单位':
+                    worksheet.write(i, columns.index(cum), oclass[i].Unit)
+                if cum == '仪表ID':
+                    worksheet.write(i, columns.index(cum), oclass[i].EquipmnetID)
+                if cum == '价格ID':
+                    worksheet.write(i, columns.index(cum), oclass[i].PriceID)
+                if cum == '采集点':
+                    worksheet.write(i, columns.index(cum), oclass[i].TagClassValue)
+                if cum == '采集时间':
+                    worksheet.write(i, columns.index(cum), oclass[i].CollectionDate)
+                if cum == '采集年':
+                    worksheet.write(i, columns.index(cum), oclass[i].CollectionYear)
+                if cum == '采集月':
+                    worksheet.write(i, columns.index(cum), oclass[i].CollectionMonth)
+                if cum == '采集天':
+                    worksheet.write(i, columns.index(cum), oclass[i].CollectionDay)
+                if cum == '总功率':
+                    worksheet.write(i, columns.index(cum), oclass[i].ZGL)
+                if cum == 'A相电压':
+                    worksheet.write(i, columns.index(cum), oclass[i].AU)
+                if cum == 'A相电流':
+                    worksheet.write(i, columns.index(cum), oclass[i].AI)
+                if cum == 'B相电压':
+                    worksheet.write(i, columns.index(cum), oclass[i].BU)
+                if cum == 'B相电流':
+                    worksheet.write(i, columns.index(cum), oclass[i].BI)
+                if cum == 'C相电压':
+                    worksheet.write(i, columns.index(cum), oclass[i].CU)
+                if cum == 'C相电压':
+                    worksheet.write(i, columns.index(cum), oclass[i].CI)
+        elif EnergyClass == "汽":
+            for cum in columns:
+                if cum == '蒸汽值':
+                    worksheet.write(i, columns.index(cum), oclass[i].SteamValue)
+                if cum == '单位':
+                    worksheet.write(i, columns.index(cum), oclass[i].Unit)
+                if cum == '仪表ID':
+                    worksheet.write(i, columns.index(cum), oclass[i].EquipmnetID)
+                if cum == '价格ID':
+                    worksheet.write(i, columns.index(cum), oclass[i].PriceID)
+                if cum == '采集点':
+                    worksheet.write(i, columns.index(cum), oclass[i].TagClassValue)
+                if cum == '采集时间':
+                    worksheet.write(i, columns.index(cum), oclass[i].CollectionDate)
+                if cum == '采集年':
+                    worksheet.write(i, columns.index(cum), oclass[i].CollectionYear)
+                if cum == '采集月':
+                    worksheet.write(i, columns.index(cum), oclass[i].CollectionMonth)
+                if cum == '采集天':
+                    worksheet.write(i, columns.index(cum), oclass[i].CollectionDay)
+                if cum == '温度':
+                    worksheet.write(i, columns.index(cum), oclass[i].WD)
+                if cum == '蒸汽瞬时值':
+                    worksheet.write(i, columns.index(cum), oclass[i].FlowValue)
+                if cum == '蒸汽累计值':
+                    worksheet.write(i, columns.index(cum), oclass[i].SumValue)
     writer.close()
     output.seek(0)
     return output
