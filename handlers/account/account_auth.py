@@ -53,7 +53,7 @@ def login():
                 # db_session.commit()
                 use = db_session.query(User).filter_by(WorkNumber=WorkNumber).first()
                 # return redirect('/')
-                return render_template('heatmap.html')
+                return render_template('./main/heatmap.html')
             # 认证失败返回登录页面
             error = '用户名或密码错误'
             return render_template('./main/login.html', error=error)
