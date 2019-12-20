@@ -21,6 +21,31 @@
     <script src="../static/highcharts/highcharts-zh_CN.js"></script>
     <script src="../static/script/base.js"></script>
     <script src="../static/script/bootstrapTableCommon.js"></script>
+    <script>
+        $(function () {
+            //区域下拉框
+            $.ajax({
+                url:"http://127.0.0.1:5000/CUID",
+                type:"get",
+                data:{
+                    tableName: "AreaTable",
+                    limit : 100000000,
+                    offset : 0
+                },
+                success:function (res) {
+                    res = JSON.parse(res)
+                    var option = ''
+                    $.each(res.rows,function(i,value){
+                        option += `<option value="${ res.rows[i].AreaName }">${ res.rows[i].AreaName }</option>`
+                    })
+                    $(".form-inline").find("#sel_area").append(`<option value="">所有区域</option>`+option)
+                    $(".form-inline").find("#sel_area").selectpicker("refresh")
+                    $(".form-inline").find("#sel_area").selectpicker("render")
+                    $(".form-inline").find("#sel_area").selectpicker("val",'')
+                }
+            });
+        })
+    </script>
 </head>
 <body>
     <div class="wrap">
@@ -30,7 +55,7 @@
             <div class="radio"><input type="radio" name="energySelector" id="energySelector2" value="水"><label for="energySelector2">水</label></div>
             <div class="radio"><input type="radio" name="energySelector" id="energySelector3" value="汽"><label for="energySelector3">汽</label></div>
             <label for="" style="padding-left: 20px;">区域：</label>
-            <select id="sel_area" name="role" class="selectpicker" title="请选择" data-width="150px"></select>
+            <select id="sel_area" class="selectpicker" data-live-search="true"></select>
             <label for="" style="padding-left: 20px;">时间：</label>
             <input type="text" class="form-control input-sm datetimepicker" id="dateTime" readonly>
             <label for="" style="padding-left: 20px;">范围：</label>
@@ -97,21 +122,6 @@
             })
             $("#dateTime").val(myDayformatter(new Date()))
 
-            $("#datetimepickerBtnGroup").on("click",".btn",function(){
-                $(this).addClass("active").siblings().removeClass("active")
-                var time = ""
-                if($(this).html() == "年"){
-                    time = myYearformatter(new Date($("#dateTime").val()))
-
-                }else if($(this).html() == "月"){
-                    time = myMonthformatter(new Date($("#dateTime").val()))
-
-                }else if($(this).html() == "日"){
-                    time = myDayformatter(new Date($("#dateTime").val()))
-
-                }
-            })
-
             $("#ElectricTab").tableRender({
                 tableName:"ElectricEnergy"
             })
@@ -122,28 +132,9 @@
                 tableName:"SteamEnergy"
             })
 
-            //区域下拉框
-            $.ajax({
-                url:"http://127.0.0.1:5000/CUID",
-                type:"get",
-                data:{
-                    tableName: "AreaTable",
-                    limit : 100000000,
-                    offset : 0
-                },
-                success:function (res) {
-                    res = JSON.parse(res)
-                    var option = ''
-                    $.each(res.rows,function(i,value){
-                        option += `<option value="${ res.rows[i].AreaName }">${ res.rows[i].AreaName }</option>`
-                    })
-                    $("#sel_area").append(option)
-                    $("#sel_area").selectpicker("refresh")
-                    $("#sel_area").selectpicker("render")
-                }
-            });
 
             //可视化图表
+            var chart = null
             $("#chartView").on("click",function(){
                 $("#energyChartModal").modal('show')
                 var energy = $('input[name="energySelector"]:checked').val()
@@ -158,6 +149,7 @@
                     CurrentTime = myYearformatter(new Date(CurrentTime))
                 }
                 $("#energyChartModal").find(".modal-title").html(energy+"能"+Area+CurrentTime+"数据图表")
+
                 $.ajax({
                     url:"/energyall",
                     type:"get",
@@ -170,11 +162,39 @@
                     },
                     success:function(res){
                         res = JSON.parse(res)
-                        console.log(res)
-                        highchartsRender("modalEnergyHistoryChart",res.X,res.Y,res.unit)
+                        chart = Highcharts.chart("modalEnergyHistoryChart",{
+                            chart: {
+                                type: 'column'
+                            },
+                            title: {
+                                text: null
+                            },
+                            credits: {
+                                enabled: false//不显示LOGO
+                            },
+                            legend: {
+                                enabled: false //不显示图例
+                            },
+                            xAxis: {
+                                categories: res.X
+                            },
+                            tooltip: {
+                                valueSuffix: " "+res.unit
+                            },
+                            yAxis: {
+                                title: {
+                                    text: ''
+                                }
+                            },
+                            series:res.Y
+                        });
                     }
                 })
             })
+            //关闭模态框后销毁
+            $('#energyChartModal').on('hide.bs.modal', function () {
+                chart.destroy();
+            });
 
             //导出
             $("#exportExcel").on("click",function(){
@@ -184,18 +204,7 @@
                 var dateTime = $('input[name="rangeSelector"]:checked').val()
                 if(dateTime == "日"){
                     CurrentTime = myDayformatter(new Date(CurrentTime))
-                    $.ajax({
-                        url:"/excelout",
-                        type:"get",
-                        data:{
-                            EnergyClass:energy,
-                            CurrentTime:CurrentTime,
-                            Area:Area,
-                        },
-                        success:function(res){
-                            console.log(res)
-                        }
-                    })
+                    window.open('http://192.168.1.106:5000/excelout?energy='+energy+'&CurrentTime='+CurrentTime+'&Area='+Area)
                 }else{
                     bootbox.alert("只能选择导出一天的数据")
                 }

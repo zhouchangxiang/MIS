@@ -236,7 +236,7 @@ function Digit(a) {
 }
 //highchart柱状图表渲染方法
 function highchartsRender(id,xAxisArray,seriesData,unit){
-    Highcharts.chart(id,{
+    var chart = Highcharts.chart(id,{
         chart: {
             type: 'column'
         },
