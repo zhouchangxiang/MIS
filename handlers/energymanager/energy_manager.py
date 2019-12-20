@@ -300,6 +300,8 @@ def energyselect(data):
                 dir["SteamValue"] = stecount
             elif ModelFlag == "成本展示":
                 oclass = db_session.query(TagDetail).filter().all()
+                if Area != None and Area != "":
+                    oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == Area).all()
                 if datime == "年":
                     for oc in oclass:
                         Tag = oc.TagClassValue[0:1]
