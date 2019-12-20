@@ -55,6 +55,10 @@
             color: #fff;
             cursor: pointer;
         }
+        .area-use-bg.area-use-active{
+            background:#07488E;
+            color: #fff;
+        }
         .area-unused-bg{
             background:#F9F9F9;
         }
@@ -84,10 +88,6 @@
             bottom: 15px;
             right: 15px;
         }
-        .checkbox-primary input[type="checkbox"]:checked + label::before, .checkbox-primary input[type="radio"]:checked + label::before{
-            background-color: #07488E;
-            border-color:#07488E;
-        }
     </style>
 </head>
 <body>
@@ -95,89 +95,82 @@
         <div class="col-sm-12">
             <div class="col-sm-9">
                 <div class="aerialView" id="canvas">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <div class="col-xs-2">
-                                <div class="area area-A area-use-bg">
-                                    <div class="connection" id="area-item1"></div>
-                                    <div class="area-name">污水站</div>
-                                </div>
-                                <div class="area area-B area-unused-bg">
-                                    <div class="area-name">原料库</div>
-                                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="col-xs-2">
+                            <div class="area area-A area-use-bg">
+                                <div class="connection" id="area-item1"></div>
+                                <div class="area-name">污水站</div>
                             </div>
-                            <div class="col-xs-4">
-                                <div class="col-xs-6"><div class="area area-A area-unused-bg"></div></div>
-                                <div class="col-xs-6"><div class="area area-A area-use-bg">
-                                    <div class="connection" id="area-item2"></div>
-                                    <div class="area-name">锅炉房</div>
-                                </div></div>
-                                <div class="col-xs-12"><div class="area area-C area-use-bg">
-                                    <div class="connection" id="area-item3"></div>
-                                    <div class="area-name">提取二车间</div>
-                                </div></div>
-                                <div class="col-xs-12"><div class="area area-D area-use-bg">
-                                    <div class="connection" id="area-item4"></div>
-                                    <div class="area-name">综合车间</div>
-                                </div></div>
+                            <div class="area area-C area-unused-bg">
+                                <div class="area-name">原料库</div>
                             </div>
-                            <div class="col-xs-2">
-                                <div class="area area-B area-use-bg">
-                                    <div class="connection connection-interchanger" id="area-item5">汇聚交换机</div>
-                                    <div class="area-name">新建综合制剂车间</div>
-                                </div>
-                                <div class="col-xs-6 clear-left-padding"><div class="area area-A area-unused-bg"></div></div>
-                                <div class="col-xs-6 clear-right-padding"><div class="area area-A area-unused-bg"></div></div>
+                            <div class="area area-D area-unused-bg"></div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="col-xs-6"><div class="area area-A area-unused-bg"></div></div>
+                            <div class="col-xs-6"><div class="area area-A area-use-bg">
+                                <div class="connection" id="area-item2"></div>
+                                <div class="area-name">锅炉房</div>
+                            </div></div>
+                            <div class="col-xs-12"><div class="area area-C area-use-bg">
+                                <div class="connection" id="area-item3"></div>
+                                <div class="area-name">提取二车间</div>
+                            </div></div>
+                            <div class="col-xs-12"><div class="area area-D area-use-bg">
+                                <div class="connection" id="area-item4"></div>
+                                <div class="area-name">综合车间</div>
+                            </div></div>
+                        </div>
+                        <div class="col-xs-2">
+                            <div class="area area-B area-use-bg">
+                                <div class="connection connection-interchanger" id="area-item5">汇聚交换机</div>
+                                <div class="area-name">新建综合制剂车间</div>
                             </div>
-                            <div class="col-xs-4">
-                                <div class="area area-A area-unused-bg"><div class="area-name">高架库</div></div>
-                                <div class="col-xs-6 clear-left-padding">
-                                    <div class="area area-C area-use-bg">
-                                        <div class="connection" id="area-item6"></div>
-                                        <div class="area-name">原提取车间</div>
-                                    </div>
-                                    <div class="area area-D area-use-bg">
-                                        <div class="connection" id="area-item7"></div>
-                                        <div class="area-name">研发中心</div>
-                                    </div>
-                                </div>
-                                <div class="col-xs-6 clear-right-padding">
-                                    <div class="area area-B area-use-bg">
-                                        <div class="connection" id="area-item8"></div>
-                                        <div class="area-name">前处理车间</div>
-                                    </div>
-                                </div>
+                            <div class="col-xs-6 clear-left-padding"><div class="area area-A area-unused-bg"></div></div>
+                            <div class="col-xs-6 clear-right-padding"><div class="area area-A area-unused-bg"></div></div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="col-xs-6"><div class="area area-A area-use-bg">
+                                <div class="connection" id="area-item6"></div>
+                                <div class="area-name">研发中心</div>
+                            </div></div>
+                            <div class="col-xs-6"><div class="area area-A area-use-bg">
+                                <div class="connection" id="area-item7"></div>
+                                <div class="area-name">前处理车间</div>
+                            </div></div>
+                            <div class="col-xs-12"><div class="area area-C area-use-bg">
+                                <div class="connection" id="area-item8"></div>
+                                <div class="area-name">好护士健康科技车间</div>
+                            </div></div>
+                            <div class="col-xs-12"><div class="area area-D area-use-bg">
+                                <div class="connection" id="area-item9"></div>
+                                <div class="area-name">固体制剂车间</div>
+                            </div></div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="col-xs-2">
+                            <div class="area area-E area-unused-bg"></div>
+                        </div>
+                        <div class="col-xs-2">
+                            <div class="area area-E area-use-bg">
+                                <div class="connection" id="area-item10"></div>
+                                <div class="area-name">展览室</div>
                             </div>
                         </div>
-                        <div class="col-xs-12">
-                            <div class="col-xs-2">
-                                <div class="area area-E area-unused-bg"></div>
+                        <div class="col-xs-4">
+                            <div class="area area-E area-use-bg">
+                                <div class="connection" id="area-item11"></div>
+                                <div class="area-name">办公楼＼食堂</div>
                             </div>
-                            <div class="col-xs-2">
-                                <div class="area area-E area-use-bg">
-                                    <div class="connection" id="area-item9"></div>
-                                    <div class="area-name">展览室</div>
-                                </div>
-                            </div>
-                            <div class="col-xs-4">
-                                <div class="area area-E area-use-bg">
-                                    <div class="connection" id="area-item10"></div>
-                                    <div class="area-name">办公楼＼食堂</div>
-                                </div>
-                            </div>
-                            <div class="col-xs-4">
-                                <div class="area area-F area-use-bg">
-                                    <div class="connection" id="area-item11"></div>
-                                    <div class="area-name">好护士健康科技车间</div>
-                                </div>
-                                <div class="area area-G area-use-bg">
-                                    <div class="connection" id="area-item12"></div>
-                                    <div class="area-name">固体制剂车间</div>
-                                </div>
-                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="area area-E area-unused-bg"></div>
                         </div>
                     </div>
                 </div>
+            </div>
             </div>
             <div class="col-sm-3">
                 <div class="block-separate">
@@ -193,8 +186,7 @@
                     </div>
                 </div>
                 <div class="block-separate">
-                    <div class="block-title">能耗成本</div>
-                    <div class="block-show-data">124352.23</div>
+                    <div id="EnergyCostChart" style="width: 100%;min-height: 300px;"></div>
                 </div>
             </div>
         </div>
@@ -221,24 +213,44 @@
             })
             $("#dateTime").val(myDayformatter(new Date()))
 
+            $(".area-use-bg").on('click',function(){
+                $(".area-use-bg").each(function(){
+                    $(this).removeClass("area-use-active")
+                })
+                $(this).addClass("area-use-active")
+            })
+
             $("#datetimepickerBtnGroup").on("click",".btn",function(){
                 $(this).addClass("active").siblings().removeClass("active")
                 var time = ""
                 if($(this).html() == "年"){
                     time = myYearformatter(new Date($("#dateTime").val()))
-                    getEnergyData(time)
+                    getEnergyData(time,$(this).html())
                 }else if($(this).html() == "月"){
                     time = myMonthformatter(new Date($("#dateTime").val()))
-                    getEnergyData(time)
+                    getEnergyData(time,$(this).html())
                 }else if($(this).html() == "日"){
                     time = myDayformatter(new Date($("#dateTime").val()))
-                    getEnergyData(time)
+                    getEnergyData(time,$(this).html())
                 }
             })
             $("#datetimepickerBtnGroup .btn").eq(0).click()
 
-            function getEnergyData(time){
-
+            function getEnergyData(CurrentTime,DateTime){
+                $.ajax({
+                    url:"/energyall",
+                    type:"get",
+                    data:{
+                        CurrentTime : CurrentTime,
+                        DateTime: DateTime,
+                        Area: $(".area-use-active").find(".area-name").html(),
+                        ModelFlag:"区域成本"
+                    },
+                    success:function (res) {
+                        res = JSON.parse(res)
+                        console.log(res)
+                    }
+                })
             }
         })
     </script>
