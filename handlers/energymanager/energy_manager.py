@@ -383,9 +383,10 @@ def energyselect(data):
                             watcount = wattongji(oc, currday, lastday, elecount)
                         elif Tag == "S":
                             stecount = stetongji(oc, currday, lastday, elecount)
-                dir["电"] = round(energymoney(elecount, "电"), 2)
-                dir["水"] = round(energymoney(watcount, "水"), 2)
-                dir["汽"] = round(energymoney(stecount, "汽"), 2)
+                chenbY = [round(energymoney(elecount, "电"), 2),round(energymoney(watcount, "水"), 2),round(energymoney(stecount, "汽"), 2)]
+                chenbX = ["电","水","汽"]
+                dir["X"] = chenbX
+                dir["Y"] = chenbY
             elif ModelFlag == "区域成本排名":
                 AreaNames = db_session.query(AreaTable.AreaName).filter().all()
                 diarea = {}
