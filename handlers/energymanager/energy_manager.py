@@ -426,7 +426,7 @@ def energyselect(data):
                                 watcount = wattongji(oc, currday, lastday, elecount)
                             elif Tag == "S":
                                 stecount = stetongji(oc, currday, lastday, elecount)
-                    diarea[AreaName[0]] = round(energymoney(elecount, "电"), 2) +  round(energymoney(watcount, "水"), 2) + round(energymoney(stecount, "汽"), 2)
+                    diarea[AreaName[0]] = round((energymoney(elecount, "电") +  energymoney(watcount, "水") + energymoney(stecount, "汽")), 2)
                 areavs = sorted(diarea.items(), key=lambda x: float(x[1]), reverse=True)
                 areax = []
                 areay = []
