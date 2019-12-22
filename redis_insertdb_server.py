@@ -160,13 +160,13 @@ def run():
                         wa.PriceID = price[0]
                         db_session.add(wa)
                         db_session.commit()
-                print("Redis数据开始写入数据库结束")
             except Exception as e:
                 print("报错tag："+key.TagClassValue+" |报错IP："+key.IP+"  |报错端口："+key.COMNum+"  |错误："+str(e))
                 logger.error(e)
                 insertSyslog("error", "实时数据写入DB报错Error：" + str(e),"")
             finally:
                 pass
+        print("Redis数据开始写入数据库结束")
 
 def roundtwo(rod):
     if rod == None or rod == "" or rod == b'':
