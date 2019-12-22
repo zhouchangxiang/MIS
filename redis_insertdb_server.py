@@ -26,9 +26,10 @@ currentmonth = str(a.shift(years=0))[0:7]
 currentday = str(a.shift(days=0))[0:10]
 def run():
     while True:
-        time.sleep(120)
+        time.sleep(60)
+        print("Redis数据开始写入数据库")
         redis_conn = redis.Redis(connection_pool=pool, password=constant.REDIS_PASSWORD,decode_responses=True)
-        keys = db_session.query(TagDetail).filter(TagDetail.TagClassValue == "E_Area_YTQ_38_1_28").all()
+        keys = db_session.query(TagDetail).filter(TagDetail.TagClassValue != None).all()
         for key in keys:
             try:
                 k = key.TagClassValue[0:1]
@@ -159,6 +160,7 @@ def run():
                         wa.PriceID = price[0]
                         db_session.add(wa)
                         db_session.commit()
+                print("Redis数据开始写入数据库结束")
             except Exception as e:
                 print("报错tag："+key.TagClassValue+" |报错IP："+key.IP+"  |报错端口："+key.COMNum+"  |错误："+str(e))
                 logger.error(e)

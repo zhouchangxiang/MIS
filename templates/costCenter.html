@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="../static/style/bootstrap/bootstrap-checkbox.css">
     <link rel="stylesheet" href="../static/style/base.css">
     <script src="../static/script/jquery-3.3.1.min.js"></script>
+    <script src="../static/highcharts/highstock.js"></script>
+    <script src="../static/highcharts/highcharts-zh_CN.js"></script>
     <script src="../static/script/bootstrap/bootstrap.min.js"></script>
     <script src="../static/script/bootstrap/bootstrap-datetimepicker.min.js"></script>
     <script src="../static/script/base.js"></script>
@@ -186,12 +188,12 @@
                     </div>
                 </div>
                 <div class="block-separate">
-                    <div id="EnergyCostChart" style="width: 100%;min-height: 300px;"></div>
+                    <div id="EnergyCostChart" style="width: 100%;min-height: 260px;"></div>
                 </div>
                 <div class="mics-panel-head">
                     <div class="mics-panel-title pull-left">区域成本排名:</div>
                 </div>
-                <div id="rankingChart" style="width: 100%;margin-top: 20px;"></div>
+                <div id="rankingChart" style="width: 100%;margin-top: 20px;min-height: 400px;"></div>
             </div>
         </div>
     </div>
@@ -222,37 +224,131 @@
                     $(this).removeClass("area-use-active")
                 })
                 $(this).addClass("area-use-active")
+                var DateTime = $("#datetimepickerBtnGroup").find(".active").html()
+                console.log(DateTime)
+                var CurrentTime = ""
+                if(DateTime == "年"){
+                    CurrentTime = myYearformatter(new Date($("#dateTime").val()))
+                    getEnergyData(CurrentTime,DateTime)
+                    getEnergyRankingData(CurrentTime,DateTime)
+                }else if(DateTime == "月"){
+                    CurrentTime = myMonthformatter(new Date($("#dateTime").val()))
+                    getEnergyData(CurrentTime,DateTime)
+                    getEnergyRankingData(CurrentTime,DateTime)
+                }else if(DateTime == "日"){
+                    CurrentTime = myDayformatter(new Date($("#dateTime").val()))
+                    getEnergyData(CurrentTime,DateTime)
+                    getEnergyRankingData(CurrentTime,DateTime)
+                }
             })
 
             $("#datetimepickerBtnGroup").on("click",".btn",function(){
                 $(this).addClass("active").siblings().removeClass("active")
-                var time = ""
+                var CurrentTime = ""
                 if($(this).html() == "年"){
-                    time = myYearformatter(new Date($("#dateTime").val()))
-                    getEnergyData(time,$(this).html())
+                    CurrentTime = myYearformatter(new Date($("#dateTime").val()))
+                    getEnergyData(CurrentTime,$(this).html())
+                    getEnergyRankingData(CurrentTime,$(this).html())
                 }else if($(this).html() == "月"){
-                    time = myMonthformatter(new Date($("#dateTime").val()))
-                    getEnergyData(time,$(this).html())
+                    CurrentTime = myMonthformatter(new Date($("#dateTime").val()))
+                    getEnergyData(CurrentTime,$(this).html())
+                    getEnergyRankingData(CurrentTime,$(this).html())
                 }else if($(this).html() == "日"){
-                    time = myDayformatter(new Date($("#dateTime").val()))
-                    getEnergyData(time,$(this).html())
+                    CurrentTime = myDayformatter(new Date($("#dateTime").val()))
+                    getEnergyData(CurrentTime,$(this).html())
+                    getEnergyRankingData(CurrentTime,$(this).html())
                 }
             })
             $("#datetimepickerBtnGroup .btn").eq(0).click()
 
             function getEnergyData(CurrentTime,DateTime){
+                var Area = $(".area-use-active").find(".area-name").html()
                 $.ajax({
                     url:"/energyall",
                     type:"get",
                     data:{
                         CurrentTime : CurrentTime,
                         DateTime: DateTime,
-                        Area: $(".area-use-active").find(".area-name").html(),
+                        Area: Area,
                         ModelFlag:"区域成本"
                     },
                     success:function (res) {
                         res = JSON.parse(res)
-                        console.log(res)
+                        Highcharts.chart('EnergyCostChart',{
+                            chart: {
+                                type: 'bar'
+                            },
+                            title: {
+                                text: Area + "能耗成本"
+                            },
+                            subtitle: {
+                                text: ''
+                            },
+                            credits: {
+                                enabled: false//不显示LOGO
+                            },
+                            legend: {
+                                enabled: false //不显示图例
+                            },
+                            xAxis: {
+                                categories: res.X
+                            },
+                            yAxis: {
+                                min: 0,
+                                title: {
+                                    text: null
+                                }
+                            },
+                            series: [{
+                                name: '成本值',
+                                data: res.Y
+                            }]
+                        });
+                    }
+                })
+            }
+            //成本排名
+            function getEnergyRankingData(CurrentTime,DateTime){
+                $.ajax({
+                    url:"/energyall",
+                    type:"get",
+                    data:{
+                        CurrentTime : CurrentTime,
+                        DateTime: DateTime,
+                        ModelFlag:"区域成本排名"
+                    },
+                    success:function (res) {
+                        res = JSON.parse(res)
+                        Highcharts.chart('rankingChart',{
+                            chart: {
+                                type: 'bar'
+                            },
+                            title: {
+                                text: null
+                            },
+                            subtitle: {
+                                text: ''
+                            },
+                            credits: {
+                                enabled: false//不显示LOGO
+                            },
+                            legend: {
+                                enabled: false //不显示图例
+                            },
+                            xAxis: {
+                                categories: res.X
+                            },
+                            yAxis: {
+                                min: 0,
+                                title: {
+                                    text: null
+                                }
+                            },
+                            series: [{
+                                name: '成本值',
+                                data: res.Y
+                            }]
+                        });
                     }
                 })
             }
