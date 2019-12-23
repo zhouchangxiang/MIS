@@ -159,7 +159,7 @@ def handler_msg(conn):
             finally:
                 pass
 def strtofloat(f):
-    if f == None or f == "" or f == "0.0":
+    if f == None or f == "" or f == b'':
         return 0.0
     else:
         return float(f)
