@@ -223,13 +223,12 @@
             jsPlumb.bind('click', function (connection, e) {
                 jsPlumb.detach(connection)
             });
-            //var e1 = jsPlumb.addEndpoint("area-item1", { anchor:"LeftMiddle" }, exampleEndpoint1);
-            //e1.bind("maxConnections", maxConnectionsCallback);//可以在加到元素上之后绑定函数
+
+            //初始化锚点
             $.each($(".connection"),function(i,value){
                 jsPlumb.addEndpoint($(this).attr("id"), exampleEndpoint);
             })
-
-            //默认连接线
+            //初始化连线
             $.each(customList,function(i,value){
                 jsPlumb.connect({
                     source: customList[i].sourceId,
