@@ -1,4 +1,6 @@
 $(function () {
+	var tableUrl = 'http://192.168.1.106:5000/CUID'
+
 	//获取主菜单导航内容
 	$.ajax({
         url: '/permission/PermissionsMenus',
@@ -55,7 +57,7 @@ $(function () {
 	var isLoaded = true;
 	function reqs() {
 		$.ajax({
-			url: 'http://127.0.0.1:5000/CUID',
+			url: tableUrl,
 			type: 'get',
 			data:{
 				tableName: 'User',
@@ -79,7 +81,7 @@ $(function () {
 			},
 			error: function() {
 				isLoaded = false;
-				bootbox.alert('请求sessionid失败');
+				//bootbox.alert('请求sessionid失败');
 			}
 		});
 	}
@@ -100,7 +102,7 @@ $(function () {
 	$("#seeUserMessage").on('click',function(){
 		var html= ''
 		$.ajax({
-			url:'http://127.0.0.1:5000/CUID',
+			url:tableUrl,
 			method: 'get',
 			data:{
 				tableName:'User',
@@ -129,7 +131,7 @@ $(function () {
 	})
 
 	//全屏
-	$(".navHead-riht").on("click","[data-fullscreen]",function(){
+	$(".navHead-right").on("click","[data-fullscreen]",function(){
 		var SCREEN_FULL = 'glyphicon-fullscreen',
       		SCREEN_REST = 'glyphicon-resize-small',
       		iconElem = $(this).find("i");
@@ -169,6 +171,13 @@ $(function () {
 			$(".contentRight").css("marginLeft","0")
 			$(".body-shade").css("display","none")
 			$(".flexibleCon").css("display","block")
+		}else if($(window).width() > 992 && $(".contentRight").css("marginLeft") == "60px"){
+
+		}else if($(window).width() > 992 && $(".sidebarRight").css("left") == "-226px"){
+			$(".contentLeft").css("left","0")
+			$(".contentRight").css("marginLeft","60px")
+			$(".body-shade").css("display","none")
+			$(".flexibleCon").css("display","none")
 		}else{
 			$(".contentLeft").css("left","0")
 			$(".contentRight").css("marginLeft","346px")

@@ -61,6 +61,12 @@ def insert(data):
                 if key != "ID" and key != "tableName" and key != "id":
                     if key == "Password":
                         setattr(ss, key, generate_password_hash(data['Password']))
+                    elif key == "WorkNumber":
+                        ocal = db_session.query(User).filter(User.WorkNumber == data['WorkNumber']).first()
+                        if ocal != None:
+                            return "工号重复，请重新录入！"
+                        else:
+                            setattr(ss, key, data['WorkNumber'])
                     else:
                         setattr(ss, key, data[key])
             db_session.add(ss)
@@ -133,6 +139,12 @@ def update(data):
                     if hasattr(oclass, key) and key != 'ID' and key != 'tableName' and key != "id":
                         if key == "Password":
                             setattr(oclass, key, generate_password_hash(data['Password']))
+                        elif key == "WorkNumber":
+                            ocal = db_session.query(User).filter(User.WorkNumber == data['WorkNumber']).first()
+                            if ocal != None:
+                                return "工号重复，请重新录入！"
+                            else:
+                                setattr(oclass, key, data['WorkNumber'])
                         else:
                             setattr(oclass, key, data[key])
                 db_session.add(oclass)

@@ -11,7 +11,8 @@
     <link rel="stylesheet" href="../../static/style/font-awesome.min.css">
     <link rel="stylesheet" href="../../static/style/base.css">
     <script src="../../static/script/jquery-3.3.1.min.js"></script>
-    <script src="../../static/highcharts/highcharts.js"></script>
+    <script src="../../static/highcharts/highstock.js"></script>
+    <script src="../../static/highcharts/highcharts-zh_CN.js"></script>
     <script src="../../static/script/bootstrap/bootstrap.min.js"></script>
     <script src="../../static/script/bootstrap/bootstrap-table.min.js"></script>
     <script src="../../static/script/bootstrap/bootstrap-table-zh-CN.min.js"></script>
@@ -52,23 +53,23 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="trendsChartContent dragscroll">
-                        <div class="trendsChartItem mics-bg-primary">
+                        <div class="trendsChartItem mics-bg-primary" data-Energy="电">
                             <div class="form-group">电能</div>
-                            <div class="form-group" id="ElectricRealTimeData">0</div>
+                            <div class="form-group"><span id="EtotalZGL">0</span> <span class="unit"></span></div>
                             <div class="form-group"><div class="row"><div class="highcharts-item" id="highcharts-electricity" style="min-width:162px;height:74px"></div></div></div>
-                            <div class="form-group">31654</div>
+                            <div class="form-group totalData"></div>
                         </div>
-                        <div class="trendsChartItem mics-bg-primary">
+                        <div class="trendsChartItem mics-bg-primary" data-Energy="水">
                             <div class="form-group">水能</div>
-                            <div class="form-group" id="WaterRealTimeData">0</div>
+                            <div class="form-group"><span id="WtotalF">0</span> <span class="unit"></span></div>
                             <div class="form-group"><div class="row"><div class="highcharts-item" id="highcharts-water" style="min-width:162px;height:74px"></div></div></div>
-                            <div class="form-group">66254</div>
+                            <div class="form-group totalData"><span id="WtotalS">0</span> <span class="unit"></span></div>
                         </div>
-                        <div class="trendsChartItem mics-bg-primary">
+                        <div class="trendsChartItem mics-bg-primary" data-Energy="汽">
                             <div class="form-group">汽能</div>
-                            <div class="form-group" id="SteamRealTimeData">0</div>
+                            <div class="form-group"><span id="StotalF">0</span> <span class="unit"></span></div>
                             <div class="form-group"><div class="row"><div class="highcharts-item" id="highcharts-steam" style="min-width:162px;height:74px"></div></div></div>
-                            <div class="form-group">3751</div>
+                            <div class="form-group totalData"><span id="StotalS">0</span> <span class="unit"></span></div>
                         </div>
                     </div>
                 </div>
@@ -124,11 +125,11 @@
             </div>
             <div class="col-md-12">
                 <div class="costHead mics-bg-primary">
-                    <span class="pull-left" id="costData">16452.17</span>
+                    <span class="pull-left" id="costValue">0</span>
                     <span class="pull-right">RMB</span>
                 </div>
-                <div class="costPieChart mics-bg-primary">
-
+                <div class="costPieChart">
+                    <div style="width: 100%;height: 200px;" id="costPieChart"></div>
                 </div>
             </div>
         </div>
@@ -149,6 +150,7 @@
                     <h4 class="modal-title">实时数据</h4>
                 </div>
                 <div class="modal-body">
+                    <input type="hidden" id="EnergyInd" value="">
                     <div class="col-md-12">
                         <div class="col-md-7">
                             <form class="form-inline">
@@ -159,36 +161,35 @@
                                     <div class="input-group">
                                         <input type="text" class="form-control datetimepicker" id="endTime" readonly>
                                     </div>
-                                    <button type="button" class="btn btn-primary" id="SearchData">查询</button>
-                                    <button type="button" class="btn btn-primary" id="seeRealTimeData">查看实时</button>
                                 </div>
                             </form>
-                            <div id="modalRealTimeChart" style="width: 100%;height: 410px;margin-top: 20px;"></div>
+                            <div id="modalEnergyHistoryChart" style="width: 100%;height: 410px;margin-top: 20px;"></div>
                             <div class="mics-panel-head">
                                 <div class="mics-panel-title pull-left">累计能耗量:</div>
                             </div>
                             <div class="mics-panel-head">
-                                <label for="" class="groupLabel">415461.13</label>
+                                <label for="" class="groupLabel" id="EnergyHistoryDataTotal">0</label>
                             </div>
                         </div>
                         <div class="col-md-5">
                             <div class="mics-panel-head">
                                 <div class="mics-panel-title pull-left">区域能耗排名:</div>
                             </div>
-                            <div id="rankingChart" style="width: 100%;height: 200px;margin-top: 20px;">
-
-                            </div>
-                            <div class="mics-panel-head">
-                                <div class="mics-panel-title pull-left">能耗数据统计:</div>
-                            </div>
-                            <div id="rankingChart" style="width: 100%;height: 200px;margin-top: 20px;">
-
-                            </div>
+                            <div id="rankingChart" style="width: 100%;margin-top: 20px;"></div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer" class="close" data-dismiss="modal">
                     <span class="fa fa-times"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="loadingModal" class="modal fade" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p class="text-center mb-0">正在加载...</p>
                 </div>
             </div>
         </div>
@@ -210,15 +211,50 @@
                 meridiem:    ["上午", "下午"],
                 today:       "今天"
             };
+
             $('#startTime,#endTime').datetimepicker({
                 format: 'yyyy-mm-dd hh:ii', // 标签上可用data-date-format="hh:ii" data-link-format="hh:ii"
                 autoclose: true, //选择完成自动关闭下拉框
                 startView : 2,
                 minView:0, //0到分钟结束，1到小时，2到日
                 language: 'zh-CN'
+            }).on('changeDate',function(ev){
+                var dffDate = (new Date($('#endTime').val())).getTime() -  (new Date($('#startTime').val())).getTime()
+                if(dffDate <= 0){
+                    bootbox.alert('截止时间不能小于开始时间')
+                }else{
+                    getEnergyHistory()
+                }
+            });
+            //实时数据弹框
+            $(".trendsChartItem").on("dblclick",function(){
+                $("#realTimeModal").modal('show')
+                var Energy = $(this).attr("data-Energy")
+                $("#realTimeModal").find(".modal-title").html(Energy+"能数据")
+                $("#realTimeModal").find("#EnergyInd").val(Energy)
+                $("#startTime").val(myformatter(new Date(new Date().getTime() - 1*24*60*60*1000)))
+                $("#endTime").val(myformatter(new Date()))
+                getEnergyHistory()
             })
+            function getEnergyHistory(){
+                $.ajax({
+                    url:"/energyHistory",
+                    type:"get",
+                    data:{
+                        StartTime: $("#startTime").val(),
+                        EndTime : $("#endTime").val(),
+                        Energy : $("#EnergyInd").val(),
+                    },
+                    success:function (res) {
+                        res = JSON.parse(res)
+                        $("#EnergyHistoryDataTotal").html(res.total)
+                        highchartsEnergyHistoryRender("modalEnergyHistoryChart",res.HistorySeries,res.Unit)
+                        highchartsAreaBarRender("rankingChart",res.energyRankX,res.energyRankY,res.Unit)
+                    }
+                })
+            }
 
-            //能耗趋势图表
+            //趋势图表
             ajaxEnergyTrend($("#EnergyChartSelect_Time").val(),$("#EnergyChartSelect_Item").val())
             $('.EnergyChartSelect_Time').bind('DOMNodeInserted',"#EnergyChartSelect_Time",function(e){
                 ajaxEnergyTrend(e.target.innerHTML,$("#EnergyChartSelect_Item").val())
@@ -226,31 +262,30 @@
             $('.EnergyChartSelect_Item').bind('DOMNodeInserted',"#EnergyChartSelect_Item",function(e){
                 ajaxEnergyTrend($("#EnergyChartSelect_Time").val(),e.target.innerHTML)
             })
-            function ajaxEnergyTrend(currenttime,classparam){
+            function ajaxEnergyTrend(DateTime,EnergyClass){
                 $.ajax({
-                    url:"/energyTrend",
+                    url:"/energyall",
                     type:"get",
                     data:{
-                        currenttime:currenttime,
-                        classparam:classparam
+                        EnergyClass : EnergyClass,
+                        DateTime:DateTime,
+                        ModelFlag:"能耗趋势"
+                    },
+                    beforeSend: function () {
+                        $("#loadingModal").modal("show")
                     },
                     success:function(res){
+                        $("#loadingModal").modal("hide")
                         res = JSON.parse(res)
-                        highchartsRender("highchartsEnergy",res.X,res.Y)
+                        highchartsRender("highchartsEnergy",res.X,res.Y,res.unit)
                     }
                 })
             }
 
-            //实时数据趋势图
-            highchartsRealTimeNoTickRender("ws://127.0.0.1:5003","highcharts-electricity","randomtime","random","ElectricRealTimeData ")
-            highchartsRealTimeNoTickRender("ws://127.0.0.1:5003","highcharts-water","randomtime","random","WaterRealTimeData ")
-            highchartsRealTimeNoTickRender("ws://127.0.0.1:5003","highcharts-steam","randomtime","random","SteamRealTimeData")
-
-            //实时数据弹框
-            $(".trendsChartItem").on("dblclick",function(){
-                $("#realTimeModal").modal('show')
-                highchartsRealTimeRender("ws://127.0.0.1:5003","modalRealTimeChart","randomtime","random")
-            })
+            //水电气实时数据趋势图
+            highchartsRealTimeNoTickRender("ws://192.168.1.106:5004","highcharts-electricity","EtotalZGL","EtotalZGL")
+            highchartsRealTimeNoTickRender("ws://192.168.1.106:5003","highcharts-water","WtotalF","WtotalF","WtotalS","WtotalS")
+            highchartsRealTimeNoTickRender("ws://192.168.1.106:5005","highcharts-steam","StotalF","StotalF","StotalS","StotalS")
 
             //区域下拉框
             $.ajax({
@@ -273,20 +308,20 @@
             })
             //区域能耗量
             EnergyAreaRender($("#EnergyAreaSelect").val(),$("#EnergyAreaDateSelect").val())
-            $(".EnergyAreaSelect").bind('DOMNodeInserted',"#EnergyAreaSelect",function(e){
+            $('.EnergyAreaSelect').bind('DOMNodeInserted','#EnergyAreaSelect',function(e){
                 EnergyAreaRender(e.target.innerHTML,$("#EnergyAreaDateSelect").val())
             })
             $('.EnergyAreaDateSelect').bind('DOMNodeInserted','#EnergyAreaDateSelect',function(e){
                 EnergyAreaRender($("#EnergyAreaSelect").val(),e.target.innerHTML)
             })
-            function EnergyAreaRender(Area,DateTime,EnergyClass){
+            function EnergyAreaRender(Area,DateTime){
                 $.ajax({
                     url:"/energyall",
                     type:"get",
                     data:{
                         Area: Area,
                         DateTime : DateTime,
-                        EnergyClass : EnergyClass,
+                        ModelFlag:"区域能耗"
                     },
                     success:function (res) {
                         res = JSON.parse(res)
@@ -296,20 +331,28 @@
                     }
                 })
             }
+
+            //成本中心
             EnergyCostRender($("#EnergyClassSelect").val())
             $('.EnergyClassSelect').bind('DOMNodeInserted','#EnergyClassSelect',function(e){
                 EnergyCostRender(e.target.innerHTML)
             })
-            function EnergyCostRender(EnergyClass){
+            function EnergyCostRender(DateTime){
                 $.ajax({
                     url:"/energyall",
                     type:"get",
                     data:{
-                        EnergyClass : EnergyClass,
+                        DateTime : DateTime,
+                        ModelFlag:"成本展示"
+                    },
+                    beforeSend: function () {
+                        $("#loadingModal").modal("show")
                     },
                     success:function (res) {
+                        $("#loadingModal").modal("hide")
                         res = JSON.parse(res)
-                        $("#costValue").html()
+                        $("#costValue").html(res.ZCB)
+                        highchartsPieRender("costPieChart",res.data)
                     }
                 })
             }

@@ -13,7 +13,7 @@ import random
 import datetime
 from dbset.database.db_operate import db_session
 from models.SystemManagement.system import ElectricSiteURL
-from models.SystemManagement.core import TagDetail
+from models.SystemManagement.core import TagDetail, Unit
 from dbset.log.BK2TLogger import logger,insertSyslog
 
 
@@ -110,73 +110,43 @@ def handler_accept(sock):
 
 def handler_msg(conn):
     with conn as c:
-        data_recv = c.recv(1024)
+        # data_recv = c.recv(1024)
         while True:
             try:
-                AreaName = ""
                 time.sleep(2)
-                if data_recv[0:1] == b"\x81":
-                    data_parse = parse_payload(data_recv)
-                    AreaName = str(data_parse)
+                # if data_recv[0:1] == b"\x81":
+                #     data_parse = parse_payload(data_recv)
                 data_dict = {}
-                dir = []
-                dis = []
-                diw = []
-                die = []
                 pool = redis.ConnectionPool(host=constant.REDIS_HOST)
                 redis_conn = redis.Redis(connection_pool=pool)
-                Tags = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaName).all()
-                i = 0
+                Tags = db_session.query(TagDetail).filter().all()
+                StotalF = 0.0
+                StotalS = 0.0
                 for tag in Tags:
                     try:
                         S = str(tag.TagClassValue)[0:1]
                         if S == "S":
-                            tis_i={}
-                            tis_i["title"] = tag.FEFportIP
-                            tis_i["WD"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                          tag.TagClassValue + "WD"))
-                            tis_i["Flow"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                            tag.TagClassValue + "F"))
-                            tis_i["Sum"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                           tag.TagClassValue + "S"))
-                            dis.append(tis_i)
-                        elif S == "W":
-                            tiw_i = {}
-                            tiw_i["title"] = tag.FEFportIP
-                            tiw_i["Flow"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                            tag.TagClassValue + "F"))
-                            tiw_i["Sum"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                           tag.TagClassValue + "S"))
-                            diw.append(tiw_i)
-                        elif S == "E":
-                            tie_i = {}
-                            tie_i["title"] = tag.FEFportIP
-                            tie_i["ZGL"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                           tag.TagClassValue + "_ZGL"))
-                            tie_i["AU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                          tag.TagClassValue + "_AU"))
-                            tie_i["AI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                          tag.TagClassValue + "_AI"))
-                            tie_i["BU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                   tag.TagClassValue + "_BU"))
-                            tie_i["BI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                   tag.TagClassValue + "_BI"))
-                            tie_i["CU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                   tag.TagClassValue + "_CU"))
-                            tie_i["CI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                   tag.TagClassValue + "_CI"))
-                            die.append(tie_i)
+                            # data_dict[tag.TagClassValue + "WD"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            #                                                       tag.TagClassValue + "WD"))
+                            # data_dict[tag.TagClassValue + "F"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            #                                                      tag.TagClassValue + "F"))
+                            # data_dict[tag.TagClassValue + "S"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            #                                                      tag.TagClassValue + "S"))
+                            Sflow = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME, tag.TagClassValue + "F"))
+                            Ssum = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME, tag.TagClassValue + "S"))
+                            StotalF = StotalF +Sflow
+                            StotalS = StotalS + Ssum
                     except Exception as ee:
                         print("报错tag：" + tag.TagClassValue + " |报错IP：" + tag.IP + "  |报错端口：" + tag.COMNum + "  |错误：" + str(ee))
                     finally:
-                        i = i + 1
                         pass
-                data_dict["E"] = die
-                data_dict["S"] = dis
-                data_dict["W"] = diw
-                dir.append(data_dict)
-                print(dir)
+                unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽").first()[0]
+                data_dict["unit"] = unit
+                data_dict["StotalF"] = StotalF
+                data_dict["StotalS"] = StotalS
+                data_dict['currentTime'] = str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
                 json_data = json.dumps(data_dict)
+                print(json_data)
                 # bytemsg = bytes(json_data, encoding="utf8")
                 # send_msg(c, bytes("recv: {}".format(data_parse), encoding="utf-8"))
                 bytemsg = bytes(json_data,encoding="utf-8")
@@ -189,13 +159,13 @@ def strtofloat(f):
     if f == None or f == "" or f == b'':
         return 0.0
     else:
-        return round(float(f), 2)
+        return float(f)
 
 
 def server_socket():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    sock.bind(("127.0.0.1", 5002))
+    sock.bind(("127.0.0.1", 5005))
     sock.listen(2)
     t = threading.Thread(target=handler_accept(sock))
     t.start()

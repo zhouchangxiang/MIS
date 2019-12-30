@@ -370,7 +370,7 @@ class User(Base):
 	Name = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
 
 	# 密码:
-	Password = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+	Password = Column(Unicode(150), primary_key=False, autoincrement=False, nullable=True)
 
 	# 工号:
 	WorkNumber = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
@@ -569,23 +569,6 @@ class LimitTable(Base):
 
 
 
-#TagClassType_START:
-class TagClassType(Base):
-	__tablename__ = "TagClassType" 
-	
-	#ID:
-	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
-	
-	#Tag类型名称:
-	TagClassName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#Tag对应值:
-	TagClassValue = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#设备ID:
-	EquipmnetID = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
-	
-#TagClassType_END:
 
 
 #Unit_START:
@@ -641,115 +624,10 @@ class PriceList(Base):
 
 
 
-#SteamEnergy_START:
-class SteamEnergy(Base):
-	__tablename__ = "SteamEnergy" 
-	
-	#ID:
-	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
-	
-	#蒸汽值:
-	SteamValue = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#单位:
-	Unit = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#仪表ID:
-	EquipmnetID = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
-	
-	#价格ID:
-	PriceID = Column(Float(53), primary_key = False, autoincrement = False, nullable = True)
-	
-	#采集点:
-	TagClassValue = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#采集时间:
-	CollectionDate = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#采集年:
-	CollectionYear = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#采集月:
-	CollectionMonth = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#采集天:
-	CollectionDay = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-#SteamEnergy_END:
 
 
-#WaterEnergy_START:
-class WaterEnergy(Base):
-	__tablename__ = "WaterEnergy" 
-	
-	#ID:
-	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
-	
-	#水能值:
-	WaterMeterValue = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#单位:
-	Unit = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#仪表ID:
-	EquipmnetID = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
-	
-	#价格ID:
-	PriceID = Column(Float(53), primary_key = False, autoincrement = False, nullable = True)
-	
-	#采集点:
-	TagClassValue = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#采集时间:
-	CollectionDate = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#采集年:
-	CollectionYear = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#采集月:
-	CollectionMonth = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#采集天:
-	CollectionDay = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-#WaterEnergy_END:
 
 
-#ElectricEnergy_START:
-class ElectricEnergy(Base):
-	__tablename__ = "ElectricEnergy" 
-	
-	#ID:
-	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
-	
-	#电能值:
-	ElectricEnergyValue = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#单位:
-	Unit = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#仪表ID:
-	EquipmnetID = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
-	
-	#价格ID:
-	PriceID = Column(Float(53), primary_key = False, autoincrement = False, nullable = True)
-	
-	#采集点:
-	TagClassValue = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#采集时间:
-	CollectionDate = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#采集年:
-	CollectionYear = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#采集月:
-	CollectionMonth = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#采集天:
-	CollectionDay = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-#ElectricEnergy_END:
 
 
 
@@ -819,32 +697,6 @@ class WorkShop(Base):
 #WorkShop_END:
 
 
-#AreaTable_START:
-class AreaTable(Base):
-	__tablename__ = "AreaTable" 
-	
-	#ID:
-	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
-	
-	#区域名称:
-	AreaName = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
-	
-	#区域编码:
-	AreaCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#区域:
-	AreaName = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
-	
-	#品名:
-	BrandName = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
-	
-	#所属车间:
-	WorkShopName = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
-	
-	#描述:
-	Desc = Column(Unicode(100), primary_key = False, autoincrement = False, nullable = True)
-	
-#AreaTable_END:
 
 
 
@@ -937,6 +789,237 @@ class Instrumentation(Base):
 	UpdateTime = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
 	
 #Instrumentation_END:
+
+
+
+
+#AreaTable_START:
+class AreaTable(Base):
+	__tablename__ = "AreaTable" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#区域名称:
+	AreaName = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
+	
+	#区域编码:
+	AreaCode = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#所属车间:
+	WorkShopName = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
+	
+	#描述:
+	Desc = Column(Unicode(100), primary_key = False, autoincrement = False, nullable = True)
+	
+#AreaTable_END:
+
+
+#TagClassType_START:
+class TagClassType(Base):
+	__tablename__ = "TagClassType" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#Tag类型名称:
+	TagClassName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#Tag对应值:
+	TagClassValue = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#设备ID:
+	EquipmnetID = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
+	
+	#所属区域:
+	AreaName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+#TagClassType_END:
+
+
+
+
+#TagDetail_START:
+class TagDetail(Base):
+	__tablename__ = "TagDetail" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#区域名称:
+	AreaName = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
+	
+	#器件号:
+	DeviceNum = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#IP地址:
+	IP = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#端口:
+	Port = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#虚拟分配COM号:
+	COMNum = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#485站点地址:
+	FEFportIP = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
+	
+	#位置:
+	Area = Column(Unicode(65), primary_key = False, autoincrement = False, nullable = True)
+	
+	#备注:
+	Description = Column(Unicode(150), primary_key = False, autoincrement = False, nullable = True)
+	
+	#水电汽分类:
+	EnergyClass = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#Tag点:
+	TagClassValue = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+#TagDetail_END:
+
+
+#SteamEnergy_START:
+class SteamEnergy(Base):
+	__tablename__ = "SteamEnergy" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#蒸汽值:
+	SteamValue = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#单位:
+	Unit = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#仪表ID:
+	EquipmnetID = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
+	
+	#价格ID:
+	PriceID = Column(Float(53), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集点:
+	TagClassValue = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集时间:
+	CollectionDate = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集年:
+	CollectionYear = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集月:
+	CollectionMonth = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集天:
+	CollectionDay = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#温度:
+	WD = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#蒸汽瞬时值:
+	FlowValue = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#蒸汽累计值:
+	SumValue = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+#SteamEnergy_END:
+
+
+
+
+#WaterEnergy_START:
+class WaterEnergy(Base):
+	__tablename__ = "WaterEnergy" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#单位:
+	Unit = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#仪表ID:
+	EquipmnetID = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
+	
+	#价格ID:
+	PriceID = Column(Float(53), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集点:
+	TagClassValue = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集时间:
+	CollectionDate = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集年:
+	CollectionYear = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集月:
+	CollectionMonth = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集天:
+	CollectionDay = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#瞬时流量:
+	WaterFlow = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#累计流量:
+	WaterSum = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+#WaterEnergy_END:
+
+
+#ElectricEnergy_START:
+class ElectricEnergy(Base):
+	__tablename__ = "ElectricEnergy" 
+	
+	#ID:
+	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+	
+	#单位:
+	Unit = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#仪表ID:
+	EquipmnetID = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
+	
+	#价格ID:
+	PriceID = Column(Float(53), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集点:
+	TagClassValue = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集时间:
+	CollectionDate = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集年:
+	CollectionYear = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集月:
+	CollectionMonth = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#采集天:
+	CollectionDay = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#总功率:
+	ZGL = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#A相电压:
+	AU = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#A相电流:
+	AI = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#B相电压:
+	BU = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#B相电流:
+	BI = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#C相电压:
+	CU = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+	#C相电压:
+	CI = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+	
+#ElectricEnergy_END:
 
 # 生成表单的执行语句_START
 Base.metadata.create_all(engine)

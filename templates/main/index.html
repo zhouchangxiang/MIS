@@ -38,6 +38,12 @@
                         </div>
                         <div class="number"></div>
                     </div>
+                    <div class="sidebarRightHead hidden" data-menu-indet="生产调度管理">
+                        <h3 class="indetNav">生产调度管理</h3>
+                    </div>
+                    <div class="sidebarRightHead hidden" data-menu-indet="生产数据管理">
+                        <h3 class="indetNav">生产数据管理</h3>
+                    </div>
                     <ul class="sidebarRightNav"></ul>
                     <div class="sidebarMoveBtn"><i class="glyphicon glyphicon-menu-left"></i></div>
                 </div>
@@ -48,7 +54,7 @@
                 <nav class="navHead">
                     <div class="navHead-item flexibleCon"><a href="javascript:;" class="flexible"><i class="glyphicon glyphicon-list"></i></a></div>
                     <div class="navLogo"><a href="/"><img src="../../static/images/logo.png" alt=""></a></div>
-                    <ul class="navHead-riht">
+                    <ul class="navHead-right">
                         <li class="navHead-item">
                             <a href="javascript:;" id="userInfo" data-job-number="{{ current_user['WorkNumber'] }}" data-sesseionid="{{ current_user['session_id'] }}"><cite>{{ current_user['Name'] }}</cite><i class="glyphicon glyphicon-triangle-bottom icon-pull-right"></i></a>
                             <div class="navUserPanel">
@@ -60,7 +66,6 @@
                         </li>
                         <li class="navHead-item"><a href="javascript:;" data-fullscreen><i class="glyphicon glyphicon-fullscreen"></i></a></li>
                         <li class="navHead-item"><a href="javascript:;"><i class="glyphicon glyphicon-bell"></i></a></li>
-                        <li class="navHead-item"><a href="/config" target="_blank"><i class="glyphicon glyphicon-glass"></i></a></li>
                     </ul>
                 </nav>
                 <div class="layadmin-pagetabs">
@@ -103,15 +108,72 @@
         $(function(){
             $('select.select').select();
 
-            var dom = document.querySelector(".number")
-            var digit = new Digit({
-                number : 7258906, // 到达指定数值停止滚动
-                finish : 3, // 整体完成时间
-                speed : 1, // 数值越大，越多数字同时进行翻滚，取值范围（1 ~ 10）
-                direction : "left", // 动画方向
-                dom : dom, // 在指定dom节点插入动画
+            EnergyCostRender($("#sidebarSelect").val())
+            $('.mics-form-select').bind('DOMNodeInserted','#sidebarSelect',function(e){
+                EnergyCostRender(e.target.innerHTML)
             })
-            digit.render() // 执行
+            function EnergyCostRender(EnergyClass) {
+                $.ajax({
+                    url:"/energyall",
+                    type:"get",
+                    data:{
+                        DateTime:"年",
+                        ModelFlag:"成本展示"
+                    },
+                    success:function (res) {
+                        res = JSON.parse(res)
+                        var dom = document.querySelector(".number")
+                        $(".number").html("")
+                        if(EnergyClass == "电"){
+                            var digit = new Digit({
+                                number : JSON.stringify(res.ElectricValue), // 到达指定数值停止滚动
+                                finish : 3, // 整体完成时间
+                                speed : 1, // 数值越大，越多数字同时进行翻滚，取值范围（1 ~ 10）
+                                direction : "left", // 动画方向
+                                dom : dom, // 在指定dom节点插入动画
+                            })
+                            digit.render() // 执行
+                        }else if(EnergyClass == "水"){
+                            var digit = new Digit({
+                                number : JSON.stringify(res.SteamValue),
+                                finish : 3,
+                                speed : 1,
+                                direction : "left",
+                                dom : dom,
+                            })
+                            digit.render() // 执行
+                        }else if(EnergyClass == "汽"){
+                            var digit = new Digit({
+                                number : JSON.stringify(res.WaterValue),
+                                finish : 3,
+                                speed : 1,
+                                direction : "left",
+                                dom : dom,
+                            })
+                            digit.render() // 执行
+                        }
+                    }
+                })
+            }
+
+            $.ajax({
+                url:"http://127.0.0.1:5000/CUID",
+                type:"get",
+                data:{
+                    tableName: "User",
+                    field: "WorkNumber",
+                    fieldvalue: "201900",
+                    limit : 100000000,
+                    offset : 0
+                },
+                success:function (res) {
+                    res = JSON.parse(res)
+                    if(res.rows[0].WorkNumber == $("#userInfo").attr("data-job-number")){
+                        var btnNavHtml = `<li class="navHead-item"><a href="/config" target="_blank"><i class="glyphicon glyphicon-glass"></i></a></li>`
+                        $(".navHead-right").append(btnNavHtml)
+                    }
+                }
+            })
         })
     </script>
 </body>

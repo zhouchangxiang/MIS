@@ -6,6 +6,7 @@
             primaryKey:'ID', //主键
             parentTableID: '', //父表ID
             parentTableLinkField: '', //父表关联的字段
+            tableUrl: 'http://127.0.0.1:5000/CUID', //通用增删改查表格的请求接口
             toolbarBtnArr:[] //操作栏按钮
         };
         options = $.extend(defaluts, options);
@@ -20,7 +21,7 @@
         var deletebtn = "" //删除按钮dom
         //在配置数据表中获取tableName这条数据
         $.ajax({
-            url: "http://127.0.0.1:5000/CUID",
+            url: options.tableUrl,
             type: "get",
             async: false,
             data: {
@@ -43,7 +44,7 @@
                             SingleSelect = false
                         }
                     }else if(data.rows[0].ISFirstCheckBox == "False"){
-                        columns = [{checkbox: false}]
+
                     }
                     if(data.rows[0].IsAdd == "True"){
                         addbtn = '<button type="button" class="btn btn-info" data-add-btn>添加</button>'
@@ -81,7 +82,7 @@
         })
         //在配置字段表中或者tableName这条数据
         $.ajax({
-            url:"http://127.0.0.1:5000/CUID",
+            url:options.tableUrl,
             type:"get",
             async: false,
             data:{
@@ -174,7 +175,7 @@
         })
         //表格渲染
         $this.bootstrapTable('destroy').bootstrapTable({
-            url: "http://127.0.0.1:5000/CUID",
+            url: options.tableUrl,
             method: 'get',
             queryParams:function(params){
                 return {
@@ -212,7 +213,7 @@
         $(toolbarID).find(FieldSetSearchID).append(resfreshFieldSelectOptions)
         $(toolbarID).find(FieldSetSearchID).selectpicker("refresh")
         $(toolbarID).find(FieldSetSearchID).selectpicker("render")
-        $(toolbarID).find(FieldSetSearchID).selectpicker("val", columns[0].title); //赋默认值
+        $(toolbarID).find(FieldSetSearchID).selectpicker("val", columns[0].field); //赋默认值
         //搜索按钮
         $(toolbarID).on("click","[data-search-btn]",function(){
             $this.bootstrapTable('refresh',{
@@ -234,7 +235,7 @@
                             $(ModalID).find(FieldSetSearchID).val("");
                         }else if(columns[i].inputType == "下拉框"){
                             $.ajax({
-                                url:"http://127.0.0.1:5000/CUID",
+                                url:options.tableUrl,
                                 type:"get",
                                 data:{
                                     tableName:columns[i].DownTable,
@@ -267,7 +268,7 @@
                         $(ModalID).find("input[name="+ columns[i].field +"]").val("");
                     }else if(columns[i].inputType == "下拉框"){
                         $.ajax({
-                            url:"http://127.0.0.1:5000/CUID",
+                            url:options.tableUrl,
                             type:"get",
                             data:{
                                 tableName:columns[i].DownTable,
@@ -307,7 +308,7 @@
                                     $(ModalID).find("input[name=" + columns[i].field + "]").val(rows[0][columns[i].field]);
                                 } else if (columns[i].inputType == "下拉框") {
                                     $.ajax({
-                                        url: "http://127.0.0.1:5000/CUID",
+                                        url: options.tableUrl,
                                         type: "get",
                                         data: {
                                             tableName:columns[i].DownTable,
@@ -348,7 +349,7 @@
                                 $(ModalID).find("input[name=" + columns[i].field + "]").val(rows[0][columns[i].field]);
                             } else if (columns[i].inputType == "下拉框") {
                                 $.ajax({
-                                    url: "http://127.0.0.1:5000/CUID",
+                                    url: options.tableUrl,
                                     type: "get",
                                     data: {
                                         tableName:columns[i].DownTable,
@@ -402,7 +403,7 @@
                             }
                             var a = JSON.stringify(jsonarray);
                             $.ajax({
-                                url: 'http://127.0.0.1:5000/CUID',
+                                url: options.tableUrl,
                                 method: 'DELETE',
                                 data: {
                                     tableName: options.tableName,
@@ -459,7 +460,7 @@
                 requestData[options.parentTableLinkField] = parentTableClickRow[0][options.parentTableLinkField]
             }
             $.ajax({
-                url:"http://127.0.0.1:5000/CUID",
+                url:options.tableUrl,
                 type:requestType,
                 data:requestData,
                 success:function(data){

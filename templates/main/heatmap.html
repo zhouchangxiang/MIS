@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>热力图</title>
+    <link rel="stylesheet" href="../../static/style/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="../../static/style/font-awesome.min.css">
+    <link rel="stylesheet" href="../../static/style/admin.css">
+    <link rel="stylesheet" href="../../static/style/base.css">
+    <style>
+        .area{
+            position: relative;
+            width: 100%;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        .area-A{
+            height: 8vh;
+        }
+        .area-B{
+            height: 16vh;
+        }
+        .area-C{
+            height: 6vh;
+        }
+        .area-D{
+            height: 8vh;
+        }
+        .area-E{
+            height: 22vh;
+        }
+        .area-use-bg{
+            color:#ffffff;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .area-unused-bg{
+            color:#ffffff;
+        }
+        .clear-left-padding{
+            padding-left: 0;
+        }
+        .clear-right-padding{
+            padding-right: 0;
+        }
+        .area-shade{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            background:linear-gradient(180deg,rgba(21,161,208,1) 0%,rgba(21,161,208,0.59) 100%);
+            padding: 15px;
+        }
+        .area-name{
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+        }
+        .rangeList{
+            position: absolute;
+            right: 20px;
+            bottom: 50px;
+        }
+        .rangeList li{
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="mapContent">
+        <div class="mapImg-shade"></div>
+        <div class="mapHead">
+            <div class="mapHead-title">辽宁好护士能源管理系统</div>
+        </div>
+        <div class="energybtn">
+            <a href="javascript:;" class="selectActive">电能</a>
+            <a href="javascript:;">水能</a>
+            <a href="javascript:;">汽能</a>
+        </div>
+        <div class="heatmapBody">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="col-xs-3"></div>
+                    <div class="col-xs-9">
+                        <div class="col-xs-2">
+                            <div class="area area-A area-use-bg" style="margin-top: 30px;">
+                                <div class="area-shade"></div>
+                                <div class="area-name">污水站</div>
+                            </div>
+                            <div class="area area-C area-unused-bg"> </div>
+                            <div class="area area-D area-unused-bg"></div>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="col-xs-6"><div class="area area-A area-unused-bg"></div></div>
+                            <div class="col-xs-6"><div class="area area-A area-use-bg">
+                                <div class="area-shade"></div>
+                                <div class="area-name">锅炉房</div>
+                            </div></div>
+                            <div class="col-xs-12"><div class="area area-C area-use-bg">
+                                <div class="area-shade"></div>
+                                <div class="area-name">提取二车间</div>
+                            </div></div>
+                            <div class="col-xs-12"><div class="area area-D area-use-bg">
+                                <div class="area-shade"></div>
+                                <div class="area-name">综合车间</div>
+                            </div></div>
+                        </div>
+                        <div class="col-xs-2">
+                            <div class="area area-B area-use-bg">
+                                <div class="area-shade"></div>
+                                <div class="area-name">新建综合制剂车间</div>
+                            </div>
+                            <div class="col-xs-6 clear-left-padding"><div class="area area-A area-unused-bg"></div></div>
+                            <div class="col-xs-6 clear-right-padding"><div class="area area-A area-unused-bg"></div></div>
+                        </div>
+                        <div class="col-xs-5">
+                            <div class="col-xs-6"><div class="area area-A area-use-bg">
+                                <div class="area-shade"></div>
+                                <div class="area-name">研发中心</div>
+                            </div></div>
+                            <div class="col-xs-6"><div class="area area-A area-use-bg">
+                                <div class="area-shade"></div>
+                                <div class="area-name">前处理车间</div>
+                            </div></div>
+                            <div class="col-xs-12"><div class="area area-C area-use-bg">
+                                <div class="area-shade"></div>
+                                <div class="area-name">好护士健康科技车间</div>
+                            </div></div>
+                            <div class="col-xs-12"><div class="area area-D area-use-bg">
+                                <div class="area-shade"></div>
+                                <div class="area-name">固体制剂车间</div>
+                            </div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12">
+                    <div class="col-xs-2">
+                        <div class="area area-E area-unused-bg"></div>
+                    </div>
+                    <div class="col-xs-2">
+                        <div class="area area-E area-use-bg">
+                            <div class="area-shade"></div>
+                            <div class="area-name">展览室</div>
+                        </div>
+                    </div>
+                    <div class="col-xs-3">
+                        <div class="area area-E area-use-bg">
+                            <div class="area-shade"></div>
+                            <div class="area-name">办公楼＼食堂</div>
+                        </div>
+                    </div>
+                    <div class="col-xs-5">
+                        <div class="area area-E area-unused-bg">
+                            <ul class="rangeList">
+                                <li><a href="javascript:;" style="display: inline-block;width:30px;height: 10px;border-radius:3px;margin-right: 10px;background: #CC1B18;"></a><span>500- KWH</span></li>
+                                <li><a href="javascript:;" style="display: inline-block;width:30px;height: 10px;border-radius:3px;margin-right: 10px;background: #CB5223;"></a><span>200-500 KWH</span></li>
+                                <li><a href="javascript:;" style="display: inline-block;width:30px;height: 10px;border-radius:3px;margin-right: 10px;background: #149FCD;"></a><span>-100 KWH</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mapFoot">
+            <ul class="mapNav">
+                <li><a href="javascript:;">实时数据</a></li>
+                <li><a href="javascript:;">数据报表</a></li>
+                <li><a href="/">首页</a></li>
+                <li><a href="javascript:;">成本中心</a></li>
+                <li><a href="javascript:;">工厂日历</a></li>
+            </ul>
+        </div>
+    </div>
+    <script src="../../static/script/jquery-3.3.1.min.js"></script>
+</body>
+</html>

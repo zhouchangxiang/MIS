@@ -13,6 +13,7 @@
             clickChildTTableField:"", //搜索子表的字段
             clickParentTableDom:"", //根据父表搜索的表格dom
             clickParentTableField:"", //根据父表搜索的表的字段
+            tableUrl: 'http://127.0.0.1:5000/CUID', //通用增删改查表格的请求接口
         };
         var options = $.extend(defaluts, options);
         var $this = $(this)
@@ -36,7 +37,7 @@
         $(options.toolbar).find(options.refreshDom).selectpicker("val", ""); //赋默认值
         //表格渲染
         $this.bootstrapTable({
-            url: "http://127.0.0.1:5000/CUID",
+            url: options.tableUrl,
             method: 'get',
             queryParams:function(params){
                 return {
@@ -139,7 +140,7 @@
                                 })
                             }else if(fieldstr.selectTableName){ //用selectTableName表名获取数据
                                 $.ajax({
-                                    url:"http://127.0.0.1:5000/CUID",
+                                    url:options.tableUrl,
                                     type:"get",
                                     data:{
                                         tableName:fieldstr.selectTableName,
@@ -163,7 +164,7 @@
                                             //默认选中状态，给子下拉框添加数据
                                             var selectVal = $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("val")
                                             $.ajax({
-                                                url:"http://127.0.0.1:5000/CUID",
+                                                url:options.tableUrl,
                                                 type:"get",
                                                 data:{
                                                     tableName:"FieldSet",
@@ -187,7 +188,7 @@
                                             $(options.Modal).find("#"+ fieldstr.field +"").on("change",function(){
                                                 selectVal = $(this).selectpicker("val")
                                                 $.ajax({
-                                                    url:"http://127.0.0.1:5000/CUID",
+                                                    url:options.tableUrl,
                                                     type:"get",
                                                     data:{
                                                         tableName:"FieldSet",
@@ -252,7 +253,7 @@
                             })
                         }else if(fieldstr.selectTableName){ //用selectTableName表名获取数据
                             $.ajax({
-                                url:"http://127.0.0.1:5000/CUID",
+                                url:options.tableUrl,
                                 type:"get",
                                 data:{
                                     tableName:fieldstr.selectTableName,
@@ -276,7 +277,7 @@
                                         //默认选中状态，给子下拉框添加数据
                                         var selectVal = $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("val")
                                         $.ajax({
-                                            url:"http://127.0.0.1:5000/CUID",
+                                            url:options.tableUrl,
                                             type:"get",
                                             data:{
                                                 tableName:"FieldSet",
@@ -300,7 +301,7 @@
                                         $(options.Modal).find("#"+ fieldstr.field +"").on("change",function(){
                                             selectVal = $(this).selectpicker("val")
                                             $.ajax({
-                                                url:"http://127.0.0.1:5000/CUID",
+                                                url:options.tableUrl,
                                                 type:"get",
                                                 data:{
                                                     tableName:"FieldSet",
@@ -369,7 +370,7 @@
                                         })
                                     }else if(fieldstr.selectTableName){
                                         $.ajax({
-                                            url: "http://127.0.0.1:5000/CUID",
+                                            url: options.tableUrl,
                                             type: "get",
                                             data: {
                                                 tableName: fieldstr.selectTableName,
@@ -391,7 +392,7 @@
                                                     //默认选中状态，给子下拉框添加数据
                                                     var selectVal = $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("val")
                                                     $.ajax({
-                                                        url:"http://127.0.0.1:5000/CUID",
+                                                        url:options.tableUrl,
                                                         type:"get",
                                                         data:{
                                                             tableName:"FieldSet",
@@ -416,7 +417,7 @@
                                                     $(options.Modal).find("#"+ fieldstr.field +"").on("change",function(){
                                                         selectVal = $(this).selectpicker("val")
                                                         $.ajax({
-                                                            url:"http://127.0.0.1:5000/CUID",
+                                                            url:options.tableUrl,
                                                             type:"get",
                                                             data:{
                                                                 tableName:"FieldSet",
@@ -485,7 +486,7 @@
                                     })
                                 }else if(fieldstr.selectTableName){
                                     $.ajax({
-                                        url: "http://127.0.0.1:5000/CUID",
+                                        url: options.tableUrl,
                                         type: "get",
                                         data: {
                                             tableName: fieldstr.selectTableName,
@@ -507,7 +508,7 @@
                                                 //默认选中状态，给子下拉框添加数据
                                                 var selectVal = $(options.Modal).find("#"+ fieldstr.field +"").selectpicker("val")
                                                 $.ajax({
-                                                    url:"http://127.0.0.1:5000/CUID",
+                                                    url:options.tableUrl,
                                                     type:"get",
                                                     data:{
                                                         tableName:"FieldSet",
@@ -532,7 +533,7 @@
                                                 $(options.Modal).find("#"+ fieldstr.field +"").on("change",function(){
                                                     selectVal = $(this).selectpicker("val")
                                                     $.ajax({
-                                                        url:"http://127.0.0.1:5000/CUID",
+                                                        url:options.tableUrl,
                                                         type:"get",
                                                         data:{
                                                             tableName:"FieldSet",
@@ -591,7 +592,7 @@
                             }
                             var a = JSON.stringify(jsonarray);
                             $.ajax({
-                                url: 'http://127.0.0.1:5000/CUID',
+                                url: options.tableUrl,
                                 method: 'DELETE',
                                 data: {
                                     tableName: options.tableName,
@@ -654,7 +655,7 @@
                 requestData[options.clickParentTableField] = clickParentTableValue[0][options.clickParentTableField]
             }
             $.ajax({
-                url:"http://127.0.0.1:5000/CUID",
+                url:options.tableUrl,
                 type:requestType,
                 data:requestData,
                 success:function(data){

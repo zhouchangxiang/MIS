@@ -4,10 +4,14 @@
     <meta charset="UTF-8">
     <title>实时数据</title>
     <link rel="stylesheet" href="../static/style/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="../../static/style/font-awesome.min.css">
     <link rel="stylesheet" href="../static/style/base.css">
     <script src="../static/script/jquery-3.3.1.min.js"></script>
     <script src="../static/script/jquery-ui.min.js"></script>
     <script src="../static/script/flowChart/jquery.jsPlumb-1.4.0-all.js"></script>
+    <script src="../static/script/bootstrap/bootstrap.min.js"></script>
+    <script src="../static/script/bootstrap/bootbox.min.js"></script>
+    <script src="../static/script/base.js"></script>
     <style>
         .aerialView{
             margin: 20px 0;
@@ -68,10 +72,9 @@
             border-radius: 50%;
         }
         .connection-interchanger{
-            width: 100px;
-            height: 50px;
-            line-height: 50px;
-            margin: 100px auto;
+            display: table;
+            margin: 20px auto;
+            padding: 20px;
             text-align: center;
             border-radius: 8px;
             color: #fff;
@@ -83,6 +86,72 @@
         }
         ._jsPlumb_endpoint,._jsPlumb_connector{
             z-index: 1;
+        }
+
+        .collectModel{
+            background: #EFF5FB;
+            color: #07488E;
+            font-size: 14px;
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .collectModel .collectModelData{
+            background: #07488E;
+            color: #ffffff;
+            letter-spacing:3px;
+            padding: 3px 5px;
+            text-align: right;
+            border-radius: 4px;
+            margin: 33px 0;
+        }
+        .collectModel .collectSteamModelData{
+            background: #07488E;
+            color: #ffffff;
+            letter-spacing:3px;
+            padding: 3px 5px;
+            text-align: right;
+            border-radius: 4px;
+            margin: 3px 0;
+        }
+        .collectModel .collectModelUnit{
+            font-size: 12px;
+            width: 100%;
+        }
+        .collectModel .collectModelTotal{
+            color: #07488E;
+            letter-spacing:3px;
+            margin-bottom: 0;
+            border-top: 2px solid #07488E;
+            padding-top: 5px;
+        }
+
+        .electricityData{
+            width: 100%;
+            height: 25px;
+            line-height: 25px;
+            text-align: center;
+            background: #07488E;
+            color: #ffffff;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .electricityData.electricityDataHead{
+            margin: 0;
+            background: none;
+            color: #07488E;
+        }
+        .electricityData .col-xs-4{
+            font-size: 12px;
+            transform : scale(0.83,0.83);
+            padding: 0;
+        }
+        #realDataBody{
+            height:490px;
+        }
+        #realDataBody .realDataLi{
+            margin-bottom:15px;
+            height:230px;
         }
     </style>
 </head>
@@ -105,48 +174,51 @@
                                 <div class="connection" id="area-item1"></div>
                                 <div class="area-name">污水站</div>
                             </div>
-                            <div class="area area-B area-use-bg">
-                                <div class="connection" id="area-item2"></div>
+                            <div class="area area-C area-unused-bg">
                                 <div class="area-name">原料库</div>
                             </div>
+                            <div class="area area-D area-unused-bg"></div>
                         </div>
                         <div class="col-xs-4">
                             <div class="col-xs-6"><div class="area area-A area-unused-bg"></div></div>
                             <div class="col-xs-6"><div class="area area-A area-use-bg">
-                                <div class="connection" id="area-item3"></div>
+                                <div class="connection" id="area-item2"></div>
                                 <div class="area-name">锅炉房</div>
                             </div></div>
                             <div class="col-xs-12"><div class="area area-C area-use-bg">
-                                <div class="connection" id="area-item4"></div>
+                                <div class="connection" id="area-item3"></div>
                                 <div class="area-name">提取二车间</div>
                             </div></div>
                             <div class="col-xs-12"><div class="area area-D area-use-bg">
-                                <div class="connection" id="area-item5"></div>
+                                <div class="connection" id="area-item4"></div>
                                 <div class="area-name">综合车间</div>
                             </div></div>
                         </div>
                         <div class="col-xs-2">
                             <div class="area area-B area-use-bg">
-                                <div class="connection connection-interchanger" id="area-item6">汇聚交换机</div>
-                                <div class="area-name">新建综合制剂楼</div>
+                                <div class="connection connection-interchanger" id="area-item5">汇聚交换机</div>
+                                <div class="area-name">新建综合制剂车间</div>
                             </div>
                             <div class="col-xs-6 clear-left-padding"><div class="area area-A area-unused-bg"></div></div>
                             <div class="col-xs-6 clear-right-padding"><div class="area area-A area-unused-bg"></div></div>
                         </div>
                         <div class="col-xs-4">
-                            <div class="area area-A area-unused-bg"><div class="area-name">高架库</div></div>
-                            <div class="col-xs-6 clear-left-padding">
-                                <div class="area area-B area-use-bg">
-                                    <div class="connection" id="area-item7"></div>
-                                    <div class="area-name">研发中心化验室</div>
-                                </div>
-                            </div>
-                            <div class="col-xs-6 clear-right-padding">
-                                <div class="area area-B area-use-bg">
-                                    <div class="connection" id="area-item8"></div>
-                                    <div class="area-name">前处理车间</div>
-                                </div>
-                            </div>
+                            <div class="col-xs-6"><div class="area area-A area-use-bg">
+                                <div class="connection" id="area-item6"></div>
+                                <div class="area-name">研发中心</div>
+                            </div></div>
+                            <div class="col-xs-6"><div class="area area-A area-use-bg">
+                                <div class="connection" id="area-item7"></div>
+                                <div class="area-name">前处理车间</div>
+                            </div></div>
+                            <div class="col-xs-12"><div class="area area-C area-use-bg">
+                                <div class="connection" id="area-item8"></div>
+                                <div class="area-name">好护士健康科技车间</div>
+                            </div></div>
+                            <div class="col-xs-12"><div class="area area-D area-use-bg">
+                                <div class="connection" id="area-item9"></div>
+                                <div class="area-name">固体制剂车间</div>
+                            </div></div>
                         </div>
                     </div>
                     <div class="col-xs-12">
@@ -154,28 +226,43 @@
                             <div class="area area-E area-unused-bg"></div>
                         </div>
                         <div class="col-xs-2">
-                            <div class="area area-E area-unused-bg"></div>
-                        </div>
-                        <div class="col-xs-5">
                             <div class="area area-E area-use-bg">
-                                <div class="connection" id="area-item9"></div>
-                                <div class="area-name">综合办公楼</div>
+                                <div class="connection" id="area-item10"></div>
+                                <div class="area-name">展览室</div>
                             </div>
                         </div>
-                        <div class="col-xs-3">
-                            <div class="area area-F area-use-bg">
-                                <div class="connection" id="area-item10"></div>
-                                <div class="area-name">生物科技楼</div>
-                            </div>
-                            <div class="area area-G area-use-bg">
+                        <div class="col-xs-4">
+                            <div class="area area-E area-use-bg">
                                 <div class="connection" id="area-item11"></div>
-                                <div class="area-name">固体制剂车间</div>
+                                <div class="area-name">办公楼＼食堂</div>
                             </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="area area-E area-unused-bg"></div>
                         </div>
                     </div>
                 </div>
             </div>
-            <button id="save">保存连线</button>
+{#            <button id="save">保存连线</button>#}
+        </div>
+    </div>
+    <div id="realTimeModal" class="modal mics-modal fade">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">实时数据</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="clearfix">
+                        <div class="col-sm-12" id="realDataBody">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" class="close" data-dismiss="modal">
+                    <span class="fa fa-times"></span>
+                </div>
+            </div>
         </div>
     </div>
     <script>
@@ -223,6 +310,7 @@
             jsPlumb.bind('click', function (connection, e) {
                 jsPlumb.detach(connection)
             });
+<<<<<<< HEAD
 
             //初始化锚点
             $.each($(".connection"),function(i,value){
@@ -235,22 +323,153 @@
                     target: customList[i].targetId
                   }, common)
             })
+=======
+            //var e1 = jsPlumb.addEndpoint("area-item1", { anchor:"LeftMiddle" }, exampleEndpoint1);
+            //e1.bind("maxConnections", maxConnectionsCallback);//可以在加到元素上之后绑定函数
+            //$.each($(".connection"),function(i,value){
+                //jsPlumb.addEndpoint($(this).attr("id"), exampleEndpoint);
+            //})
+
+            //默认连接线
+            {#$.each(customList,function(i,value){#}
+            {#    jsPlumb.connect({#}
+            {#        source: customList[i].sourceId,#}
+            {#        target: customList[i].targetId#}
+            {#      }, common)#}
+            {# })#}
+>>>>>>> d573bae238bf005a32e5334340fa7f562e418361
 
             list = jsPlumb.getAllConnections();//获取所有的链接
 
         })
         $(function(){
-            var listArr = []
-            $("#save").on('click',function(){
-                $.each(list.jsPlumb_DefaultScope,function(i,value){
-                    var str = {}
-                    str.sourceId = list.jsPlumb_DefaultScope[i].sourceId
-                    str.targetId = list.jsPlumb_DefaultScope[i].targetId
-                    listArr.push(str)
-                })
-                console.log(listArr)
+            {#var listArr = []#}
+            {#$("#save").on('click',function(){#}
+            {#    $.each(list.jsPlumb_DefaultScope,function(i,value){#}
+            {#        var str = {}#}
+            {#        str.sourceId = list.jsPlumb_DefaultScope[i].sourceId#}
+            {#        str.targetId = list.jsPlumb_DefaultScope[i].targetId#}
+            {#        listArr.push(str)#}
+            {#    })#}
+            {#    console.log(listArr)#}
+            {# })#}
+
+            //点击车间出现弹框
+            $(".area-use-bg").on("click",function(){
+                $("#realTimeModal").modal('show')
+                var areaTitle = $(this).find(".area-name").html()
+                var ws = new WebSocket("ws://192.168.1.106:5002");
+                ws.onopen = function(){
+                    ws.send(areaTitle);
+                    console.log("数据发送中...");
+                    $("#realTimeModal").find(".modal-title").html("正在连接中...")
+                };
+                ws.onclose = function(){
+                    console.log("连接已关闭");
+                    $("#realTimeModal").find(".modal-title").html("连接已关闭，获取数据失败。")
+                };
+                ws.onmessage = function (evt){
+                    $("#realTimeModal").find(".modal-title").html(areaTitle)
+                    var received_msg = evt.data;
+                    received_msg = JSON.parse(received_msg)
+                    console.log(received_msg)
+                    $("#realDataBody").html("")
+                    if(received_msg.W) {
+                        $.each(received_msg.W, function (i, value) {
+                            WRender("W",value)
+                        })
+                    }
+                    if(received_msg.E) {
+                        $.each(received_msg.E, function (i, value) {
+                            WRender("E",value)
+                        })
+                    }
+                    if(received_msg.S) {
+                        $.each(received_msg.S, function (i, value) {
+                            WRender("S",value)
+                        })
+                    }
+                };
+                $('#realTimeModal').on('hide.bs.modal', function () {
+                    ws.close()
+                });
             })
         })
+        function WRender(type,value){
+            if(type == "W"){
+                var Flow = (parseInt(value.Flow * 100 ) / 100 ).toFixed(2)
+                var Sum = (parseInt(value.Flow * 100 ) / 100 ).toFixed(2)
+                var str = `<div class="col-sm-3 realDataLi">
+                    <div class="collectModel">
+                        <div class="collectModelTitle">${ value.title }</div>
+                        <div class="collectModelData number">${ Flow }</div>
+                        <div class="collectModelUnit">单位：L</div>
+                        <div class="collectModelTotal number">${ Sum }</div>
+                    </div>
+                </div>`
+                $("#realDataBody").append(str)
+            }else if(type == "E"){
+                var AI = (parseInt(value.AI * 100 ) / 100 ).toFixed(2)
+                var AU = (parseInt(value.AU * 100 ) / 100 ).toFixed(2)
+                var BI = (parseInt(value.BI * 100 ) / 100 ).toFixed(2)
+                var BU = (parseInt(value.BU * 100 ) / 100 ).toFixed(2)
+                var CI = (parseInt(value.CI * 100 ) / 100 ).toFixed(2)
+                var CU = (parseInt(value.CU * 100 ) / 100 ).toFixed(2)
+                var ZGL = (parseInt(value.ZGL * 100 ) / 100 ).toFixed(2)
+                var str = `<div class="col-sm-3 realDataLi">
+                    <div class="collectModel">
+                        <div class="collectModelTitle">${ value.title }</div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="electricityData electricityDataHead">
+                                    <div class="col-xs-4"> </div>
+                                    <div class="col-xs-4">U</div>
+                                    <div class="col-xs-4">A</div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12">
+                                <div class="electricityData">
+                                    <div class="col-xs-4">A相</div>
+                                    <div class="col-xs-4">${ AU }</div>
+                                    <div class="col-xs-4">${ AI }</div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12">
+                                <div class="electricityData">
+                                    <div class="col-xs-4">B相</div>
+                                    <div class="col-xs-4">${ BU }</div>
+                                    <div class="col-xs-4">${ BI }</div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12">
+                                <div class="electricityData" style="margin: 0;">
+                                    <div class="col-xs-4">C相</div>
+                                    <div class="col-xs-4">${ CU }</div>
+                                    <div class="col-xs-4">${ CI }</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="collectModelTotal number">${ ZGL }</div>
+                    </div>
+                </div>`
+                $("#realDataBody").append(str)
+            }else if(type == "S"){
+                var WD = (parseInt(value.WD * 100 ) / 100 ).toFixed(2)
+                var Flow = (parseInt(value.Flow * 100 ) / 100 ).toFixed(2)
+                var Sum = (parseInt(value.Sum * 100 ) / 100 ).toFixed(2)
+                var str = `<div class="col-sm-3 realDataLi">
+                    <div class="collectModel">
+                        <div class="collectModelTitle">${ value.title }</div>
+                        <div class="collectSteamModelData number">${ WD }</div>
+                        <div class="collectModelUnit">单位：°C</div>
+                        <div class="collectSteamModelData number">${ Flow }</div>
+                        <div class="collectModelUnit">单位：L</div>
+                        <div class="collectModelTotal number">${ Sum }</div>
+                    </div>
+                </div>`
+                $("#realDataBody").append(str)
+            }
+        }
     </script>
 </body>
 </html>
