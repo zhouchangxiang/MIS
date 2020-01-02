@@ -173,5 +173,10 @@ class ENERGY(Resource):
 api.add_resource(ENERGY, '/energyall')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    from livereload import Server
+
+    server = Server(app.wsgi_app)
+    server.watch('**/*.*')
+    server.serve()
+    # app.run(debug=True)
 
