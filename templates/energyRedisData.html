@@ -310,6 +310,20 @@
             jsPlumb.bind('click', function (connection, e) {
                 jsPlumb.detach(connection)
             });
+<<<<<<< HEAD
+
+            //初始化锚点
+            $.each($(".connection"),function(i,value){
+                jsPlumb.addEndpoint($(this).attr("id"), exampleEndpoint);
+            })
+            //初始化连线
+            $.each(customList,function(i,value){
+                jsPlumb.connect({
+                    source: customList[i].sourceId,
+                    target: customList[i].targetId
+                  }, common)
+            })
+=======
             //var e1 = jsPlumb.addEndpoint("area-item1", { anchor:"LeftMiddle" }, exampleEndpoint1);
             //e1.bind("maxConnections", maxConnectionsCallback);//可以在加到元素上之后绑定函数
             //$.each($(".connection"),function(i,value){
@@ -323,6 +337,7 @@
             {#        target: customList[i].targetId#}
             {#      }, common)#}
             {# })#}
+>>>>>>> d573bae238bf005a32e5334340fa7f562e418361
 
             list = jsPlumb.getAllConnections();//获取所有的链接
 
