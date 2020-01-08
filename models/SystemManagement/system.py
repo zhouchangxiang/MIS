@@ -709,6 +709,30 @@ class ElectricSiteURL(Base):
     # 备注:
     Description = Column(Unicode(150), primary_key=False, autoincrement=False, nullable=True)
 
+# 服务运行情况表
+class SystemRunDetail(Base):
+    __tablename__ = 'SystemRunDetail'
+    # ID
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 总执行次数:
+    RunTotalNum = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 开始执行时间:
+    RunStartTime = Column(Unicode(65), primary_key=False, autoincrement=False, nullable=True)
+
+    # 最后刷新时间:
+    RunRefreshTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 执行状态:
+    RunStatus = Column(Unicode(65), primary_key=False, autoincrement=False, nullable=True)
+
+    # 执行成功数:
+    RunSuccessNum = Column(Unicode(150), primary_key=False, autoincrement=False, nullable=True)
+
+    # 执行失败数:
+    RunFailNum = Column(Unicode(150), primary_key=False, autoincrement=False, nullable=True)
+
 
 
 # 生成表单的执行语句

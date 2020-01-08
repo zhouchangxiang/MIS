@@ -91,7 +91,8 @@ def run():
                     valueS = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "S"))  # 蒸汽累计流量
 
                     ste = db_session.query(SteamEnergy).filter(SteamEnergy.TagClassValue == key.TagClassValue).first()
-                    unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽").first()
+                    unitf = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽瞬时流量单位").first()
+                    units = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽累计量体积单位").first()
                     # equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key.TagClassValue).first()
                     price = db_session.query(PriceList.PriceValue).filter(PriceList.PriceName == "汽",
                                                                           PriceList.IsEnabled == "是").first()
@@ -105,7 +106,8 @@ def run():
                         sl.FlowValue = valueF
                         sl.SumValue = valueS
                         sl.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                        sl.Unit = unit[0]
+                        sl.FlowUnit = unitf[0]
+                        sl.SumUnit = units[0]
                         # sl.EquipmnetID = equip[0]
                         sl.PriceID = price[0]
                         db_session.add(sl)
@@ -119,7 +121,8 @@ def run():
                         sl.FlowValue = valueF
                         sl.SumValue = valueS
                         sl.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                        sl.Unit = unit[0]
+                        sl.FlowUnit = unitf[0]
+                        sl.SumUnit = units[0]
                         # sl.EquipmnetID = equip[0]
                         sl.PriceID = price[0]
                         db_session.add(sl)
@@ -128,7 +131,8 @@ def run():
                     valueS = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "S"))  # 水的累计流量
                     valueF = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "F"))  # 水的瞬时流量
                     wat = db_session.query(WaterEnergy).filter(WaterEnergy.TagClassValue == key.TagClassValue).first()
-                    unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "水").first()
+                    unitf = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "水瞬时流量单位").first()
+                    units = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "水累计量体积单位").first()
                     # equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key.TagClassValue).first()
                     price = db_session.query(PriceList.PriceValue).filter(PriceList.PriceName == "水",
                                                                           PriceList.IsEnabled == "是").first()
@@ -141,7 +145,8 @@ def run():
                         wa.WaterFlow = valueF
                         wa.WaterSum = valueS
                         wa.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                        wa.Unit = unit[0]
+                        wa.FlowWUnit = unitf[0]
+                        wa.SumWUnit = units[0]
                         # wa.EquipmnetID = equip[0]
                         wa.PriceID = price[0]
                         db_session.add(wa)

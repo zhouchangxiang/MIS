@@ -134,11 +134,6 @@ def energymoney(count, name):
     for pr in prices:
         if pr.PriceName == name:
             return float(count)*float(pr.PriceValue)
-def getO(sum):
-    if sum is not None:
-        return float(sum[0])
-    else:
-        return 0
 def eletongji(oc, currtime, lasttime, elecount):
     cur = \
         db_session.query(ElectricEnergy.ZGL).filter(
