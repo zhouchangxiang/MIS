@@ -4,13 +4,16 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
+import axios from 'axios'
+Vue.use(ElementUI)
 import 'element-ui/lib/theme-chalk/index.css'
 import Jqeury from './assets/script/jquery-3.3.1.min'
 import 'font-awesome/css/font-awesome.min.css'
 import moment from 'moment'
 
 Vue.config.productionTip = false
-Vue.use(ElementUI)
+Vue.prototype.axios = axios //设为Vue对象的方法
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

@@ -5,7 +5,7 @@
       <el-row>
         <el-col :span="24">
           <div class="aside-head">
-            <i class="fa fa-home"></i>
+            <router-link :to="{name:'home'}"><i class="fa fa-home"></i></router-link>
           </div>
           <el-menu class="menu-ul" :collapse="isCollapse">
             <el-menu-item v-for="(item,index) in subMenulist" :index="index.toString()" :src="item.url" @click="clickSubMenu"><i :class="item.icon"></i><span slot="title">{{ item.name }}</span></el-menu-item>
@@ -119,7 +119,7 @@ export default {
       this.isactive = index
       if(index == 0) {
         this.subMenulist = [
-          {name: "实时数据", icon: "el-icon-s-data", url: "/RealTimeData"},
+          {name: "实时数据", icon: "el-icon-time", url: "/RealTimeData"},
           {name: "数据报表", icon: "el-icon-document", url: "/DataReport"}
         ]
       }else if(index == 1){
@@ -145,19 +145,21 @@ export default {
     overflow: hidden;
   }
   .body-container{
-    background: rgba(238, 238, 238, 1);
+    background: #EEEEEE;
   }
   .left-aside{
-    background: rgba(8, 47, 76, 1);
+    background: #082F4C;
   }
   .aside-head{
     position: absolute;
     width: 100%;
     top: 0;
     text-align: center;
-    color: #fff;
-    font-size: 36px;
+    font-size: 30px;
     padding-top: 30px;
+  }
+  .aside-head a{
+    color: #fff;
   }
   .aside-foot{
     position: absolute;
@@ -176,12 +178,13 @@ export default {
     border: none;
   }
   .menu-ul .el-menu-item{
-    background: rgba(8, 47, 76, 1);
+    background: #082F4C;
     color: #fff;
+    font-size: 18px;
   }
   .menu-ul .el-menu-item.is-active {
     background-color: #fff;
-    color: rgba(8, 47, 76, 1);
+    color: #082F4C;
   }
   .el-menu-item .fa {
     margin-right: 5px;
@@ -203,34 +206,37 @@ export default {
   .head-left-menu{
     float: left;
   }
+  .head-left-menu i{
+    font-size: 24px;
+  }
   .head-right-menu{
     float: right;
   }
   .head-left-menu li{
     display: inline-block;
     margin-right: 20px;
-    color: rgba(8, 47, 76, 1);
-    font-size: 18px;
+    color: #082F4C;
+    font-size: 20px;
   }
   .head-right-menu li{
     float: left;
     margin-right: 15px;
-    color: rgba(8, 47, 76, 1);
+    color: #082F4C;
     font-size: 16px;
     text-decoration: none;
     display: block;
     padding: 5px 10px;
-    background-color: rgba(238, 238, 238, 1);
+    background-color: #EEEEEE;
     border-radius: 8px;
     cursor: pointer;
   }
   .head-right-menu li.active{
-    background-color: rgba(8, 47, 76, 1);
+    background-color: #082F4C;
     color: #fff;
   }
   .el-dropdown{
-    color: rgba(8, 47, 76, 1);
-    font-size: 18px;
+    color: #082F4C;
+    font-size: 20px;
   }
   .el-dropdown-menu {
     text-align: center;
