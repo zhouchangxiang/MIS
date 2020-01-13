@@ -73,7 +73,26 @@
               </el-select>
             </div>
             <div class="home-card-body" style="height:280px;">
-              <ve-bar :data="zoneTimeChartData" :settings="zoneTimeChartSettings" :extend="zoneTimeChartExtend" height="260px"></ve-bar>
+              <ul class="colorBar">
+                <li><i class="bg-dead"></i><span>停</span></li>
+                <li><i class="bg-low"></i><span>低</span></li>
+                <li><i class="bg-center"></i><span>中</span></li>
+                <li><i class="bg-tall"></i><span>高</span></li>
+              </ul>
+              <ul class="gradientList">
+                <li v-for="item in colorBarOption">
+                  <p>{{ item.name }}</p>
+                  <el-popover trigger="hover">
+                    <div>0-4点：{{ item.value0 }}</div>
+                    <div>4-8点：{{ item.value4 }}</div>
+                    <div>8-12点：{{ item.value8 }}</div>
+                    <div>12-16点：{{ item.value12 }}</div>
+                    <div>16-20点：{{ item.value16 }}</div>
+                    <div>20-24点：{{ item.value20 }}</div>
+                    <div slot="reference" class="gradientColorItem" :style='{background:item.backgroundColor}'></div>
+                  </el-popover>
+                </li>
+              </ul>
             </div>
           </el-col>
           <el-col :span="7">
@@ -94,8 +113,8 @@
             <div class="home-card-body" style="height:280px;">
               <ul>
                 <li v-for="item in onlineEquipmentOption" style="margin-bottom: 5px;">
-                  <p class="text-size-small text-color-info">{{ item.name }}</p>
-                  <p class="text-size-mini text-color-info-shallow"><span>上线数/总数</span><span style="float: right;">{{ item.online }}/{{ item.total }}</span></p>
+                  <p class="text-size-normol text-color-info">{{ item.name }}</p>
+                  <p class="text-size-mini text-color-info-shallow" style="margin-top: 5px;"><span>上线数/总数</span><span style="float: right;">{{ item.online }}/{{ item.total }}</span></p>
                   <el-progress :text-inside="true" :stroke-width="16" :percentage="item.rate"></el-progress>
                 </li>
               </ul>
@@ -109,7 +128,7 @@
             <span><i class="el-icon-bell el-icon--left" style="color: #FB3A06;"></i>实时预警</span>
           </div>
           <div class="home-card-body" style="height: 300px;">
-            <el-table :data="ralTimeWarningTableData" size="mini" height="234px" max-height="234px" style="width: 100%">
+            <el-table :data="ralTimeWarningTableData" size="mini" height="232px" max-height="232px" style="width: 100%">
               <el-table-column prop="area" label="区域"></el-table-column>
               <el-table-column prop="name" label="设备"></el-table-column>
               <el-table-column prop="type" label="状态">
@@ -133,7 +152,7 @@
                 <el-option v-for="item in lotsEnergyOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </p>
-            <el-table :data="lotsEnergyTableData" size="small" height="163px" max-height="163px" style="width: 100%">
+            <el-table :data="lotsEnergyTableData" size="small" height="160px" max-height="160px" style="width: 100%">
               <el-table-column prop="type" label="类型"></el-table-column>
               <el-table-column prop="total" label="总量">
                 <template slot-scope="scope">
@@ -190,19 +209,6 @@
           top:'20px'
         }
       }
-      this.zoneTimeChartSettings = { //区域时间段能耗图表配置
-        stack:{
-          'xxx':['停','低','中','高']
-        }
-      }
-      this.zoneTimeChartExtend = {
-        grid:{
-          left: '0',
-          right: '0',
-          bottom: '0',
-          top:'40px'
-        }
-      }
       this.electricLoadRateChartSettings = { //电能负荷率图表配置
         dimension: 'type',
         metrics: 'value'
@@ -227,6 +233,7 @@
           label: '汽能'
         }],
         energyValue:'电能', //默认下拉
+
         pickerOptions: {
           disabledDate(time) {
             return time.getTime() > (Date.now() - 3600 * 1000 * 24);
@@ -274,18 +281,12 @@
             { '日期': '8日', '上月能耗': 4783, '本月能耗': 4453},
           ]
         },
-        zoneTimeChartData:{
-          columns: ['时间','停','低','中','高'],
-          rows: [
-            { '时间': '0', '停': 1393, '低': 1093, '中': 5193},
-            { '时间': '4', '停': 3530, '低': 3230, '中': 2453},
-            { '时间': '8', '停': 2923, '低': 2623, '中': 5493},
-            { '时间': '12', '停': 1723, '低': 1423, '中': 2493},
-            { '时间': '16', '停': 3792, '低': 3492, '中': 5493},
-            { '时间': '20', '停': 4593, '低': 4293, '中': 5993},
-            { '时间': '24', '停': 4593, '低': 4793, '中': 5593},
-          ]
-        },
+        colorBarOption:[
+          {name: "新建综合制剂楼", value0: 2342,value4: 4234,value8: 2232,value12: 235,value16: 2042,value20: 264, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'},
+          {name: "提取二车间", value0: 2342,value4: 2342,value8: 2342,value12: 2342,value16: 2342,value20: 2342, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'},
+          {name: "新建综合制剂楼", value0: 2342,value4: 2342,value8: 2342,value12: 2342,value16: 2342,value20: 2342, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'},
+          {name: "新建综合制剂楼", value0: 2342,value4: 2342,value8: 2342,value12: 2342,value16: 2342,value20: 2342, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'}
+        ],
         electricLoadRateChartData:{
           columns: ['type', 'value'],
           rows: [
@@ -329,7 +330,7 @@
         lotsEnergyTableData:[
           {type:"电能",total:"16456.24kwh",unitNum:"1246.15kwh/批"},
           {type:"水能",total:"16456.24kwh",unitNum:"1246.15kwh/批"},
-          {type:"汽能",total:"16456.24kwh",unitNum:"1246.15kwh/批"},
+          {type:"汽能",total:"16456.24kwh",unitNum:"1246.15kwh/批"}
         ]
       }
     },
@@ -387,13 +388,16 @@
     font-size: 24px;
   }
   .text-size-large{
-    font-size: 21px;
+    font-size: 20px;
+  }
+  .text-size-normol{
+    font-size: 16px;
   }
   .text-size-small{
-    font-size: 18px;
+    font-size: 14px;
   }
   .text-size-mini{
-    font-size: 14px;
+    font-size: 12px;
   }
   .text-color-info{
     color: rgba(8,47,76,1);
@@ -412,6 +416,44 @@
   }
   .text-color-danger{
     color: #FB3A06;
+  }
+  .colorBar li{
+    display: inline-block;
+    margin-right: 20px;
+  }
+  .colorBar li i{
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+    margin-right: 15px;
+    vertical-align: middle;
+  }
+  .colorBar li span{
+    display: inline-block;
+    color: #082F4C;
+    font-size: 16px;
+    vertical-align: middle;
+  }
+  .bg-dead{
+    background-color: #ECF1F4;
+  }
+  .bg-low{
+    background-color: #F5E866;
+  }
+  .bg-center{
+    background-color: #FB8A06;
+  }
+  .bg-tall{
+    background-color: #FB3A06;
+  }
+  .gradientList li{
+    margin-top: 10px;
+  }
+  .gradientColorItem{
+    width: 100%;
+    height: 16px;
+    margin-top: 10px;
   }
   .el-table--mini td, .el-table--mini th{
     padding: 2px 0;
