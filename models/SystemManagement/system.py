@@ -733,6 +733,114 @@ class SystemRunDetail(Base):
     # 执行失败数:
     RunFailNum = Column(Unicode(150), primary_key=False, autoincrement=False, nullable=True)
 
+# 实时预警温度上下限维护表
+class EarlyWarningLimitMaintain(Base):
+    __tablename__ = 'EarlyWarningLimitMaintain'
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 区域:
+    AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 设备名称:
+    EQPName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 上限:
+    UpperLimit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 下限:
+    LowerLimit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 能源类型:
+    EnergyClass = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 描述:
+    Descrption = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+
+    # 时间:
+    CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+# 实时预警三相电流不平衡百分比维护表
+class EarlyWarningPercentMaintain(Base):
+    __tablename__ = 'EarlyWarningPercentMaintain'
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 区域:
+    AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 设备名称:
+    EQPName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 三相电流不平衡百分比:
+    Percent = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 描述:
+    Descrption = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+
+    # 时间:
+    CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+# 实时预警表
+class EarlyWarning(Base):
+    __tablename__ = 'EarlyWarning'
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 区域:
+    AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 设备名称:
+    EQPName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 故障类型:
+    WarningType = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+
+    # 时间:
+    WarningDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+
+# 每批次水汽用量表:
+class WaterSteamBatchMaintain(Base):
+    __tablename__ = "WaterSteamBatchMaintain"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 品名:
+    BrandName = Column(Unicode(52), primary_key=False, autoincrement=False, nullable=True)
+
+    # 水电汽分类:
+    EnergyClass = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 单位耗量:
+    UnitConsumption = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 创建时间:
+    CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+# 区域时段能耗颜色配置:
+class AreaTimeEnergyColour(Base):
+    __tablename__ = "AreaTimeEnergyColour"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 区域:
+    AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 颜色:
+    Colour = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 区域时段颜色分类:
+    ColourName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+
+
+
 
 
 # 生成表单的执行语句

@@ -14,7 +14,8 @@ from dbset.main.BSFramwork import AlchemyEncoder
 from flask_login import login_required, logout_user, login_user,current_user,LoginManager
 import arrow
 from models.SystemManagement.core import RedisKey, TagClassType, ElectricEnergy, Unit, PriceList, SteamEnergy, \
-    WaterEnergy, TagDetail
+    WaterEnergy, TagDetail, Equipment
+from models.SystemManagement.system import EarlyWarningLimitMaintain, EarlyWarning, EarlyWarningPercentMaintain
 from tools.common import insert,delete,update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger,insertSyslog
@@ -85,8 +86,62 @@ def run():
                         el.PriceID = price[0]
                         db_session.add(el)
                         db_session.commit()
+                    # 实时预电压电流故障
+                    if AU == 0.0 or BU == 0.0 or CU == 0.0:
+                        earw = EarlyWarning()
+                        earw.AreaName = key.AreaName
+                        EQPName = db_session.query(TagClassType).filter(
+                            TagClassType.TagClassValue == key.TagClassValue).first()
+                        if EQPName != None:
+                            EQPName = EQPName[0]
+                        else:
+                            EQPName = ""
+                        earw.EQPName = EQPName
+                        earw.WarningType = "三相电压中缺相"
+                        WarningDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                        db_session.commit()
+                    else:
+                        avgI_list = [AI,BI,CI]
+                        percentI = 100*((max(avgI_list) - min(avgI_list))/max(avgI_list))
+                        EQPName = db_session.query(TagClassType).filter(
+                            TagClassType.TagClassValue == key.TagClassValue).first()
+                        if EQPName != None:
+                            EQPName = EQPName[0]
+                        else:
+                            EQPName = ""
+                        percent = db_session(EarlyWarningPercentMaintain).filter(EarlyWarningPercentMaintain.AreaName == key.AreaName,
+                            EarlyWarningPercentMaintain.EQPName == EQPName).first()
+                        if percent != None:
+                            percent = percent[0]
+                            if percentI > percent:
+                                earw = EarlyWarning()
+                                earw.AreaName = key.AreaName
+                                earw.EQPName = EQPName
+                                earw.WarningType = "三相电流不平衡"
+                                WarningDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                                db_session.commit()
                 elif k == "S":
                     valueWD = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "WD"))  # 蒸汽温度
+
+                    #实时预警判断温度是否达到设定值
+                    warn = db_session.query(EarlyWarningLimitMaintain).filter(EarlyWarningLimitMaintain.AreaName == key.AreaName,
+                                                                       EarlyWarningLimitMaintain.EnergyClass == key.EnergyClass).first()
+                    if valueWD < warn.LowerLimit or valueWD > warn.UpperLimit:
+                        earw = EarlyWarning()
+                        earw.AreaName = key.AreaName
+                        EQPName = db_session.query(TagClassType).filter(TagClassType.TagClassValue == key.TagClassValue).first()
+                        if EQPName != None:
+                            EQPName = EQPName[0]
+                        else:
+                            EQPName = ""
+                        earw.EQPName = EQPName
+                        if valueWD < warn.LowerLimit:
+                            earw.WarningType = "温度低于最低限值"
+                        if valueWD > warn.UpperLimit:
+                            earw.WarningType = "温度高于最高限值"
+                        WarningDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                        db_session.commit()
+
                     valueF = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "F"))  # 蒸汽瞬时流量
                     valueS = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "S"))  # 蒸汽累计流量
 
