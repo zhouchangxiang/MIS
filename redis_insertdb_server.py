@@ -109,7 +109,7 @@ def run():
                             EQPName = EQPName[0]
                         else:
                             EQPName = ""
-                        percent = db_session(EarlyWarningPercentMaintain).filter(EarlyWarningPercentMaintain.AreaName == key.AreaName,
+                        percent = db_session(EarlyWarningPercentMaintain.Percent).filter(EarlyWarningPercentMaintain.AreaName == key.AreaName,
                             EarlyWarningPercentMaintain.EQPName == EQPName).first()
                         if percent != None:
                             percent = percent[0]

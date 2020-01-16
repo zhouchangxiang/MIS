@@ -478,22 +478,26 @@ def energyselect(data):
                         watstatust = watstatust + 1
                         if ret == "1":
                             watstatuss = watstatuss + 1
-                dir["watstatust"] = watstatust
-                dir["elestatust"] = elestatust
-                dir["stestatust"] = stestatust
-                dir["watstatuss"] = watstatuss
-                dir["elestatuss"] = elestatuss
-                dir["stestatuss"] = stestatuss
+                data_list = []
+                data_list.append({"name": "电表", "online": elestatuss, "rate": int(100 * (elestatuss/elestatust))})
+                data_list.append({"name": "水表", "online": watstatuss, "rate": int(100 * (watstatuss / watstatust))})
+                data_list.append({"name": "汽表", "online": stestatuss, "rate": int(100 * (stestatuss / stestatust))})
+                return json.dumps(data_list, cls=AlchemyEncoder, ensure_ascii=False)
             elif ModelFlag == "单位批次能耗":
                 curryear = str(currentyear)
                 lastyear = str(int(curryear) - 1)
                 currmonth = str(currentyear) + "-" + addzero(int(currentmonth))
+                wsbs = db_session.query(WaterSteamBatchMaintain).filter().all()
                 if TimeClass == "本周":
                     re = getWeekDaysByNum(0, 0)
                     first_week_day = re[0][0]
                     end_week_day = re[0][1]
-                    BatchMaintain
-                    WaterSteamBatchMaintain
+                    bats = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(first_week_day,end_week_day)).all()
+                    countw = 0.0
+                    counte = 0.0
+                    for bat in bats:
+                        countw = countw + bat.WaterConsumption
+                        counte = counte + bat.ElectricConsumption
                 elif TimeClass == "本月":
                     currmonth = str(currentyear) + "-" + addzero(int(currentmonth))
                     BatchMaintain
