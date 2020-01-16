@@ -656,15 +656,24 @@ class BatchMaintain(Base):
 	
 	#ID:
 	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
+
+	# 计划单号:
+	PlanNum = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 	
 	#批次号:
-	BatchID = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
+	BatchID = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
 	
 	#品名:
 	BrandName = Column(Unicode(52), primary_key = False, autoincrement = False, nullable = True)
-	
-	#品名ID:
-	BrandID = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
+
+	# 水用量:
+	WaterConsumption = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+	# 电用量:
+	ElectricConsumption = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+	#生产日期:
+	ProductionDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 	
 	#开始时间:
 	StartTime = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
@@ -830,6 +839,9 @@ class TagClassType(Base):
 	
 	#设备ID:
 	EquipmnetID = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
+
+	# 设备名称:
+	EQPName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 	
 	#所属区域:
 	AreaName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
