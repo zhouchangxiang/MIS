@@ -7,6 +7,7 @@ import Home from '@/views/home'
 import RealTimeData from '@/views/energy/RealTimeData'
 import DataReport from '@/views/energy/DataReport'
 import Organization from '@/views/SystemManage/Organization'
+import AreaShows from '@/views/energy/AreaShows'
 
 Vue.use(Router)
 
@@ -40,6 +41,11 @@ export default new Router({
         name:'DataReport',
         meta:{ title:'数据报表' },
         component:DataReport
+      },{
+        path:'/AreaShows',
+        name:'AreaShows',
+        meta:{ title:'区域展示' },
+        component:AreaShows
       },{
         path:'/Organization',
         name:'Organization',

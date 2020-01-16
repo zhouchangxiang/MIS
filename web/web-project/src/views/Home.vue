@@ -11,17 +11,17 @@
           </div>
           <div class="home-card-body" style="height: 462px;">
             <el-row :gutter="10">
-              <el-col :span="8" style="white-space:nowrap;">
+              <el-col :span="7" style="white-space:nowrap;">
                 <ul class="card-body-ul">
                   <li><span class="text-size-large text-color-info">本日耗电量</span><span class="text-size-mini text-color-info-shallow">（截止12：00）</span></li>
                   <li class="text-size-big text-color-warning">1256.25kwh</li>
                   <li><span class="text-size-mini text-color-info-shallow">对比</span>
                     <el-date-picker v-model="CompareDate" align="right" type="date" placeholder="选择日期" :picker-options="pickerOptions" size="mini" style="width: 130px"></el-date-picker>
                   </li>
-                  <li><span class="text-size-small text-color-primary">1256.25kwh</span><span class="text-size-mini text-color-danger" style="float: right;">+9.5%<i class="el-icon-top"></i></span></li>
+                  <li><span class="text-size-small text-color-primary">1256.25kwh</span><span class="text-size-mini text-color-danger" style="margin-left: 20px;">+9.5%<i class="el-icon-top"></i></span></li>
                 </ul>
               </el-col>
-              <el-col :span="8" style="white-space:nowrap;">
+              <el-col :span="9" style="white-space:nowrap;">
                 <ul class="card-body-ul" style="display: inline-block;">
                   <li><span class="text-size-large text-color-info">本月耗电量</span></li>
                   <li class="text-size-big text-color-warning">1256.25kwh</li>
@@ -46,7 +46,7 @@
                   <li style="margin-top: 15px;">
                     <span class="text-size-mini text-color-info-shallow">上年同期</span>
                     <span class="text-size-mini text-color-info">4543.56 kwh</span>
-                    <span style="float: right;" class="text-size-mini text-color-danger">+9.5%<i class="el-icon-top"></i></span>
+                    <span style="margin-left: 20px;" class="text-size-mini text-color-danger">+9.5%<i class="el-icon-top"></i></span>
                   </li>
                 </ul>
               </el-col>
@@ -210,8 +210,15 @@
         }
       }
       this.electricLoadRateChartSettings = { //电能负荷率图表配置
-        dimension: 'type',
-        metrics: 'value'
+        dataType: {
+          '占比': 'percent'
+        },
+        seriesMap: {
+          '占比': {
+            min: 0,
+            max: 1
+          }
+        }
       }
       this.electricLoadRateChartExtend = {
         grid:{
@@ -233,7 +240,6 @@
           label: '汽能'
         }],
         energyValue:'电能', //默认下拉
-
         pickerOptions: {
           disabledDate(time) {
             return time.getTime() > (Date.now() - 3600 * 1000 * 24);
@@ -290,7 +296,7 @@
         electricLoadRateChartData:{
           columns: ['type', 'value'],
           rows: [
-            { type: '占比', value: 80 }
+            { type: '占比', value: 0.8 }
           ]
         },
         electricLoadRateTimeOptions: [{ //电能负荷率下拉框

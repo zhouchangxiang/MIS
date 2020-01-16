@@ -7,8 +7,14 @@
           <div class="aside-head">
             <router-link :to="{name:'home'}"><i class="fa fa-home"></i></router-link>
           </div>
-          <el-menu class="menu-ul" :collapse="isCollapse">
-            <el-menu-item v-for="(item,index) in subMenulist" :index="index.toString()" :src="item.url" @click="clickSubMenu"><i :class="item.icon"></i><span slot="title">{{ item.name }}</span></el-menu-item>
+          <el-menu class="menu-ul" default-active="0" :collapse="isCollapse">
+            <template v-for="(item,index) in subMenulist">
+              <el-menu-item v-if="!item.children" :index="item.name" :src="item.url" @click="clickSubMenu"><i :class="item.icon"></i><span slot="title">{{ item.name }}</span></el-menu-item>
+              <el-submenu v-if="!item.url" :index="item.name">
+                  <template slot="title"><i :class="item.icon"></i><span>{{ item.name }}</span></template>
+                  <el-menu-item v-for="(child,childIndex) in item.children" :index="childIndex+''" :src="child.url" @click="clickSubMenu"><span style="margin-left:-10px;">{{child.name}}</span></el-menu-item>
+              </el-submenu>
+            </template>
           </el-menu>
           <div class="aside-foot">
             <el-button :icon="sideIcon" size="mini" circle @click="iconToggle"></el-button>
@@ -91,12 +97,13 @@ export default {
   },
   methods:{
     clickSubMenu(item){
+      console.log(item)
       this.$router.push({
         path:item.$attrs.src,
         query:{
           t:Date.now(),
-      }
-    })
+        }
+      })
     },
     handleCommand(command) {
       if(command == "a"){
@@ -119,6 +126,11 @@ export default {
       this.isactive = index
       if(index == 0) {
         this.subMenulist = [
+          {name: "桓仁厂区", icon: "el-icon-location-outline", children:[
+              {name:"综合车间",url:"/AreaShows?areaName='综合车间'"},
+              {name:"提取二车间",url:"/AreaShows?areaName='提取二车间'"},
+            ]
+          },
           {name: "实时数据", icon: "el-icon-time", url: "/RealTimeData"},
           {name: "数据报表", icon: "el-icon-document", url: "/DataReport"}
         ]
@@ -177,7 +189,7 @@ export default {
   .menu-ul{
     border: none;
   }
-  .menu-ul .el-menu-item{
+  .menu-ul .el-menu-item,.el-submenu__title,.el-submenu__title:hover{
     background: #082F4C;
     color: #fff;
     font-size: 18px;
@@ -185,6 +197,10 @@ export default {
   .menu-ul .el-menu-item.is-active {
     background-color: #fff;
     color: #082F4C;
+  }
+  .el-submenu .el-menu-item{
+    font-size: 14px;
+    min-width: auto;
   }
   .el-menu-item .fa {
     margin-right: 5px;
