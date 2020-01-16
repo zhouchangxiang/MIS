@@ -5,7 +5,7 @@
         <div class="home-card">
           <div class="home-card-head">
             <span><i class="el-icon-time el-icon--left" style="color: #FB3A06;"></i>能耗预览</span>
-            <el-select class="card-head-select" v-model="energyValue" placeholder="请选择">
+            <el-select class="card-head-select" v-model="energyValue" placeholder="请选择" @change="getEnergyPreview">
               <el-option v-for="item in energyOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
           </div>
@@ -16,7 +16,7 @@
                   <li><span class="text-size-large text-color-info">本日耗电量</span><span class="text-size-mini text-color-info-shallow">（截止12：00）</span></li>
                   <li class="text-size-big text-color-warning">1256.25kwh</li>
                   <li><span class="text-size-mini text-color-info-shallow">对比</span>
-                    <el-date-picker v-model="CompareDate" align="right" type="date" placeholder="选择日期" :picker-options="pickerOptions" size="mini" style="width: 130px"></el-date-picker>
+                    <el-date-picker v-model="CompareDate" align="right" type="date" placeholder="选择日期" :picker-options="pickerOptions" @change="getEnergyPreview" :clearable="false" size="mini" style="width: 130px"></el-date-picker>
                   </li>
                   <li><span class="text-size-small text-color-primary">1256.25kwh</span><span class="text-size-mini text-color-danger" style="margin-left: 20px;">+9.5%<i class="el-icon-top"></i></span></li>
                 </ul>
@@ -178,6 +178,7 @@
 </template>
 
 <script>
+  var moment = require('moment');
   export default {
     name: "Home",
     data(){
@@ -229,17 +230,18 @@
         }
       }
       return{
+        ip:"http://127.0.0.1:5000",
         energyOptions: [{
-          value: '选项1',
+          value: '电',
           label: '电能'
         }, {
-          value: '选项2',
+          value: '水',
           label: '水能'
         }, {
-          value: '选项3',
+          value: '汽',
           label: '汽能'
         }],
-        energyValue:'电能', //默认下拉
+        energyValue:'电', //默认下拉
         pickerOptions: {
           disabledDate(time) {
             return time.getTime() > (Date.now() - 3600 * 1000 * 24);
@@ -340,18 +342,25 @@
         ]
       }
     },
+    created(){
+      this.getEnergyPreview()
+    },
     mounted(){
-      this.axios.get('http://127.0.0.1:5000/CUID',{
-        params: {
-            tableName: "AreaTable",
-            limit : 100000000,
-              offset : 0
-        }
-      }).then(function (response) {
-          console.log(response);
-      }).catch(function (error) {
-          console.log(error);
-      });
+
+    },
+    methods: {
+      getEnergyPreview() {
+        this.axios.get(this.ip+'/energyPreview',{
+          params: {
+              energyType: this.energyValue,
+              compareDate: moment(this.CompareDate).format('YYYY-MM-DD')
+          }
+        }).then(function (response) {
+            console.log(response);
+        }).catch(function (error) {
+            console.log(error);
+        });
+      }
     }
   }
 </script>
