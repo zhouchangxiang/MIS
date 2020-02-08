@@ -10,15 +10,13 @@ import re
 from dbset.database import db_operate
 from dbset.log.BK2TLogger import insertSyslog, MESLogger
 from dbset.main.BSFramwork import AlchemyEncoder
-from models.SystemManagement.system import Organization
 from collections import Counter
 from dbset.log.BK2TLogger import logger,insertSyslog
-from tools.common import insert,delete,update
 from dbset.database.db_operate import db_session
 
-calender = Blueprint('calender', __name__, template_folder='templates')
+cale = Blueprint('calender', __name__, template_folder='templates')
 
 # 日历
-@calender.route('/plantcalender')
+@cale.route('/plantcalender')
 def plantcalender():
     return render_template('./calender.html')

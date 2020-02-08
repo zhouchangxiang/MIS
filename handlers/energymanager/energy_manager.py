@@ -506,6 +506,9 @@ def energyselect(data):
                     curryear = str(currentyear)
                     BatchMaintain
                     WaterSteamBatchMaintain
+            elif ModelFlag == "实时预警":
+                oclass = db_session.query(EarlyWarning).filter().order_by(desc("WarningDate")).all()
+                dir["data"] = oclass
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
@@ -560,7 +563,11 @@ def energyPreview():
             lastyeartotal = round(lastelecount + lastwatcount + laststecount, 2)
             dir["thisYearCon"] =curryeartotal#年能耗量
             dir["lastYearCon"] =lastyeartotal  # 上年同期能耗
-            percen = round(((curryeartotal - lastyeartotal) / lastyeartotal) * 100, 2)
+            cl = curryeartotal - lastyeartotal
+            if cl > 0:
+                percen = round((cl / lastyeartotal) * 100, 2)
+            else:
+                percen = 0
             dir["lastYearCompare"] = str(percen) + "%"
             if percen < 0:
                 dir["lastYearCompareState"] = "bottom"
@@ -570,8 +577,8 @@ def energyPreview():
                 dir["lastYearCompareState"] = "top"
             # elif datime == "月":
             zerocurrday = str(currentyear) + "-" + addzero(int(currentmonth)) + "-01"
-            lastMday = strlastMonth(currentmonth) + "-" + addzero(currentday)
-            zerolastMday = strlastMonth(currentmonth) + "-01"
+            lastMday = strlastMonth(currmonth) + "-" + addzero(currentday)
+            zerolastMday = strlastMonth(currmonth) + "-01"
             thisMonthCon = 0.0
             lastMonthCon = 0.0
             for oc in oclass:
@@ -590,7 +597,11 @@ def energyPreview():
             dir["thisMonthCon"] = currMont#本月能耗量
             dir["lastMonthCon"] =   lastMont# 上月同期能耗量
             #上月同期百分比
-            perce = round(((currMont - lastMont)/lastMont)*100, 2)
+            cla = currMont - lastMont
+            if cla > 0:
+                perce = round((cla/lastMont)*100, 2)
+            else:
+                perce = 0
             dir["lastMonthCompare"] = str(perce) + "%"
             if perce < 0:
                 dir["lastMonthCompareState"] = "bottom"
@@ -617,7 +628,7 @@ def energyPreview():
                         count = stetongji(oc, currdayxin, lastdayxin, count)
                 month_data_dir["本月能耗"] = count
                 lastcount = 0.0
-                lastMondayxin = strlastMonth(currentmonth) + "-" + addzero(j)
+                lastMondayxin = strlastMonth(currmonth) + "-" + addzero(j)
                 mm = datetime.datetime.strptime(currday, "%Y-%m-%d")
                 laMondayxin = str(mm + datetime.timedelta(days=-1))[0:10]
                 for oc in oclass:
@@ -649,7 +660,11 @@ def energyPreview():
                     comparedaycount = stetongji(oc, compareday, lastcompareday, comparedaycount)
                     currdaycounts = stetongji(oc, currday, lastday, currdaycounts)
             dir["compareDateCon"] = round(comparedaycount, 2)
-            percencc = round(((comparedaycount - currdaycounts) / comparedaycount) * 100, 2)
+            pccss = comparedaycount - currdaycounts
+            if pccss > 0:
+                percencc = round((pccss/comparedaycount) * 100, 2)
+            else:
+                percencc = 0
             dir["comparePer"] = str(percencc) + "%"
             if percencc < 0:
                 dir["comparePerState"] = "bottom"

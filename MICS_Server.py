@@ -2,7 +2,7 @@ from flask import Flask, abort, request, render_template
 from flask_restful import reqparse, abort, Api, Resource
 from flask_login import login_required
 from dbset.account import auth_lib
-from handlers.SystemManagement.calendar import calender
+from handlers.SystemManagement.calendar import cale
 from handlers.account import account_auth
 from handlers.SystemManagement import user_management, PermissionAssignment,Role_management
 from handlers.main import system_manage
@@ -47,7 +47,7 @@ app.register_blueprint(systemlog)
 # 批次管理
 app.register_blueprint(batch)
 # 日历管理
-app.register_blueprint(calender)
+app.register_blueprint(cale)
 #能耗管理
 app.register_blueprint(energy)
 

@@ -10,8 +10,8 @@ from dbset.database.db_operate import db_session
 from PIL import Image, ImageFont, ImageDraw, ImageFilter
 import random
 from io import BytesIO
-from models.SystemManagement.core import User
 import time
+# from models.SystemManagement.system import User
 
 #flask_login的初始化
 login_manager = LoginManager()
