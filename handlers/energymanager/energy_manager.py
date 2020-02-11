@@ -25,6 +25,9 @@ from flask import Flask, send_file,make_response
 energy = Blueprint('energy', __name__, template_folder='templates')
 
 arro = arrow.now()
+pool = redis.ConnectionPool(host=constant.REDIS_HOST)
+redis_conn = redis.Redis(connection_pool=pool)
+
 @energy.route('/energyRedisData')
 def energyRedisData():
     return render_template('./energyRedisData.html')
@@ -453,8 +456,6 @@ def energyselect(data):
             elif ModelFlag == "电能负荷率":
                 dir["a"]=""
             elif ModelFlag == "在线检测情况":
-                pool = redis.ConnectionPool(host=constant.REDIS_HOST)
-                redis_conn = redis.Redis(connection_pool=pool)
                 # pipe = redis_conn.pipeline(transaction=False)
                 oclass = db_session.query(TagDetail).filter().all()
                 watstatust = 0
@@ -509,6 +510,20 @@ def energyselect(data):
             elif ModelFlag == "实时预警":
                 oclass = db_session.query(EarlyWarning).filter().order_by(desc("WarningDate")).all()
                 dir["data"] = oclass
+            elif ModelFlag == "电能负荷率":
+                aa = "aa"
+                #电能负荷率 = 当前视在功率 / 额定功率
+            elif ModelFlag == "系统体检":
+                pipe = redis_conn.pipeline(transaction=False)
+                pipe.hget("hash_key", "leizhu900516")
+                result = pipe.execute()
+                conngoods = pipe.hget("run_status","1")
+                connbads = pipe.hget("run_status", "0")
+                list_bad = []
+                for i in connbads:
+                    list_bad.append(i.key)
+                dir["连接通畅数"] = conngoods
+                dir["连接阻塞数"] = connbads
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
@@ -778,6 +793,56 @@ def areaTimeEnergy():
                 value_dirc["valuelist"] = valuelist
                 value_dirc["backgroundColor"] = "-webkit-linear-gradient(left," + colour + ")"
                 araeY_list.append(value_dirc)
+            return json.dumps(araeY_list, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "区域时段能耗查询报错Error：" + str(e), current_user.Name)
+
+@energy.route('/areaTimeEnergy', methods=['POST', 'GET'])
+def areaTimeEnergy():
+    '''
+    趋势图
+    :return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            dir = {}
+            currentyear = datetime.datetime.now().year
+            currentmonth = datetime.datetime.now().month
+            currentday = datetime.datetime.now().day
+            currenthour = datetime.datetime.now().hour
+            EnergyClass = data.get("energyType")
+            AreaNames = db_session.query(AreaTable.AreaName).filter().all()
+            dir = {}
+            diarea = {}
+            araeY_list = []
+            TimeClass = data.get("TimeClass")
+            if TimeClass == "本周":
+                re = getWeekDaysByNum(0, 0)
+                first_week_day = re[0][0]
+                end_week_day = re[0][1]
+                bats = db_session.query(BatchMaintain).filter(
+                    BatchMaintain.ProductionDate.between(first_week_day, end_week_day)).all()
+                countw = 0.0
+                counte = 0.0
+                countbat = 0
+                for bat in bats:
+                    countw = countw + bat.WaterConsumption
+                    counte = counte + bat.ElectricConsumption
+                    countbat = countbat + 1
+            elif TimeClass == "本月":
+                currmonth = str(currentyear) + "-" + addzero(int(currentmonth))
+                BatchMaintain
+                WaterSteamBatchMaintain
+            elif TimeClass == "本年":
+                curryear = str(currentyear)
+                BatchMaintain
+                WaterSteamBatchMaintain
+            dir["countw"] = countw
+            dir["counte"] = counte
+            dir["countbat"] = countbat
             return json.dumps(araeY_list, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
