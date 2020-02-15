@@ -127,8 +127,8 @@ export default {
       if(index == 0) {
         this.subMenulist = [
           {name: "桓仁厂区", icon: "el-icon-location-outline", children:[
-              {name:"综合车间",url:"/AreaShows?areaName='综合车间'"},
-              {name:"提取二车间",url:"/AreaShows?areaName='提取二车间'"},
+              {name:"综合车间",url:"/Areas?areaName='综合车间'"},
+              {name:"提取二车间",url:"/Areas?areaName='提取二车间'"},
             ]
           },
           {name: "实时数据", icon: "el-icon-time", url: "/RealTimeData"},
