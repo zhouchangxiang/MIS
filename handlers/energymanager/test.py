@@ -1,5 +1,9 @@
 import datetime
 import arrow
+
+
+print(((90-100)/100)*100)
+
 to = 0.0
 for i in range(1,3):
     to = to + 1.1
