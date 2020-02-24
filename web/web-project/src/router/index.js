@@ -6,8 +6,13 @@ import Error from '@/components/404'
 import Home from '@/views/home'
 import RealTimeData from '@/views/energy/RealTimeData'
 import DataReport from '@/views/energy/DataReport'
-import Organization from '@/views/SystemManage/Organization'
 import Areas from '@/views/energy/Areas'
+import Organization from '@/views/SystemManage/Organization'
+import Factory from '@/views/SystemManage/Factory'
+import Role from '@/views/SystemManage/Role'
+import Personnel from '@/views/SystemManage/Personnel'
+import Calendar from '@/views/SystemManage/Calendar'
+import Log from '@/views/SystemManage/Log'
 
 Vue.use(Router)
 
@@ -51,6 +56,31 @@ export default new Router({
         name:'Organization',
         meta:{ title:'组织架构' },
         component:Organization
+      },{
+        path:'/Factory',
+        name:'Factory',
+        meta:{ title:'厂区管理' },
+        component:Factory
+      },{
+        path:'/Role',
+        name:'Role',
+        meta:{ title:'角色管理' },
+        component:Role
+      },{
+        path:'/Personnel',
+        name:'Personnel',
+        meta:{ title:'人员管理' },
+        component:Personnel
+      },{
+        path:'/Calendar',
+        name:'Calendar',
+        meta:{ title:'工厂日历' },
+        component:Calendar
+      },{
+        path:'/Log',
+        name:'Log',
+        meta:{ title:'系统日志' },
+        component:Log
       }]
     },
     {
