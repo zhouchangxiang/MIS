@@ -799,8 +799,8 @@ def areaTimeEnergy():
             logger.error(e)
             insertSyslog("error", "区域时段能耗查询报错Error：" + str(e), current_user.Name)
 
-@energy.route('/areaTimeEnergy', methods=['POST', 'GET'])
-def areaTimeEnergy():
+@energy.route('/trendChart', methods=['POST', 'GET'])
+def trendChart():
     '''
     趋势图
     :return:
