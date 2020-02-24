@@ -7,7 +7,7 @@
           <div class="aside-head">
             <router-link :to="{name:'home'}"><i class="fa fa-home"></i></router-link>
           </div>
-          <el-menu class="menu-ul" default-active="0" :collapse="isCollapse">
+          <el-menu class="menu-ul" default-active="" :collapse="isCollapse">
             <template v-for="(item,index) in subMenulist">
               <el-menu-item v-if="!item.children" :index="item.name" :src="item.url" @click="clickSubMenu"><i :class="item.icon"></i><span slot="title">{{ item.name }}</span></el-menu-item>
               <el-submenu v-if="!item.url" :index="item.name">
@@ -85,7 +85,8 @@ export default {
         {text:"能源管理"},
         {text:"系统管理"}
       ],
-      subMenulist:[] //子菜单导航列表
+      subMenulist:[], //子菜单导航列表
+      routerParameters:"" //车间跳转页面参数
     }
   },
   mounted(){
@@ -97,11 +98,10 @@ export default {
   },
   methods:{
     clickSubMenu(item){
-      console.log(item)
       this.$router.push({
         path:item.$attrs.src,
         query:{
-          t:Date.now(),
+          t:Date.now()
         }
       })
     },
