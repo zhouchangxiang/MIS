@@ -7,7 +7,7 @@
           <div class="aside-head">
             <router-link :to="{name:'home'}"><i class="fa fa-home"></i></router-link>
           </div>
-          <el-menu class="menu-ul" default-active="0" :collapse="isCollapse">
+          <el-menu class="menu-ul" default-active="" :collapse="isCollapse">
             <template v-for="(item,index) in subMenulist">
               <el-menu-item v-if="!item.children" :index="item.name" :src="item.url" @click="clickSubMenu"><i :class="item.icon"></i><span slot="title">{{ item.name }}</span></el-menu-item>
               <el-submenu v-if="!item.url" :index="item.name">
@@ -30,7 +30,7 @@
         <div class="head-left-menu">
           <ul>
             <li>
-              <el-dropdown trigger="click" @command="handleCommand">
+              <el-dropdown class="head-menu-item" trigger="click" @command="handleCommand">
                 <span class="el-dropdown-link">
                   <i class="el-icon-user-solid el-icon--left"></i>admin<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
@@ -40,7 +40,12 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </li>
-            <li><el-badge :value="12" class="item"><i class="el-icon-s-comment"></i></el-badge></li>
+            <li>
+              <el-tooltip class="head-menu-item" effect="dark" content="消息提醒" placement="bottom">
+                <el-badge :value="12"><i class="el-icon-s-comment"></i></el-badge>
+              </el-tooltip>
+            </li>
+            <li><el-tooltip class="head-menu-item" effect="dark" content="全屏" placement="bottom"><span :class="isFullScreen?'el-icon-aim':'el-icon-full-screen'" @click="getFullCreeen"></span></el-tooltip></li>
             <li><div>{{ time }}</div></li>
           </ul>
         </div>
@@ -72,6 +77,7 @@
 
 <script>
 var moment = require('moment');
+import screenfull from "screenfull"
 export default {
   name: 'Index',
   data () {
@@ -85,7 +91,8 @@ export default {
         {text:"能源管理"},
         {text:"系统管理"}
       ],
-      subMenulist:[] //子菜单导航列表
+      subMenulist:[], //子菜单导航列表
+      isFullScreen:false, //是否全屏
     }
   },
   mounted(){
@@ -97,11 +104,10 @@ export default {
   },
   methods:{
     clickSubMenu(item){
-      console.log(item)
       this.$router.push({
         path:item.$attrs.src,
         query:{
-          t:Date.now(),
+          t:Date.now()
         }
       })
     },
@@ -136,13 +142,28 @@ export default {
         ]
       }else if(index == 1){
         this.subMenulist = [
-          {name:"组织架构",icon:"el-icon-s-data",url:"/Organization"}
+          {name:"组织架构",icon:"el-icon-office-building",url:"/Organization"},
+          {name:"厂区管理",icon:"el-icon-location-information",url:"/Factory"},
+          {name:"角色管理",icon:"el-icon-s-check",url:"/Role"},
+          {name:"人员管理",icon:"el-icon-user",url:"/Personnel"},
+          {name:"工厂日历",icon:"el-icon-date",url:"/Calendar"},
+          {name:"系统日志",icon:"el-icon-notebook-1",url:"/Log"},
         ]
       }
     },
     beforeDestroy() {
       if (this.timer) {
         clearInterval(this.timer);
+      }
+    },
+    getFullCreeen () {
+      if (screenfull.isEnabled) {
+        screenfull.toggle()
+        if(screenfull.isFullscreen){
+          this.isFullScreen = false
+        }else{
+          this.isFullScreen = true
+        }
       }
     }
   }
@@ -230,7 +251,7 @@ export default {
   }
   .head-left-menu li{
     display: inline-block;
-    margin-right: 20px;
+    margin-right: 30px;
     color: #082F4C;
     font-size: 20px;
   }
@@ -249,6 +270,9 @@ export default {
   .head-right-menu li.active{
     background-color: #082F4C;
     color: #fff;
+  }
+  .head-menu-item{
+    cursor:pointer;
   }
   .el-dropdown{
     color: #082F4C;

@@ -176,7 +176,7 @@
     color: #082F4C;
   }
   .energyDataItem{
-    display: inline-block;
+    display: table;
     margin-bottom: 20px;
     font-size: 22px;
   }

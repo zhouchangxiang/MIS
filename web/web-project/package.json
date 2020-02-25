@@ -18,9 +18,12 @@
     "echarts": "^4.6.0",
     "element-ui": "^2.13.0",
     "font-awesome": "^4.7.0",
+    "jquery": "^3.4.1",
     "moment": "^2.24.0",
+    "screenfull": "^5.0.2",
     "v-charts": "^1.19.0",
     "vue": "^2.5.2",
+    "vue-full-calendar": "^2.7.0",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {

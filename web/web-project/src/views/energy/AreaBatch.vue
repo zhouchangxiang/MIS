@@ -50,10 +50,36 @@
       </div>
     </el-col>
     <el-col :span="24" style="margin-top:10px;margin-bottom:2px;">
-      <div class="chartTile text-size-large text-color-info">趋势图</div>
+      <div class="chartTile">
+        <span class="text-size-large text-color-info">数据表</span>
+        <span class="text-size-mini text-color-danger">（倒序对比）</span>
+        <el-select class="collapse-head-select" v-model="commodityValue" placeholder="请选择" @change="getCommodityPreview" size="small">
+          <el-option v-for="item in commodityOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+        </el-select>
+        <el-button type="primary" style="float:right;background-color: #082F4C;border:none;" size="small">导出</el-button>
+      </div>
     </el-col>
-    <el-col :span="24">
-
+    <el-col :span="12" style="border-radius:0 0 4px 4px;padding: 10px;background: #fff;">
+      <el-table :data="thisDateTableData" size="small" style="width: 100%">
+        <el-table-column prop="date" label="时间"></el-table-column>
+        <el-table-column prop="commodity" label="品名"></el-table-column>
+        <el-table-column prop="batch" label="生产批次号"></el-table-column>
+        <el-table-column prop="area" label="区域"></el-table-column>
+        <el-table-column prop="energyVal" label="耗电量"></el-table-column>
+        <el-table-column prop="totalEnergy" label="总耗电量"></el-table-column>
+        <el-table-column prop="unitEnergy" label="单位耗电"></el-table-column>
+      </el-table>
+    </el-col>
+    <el-col :span="12" style="border-radius:0 0 4px 4px;padding: 10px;background: #fff;">
+      <el-table :data="thisDateTableData" size="small" style="width: 100%">
+        <el-table-column prop="date" label="时间"></el-table-column>
+        <el-table-column prop="commodity" label="品名"></el-table-column>
+        <el-table-column prop="batch" label="生产批次号"></el-table-column>
+        <el-table-column prop="area" label="区域"></el-table-column>
+        <el-table-column prop="energyVal" label="耗电量"></el-table-column>
+        <el-table-column prop="totalEnergy" label="总耗电量"></el-table-column>
+        <el-table-column prop="unitEnergy" label="单位耗电"></el-table-column>
+      </el-table>
     </el-col>
   </el-row>
 </template>
@@ -101,22 +127,48 @@
             }
           },
           chartData: {
-            columns: ['日期', '查看月份', '选择同期'],
+            columns: ['日期', '当前月份能耗', '选择同期能耗'],
             rows: [
-              { '日期': '1/1', '查看月份': 1393, '选择同期': 1093},
-              { '日期': '1/2', '查看月份': 3530, '选择同期': 3230},
-              { '日期': '1/3', '查看月份': 2923, '选择同期': 2623},
-              { '日期': '1/4', '查看月份': 1723, '选择同期': 1423},
-              { '日期': '1/5', '查看月份': 3792, '选择同期': 3492},
-              { '日期': '1/6', '查看月份': 4593, '选择同期': 4293}
+              { '日期': '1-1', '当前月份能耗': 1393, '选择同期能耗': 1093},
+              { '日期': '1-2', '当前月份能耗': 3530, '选择同期能耗': 3230},
+              { '日期': '1-3', '当前月份能耗': 2923, '选择同期能耗': 2623},
+              { '日期': '1-4', '当前月份能耗': 1723, '选择同期能耗': 1423},
+              { '日期': '1-5', '当前月份能耗': 3792, '选择同期能耗': 3492},
+              { '日期': '1-6', '当前月份能耗': 4593, '选择同期能耗': 4293}
             ]
-          }
+          },
+          commodityValue:"选项1",
+          commodityOptions:[{
+            value: '选项1',
+            label: '药品1'
+          }, {
+            value: '选项2',
+            label: '药品2'
+          }, {
+            value: '选项3',
+            label: '药品3'
+          }],
+          thisDateTableData:[ //实时预警表格数据
+            {date:"2020-01-02 12:05",commodity:"药品1",batch:"546465456",area:"新建综合制剂楼",energyVal:"4164",totalEnergy:"16424",unitEnergy:"1645"},
+            {date:"2020-01-02 12:05",commodity:"药品1",batch:"546465456",area:"新建综合制剂楼",energyVal:"4164",totalEnergy:"16424",unitEnergy:"1645"},
+            {date:"2020-01-02 12:05",commodity:"药品1",batch:"546465456",area:"新建综合制剂楼",energyVal:"4164",totalEnergy:"16424",unitEnergy:"1645"},
+            {date:"2020-01-02 12:05",commodity:"药品1",batch:"546465456",area:"新建综合制剂楼",energyVal:"4164",totalEnergy:"16424",unitEnergy:"1645"},
+            {date:"2020-01-02 12:05",commodity:"药品1",batch:"546465456",area:"新建综合制剂楼",energyVal:"4164",totalEnergy:"16424",unitEnergy:"1645"}
+          ]
+        }
+      },
+      created(){
+        console.log(this.$route.query.areaName)
+      },
+      methods: {
+        getCommodityPreview() {
+
         }
       }
     }
 </script>
 
-<style scoped>
+<style>
   .text-size-big{
     font-size: 24px;
   }
@@ -168,5 +220,13 @@
   }
   .energyDataItem li{
     margin-bottom: 5px;
+  }
+  .collapse-head-select{
+    width: 100px;
+  }
+  .collapse-head-select .el-input__inner{
+    background-color: #fff;
+    border:none;
+    color:#082F4C;
   }
 </style>

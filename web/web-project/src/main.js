@@ -11,6 +11,8 @@ import Jqeury from './assets/script/jquery-3.3.1.min'
 import 'font-awesome/css/font-awesome.min.css'
 import moment from 'moment'
 import VCharts from 'v-charts'
+import FullCalendar from 'vue-full-calendar'
+Vue.use(FullCalendar)
 
 Vue.config.productionTip = false
 Vue.prototype.axios = axios //设为Vue对象的方法
