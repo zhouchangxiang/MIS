@@ -823,7 +823,7 @@ def trendChart():
                 re = getWeekDaysByNum(0, 0)
                 first_week_day = re[0][0]
                 end_week_day = re[0][1]
-                bats = db_session.query(BatchMaintain).filter(
+                bats = db_session.query(BatchMaintain).filter( ,xm,oi khmnbbvccxxc/.=
                     BatchMaintain.ProductionDate.between(first_week_day, end_week_day)).all()
                 countw = 0.0
                 counte = 0.0
