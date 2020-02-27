@@ -133,8 +133,18 @@ export default {
       if(index == 0) {
         this.subMenulist = [
           {name: "桓仁厂区", icon: "el-icon-location-outline", children:[
-              {name:"综合车间",url:"/Areas?areaName='综合车间'"},
+              {name:"新建综合试剂楼",url:"/Areas?areaName='新建综合试剂楼'"},
               {name:"提取二车间",url:"/Areas?areaName='提取二车间'"},
+              {name:"前处理车间",url:"/Areas?areaName='前处理车间'"},
+              {name:"研发中心",url:"/Areas?areaName='研发中心'"},
+              {name:"生物科技楼",url:"/Areas?areaName='生物科技楼'"},
+              {name:"原提取车间",url:"/Areas?areaName='原提取车间'"},
+              {name:"锅炉房",url:"/Areas?areaName='锅炉房'"},
+              {name:"综合办公楼",url:"/Areas?areaName='综合办公楼'"},
+              {name:"综合车间",url:"/Areas?areaName='综合车间'"},
+              {name:"污水站",url:"/Areas?areaName='污水站'"},
+              {name:"固体制剂车间",url:"/Areas?areaName='固体制剂车间'"},
+              {name:"展览馆",url:"/Areas?areaName='展览馆'"},
             ]
           },
           {name: "实时数据", icon: "el-icon-time", url: "/RealTimeData"},

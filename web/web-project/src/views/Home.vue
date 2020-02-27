@@ -170,7 +170,31 @@
         </div>
         <div class="home-card-body" style="height: 130px;text-align: center;">
           <p class="text-size-big text-color-primary">系统体检</p>
-          <a href="javascript:;" class="systemCheckup">立即体检</a>
+          <a href="javascript:;" class="systemCheckup" @click="openSystemCheckupDialog">立即体检</a>
+          <el-dialog
+            title="系统体检"
+            :close-on-press-escape="false"
+            :close-on-click-modal="false"
+            :show-close="false"
+            :visible.sync="systemCheckupDialogVisible"
+            width="30%"
+            center>
+            <el-timeline>
+              <el-timeline-item
+                v-for="(activity, index) in timelineData"
+                :key="index"
+                :icon="activity.icon"
+                size="large"
+                :type="activity.type">
+                <p>{{activity.content}}</p>
+                <p>{{activity.result}}</p>
+              </el-timeline-item>
+            </el-timeline>
+            <span slot="footer" class="dialog-footer">
+              <el-button @click="systemCheckupDialogVisible = false">取 消</el-button>
+              <el-button type="primary" @click="startSystemCheckup">开 始 体 检</el-button>
+            </span>
+          </el-dialog>
         </div>
       </el-col>
     </el-row>
@@ -338,7 +362,9 @@
           {type:"电能",total:"16456.24kwh",unitNum:"1246.15kwh/批"},
           {type:"水能",total:"16456.24kwh",unitNum:"1246.15kwh/批"},
           {type:"汽能",total:"16456.24kwh",unitNum:"1246.15kwh/批"}
-        ]
+        ],
+        systemCheckupDialogVisible:false, //是否展开系统体检对话框
+        timelineData:[],
       }
     },
     created(){
@@ -359,6 +385,20 @@
         }).catch(function (error) {
             console.log(error);
         });
+      },
+      openSystemCheckupDialog(){ //打开系统体检
+        this.systemCheckupDialogVisible = true
+        this.timelineData = [
+          {content:"检查服务端是否正常"},
+          {content:"采集设备是否正常"},
+          {content:"网络是否正常"},
+        ]
+      },
+      startSystemCheckup(){ //点击开始系统体检
+        this.$set(this.timelineData[0],'icon',"el-icon-check")
+        this.$set(this.timelineData[0],'type',"success")
+        this.$set(this.timelineData[1],'icon',"el-icon-loading")
+        this.$set(this.timelineData[1],'type',"primary")
       }
     }
   }

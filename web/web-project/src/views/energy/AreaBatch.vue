@@ -23,7 +23,7 @@
       </el-form>
     </el-col>
     <el-col :span="24" style="margin-bottom:2px;">
-      <div class="chartTile text-size-large text-color-info">趋势图</div>
+      <div class="chartHead text-size-large text-color-info"><div class="chartTile">趋势图</div></div>
     </el-col>
     <el-col :span="4">
       <div class="energyDataContainer" style="border-radius: 0 0 0 4px;">
@@ -50,13 +50,12 @@
       </div>
     </el-col>
     <el-col :span="24" style="margin-top:10px;margin-bottom:2px;">
-      <div class="chartTile">
-        <span class="text-size-large text-color-info">数据表</span>
-        <span class="text-size-mini text-color-danger">（倒序对比）</span>
+      <div class="chartHead">
+        <div class="chartTile text-size-large text-color-info">数据表<span class="text-size-mini text-color-danger">（倒序对比）</span></div>
         <el-select class="collapse-head-select" v-model="commodityValue" placeholder="请选择" @change="getCommodityPreview" size="small">
           <el-option v-for="item in commodityOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
-        <el-button type="primary" style="float:right;background-color: #082F4C;border:none;" size="small">导出</el-button>
+        <el-button type="primary" style="background-color: #082F4C;border:none;" size="small">导出</el-button>
       </div>
     </el-col>
     <el-col :span="12" style="border-radius:0 0 4px 4px;padding: 10px;background: #fff;">
@@ -95,7 +94,7 @@
           grid:{
             left:'0',
             right:'0',
-            bottom:'20px',
+            bottom:'0',
             top:'40px'
           },
           'series.1.itemStyle.normal.lineStyle': {
@@ -169,49 +168,6 @@
 </script>
 
 <style>
-  .text-size-big{
-    font-size: 24px;
-  }
-  .text-size-large{
-    font-size: 20px;
-  }
-  .text-size-normol{
-    font-size: 16px;
-  }
-  .text-size-small{
-    font-size: 14px;
-  }
-  .text-size-mini{
-    font-size: 12px;
-  }
-  .text-color-info{
-    color: rgba(8,47,76,1);
-  }
-  .text-color-info-shallow{
-    color: rgba(8,47,76,0.58);
-  }
-  .text-color-primary{
-    color: #228AD5;
-  }
-  .text-color-warning{
-    color: #FB8A06;
-  }
-  .text-color-success{
-    color: #15CC48;
-  }
-  .text-color-danger{
-    color: #FB3A06;
-  }
-  .chartTile{
-    background: #fff;
-    padding: 10px 15px;
-    border-radius: 4px 4px 0 0;
-  }
-  .energyDataContainer{
-    background: #fff;
-    height: 420px;
-    padding: 20px 15px;
-  }
   .energyDataItem{
     margin-bottom: 45px;
   }

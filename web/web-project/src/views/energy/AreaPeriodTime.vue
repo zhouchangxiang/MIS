@@ -84,7 +84,7 @@
           grid:{
             left:'10px',
             right:'10px',
-            bottom:'20px',
+            bottom:'0',
             top:'50px'
           }
         }
@@ -150,18 +150,6 @@
     color: #082F4C;
     font-size: 16px;
     vertical-align: middle;
-  }
-  .bg-dead{
-    background-color: #ECF1F4;
-  }
-  .bg-low{
-    background-color: #F5E866;
-  }
-  .bg-center{
-    background-color: #FB8A06;
-  }
-  .bg-tall{
-    background-color: #FB3A06;
   }
   .realTimeCardTitle{
     font-size: 21px;

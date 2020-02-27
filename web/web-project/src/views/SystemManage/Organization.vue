@@ -68,8 +68,9 @@
         this.selectedLabel = data.label
       },
       addNode(){
+        var treeData = this.treeData
         this.showBox = false
-        this.$prompt('请输入子节点名称', '提示', {
+        this.$prompt('请输入子节点名称', '给'+this.selectedLabel+'添加子节点', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
         }).then(({ value }) => {
@@ -77,7 +78,8 @@
             type: 'success',
             message: '已成功为' + this.selectedLabel + '添加子节点：' + value
           });
-        }).catch(() => {
+        }).catch(action => {
+          console.log(action)
           this.$message({
             type: 'info',
             message: '取消添加'
@@ -86,7 +88,7 @@
       },
       editNode(){
         this.showBox = false
-        this.$prompt('请输入修改后的名称', '提示', {
+        this.$prompt('请输入子节点名称', '修改'+this.selectedLabel+'的名称', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
         }).then(({ value }) => {
@@ -103,7 +105,7 @@
       },
       delNode(){
         this.showBox = false
-        this.$confirm('此操作将永久删除该节点, 是否继续?', '提示', {
+        this.$confirm('此操作将永久删除该节点, 是否继续?', '删除'+this.selectedLabel+'节点', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'

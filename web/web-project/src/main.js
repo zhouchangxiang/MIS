@@ -7,6 +7,7 @@ import ElementUI from 'element-ui'
 import axios from 'axios'
 Vue.use(ElementUI)
 import 'element-ui/lib/theme-chalk/index.css'
+import './assets/common.css'
 import Jqeury from './assets/script/jquery-3.3.1.min'
 import 'font-awesome/css/font-awesome.min.css'
 import moment from 'moment'

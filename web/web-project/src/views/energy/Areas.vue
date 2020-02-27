@@ -9,6 +9,8 @@
       <AreaPeriodTime v-if="navOptionsCurrent == 0"></AreaPeriodTime>
       <AreaBatch v-else-if="navOptionsCurrent == 1"></AreaBatch>
       <AreaEqDetails v-else-if="navOptionsCurrent == 2"></AreaEqDetails>
+      <AreaBasicData v-else-if="navOptionsCurrent == 3"></AreaBasicData>
+      <CostCenter v-else-if="navOptionsCurrent == 4"></CostCenter>
     </el-col>
   </el-row>
 </template>
@@ -17,10 +19,12 @@
   import AreaBatch from '@/views/energy/AreaBatch'
   import AreaPeriodTime from '@/views/energy/AreaPeriodTime'
   import AreaEqDetails from '@/views/energy/AreaEqDetails'
+  import AreaBasicData from '@/views/energy/AreaBasicData'
+  import CostCenter from '@/views/energy/CostCenter'
   export default {
     name: "Areas",
     components:{
-      AreaBatch,AreaPeriodTime,AreaEqDetails
+      AreaBatch,AreaPeriodTime,AreaEqDetails,AreaBasicData,CostCenter
     },
     data(){
       return {
@@ -28,7 +32,9 @@
         navOptions:[
           {name:"时段能耗"},
           {name:"单位批次能耗"},
-          {name:"设备详情"}
+          {name:"设备详情"},
+          {name:"基础数据"},
+          {name:"成本中心"},
         ]
       }
     },

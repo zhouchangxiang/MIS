@@ -1,1 +1,62 @@
-
+.bg-dead{
+  background-color: #ECF1F4;
+}
+.bg-low{
+  background-color: #F5E866;
+}
+.bg-center{
+  background-color: #FB8A06;
+}
+.bg-tall{
+  background-color: #FB3A06;
+}
+.text-size-big{
+  font-size: 24px;
+}
+.text-size-large{
+  font-size: 20px;
+}
+.text-size-normol{
+  font-size: 16px;
+}
+.text-size-small{
+  font-size: 14px;
+}
+.text-size-mini{
+  font-size: 12px;
+}
+.text-color-info{
+  color: rgba(8,47,76,1);
+}
+.text-color-info-shallow{
+  color: rgba(8,47,76,0.58);
+}
+.text-color-primary{
+  color: #228AD5;
+}
+.text-color-warning{
+  color: #FB8A06;
+}
+.text-color-success{
+  color: #15CC48;
+}
+.text-color-danger{
+  color: #FB3A06;
+}
+.chartHead{
+  background: #fff;
+  border-radius: 4px 4px 0 0;
+  height: 46px;
+  line-height: 46px;
+}
+.chartTile{
+  float: left;
+  height: 46px;
+  line-height: 46px;
+  padding: 0 15px;
+}
+.energyDataContainer{
+  background: #fff;
+  height: 440px;
+  padding: 20px 15px;
+}
