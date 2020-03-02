@@ -177,12 +177,4 @@
   .energyDataItem li{
     margin-bottom: 5px;
   }
-  .collapse-head-select{
-    width: 100px;
-  }
-  .collapse-head-select .el-input__inner{
-    background-color: #fff;
-    border:none;
-    color:#082F4C;
-  }
 </style>

@@ -111,38 +111,18 @@
       methods:{
         getSubsection(index){
           this.subsectionActive = index;
-          console.log(index)
         }
       }
     }
 </script>
 
 <style scoped>
-  .subsectionList{
-    float: left;
-    height: 46px;
-    margin-left: 20px;
-  }
-  .subsectionList li {
-    float: left;
-  }
-  .subsectionList li a{
-    display: block;
-    text-decoration: none;
-    color: #9B9B9B;
-    padding: 0 15px;
-    font-size: 14px;
-    border-bottom: 2px solid #EEEEEE;
-  }
-  .subsectionList li a.active{
-    color: #228AD5;
-    border-bottom: 2px solid #228AD5;
-  }
   .sortHandle{
     float: right;
     display: flex;
     color: #9B9B9B;
     font-size: 14px;
+    margin-right: 15px;
   }
   .sortHandle a{
     display: block;
