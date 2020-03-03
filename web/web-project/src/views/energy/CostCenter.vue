@@ -16,7 +16,7 @@
         </el-form-item>
         <el-form-item label="参数：" style="margin-bottom: 10px;">
           <el-radio-group v-model="formParameters.resourceType" fill="#082F4C" size="mini">
-            <el-radio-button v-for="item in radioTypeList" border :key="item.id" :label="item.name"></el-radio-button>
+            <el-radio-button v-for="item in radioTypeList" border :key="item.id" :label="item.name" :disabled="item.disabled"></el-radio-button>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -32,7 +32,7 @@
       </el-col>
       <el-col :span="24">
         <div class="energyDataContainer">
-          <ve-histogram :data="basicElectricityChartData" :settings="basicElectricityChartSettings" :extend="basicElectricityChartExtend"></ve-histogram>
+          <ve-histogram :data="basicElectricityChartData" :settings="basicElectricityChartSettings" :extend="ChartExtend"></ve-histogram>
         </div>
       </el-col>
     </el-col>
@@ -52,7 +52,7 @@
         </div>
       </el-col>
       <div class="energyDataContainer" style="margin-bottom:10px;">
-        <ve-histogram :data="electricityPileChartData" :settings="electricityPileChartSettings" :extend="basicElectricityChartExtend"></ve-histogram>
+        <ve-histogram :data="electricityPileChartData" :settings="electricityPileChartSettings" :extend="ChartExtend"></ve-histogram>
       </div>
       <el-col :span="12" v-for="item in electricAnalyzeItem">
         <div class="electricAnalyze">
@@ -115,6 +115,11 @@
           <el-col :span="8"><p class="text-color-caption">低于考核值次数</p>{{ forceElectricityParameter.belowNumber }}次</el-col>
         </div>
       </el-col>
+      <el-col :span="24">
+        <div class="energyDataContainer">
+          <ve-line :data="ElecCalculationChartData" :settings="ElecCalculationChartSettings" :extend="ChartExtend"></ve-line>
+        </div>
+      </el-col>
     </el-col>
   </el-row>
 </template>
@@ -127,7 +132,11 @@
       this.basicElectricityChartSettings = {
         yAxisName: ['元']
       }
-      this.basicElectricityChartExtend = {
+      this.ElecCalculationChartSettings = {
+        axisSite: { right: ['功率因素'] },
+        yAxisName: ['无功罚款', '功率因素']
+      }
+      this.ChartExtend = {
         grid:{
           left:'0',
           right:'0',
@@ -135,7 +144,8 @@
           top:'40px'
         },
         series:{
-          barMaxWidth : 30
+          barMaxWidth : 30,
+          smooth: false
         }
       }
       this.electricityPileChartSettings = {
@@ -156,9 +166,7 @@
         radioTypeList:[
           {name:"基本电费",id:1},
           {name:"电度电费",id:2},
-          {name:"力调电费",id:3},
-          {name:"无功补偿",id:4},
-          {name:"诺波治理",id:5}
+          {name:"力调电费",id:3}
         ],
         pickerOptions:{
           disabledDate(time) {
@@ -221,6 +229,15 @@
           powerFactorAssessmentValue:0.5,
           averagePowerFactor:0.66,
           belowNumber:30
+        },
+        ElecCalculationChartData:{
+          columns: ['日期', '无功罚款','功率因素'],
+          rows: [
+            { '日期': '01', '无功罚款': 4393, '功率因素': 43},
+            { '日期': '02', '无功罚款': 2393, '功率因素': 93},
+            { '日期': '03', '无功罚款': 1593, '功率因素': 87},
+            { '日期': '04', '无功罚款': 1693, '功率因素': 21}
+          ]
         }
       }
     },

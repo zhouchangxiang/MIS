@@ -221,6 +221,9 @@
           right: '0',
           bottom: '-20px',
           top:'0'
+        },
+        series: {
+          smooth: false
         }
       }
       this.realtimeChartSettings = { //今日对比能耗图表配置
@@ -232,6 +235,9 @@
           right: '0',
           bottom: '0',
           top:'20px'
+        },
+        series: {
+          smooth: false
         }
       }
       this.electricLoadRateChartSettings = { //电能负荷率图表配置
@@ -251,6 +257,9 @@
           right: '0',
           bottom: '-40px',
           top:'0'
+        },
+        series: {
+          smooth: false
         }
       }
       return{

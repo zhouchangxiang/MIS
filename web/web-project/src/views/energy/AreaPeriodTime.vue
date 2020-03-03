@@ -86,6 +86,9 @@
             right:'10px',
             bottom:'0',
             top:'50px'
+          },
+          series:{
+            smooth: false
           }
         }
         return {

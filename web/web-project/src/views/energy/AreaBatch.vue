@@ -100,6 +100,9 @@
           'series.1.itemStyle.normal.lineStyle': {
             width:2,
             type:'dotted'
+          },
+          series:{
+            smooth: false
           }
         }
         return {

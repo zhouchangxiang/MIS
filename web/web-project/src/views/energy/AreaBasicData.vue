@@ -49,6 +49,9 @@
             right:'0',
             bottom:'0',
             top:'40px'
+          },
+          series:{
+            smooth: false
           }
         }
         return {
