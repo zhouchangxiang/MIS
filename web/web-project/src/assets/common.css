@@ -49,6 +49,33 @@
 .text-color-caption{
   color: #9B9B9B;
 }
+/* 公共导航菜单 */
+.navOptionsItem{
+  width:100%;
+  background:#082F4C;
+  clear: both;
+  overflow: hidden;
+  border-radius:4px;
+  margin-bottom: 20px;
+}
+.navOptionsItem ul li{
+  float:left;
+  margin:10px;
+}
+.navOptionsItem ul li a{
+  display: block;
+  color:#fff;
+  font-size:18px;
+  background:#082F4C;
+  text-decoration: none;
+  padding:5px 20px;
+  border-radius:4px;
+}
+.navOptionsItem ul li a.active{
+  color:#082F4C;
+  background:#fff;
+}
+/* 卡片头部及装载图表的div */
 .chartHead{
   background: #fff;
   border-radius: 4px 4px 0 0;
@@ -72,6 +99,14 @@
   background: #fff;
   height: 440px;
   padding: 20px 15px;
+  clear: both;
+  overflow: hidden;
+}
+.platformContainer{
+  background: #fff;
+  color: #131414;
+  padding: 10px;
+  font-size: 16px;
   clear: both;
   overflow: hidden;
 }

@@ -28,7 +28,7 @@
               <el-button size="mini">历史事件</el-button>
             </div>
           </div>
-          <div class="faultContainer" style="margin-bottom:10px;">
+          <div class="platformContainer" style="margin-bottom:10px;">
             <el-col :span="6">
               <div class="faultItemHead">
                 <span>功率</span>
@@ -93,7 +93,7 @@
           <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
             <div class="chartTile">实时预警 <span class="text-color-info-shallow text-size-mini">所有设备</span></div>
           </div>
-          <div class="faultContainer">
+          <div class="platformContainer">
             <el-table :data="ralTimeWarningTableData" size="mini" height="216px" max-height="216px" style="width: 100%">
               <el-table-column prop="area" label="区域"></el-table-column>
               <el-table-column prop="name" label="设备"></el-table-column>
@@ -149,7 +149,7 @@
           </div>
         </el-col>
         <el-col :span="24" style="margin-bottom: 10px;">
-          <div class="faultContainer">
+          <div class="platformContainer">
             <el-row type="flex" justify="space-between">
               <el-col :span="4">
                 <div class="equirunInfoItem">
@@ -200,7 +200,7 @@
       </el-col>
       <el-col :span="24" v-if="formParameters.eqComponentValue == '电能质量'">
         <el-col :span="24" style="margin-bottom: 10px;">
-          <div class="faultContainer">
+          <div class="platformContainer">
             <el-col :span="8">
               <div class="equirunInfoItem">
                 <label>三项电流不平衡度</label>
@@ -350,14 +350,6 @@
 </script>
 
 <style scoped>
-  .faultContainer{
-    background: #fff;
-    color: #131414;
-    padding: 10px;
-    font-size: 16px;
-    clear: both;
-    overflow: hidden;
-  }
   .faultItemHead{
     background: #EEEEEE;
     border-radius:4px;

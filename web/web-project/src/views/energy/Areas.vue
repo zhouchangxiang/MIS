@@ -47,29 +47,5 @@
 </script>
 
 <style scoped>
-  .navOptionsItem{
-    width:100%;
-    background:#082F4C;
-    clear: both;
-    overflow: hidden;
-    border-radius:4px;
-    margin-bottom: 20px;
-  }
-  .navOptionsItem ul li{
-    float:left;
-    margin:10px;
-  }
-  .navOptionsItem ul li a{
-    display: block;
-    color:#fff;
-    font-size:18px;
-    background:#082F4C;
-    text-decoration: none;
-    padding:5px 20px;
-    border-radius:4px;
-  }
-  .navOptionsItem ul li a.active{
-    color:#082F4C;
-    background:#fff;
-  }
+
 </style>
