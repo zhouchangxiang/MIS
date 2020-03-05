@@ -70,7 +70,7 @@
       <el-main>
         <transition name="move" mode="out-in">
          <!--渲染子页面-->
-          <router-view></router-view>
+          <router-view :key="$route.fullPath"></router-view>
          </transition>
     </el-main>
   </el-container>
@@ -160,7 +160,7 @@ export default {
             ]
           },
           {name: "能效分析", icon: "el-icon-time", url: "/EfficiencyAnalysis"},
-          {name: "数据报表", icon: "el-icon-document", url: "/DataReport"}
+          {name: "综合报表", icon: "el-icon-document", url: "/DataReport"}
         ]
       }else if(index == 1){
         this.subMenulist = [
@@ -209,7 +209,7 @@ export default {
     width: 100%;
     text-align: center;
     font-size: 30px;
-    padding: 30px;
+    padding: 30px 0;
   }
   .aside-head a{
     color: #fff;
@@ -233,24 +233,6 @@ export default {
   }
   .menu-ul::-webkit-scrollbar {
     display: none;  /* 隐藏滚动条 */
-  }
-  .menu-ul .el-menu-item,.el-submenu__title{
-    background: #082F4C;
-    color: #fff;
-    font-size: 18px;
-  }
-  .menu-ul .el-menu-item,.el-submenu__title:hover{
-    background: #082F4C;
-    color: #fff;
-    font-size: 18px;
-  }
-  .menu-ul .el-menu-item.is-active {
-    background-color: #fff;
-    color: #082F4C;
-  }
-  .el-submenu .el-menu-item{
-    font-size: 14px;
-    min-width: auto;
   }
   .el-menu-item .fa {
     margin-right: 5px;

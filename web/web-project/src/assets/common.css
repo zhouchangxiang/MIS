@@ -1,3 +1,18 @@
+/* 侧边导航栏 */
+.menu-ul .el-menu-item,.el-submenu__title,.el-submenu__title:hover{
+  background: #082F4C;
+  color: #fff;
+  font-size: 18px;
+}
+.menu-ul .el-menu-item.is-active {
+  background-color: #fff;
+  color: #082F4C;
+}
+.el-submenu .el-menu-item{
+  font-size: 14px;
+  min-width: auto;
+}
+/* 常用字体样式 */
 .float-right{
   float: right;
 }
@@ -77,16 +92,18 @@
 }
 /* 卡片头部及装载图表的div */
 .chartHead{
+  position: relative;
   background: #fff;
   border-radius: 4px 4px 0 0;
   height: 46px;
   line-height: 46px;
+  padding: 0 15px;
 }
 .chartTile{
   float: left;
   height: 46px;
   line-height: 46px;
-  padding: 0 15px;
+  padding-right: 15px;
 }
 .chartHeadRight{
   float: right;

@@ -44,7 +44,7 @@ export default new Router({
       },{
         path:'/DataReport',
         name:'DataReport',
-        meta:{ title:'数据报表' },
+        meta:{ title:'综合报表' },
         component:DataReport
       },{
         path:'/Areas',
