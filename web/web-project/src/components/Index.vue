@@ -7,15 +7,17 @@
           <div class="aside-head">
             <router-link :to="{name:'home'}"><i class="fa fa-home"></i></router-link>
           </div>
-          <el-menu class="menu-ul" default-active="" :collapse="isCollapse">
-            <template v-for="(item,index) in subMenulist">
-              <el-menu-item v-if="!item.children" :index="item.name" :src="item.url" @click="clickSubMenu"><i :class="item.icon"></i><span slot="title">{{ item.name }}</span></el-menu-item>
-              <el-submenu v-if="!item.url" :index="item.name">
-                  <template slot="title"><i :class="item.icon"></i><span>{{ item.name }}</span></template>
-                  <el-menu-item v-for="(child,childIndex) in item.children" :index="childIndex+''" :src="child.url" @click="clickSubMenu"><span style="margin-left:-10px;">{{child.name}}</span></el-menu-item>
-              </el-submenu>
-            </template>
-          </el-menu>
+          <div :style="selfHeight" class="aside-menu">
+            <el-menu class="menu-ul" default-active="" :collapse="isCollapse">
+              <template v-for="(item,index) in subMenulist">
+                <el-menu-item v-if="!item.children" :index="item.name" :src="item.url" @click="clickSubMenu"><i :class="item.icon"></i><span slot="title">{{ item.name }}</span></el-menu-item>
+                <el-submenu v-if="!item.url" :index="item.name">
+                    <template slot="title"><i :class="item.icon"></i><span>{{ item.name }}</span></template>
+                    <el-menu-item v-for="(child,childIndex) in item.children" :index="childIndex+''" :src="child.url" @click="clickSubMenu"><span style="margin-left:-10px;">{{child.name}}</span></el-menu-item>
+                </el-submenu>
+              </template>
+            </el-menu>
+          </div>
           <div class="aside-foot">
             <el-button :icon="sideIcon" size="mini" circle @click="iconToggle"></el-button>
             <div class="version-number">V2.0</div>
@@ -82,6 +84,9 @@ export default {
   name: 'Index',
   data () {
     return {
+      selfHeight:{ //自适应高度
+        height:''
+      },
       isCollapse: false, //左侧菜单栏是否缩进了
       sideIcon:'el-icon-arrow-left', //左侧菜单栏缩进点击切换图标
       time:"",  //实时显示当前的时间
@@ -102,7 +107,14 @@ export default {
     },1000);
     this.clickMainMenu(this.isactive)
   },
+  created(){
+    window.addEventListener('resize', this.getMenuHeight);
+    this.getMenuHeight()
+  },
   methods:{
+    getMenuHeight(){
+      this.selfHeight.height = window.innerHeight - 210+'px';
+    },
     clickSubMenu(item){
       this.$router.push({
         path:item.$attrs.src,
@@ -133,11 +145,21 @@ export default {
       if(index == 0) {
         this.subMenulist = [
           {name: "桓仁厂区", icon: "el-icon-location-outline", children:[
-              {name:"综合车间",url:"/Areas?areaName='综合车间'"},
+              {name:"新建综合试剂楼",url:"/Areas?areaName='新建综合试剂楼'"},
               {name:"提取二车间",url:"/Areas?areaName='提取二车间'"},
+              {name:"前处理车间",url:"/Areas?areaName='前处理车间'"},
+              {name:"研发中心",url:"/Areas?areaName='研发中心'"},
+              {name:"生物科技楼",url:"/Areas?areaName='生物科技楼'"},
+              {name:"原提取车间",url:"/Areas?areaName='原提取车间'"},
+              {name:"锅炉房",url:"/Areas?areaName='锅炉房'"},
+              {name:"综合办公楼",url:"/Areas?areaName='综合办公楼'"},
+              {name:"综合车间",url:"/Areas?areaName='综合车间'"},
+              {name:"污水站",url:"/Areas?areaName='污水站'"},
+              {name:"固体制剂车间",url:"/Areas?areaName='固体制剂车间'"},
+              {name:"展览馆",url:"/Areas?areaName='展览馆'"},
             ]
           },
-          {name: "实时数据", icon: "el-icon-time", url: "/RealTimeData"},
+          {name: "能效分析", icon: "el-icon-time", url: "/EfficiencyAnalysis"},
           {name: "数据报表", icon: "el-icon-document", url: "/DataReport"}
         ]
       }else if(index == 1){
@@ -184,33 +206,40 @@ export default {
     background: #082F4C;
   }
   .aside-head{
-    position: absolute;
     width: 100%;
-    top: 0;
     text-align: center;
     font-size: 30px;
-    padding-top: 30px;
+    padding: 30px;
   }
   .aside-head a{
     color: #fff;
   }
   .aside-foot{
-    position: absolute;
+    height:110px;
     width: 100%;
-    bottom: 0;
     text-align: center;
     font-size: 18px;
-    padding-bottom: 30px;
+    padding-top: 20px;
   }
-  .left-aside .el-row .el-col{
+  .aside-menu{
     display: flex;
     flex-direction: column;
     justify-content: center;
   }
   .menu-ul{
     border: none;
+    clear: both;
+    overflow: auto;
   }
-  .menu-ul .el-menu-item,.el-submenu__title,.el-submenu__title:hover{
+  .menu-ul::-webkit-scrollbar {
+    display: none;  /* 隐藏滚动条 */
+  }
+  .menu-ul .el-menu-item,.el-submenu__title{
+    background: #082F4C;
+    color: #fff;
+    font-size: 18px;
+  }
+  .menu-ul .el-menu-item,.el-submenu__title:hover{
     background: #082F4C;
     color: #fff;
     font-size: 18px;

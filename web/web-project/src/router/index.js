@@ -4,7 +4,7 @@ import Login from '@/components/login'
 import Index from '@/components/index'
 import Error from '@/components/404'
 import Home from '@/views/home'
-import RealTimeData from '@/views/energy/RealTimeData'
+import EfficiencyAnalysis from '@/views/energy/EfficiencyAnalysis'
 import DataReport from '@/views/energy/DataReport'
 import Areas from '@/views/energy/Areas'
 import Organization from '@/views/SystemManage/Organization'
@@ -37,10 +37,10 @@ export default new Router({
         meta:{ title:'工作台' },
         component:Home
       },{
-        path:'/RealTimeData',
-        name:'RealTimeData',
-        meta:{ title:'实时数据' },
-        component:RealTimeData
+        path:'/EfficiencyAnalysis',
+        name:'EfficiencyAnalysis',
+        meta:{ title:'能效分析' },
+        component:EfficiencyAnalysis
       },{
         path:'/DataReport',
         name:'DataReport',

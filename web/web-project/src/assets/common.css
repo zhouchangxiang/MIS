@@ -1,1 +1,143 @@
+.float-right{
+  float: right;
+}
+.bg-dead{
+  background-color: #ECF1F4;
+}
+.bg-low{
+  background-color: #F5E866;
+}
+.bg-center{
+  background-color: #FB8A06;
+}
+.bg-tall{
+  background-color: #FB3A06;
+}
+.text-size-big{
+  font-size: 24px;
+}
+.text-size-large{
+  font-size: 20px;
+}
+.text-size-normol{
+  font-size: 16px;
+}
+.text-size-small{
+  font-size: 14px;
+}
+.text-size-mini{
+  font-size: 12px;
+}
+.text-color-info{
+  color: rgba(8,47,76,1);
+}
+.text-color-info-shallow{
+  color: rgba(8,47,76,0.58);
+}
+.text-color-primary{
+  color: #228AD5;
+}
+.text-color-warning{
+  color: #FB8A06;
+}
+.text-color-success{
+  color: #15CC48;
+}
+.text-color-danger{
+  color: #FB3A06;
+}
+.text-color-caption{
+  color: #9B9B9B;
+}
+/* 公共导航菜单 */
+.navOptionsItem{
+  width:100%;
+  background:#082F4C;
+  clear: both;
+  overflow: hidden;
+  border-radius:4px;
+  margin-bottom: 20px;
+}
+.navOptionsItem ul li{
+  float:left;
+  margin:10px;
+}
+.navOptionsItem ul li a{
+  display: block;
+  color:#fff;
+  font-size:18px;
+  background:#082F4C;
+  text-decoration: none;
+  padding:5px 20px;
+  border-radius:4px;
+}
+.navOptionsItem ul li a.active{
+  color:#082F4C;
+  background:#fff;
+}
+/* 卡片头部及装载图表的div */
+.chartHead{
+  background: #fff;
+  border-radius: 4px 4px 0 0;
+  height: 46px;
+  line-height: 46px;
+}
+.chartTile{
+  float: left;
+  height: 46px;
+  line-height: 46px;
+  padding: 0 15px;
+}
+.chartHeadRight{
+  float: right;
+  line-height: 46px;
+  margin-right: 15px;
+  color: #131414;
+  font-size: 18px;
+}
+.energyDataContainer{
+  background: #fff;
+  height: 440px;
+  padding: 20px 15px;
+  clear: both;
+  overflow: hidden;
+}
+.platformContainer{
+  background: #fff;
+  color: #131414;
+  padding: 10px;
+  font-size: 16px;
+  clear: both;
+  overflow: hidden;
+}
+/* 卡片内下拉框 */
+.collapse-head-select{
+  width: 100px;
+}
+.collapse-head-select .el-input__inner{
+  background-color: #fff;
+  border:none;
+  color:#082F4C;
+}
+/* 卡片标题头部切换菜单 */
+.subsectionList{
+  float: left;
+  height: 46px;
+  margin-left: 20px;
+}
+.subsectionList li {
+  float: left;
+}
+.subsectionList li a{
+  display: block;
+  text-decoration: none;
+  color: #9B9B9B;
+  padding: 0 15px;
+  font-size: 14px;
+  border-bottom: 2px solid #EEEEEE;
+}
+.subsectionList li a.active{
+  color: #228AD5;
+  border-bottom: 2px solid #228AD5;
+}
 
