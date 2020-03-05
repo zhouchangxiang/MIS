@@ -12,6 +12,11 @@
   font-size: 14px;
   min-width: auto;
 }
+/* 头部用户导航 */
+.el-dropdown{
+  color: #082F4C;
+  font-size: 20px;
+}
 /* 常用字体样式 */
 .float-right{
   float: right;

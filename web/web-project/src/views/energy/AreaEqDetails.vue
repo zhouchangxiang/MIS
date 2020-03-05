@@ -29,21 +29,19 @@
             </div>
           </div>
           <div class="platformContainer" style="margin-bottom:10px;">
-            <el-col :span="6">
+            <el-col :span="8">
               <div class="faultItemHead">
                 <span>功率</span>
                 <p>额定功率/kw <span>53</span></p>
               </div>
               <div class="faultItemBody">
-                <p>有功功率/kw <span>2.1514</span></p>
-                <p>无功功率/kw <span>2.1514</span></p>
-                <p>功率因素 <span>2.1514</span></p>
+                <p style="padding: 29px 0;">有功功率/kw <span>2.1514</span></p>
               </div>
               <div class="faultWarn">
                 <p class="text-color-success" style="line-height: 60px;">未发现异常</p>
               </div>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="8">
               <div class="faultItemHead">
                 <span>电流</span>
                 <p>额定电流/A <span>53</span></p>
@@ -58,7 +56,7 @@
                 <p class="text-color-danger">B项断项</p>
               </div>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="8">
               <div class="faultItemHead">
                 <span>电压</span>
                 <p>额定电压/V <span>5</span></p>
@@ -70,21 +68,6 @@
               </div>
               <div class="faultWarn">
                 <p class="text-color-success" style="line-height: 60px;">未发现异常</p>
-              </div>
-            </el-col>
-            <el-col :span="6">
-              <div class="faultItemHead">
-                <span>频率</span>
-                <p>额定频率/HZ <span>4.5</span></p>
-              </div>
-              <div class="faultItemBody">
-                <p>A项电流 <span>2.1514</span></p>
-                <p>B项电流 <span>2.666</span></p>
-                <p>C项电流 <span>2.1514</span></p>
-              </div>
-              <div class="faultWarn">
-                <span>2020-02-04 17:56</span>
-                <p class="text-color-danger">B项断项</p>
               </div>
             </el-col>
           </div>

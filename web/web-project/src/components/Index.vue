@@ -13,7 +13,7 @@
                 <el-menu-item v-if="!item.children" :index="item.name" :src="item.url" @click="clickSubMenu"><i :class="item.icon"></i><span slot="title">{{ item.name }}</span></el-menu-item>
                 <el-submenu v-if="!item.url" :index="item.name">
                     <template slot="title"><i :class="item.icon"></i><span>{{ item.name }}</span></template>
-                    <el-menu-item v-for="(child,childIndex) in item.children" :index="childIndex+''" :src="child.url" @click="clickSubMenu"><span style="margin-left:-10px;">{{child.name}}</span></el-menu-item>
+                    <el-menu-item v-for="(child,childIndex) in item.children" :key="childIndex" :index="childIndex+''" :src="child.url" @click="clickSubMenu"><span style="margin-left:10px;">{{child.name}}</span></el-menu-item>
                 </el-submenu>
               </template>
             </el-menu>
@@ -54,7 +54,7 @@
         <div class="head-right-menu"><ul><li class="active"><i class="el-icon-menu"></i></li></ul></div>
         <div class="head-right-menu">
           <ul>
-            <li v-for="(item,index) in mainMenuList" @click="clickMainMenu(index)" v-bind:class="{active:index==isactive}">{{ item.text }}</li>
+            <li v-for="(item,index) in mainMenuList" :key="index" @click="clickMainMenu(index)" v-bind:class="{active:index==isactive}">{{ item.text }}</li>
           </ul>
         </div>
         <!-- 个人信息 -->
@@ -145,6 +145,7 @@ export default {
       if(index == 0) {
         this.subMenulist = [
           {name: "桓仁厂区", icon: "el-icon-location-outline", children:[
+              {name:"整厂区",url:"/Areas?areaName='整厂区'"},
               {name:"新建综合试剂楼",url:"/Areas?areaName='新建综合试剂楼'"},
               {name:"提取二车间",url:"/Areas?areaName='提取二车间'"},
               {name:"前处理车间",url:"/Areas?areaName='前处理车间'"},
@@ -284,10 +285,6 @@ export default {
   }
   .head-menu-item{
     cursor:pointer;
-  }
-  .el-dropdown{
-    color: #082F4C;
-    font-size: 20px;
   }
   .el-dropdown-menu {
     text-align: center;

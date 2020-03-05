@@ -5,8 +5,8 @@
         <div class="home-card">
           <div class="home-card-head">
             <span><i class="el-icon-time el-icon--left" style="color: #FB3A06;"></i>能耗预览</span>
-            <el-select class="card-head-select" v-model="energyValue" placeholder="请选择" @change="getEnergyPreview">
-              <el-option v-for="item in energyOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            <el-select class="card-head-select" v-model="previewEnergyValue" placeholder="请选择" @change="getEnergyPreview">
+              <el-option v-for="(item,index) in previewEnergyOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
           </div>
           <div class="home-card-body" style="height: 462px;">
@@ -68,8 +68,8 @@
           <el-col :span="10">
             <div class="home-card-head">
               <span><i class="el-icon-guide el-icon--left" style="color: #228AD5;"></i>区域时段能耗</span>
-              <el-select class="card-head-select" v-model="energyValue" placeholder="请选择">
-                <el-option v-for="item in energyOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+              <el-select class="card-head-select" v-model="areaTimeEnergyValue" placeholder="请选择">
+                <el-option v-for="(item,index) in areaTimeEnergyOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </div>
             <div class="home-card-body" style="height:280px;">
@@ -102,7 +102,7 @@
             <div class="home-card-body" style="height:280px;text-align: center">
               <ve-gauge :data="electricLoadRateChartData" :settings="electricLoadRateChartSettings" :extend="electricLoadRateChartExtend" height="220px"></ve-gauge>
               <el-select class="" v-model="electricLoadRateTime" size="small" style="width: 80px;">
-                <el-option v-for="item in electricLoadRateTimeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                <el-option v-for="(item,index) in electricLoadRateTimeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </div>
           </el-col>
@@ -263,7 +263,7 @@
         }
       }
       return{
-        energyOptions: [{
+        previewEnergyOptions: [{
           value: '电',
           label: '电能'
         }, {
@@ -273,7 +273,18 @@
           value: '汽',
           label: '汽能'
         }],
-        energyValue:'电', //默认下拉
+        previewEnergyValue:'电',
+        areaTimeEnergyOptions: [{
+          value: '电',
+          label: '电能'
+        }, {
+          value: '水',
+          label: '水能'
+        }, {
+          value: '汽',
+          label: '汽能'
+        }],
+        areaTimeEnergyValue:'电',
         pickerOptions: {
           disabledDate(time) {
             return time.getTime() > (Date.now() - 3600 * 1000 * 24);
@@ -378,6 +389,7 @@
     },
     created(){
       this.getEnergyPreview()
+      this.getAreaTime()
     },
     mounted(){
 
@@ -386,8 +398,19 @@
       getEnergyPreview() {
         this.axios.get('/api/energyPreview',{
           params: {
-              energyType: this.energyValue,
+              energyType: this.previewEnergyValue,
               compareDate: moment(this.CompareDate).format('YYYY-MM-DD')
+          }
+        }).then(function (response) {
+            console.log(response);
+        }).catch(function (error) {
+            console.log(error);
+        });
+      },
+      getAreaTime() {
+        this.axios.get('/api/areaTimeEnergy',{
+          params: {
+              energyType: this.areaTimeEnergyValue,
           }
         }).then(function (response) {
             console.log(response);

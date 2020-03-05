@@ -22,7 +22,7 @@
       </el-form>
     </el-col>
     <el-col :span="24" v-if="formParameters.resourceType == '基本电费'">
-      <el-col :span="12" v-for="item in ElecCalculationTypeItem">
+      <el-col :span="12" v-for="(item,index) in ElecCalculationTypeItem" :key="index">
         <div class="ElecCalculationType">
           <p>{{ item.title }}</p>
           <el-col :span="8"><p class="text-color-caption">{{ item.typeTitle }}</p>{{ item.typeData }}</el-col>
@@ -43,7 +43,7 @@
           总电费：163411元
         </div>
       </div>
-      <el-col :span="6" v-for="(item,index) in periodTimeTypeItem" style="margin-bottom:2px;">
+      <el-col :span="6" v-for="(item,index) in periodTimeTypeItem" :key="index" style="margin-bottom:2px;">
         <div class="periodTimeTypeItem">
           <p>{{ item.title }} <span class="text-color-caption" style="float: right;">电价：{{ item.electrovalence }}元</span></p>
           <el-col :span="8"><p class="text-color-caption">电费/元</p>{{ item.electricity }}</el-col>
@@ -54,7 +54,7 @@
       <div class="energyDataContainer" style="margin-bottom:10px;">
         <ve-histogram :data="electricityPileChartData" :settings="electricityPileChartSettings" :extend="ChartExtend"></ve-histogram>
       </div>
-      <el-col :span="12" v-for="item in electricAnalyzeItem">
+      <el-col :span="12" v-for="(item,index) in electricAnalyzeItem" :key="index">
         <div class="electricAnalyze">
           <p style="text-align: center;margin-bottom: 10px;">{{ item.title }}</p>
           <el-row :gutter="20" style="margin-bottom: 10px;">

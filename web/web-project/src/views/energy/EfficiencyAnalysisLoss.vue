@@ -8,11 +8,6 @@
           </el-radio-group>
           <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false"></el-date-picker>
         </el-form-item>
-        <el-form-item style="float: right;">
-          <el-radio-group v-model="formParameters.energy" fill="#082F4C" size="small">
-            <el-radio-button v-for="item in energyList" :key="item.id" :label="item.name"></el-radio-button>
-          </el-radio-group>
-        </el-form-item>
       </el-form>
     </el-col>
     <el-col :span="24">
@@ -78,8 +73,7 @@
       return {
         formParameters:{
           resourceTime:"班次",
-          startDate:Date.now(),
-          energy:"电能"
+          startDate:Date.now()
         },
         radioTimeList:[
           {name:"班次",id:1},
@@ -92,11 +86,6 @@
             return time.getTime() > Date.now();
           }
         },
-        energyList:[
-          {name:"电能",id:1},
-          {name:"水能",id:2},
-          {name:"汽能",id:3},
-        ],
         lineLossChartData:{
           columns: ['时间', '今日', '选择日'],
           rows: [
