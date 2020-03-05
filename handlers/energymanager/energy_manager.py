@@ -740,6 +740,8 @@ def areaTimeEnergy():
             currentday = datetime.datetime.now().day
             currenthour = datetime.datetime.now().hour
             EnergyClass = data.get("energyType")
+            currdate = data.get("date")#当前时间
+            compareDate = data.get("compareDate")#对比日期
             AreaNames = db_session.query(AreaTable.AreaName).filter().all()
             diarea = {}
             araeY_list = []
@@ -823,7 +825,7 @@ def trendChart():
                 re = getWeekDaysByNum(0, 0)
                 first_week_day = re[0][0]
                 end_week_day = re[0][1]
-                bats = db_session.query(BatchMaintain).filter( ,xm,oi khmnbbvccxxc/.=
+                bats = db_session.query(BatchMaintain).filter(
                     BatchMaintain.ProductionDate.between(first_week_day, end_week_day)).all()
                 countw = 0.0
                 counte = 0.0
