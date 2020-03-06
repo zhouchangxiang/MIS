@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Login from '@/components/login'
 import Index from '@/components/index'
 import Error from '@/components/404'
+import Config from '@/components/config'
 import Home from '@/views/home'
 import EfficiencyAnalysis from '@/views/energy/EfficiencyAnalysis'
 import DataReport from '@/views/energy/DataReport'
@@ -84,9 +85,15 @@ export default new Router({
       }]
     },
     {
+      path:'/config',
+      name:'Config',
+      meta:{ title:'404' },
+      component:Config
+    },
+    {
       path:'/404',
       name:'404',
-      meta:{ title:'404' },
+      meta:{ title:'配置页' },
       component:Error
     }
   ]
