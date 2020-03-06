@@ -40,78 +40,35 @@ def run():
                     ele = db_session.query(ElectricEnergy).filter(ElectricEnergy.TagClassValue == key.TagClassValue).first()
                     unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "电").first()
                     # equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key.TagClassValue).first()
-                    price = db_session.query(ElectricPrice.PriceValue).filter(ElectricPrice.PriceName == "电",PriceList.IsEnabled == "是").first()
-                    timeprices = db_session.query(ElectricTimePrice).filter().all()
+                    timeprices = db_session.query(ElectricPrice.PriceValue).filter(ElectricPrice.PriceName == "电",PriceList.IsEnabled == "是").first()
+                    PriceID = ""
                     for timeprice in timeprices:
-                        if
-
-                    if ele == None:
-                        el = ElectricEnergy()
-                        el.TagClassValue = key.TagClassValue
-                        el.CollectionYear = currentyear
-                        el.CollectionMonth = currentmonth
-                        el.CollectionDay = currentday
-                        el.ZGL = ZGL
-                        el.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                        el.Unit = unit[0]
-                        # el.EquipmnetID = equip[0]
-                        el.PriceID =price[0]
-                        db_session.add(el)
-                        db_session.commit()
-                    else:
-                        el = ElectricEnergy()
-                        el.TagClassValue = key.TagClassValue
-                        el.CollectionYear = currentyear
-                        el.CollectionMonth = currentmonth
-                        el.CollectionDay = currentday
-                        el.ZGL = ZGL
-                        el.AU = AU
-                        el.AI = AI
-                        el.AI = ZGL
-                        el.BU = BU
-                        el.BI = BI
-                        el.CU = CU
-                        el.CI = CI
-                        el.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                        el.Unit = unit[0]
-                        # el.EquipmnetID = equip[0]
-                        el.PriceID = price[0]
-                        db_session.add(el)
-                        db_session.commit()
-                    # 实时预电压电流故障
-                    if AU == 0.0 or BU == 0.0 or CU == 0.0:
-                        earw = EarlyWarning()
-                        earw.AreaName = key.AreaName
-                        EQPName = db_session.query(TagClassType).filter(
-                            TagClassType.TagClassValue == key.TagClassValue).first()
-                        if EQPName != None:
-                            EQPName = EQPName[0]
-                        else:
-                            EQPName = ""
-                        earw.EQPName = EQPName
-                        earw.WarningType = "三相电压中缺相"
-                        WarningDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                        db_session.commit()
-                    else:
-                        avgI_list = [AI,BI,CI]
-                        percentI = 100*((max(avgI_list) - min(avgI_list))/max(avgI_list))
-                        EQPName = db_session.query(TagClassType).filter(
-                            TagClassType.TagClassValue == key.TagClassValue).first()
-                        if EQPName != None:
-                            EQPName = EQPName[0]
-                        else:
-                            EQPName = ""
-                        percent = db_session(EarlyWarningPercentMaintain.Percent).filter(EarlyWarningPercentMaintain.AreaName == key.AreaName,
-                            EarlyWarningPercentMaintain.EQPName == EQPName).first()
-                        if percent != None:
-                            percent = percent[0]
-                            if percentI > percent:
-                                earw = EarlyWarning()
-                                earw.AreaName = key.AreaName
-                                earw.EQPName = EQPName
-                                earw.WarningType = "三相电流不平衡"
-                                WarningDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                                db_session.commit()
+                        a = int(time.time())  # 当前时间
+                        ststr = currentday + timeprice.StartTime
+                        endstr = currentday + timeprice.EndTime
+                        sttimeArray = time.strptime(ststr, '%Y-%m-%d%H:%M')
+                        endtimeArray = time.strptime(endstr, '%Y-%m-%d%H:%M')
+                        sttime = int(time.mktime(sttimeArray))
+                        endtime = int(time.mktime(endtimeArray))
+                        if endtime<sttime:
+                            endstr = currentday + timeprice.EndTime
+                            endtimeArray = time.strptime(endstr, '%Y-%m-%d%H:%M')
+                            currentmonth
+                            endtime =
+                        if sttime<a<endtime:
+                            PriceID = timeprice.ID
+                    el = ElectricEnergy()
+                    el.TagClassValue = key.TagClassValue
+                    el.CollectionYear = currentyear
+                    el.CollectionMonth = currentmonth
+                    el.CollectionDay = currentday
+                    el.ZGL = ZGL
+                    el.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    el.Unit = unit[0]
+                    # el.EquipmnetID = equip[0]
+                    el.PriceID = PriceID
+                    db_session.add(el)
+                    db_session.commit()
                 elif k == "S":
                     valueWD = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "WD"))  # 蒸汽温度
 
