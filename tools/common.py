@@ -128,6 +128,7 @@ def update(data):
     if isinstance(data, dict) and len(data) > 0:
         try:
             tableName = str(data.get("tableName"))
+            current_name = data.get("current_name")
             obj = Base.classes.get(tableName)
             ss = obj()
             if tableName == "User":
@@ -142,7 +143,8 @@ def update(data):
                         elif key == "WorkNumber":
                             ocal = db_session.query(User).filter(User.WorkNumber == data['WorkNumber']).first()
                             if ocal != None:
-                                return "工号重复，请重新录入！"
+                                if oclass.WorkNumber != data['WorkNumber']:
+                                    return "工号重复，请重新录入！"
                             else:
                                 setattr(oclass, key, data['WorkNumber'])
                         else:
@@ -150,10 +152,10 @@ def update(data):
                 db_session.add(oclass)
                 aud = AuditTrace()
                 aud.TableName = tableName
-                aud.Operation =current_user.Name+" 对表"+tableName+"的数据做了更新操作！"
-                aud.DeitalMSG = "用户："+current_user.Name+" 对表"+tableName+"ID为："+data.get('ID')+"做了更新操作："+json.dumps(data.to_dict())
+                aud.Operation =current_name+" 对表"+tableName+"的数据做了更新操作！"
+                aud.DeitalMSG = "用户："+current_name+" 对表"+tableName+"ID为："+data.get('ID')+"做了更新操作："+json.dumps(data.to_dict())
                 aud.ReviseDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                aud.User = current_user.Name
+                aud.User = current_name
                 db_session.add(aud)
                 db_session.commit()
                 return 'OK'
