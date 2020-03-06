@@ -15,7 +15,8 @@ from flask_login import login_required, logout_user, login_user,current_user,Log
 import arrow
 from models.SystemManagement.core import RedisKey, TagClassType, ElectricEnergy, Unit, PriceList, SteamEnergy, \
     WaterEnergy, TagDetail, Equipment
-from models.SystemManagement.system import EarlyWarningLimitMaintain, EarlyWarning, EarlyWarningPercentMaintain
+from models.SystemManagement.system import EarlyWarningLimitMaintain, EarlyWarning, EarlyWarningPercentMaintain, \
+    ElectricPrice, ElectricTimePrice
 from tools.common import insert,delete,update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger,insertSyslog
@@ -24,7 +25,7 @@ pool = redis.ConnectionPool(host=constant.REDIS_HOST)
 def run():
     while True:
         time.sleep(60)
-        print("Redis数据开始写入数据库")
+        print("Redis数据开始写入增量数据库")
         a = arrow.now()
         currentyear = str(a.shift(years=0))[0:4]
         currentmonth = str(a.shift(years=0))[0:7]
@@ -36,16 +37,14 @@ def run():
                 k = key.TagClassValue[0:1]
                 if k == "E":
                     ZGL = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_ZGL"))
-                    AU = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_AU"))
-                    AI = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_AI"))
-                    BU = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_BU"))
-                    BI = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_BI"))
-                    CU = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_CU"))
-                    CI = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_CI"))
                     ele = db_session.query(ElectricEnergy).filter(ElectricEnergy.TagClassValue == key.TagClassValue).first()
                     unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "电").first()
                     # equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key.TagClassValue).first()
-                    price = db_session.query(PriceList.PriceValue).filter(PriceList.PriceName == "电",PriceList.IsEnabled == "是").first()
+                    price = db_session.query(ElectricPrice.PriceValue).filter(ElectricPrice.PriceName == "电",PriceList.IsEnabled == "是").first()
+                    timeprices = db_session.query(ElectricTimePrice).filter().all()
+                    for timeprice in timeprices:
+                        if
+
                     if ele == None:
                         el = ElectricEnergy()
                         el.TagClassValue = key.TagClassValue
@@ -53,12 +52,6 @@ def run():
                         el.CollectionMonth = currentmonth
                         el.CollectionDay = currentday
                         el.ZGL = ZGL
-                        el.AU = AU
-                        el.AI = AI
-                        el.BU = BU
-                        el.BI = BI
-                        el.CU = CU
-                        el.CI = CI
                         el.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                         el.Unit = unit[0]
                         # el.EquipmnetID = equip[0]
@@ -74,6 +67,7 @@ def run():
                         el.ZGL = ZGL
                         el.AU = AU
                         el.AI = AI
+                        el.AI = ZGL
                         el.BU = BU
                         el.BI = BI
                         el.CU = CU
