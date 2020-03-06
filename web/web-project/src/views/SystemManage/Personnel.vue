@@ -148,7 +148,7 @@
         if(val == "add"){
           this.dialogVisible = true
           this.UserForm = {
-            id:"",
+            ID:"",
             Name:"",
             Password:"",
             WorkNumber:"",
@@ -161,7 +161,7 @@
             this.dialogVisible = true
             let data = this.multipleSelection[0]
             this.UserForm = {
-              id:data.id,
+              ID:data.id,
               Name:data.Name,
               Password:data.Password,
               WorkNumber:data.WorkNumber,
