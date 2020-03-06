@@ -14,7 +14,10 @@
               <el-button type="primary" size="small" @click="openDialog('add')">添加</el-button>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" size="small" @click="openDialog('edit')">修改</el-button>
+              <el-button type="warning" size="small" @click="openDialog('edit')">修改</el-button>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="danger" size="small" @click="del">删除</el-button>
             </el-form-item>
           </el-form>
         </el-col>
@@ -87,6 +90,7 @@
 </template>
 
 <script>
+  import qs from 'qs'
   export default {
     name: "Personnel",
     data(){
@@ -179,20 +183,15 @@
           if (valid) {
             this.UserForm.tableName = "User"
             if(this.dialogTitle == "add"){
-              this.axios.post("/api/CUID",{
-                params: this.UserForm
-              }).then(res =>{
+              this.axios.post("/api/CUID",qs.stringify(this.UserForm)).then(res =>{
                 console.log(res)
                 this.getTableData()
               },res =>{
                 console.log("请求错误")
               })
             }else if(this.dialogTitle == "edit"){
-              this.axios.put("/api/CUID",{
-                params: {
-                  params: this.UserForm
-                }
-              }).then(res =>{
+              console.log(this.UserForm)
+              this.axios.put("/api/CUID",qs.stringify(this.UserForm)).then(res =>{
                 console.log(res)
                 this.getTableData()
               },res =>{
@@ -204,6 +203,9 @@
           }
         });
       },
+      del(){
+
+      }
     }
   }
 </script>
