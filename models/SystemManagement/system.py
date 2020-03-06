@@ -1,6 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
-from sqlalchemy import create_engine,ForeignKey, Table,Column, DateTime, Integer, String, Unicode
+from sqlalchemy import create_engine,ForeignKey, Table,Column, DateTime, Integer, String, Unicode, Float
 from sqlalchemy.dialects.mssql.base import BIT
 from werkzeug.security import generate_password_hash, check_password_hash
 from dbset.database.db_operate import GLOBAL_DATABASE_CONNECT_STRING
@@ -837,6 +837,113 @@ class AreaTimeEnergyColour(Base):
 
     # 区域时段颜色分类:
     ColourName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+# 水汽价格维护表:
+class WaterSteamPrice(Base):
+    __tablename__ = "WaterSteamPrice"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 价格值:
+    PriceValue = Column(Float(53), primary_key=False, autoincrement=False, nullable=True)
+
+    # 价格类型:
+    PriceType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 是否启用:
+    IsEnabled = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 开始时间:
+    StartTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 结束时间:
+    EndTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 描述:
+    Description = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+
+# 电价格维护表:
+class ElectricPrice(Base):
+    __tablename__ = "ElectricPrice"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 价格名称:
+    PriceName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 价格值:
+    PriceValue = Column(Float(53), primary_key=False, autoincrement=False, nullable=True)
+
+    # 价格类型:
+    PriceType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True, default="电")
+
+    # 是否启用:
+    IsEnabled = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 对应时段ID:
+    ElectricTimePriceID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 描述:
+    Description = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+
+# 电价格时段维护表:
+class ElectricTimePrice(Base):
+    __tablename__ = "ElectricTimePrice"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 价格名称:
+    PriceName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 开始时间:
+    StartTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 结束时间:
+    EndTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 描述:
+    Description = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+
+#增量表
+class IncremenTable(Base):
+    __tablename__ = "IncremenTable"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 增量值:
+    IncremenValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 增量类型:
+    IncremenType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 价格表ID:
+    PriceID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 单位:
+    Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 仪表ID:
+    EquipmnetID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集点:
+    TagClassValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集时间:
+    CollectionDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集年:
+    CollectionYear = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集月:
+    CollectionMonth = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集天:
+    CollectionDay = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 
 
 
