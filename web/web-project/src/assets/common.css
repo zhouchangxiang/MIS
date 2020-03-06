@@ -162,4 +162,8 @@
   color: #228AD5;
   border-bottom: 2px solid #228AD5;
 }
-
+/* 表格行展开内容样式 */
+.table-expand label{
+  color: #99a9bf;
+  min-width: 90px;
+}
