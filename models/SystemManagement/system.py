@@ -879,30 +879,14 @@ class ElectricPrice(Base):
     # 价格类型:
     PriceType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True, default="电")
 
-    # 是否启用:
-    IsEnabled = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 对应时段ID:
-    ElectricTimePriceID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
-
-    # 描述:
-    Description = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
-
-# 电价格时段维护表:
-class ElectricTimePrice(Base):
-    __tablename__ = "ElectricTimePrice"
-
-    # ID:
-    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
-
-    # 价格名称:
-    PriceName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
     # 开始时间:
     StartTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 结束时间:
     EndTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 是否启用:
+    IsEnabled = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 描述:
     Description = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
