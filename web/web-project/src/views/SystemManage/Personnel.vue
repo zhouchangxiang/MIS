@@ -90,7 +90,6 @@
 </template>
 
 <script>
-  import qs from 'qs'
   export default {
     name: "Personnel",
     data(){
@@ -183,7 +182,7 @@
           if (valid) {
             this.UserForm.tableName = "User"
             if(this.dialogTitle == "add"){
-              this.axios.post("/api/CUID",qs.stringify(this.UserForm)).then(res =>{
+              this.axios.post("/api/CUID",this.qs.stringify(this.UserForm)).then(res =>{
                 console.log(res)
                 this.getTableData()
               },res =>{
@@ -191,7 +190,7 @@
               })
             }else if(this.dialogTitle == "edit"){
               console.log(this.UserForm)
-              this.axios.put("/api/CUID",qs.stringify(this.UserForm)).then(res =>{
+              this.axios.put("/api/CUID",this.qs.stringify(this.UserForm)).then(res =>{
                 console.log(res)
                 this.getTableData()
               },res =>{
@@ -204,7 +203,34 @@
         });
       },
       del(){
-
+        if(this.multipleSelection.length >= 1){
+          this.$confirm('确定删除所选记录？', '提示', {
+            confirmButtonText: '删除',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.axios.delete("/api/CUID",qs.stringify(this.multipleSelection)).then(res =>{
+              console.log(res)
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+                this.getTableData()
+              },res =>{
+                console.log("请求错误")
+              })
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消'
+            });
+          });
+        }else{
+          this.$message({
+            message: '至少选择一条数据进行删除',
+            type: 'warning'
+          });
+        }
       }
     }
   }

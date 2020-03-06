@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
 import axios from 'axios'
+import qs from 'qs'
 Vue.use(ElementUI)
 import 'element-ui/lib/theme-chalk/index.css'
 import './assets/common.css'
@@ -19,6 +20,7 @@ Vue.use(Vue2OrgTree)
 
 Vue.config.productionTip = false
 Vue.prototype.axios = axios
+Vue.prototype.qs = qs
 Vue.use(VCharts)
 
 /* eslint-disable no-new */
