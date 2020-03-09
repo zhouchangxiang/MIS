@@ -36,8 +36,7 @@ def run():
             try:
                 k = key.TagClassValue[0:1]
                 if k == "E":
-                    ZGL = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_ZGL"))
-                    reZGL = db_session.query(ElectricEnergy.ZGL).filter(ElectricEnergy.TagClassValue == key.TagClassValue).order_by(desc("ID")).first()[0]
+                    ZGL = roundtwo(redis_conn.hget(constant.REDIS_ZENGLIANG, key.TagClassValue + "_ZGL"))
                     unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "电").first()
                     # equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key.TagClassValue).first()
                     timeprices = db_session.query(ElectricPrice).filter(ElectricPrice.PriceName == "电",PriceList.IsEnabled == "是").first()
@@ -63,10 +62,7 @@ def run():
                     inc.CollectionYear = currentyear
                     inc.CollectionMonth = currentmonth
                     inc.CollectionDay = currentday
-                    currZGL = ZGL - roundtwo(reZGL)
-                    if currZGL < 0:
-                        currZGL = 0
-                    inc.IncremenValue = currZGL
+                    inc.IncremenValue = ZGL
                     inc.IncremenType = "电"
                     inc.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                     inc.Unit = unit[0]
@@ -75,9 +71,7 @@ def run():
                     db_session.add(inc)
                     db_session.commit()
                 elif k == "S":
-                    Liul = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "S"))  # 蒸汽累计流量
-                    reLiul = db_session.query(SteamEnergy.SumValue).filter(
-                        SteamEnergy.TagClassValue == key.TagClassValue).order_by(desc("ID")).first()[0]
+                    Liul = roundtwo(redis_conn.hget(constant.REDIS_ZENGLIANG, key.TagClassValue + "S"))  # 蒸汽累计流量
                     units = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽累计量体积单位").first()
                     # equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key.TagClassValue).first()
                     prices = db_session.query(WaterSteamPrice).filter(WaterSteamPrice.PriceName == "汽",
@@ -94,10 +88,7 @@ def run():
                     inc.CollectionYear = currentyear
                     inc.CollectionMonth = currentmonth
                     inc.CollectionDay = currentday
-                    currLiul = Liul - roundtwo(reLiul)
-                    if currLiul < 0:
-                        currLiul = 0
-                    inc.IncremenValue = currLiul
+                    inc.IncremenValue = Liul
                     inc.IncremenType = "汽"
                     inc.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                     inc.Unit = unit[0]
@@ -106,9 +97,7 @@ def run():
                     db_session.add(inc)
                     db_session.commit()
                 elif k == "W":
-                    wLiul = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "S"))  # 水的累计流量
-                    rewLiul = db_session.query(WaterEnergy.SumValue).filter(
-                        WaterEnergy.TagClassValue == key.TagClassValue).order_by(desc("ID")).first()[0]
+                    wLiul = roundtwo(redis_conn.hget(constant.REDIS_ZENGLIANG, key.TagClassValue + "S"))  # 水的累计流量
                     units = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "水累计量体积单位").first()
                     # equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key.TagClassValue).first()
                     prices = db_session.query(WaterSteamPrice).filter(WaterSteamPrice.PriceName == "水",
@@ -125,10 +114,7 @@ def run():
                     inc.CollectionYear = currentyear
                     inc.CollectionMonth = currentmonth
                     inc.CollectionDay = currentday
-                    currwLiul = wLiul - roundtwo(rewLiul)
-                    if currwLiul < 0:
-                        currwLiul = 0
-                    inc.IncremenValue = currwLiul
+                    inc.IncremenValue = wLiul
                     inc.IncremenType = "水"
                     inc.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                     inc.Unit = unit[0]
