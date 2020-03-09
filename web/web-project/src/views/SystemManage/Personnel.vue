@@ -99,6 +99,7 @@
         // pagesize:2,
         // currentPage:1
         multipleSelection: [],
+        mulId: [],
         dialogVisible: false,
         UserForm:'',
         dialogTitle:'',
@@ -192,6 +193,7 @@
                     message: res.data
                   });
                 }
+                this.dialogVisible = false
               },res =>{
                 console.log("请求错误")
               })
@@ -205,6 +207,7 @@
                     message: res.data
                   });
                 }
+                this.dialogVisible = false
               },res =>{
                 console.log("请求错误")
               })
@@ -215,17 +218,22 @@
         });
       },
       del(){
-        let mulId = []
         this.multipleSelection.forEach(item=>{
-            mulId.push(item.id);
+            this.mulId.push({id:item.id});
         })
-        console.log(mulId)
+        console.log(this.mulId)
         if(this.multipleSelection.length >= 1){
           this.$confirm('确定删除所选记录？', '提示', {
             distinguishCancelAndClose:true,
             type: 'warning'
           }).then(()  => {
-            this.axios.delete("/api/CUID",this.qs.stringify({id:mulId},{indices: false})).then(res =>{
+            this.axios.delete("/api/CUID",{
+              params: {
+                tableName: "User",
+                delete_data: this.mulId,
+                Creater: "管理员",
+              }
+            }).then(res =>{
               console.log(res)
               this.getTableData()
             },res =>{
