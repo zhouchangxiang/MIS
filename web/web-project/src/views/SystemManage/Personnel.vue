@@ -223,7 +223,7 @@
       del(){
         let mulId = []
         this.multipleSelection.forEach(item=>{
-            mulId.push(item.id);
+            mulId.push({id:item.id});
         })
         if(this.multipleSelection.length >= 1){
           this.$confirm('确定删除所选记录？', '提示', {
@@ -234,7 +234,7 @@
               params: {
                 tableName: "User",
                 Creater: "管理员",
-                delete_data: mulId
+                delete_data: JSON.stringify(mulId)
               }
             }).then(res =>{
               if(res.data == "OK"){
