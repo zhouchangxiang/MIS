@@ -97,7 +97,8 @@ def delete(data):
         current_name = data.get("Creater")
         jsonstr = json.dumps(data.to_dict())
         if len(jsonstr) > 10:
-            jsonnumber = re.findall(r"\d+\.?\d*", jsonstr)
+            jstr = data.get("delete_data")
+            jsonnumber = re.findall(r"\d+\.?\d*", jstr)
             for key in jsonnumber:
                 try:
                     sql = "delete from "+"[DB_MICS].[dbo].["+tableName+"] where ID = '"+key+"'"
