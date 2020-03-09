@@ -167,3 +167,8 @@
   color: #99a9bf;
   min-width: 90px;
 }
+/* 表格分页样式 */
+.paginationClass{
+  margin:20px 0;
+  text-align: right;
+}

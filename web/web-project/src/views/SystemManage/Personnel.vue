@@ -48,15 +48,17 @@
         <el-table-column prop="OrganizationName" label="所属部门"></el-table-column>
         <el-table-column prop="FactoryName" label="所属厂区"></el-table-column>
       </el-table>
-      <!--<el-pagination background layout="prev, pager, next"-->
-                     <!--:total="total"-->
-                     <!--:current-page="currentPage"-->
-                     <!--:page-sizes="[10,20,30]"-->
-                     <!--:page-size="pagesize"-->
-                     <!--@size-change="handleSizeChange"-->
-                     <!--@current-change="handleCurrentChange">-->
-      <!--</el-pagination>-->
-      <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" width="40%">
+      <div class="paginationClass">
+        <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
+                       :total="total"
+                       :current-page="currentPage"
+                       :page-sizes="[5,10,20]"
+                       :page-size="pagesize"
+                       @size-change="handleSizeChange"
+                       @current-change="handleCurrentChange">
+        </el-pagination>
+      </div>
+      <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false" width="40%">
         <el-form :model="UserForm" label-width="80px" :rules="rules" ref="ruleForm">
           <el-form-item label="ID">
             <el-input v-model="UserForm.id" :disabled="true"></el-input>
@@ -95,11 +97,10 @@
     data(){
       return {
         tableData:[],
-        // total:3,
-        // pagesize:2,
-        // currentPage:1
+        total:0,
+        pagesize:5,
+        currentPage:1,
         multipleSelection: [],
-        mulId: [],
         dialogVisible: false,
         UserForm:'',
         dialogTitle:'',
@@ -124,24 +125,26 @@
         this.axios.get("/api/CUID",{
           params: {
             tableName: "User",
-            limit:1000000,
-            offset:0
+            limit:this.pagesize,
+            offset:this.currentPage - 1
           }
         }).then(res =>{
           var data = JSON.parse(res.data)
           this.tableData = data.rows
+          this.total = data.total
         },res =>{
           console.log("请求错误")
         })
       },
-      // handleSizeChange(pagesize){ //每页条数切换
-      //   this.pagesize = pagesize
-      //   this.handleCurrentChange(this.currentPage)
-      // },
-      // handleCurrentChange(currentPage) { // 页码切换
-      //   this.currentPage = currentPage
-      // }
-      handleSelectionChange(val){
+      handleSizeChange(pagesize){ //每页条数切换
+        this.pagesize = pagesize
+        this.getTableData()
+      },
+      handleCurrentChange(currentPage) { // 页码切换
+        this.currentPage = currentPage
+        this.getTableData()
+      },
+      handleSelectionChange(val){  //选择行数
         this.multipleSelection = val;
       },
       openDialog(val){
@@ -218,10 +221,10 @@
         });
       },
       del(){
+        let mulId = []
         this.multipleSelection.forEach(item=>{
-            this.mulId.push({id:item.id});
+            mulId.push({id:item.id});
         })
-        console.log(this.mulId)
         if(this.multipleSelection.length >= 1){
           this.$confirm('确定删除所选记录？', '提示', {
             distinguishCancelAndClose:true,
@@ -230,21 +233,24 @@
             this.axios.delete("/api/CUID",{
               params: {
                 tableName: "User",
-                delete_data: this.mulId,
+                delete_data: this.qs.stringify(mulId),
                 Creater: "管理员",
               }
             }).then(res =>{
-              console.log(res)
+              if(res.data == "OK"){
+                this.$message({
+                  type: 'success',
+                  message: '删除成功'
+                });
+              }
               this.getTableData()
             },res =>{
               console.log("请求错误")
             })
-          }).catch(action   => {
+          }).catch(()   => {
             this.$message({
               type: 'info',
-              message: action === 'cancel'
-                ? '已取消删除'
-                : '删除成功'
+              message: '已取消删除'
             });
           });
         }else{
