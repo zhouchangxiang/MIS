@@ -217,16 +217,15 @@
       del(){
         let mulId = []
         this.multipleSelection.forEach(item=>{
-            mulId.push({
-              id :item.id
-            });
+            mulId.push(item.id);
         })
+        console.log(mulId)
         if(this.multipleSelection.length >= 1){
           this.$confirm('确定删除所选记录？', '提示', {
             distinguishCancelAndClose:true,
             type: 'warning'
           }).then(()  => {
-            this.axios.delete("/api/CUID",this.qs.stringify(mulId)).then(res =>{
+            this.axios.delete("/api/CUID",this.qs.stringify({id:mulId},{indices: false})).then(res =>{
               console.log(res)
               this.getTableData()
             },res =>{
