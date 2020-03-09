@@ -232,9 +232,9 @@
           }).then(()  => {
             this.axios.delete("/api/CUID",{
               params: {
-                delete_data: mulId,
                 tableName: "User",
                 Creater: "管理员",
+                delete_data: mulId
               }
             }).then(res =>{
               if(res.data == "OK"){
