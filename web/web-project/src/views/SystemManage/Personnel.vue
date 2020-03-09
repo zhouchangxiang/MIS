@@ -184,16 +184,27 @@
             this.UserForm.Creater = "管理员"
             if(this.dialogTitle == "add"){
               this.axios.post("/api/CUID",this.qs.stringify(this.UserForm)).then(res =>{
-                console.log(res)
-                this.getTableData()
+                if(res.data == "OK"){
+                  this.getTableData()
+                }else{
+                  this.$message({
+                    type: 'info',
+                    message: res.data
+                  });
+                }
               },res =>{
                 console.log("请求错误")
               })
             }else if(this.dialogTitle == "edit"){
-              console.log(this.UserForm)
               this.axios.put("/api/CUID",this.qs.stringify(this.UserForm)).then(res =>{
-                console.log(res)
-                this.getTableData()
+                if(res.data == "OK"){
+                  this.getTableData()
+                }else{
+                  this.$message({
+                    type: 'info',
+                    message: res.data
+                  });
+                }
               },res =>{
                 console.log("请求错误")
               })
@@ -204,26 +215,29 @@
         });
       },
       del(){
+        let mulId = []
+        this.multipleSelection.forEach(item=>{
+            mulId.push({
+              id :item.id
+            });
+        })
         if(this.multipleSelection.length >= 1){
           this.$confirm('确定删除所选记录？', '提示', {
-            confirmButtonText: '删除',
-            cancelButtonText: '取消',
+            distinguishCancelAndClose:true,
             type: 'warning'
-          }).then(() => {
-            this.axios.delete("/api/CUID",qs.stringify(this.multipleSelection)).then(res =>{
+          }).then(()  => {
+            this.axios.delete("/api/CUID",this.qs.stringify(mulId)).then(res =>{
               console.log(res)
-              this.$message({
-                type: 'success',
-                message: '删除成功!'
-              });
-                this.getTableData()
-              },res =>{
-                console.log("请求错误")
-              })
-          }).catch(() => {
+              this.getTableData()
+            },res =>{
+              console.log("请求错误")
+            })
+          }).catch(action   => {
             this.$message({
               type: 'info',
-              message: '已取消'
+              message: action === 'cancel'
+                ? '已取消删除'
+                : '删除成功'
             });
           });
         }else{
