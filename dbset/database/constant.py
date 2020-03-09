@@ -7,6 +7,7 @@ config.read(CONFIG_DIR,encoding='UTF-8')
 
 REDIS_HOST = config['data_realtime_server']['host']
 REDIS_TABLENAME = config['data_realtime_server']['tablename']
+REDIS_ZENGLIANG = config['data_realtime_server']['db_zengliang']
 REDIS_PORT = int(config['data_realtime_server']['port']) if config['data_realtime_server'][
     'port'].isdigit() else 6379
 REDIS_PASSWORD = config['data_realtime_server']['password']
