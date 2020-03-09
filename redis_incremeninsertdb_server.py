@@ -16,7 +16,7 @@ import arrow
 from models.SystemManagement.core import RedisKey, TagClassType, ElectricEnergy, Unit, PriceList, SteamEnergy, \
     WaterEnergy, TagDetail, Equipment
 from models.SystemManagement.system import EarlyWarningLimitMaintain, EarlyWarning, EarlyWarningPercentMaintain, \
-    ElectricPrice, ElectricTimePrice
+    ElectricPrice, IncremenTable, WaterSteamPrice
 from tools.common import insert,delete,update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger,insertSyslog
@@ -24,7 +24,7 @@ from dbset.log.BK2TLogger import logger,insertSyslog
 pool = redis.ConnectionPool(host=constant.REDIS_HOST)
 def run():
     while True:
-        time.sleep(60)
+        # time.sleep(60)
         print("Redis数据开始写入增量数据库")
         a = arrow.now()
         currentyear = str(a.shift(years=0))[0:4]
@@ -37,10 +37,10 @@ def run():
                 k = key.TagClassValue[0:1]
                 if k == "E":
                     ZGL = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_ZGL"))
-                    ele = db_session.query(ElectricEnergy).filter(ElectricEnergy.TagClassValue == key.TagClassValue).first()
+                    reZGL = db_session.query(ElectricEnergy.ZGL).filter(ElectricEnergy.TagClassValue == key.TagClassValue).order_by(desc("ID")).first()[0]
                     unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "电").first()
                     # equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key.TagClassValue).first()
-                    timeprices = db_session.query(ElectricPrice.PriceValue).filter(ElectricPrice.PriceName == "电",PriceList.IsEnabled == "是").first()
+                    timeprices = db_session.query(ElectricPrice).filter(ElectricPrice.PriceName == "电",PriceList.IsEnabled == "是").first()
                     PriceID = ""
                     for timeprice in timeprices:
                         a = int(time.time())  # 当前时间
@@ -51,124 +51,91 @@ def run():
                         sttime = int(time.mktime(sttimeArray))
                         endtime = int(time.mktime(endtimeArray))
                         if endtime<sttime:
-                            endstr = currentday + timeprice.EndTime
-                            endtimeArray = time.strptime(endstr, '%Y-%m-%d%H:%M')
-                            currentmonth
-                            endtime =
+                            #如果结束时间小于开始时间，说明已经跨天，往后加一天再比大小
+                            cuday = str(a.shift(days=1))[0:10]
+                            endstr = cuday + timeprice.EndTime
+                            endArray = time.strptime(endstr, '%Y-%m-%d%H:%M')
+                            endtime = int(time.mktime(endArray))
                         if sttime<a<endtime:
                             PriceID = timeprice.ID
-                    el = ElectricEnergy()
-                    el.TagClassValue = key.TagClassValue
-                    el.CollectionYear = currentyear
-                    el.CollectionMonth = currentmonth
-                    el.CollectionDay = currentday
-                    el.ZGL = ZGL
-                    el.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                    el.Unit = unit[0]
+                    inc = IncremenTable()
+                    inc.TagClassValue = key.TagClassValue
+                    inc.CollectionYear = currentyear
+                    inc.CollectionMonth = currentmonth
+                    inc.CollectionDay = currentday
+                    currZGL = ZGL - roundtwo(reZGL)
+                    if currZGL < 0:
+                        currZGL = 0
+                    inc.IncremenValue = currZGL
+                    inc.IncremenType = "电"
+                    inc.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    inc.Unit = unit[0]
                     # el.EquipmnetID = equip[0]
-                    el.PriceID = PriceID
-                    db_session.add(el)
+                    inc.PriceID = PriceID
+                    db_session.add(inc)
                     db_session.commit()
                 elif k == "S":
-                    valueWD = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "WD"))  # 蒸汽温度
-
-                    #实时预警判断温度是否达到设定值
-                    warn = db_session.query(EarlyWarningLimitMaintain).filter(EarlyWarningLimitMaintain.AreaName == key.AreaName,
-                                                                       EarlyWarningLimitMaintain.EnergyClass == key.EnergyClass).first()
-                    if valueWD < warn.LowerLimit or valueWD > warn.UpperLimit:
-                        earw = EarlyWarning()
-                        earw.AreaName = key.AreaName
-                        EQPName = db_session.query(TagClassType).filter(TagClassType.TagClassValue == key.TagClassValue).first()
-                        if EQPName != None:
-                            EQPName = EQPName[0]
-                        else:
-                            EQPName = ""
-                        earw.EQPName = EQPName
-                        if valueWD < warn.LowerLimit:
-                            earw.WarningType = "温度低于最低限值"
-                        if valueWD > warn.UpperLimit:
-                            earw.WarningType = "温度高于最高限值"
-                        WarningDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                        db_session.commit()
-
-                    valueF = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "F"))  # 蒸汽瞬时流量
-                    valueS = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "S"))  # 蒸汽累计流量
-
-                    ste = db_session.query(SteamEnergy).filter(SteamEnergy.TagClassValue == key.TagClassValue).first()
-                    unitf = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽瞬时流量单位").first()
+                    Liul = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "S"))  # 蒸汽累计流量
+                    reLiul = db_session.query(SteamEnergy.SumValue).filter(
+                        SteamEnergy.TagClassValue == key.TagClassValue).order_by(desc("ID")).first()[0]
                     units = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽累计量体积单位").first()
                     # equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key.TagClassValue).first()
-                    price = db_session.query(PriceList.PriceValue).filter(PriceList.PriceName == "汽",
-                                                                          PriceList.IsEnabled == "是").first()
-                    if ste == None:
-                        sl = SteamEnergy()
-                        sl.TagClassValue = key.TagClassValue
-                        sl.CollectionYear = currentyear
-                        sl.CollectionMonth = currentmonth
-                        sl.CollectionDay = currentday
-                        sl.WD = valueWD
-                        sl.FlowValue = valueF
-                        sl.SumValue = valueS
-                        sl.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                        sl.FlowUnit = unitf[0]
-                        sl.SumUnit = units[0]
-                        # sl.EquipmnetID = equip[0]
-                        sl.PriceID = price[0]
-                        db_session.add(sl)
-                        db_session.commit()
-                    else:
-                        sl = SteamEnergy()
-                        sl.TagClassValue = key.TagClassValue
-                        sl.CollectionYear = currentyear
-                        sl.CollectionMonth = currentmonth
-                        sl.CollectionDay = currentday
-                        sl.FlowValue = valueF
-                        sl.SumValue = valueS
-                        sl.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                        sl.FlowUnit = unitf[0]
-                        sl.SumUnit = units[0]
-                        # sl.EquipmnetID = equip[0]
-                        sl.PriceID = price[0]
-                        db_session.add(sl)
-                        db_session.commit()
+                    prices = db_session.query(WaterSteamPrice).filter(WaterSteamPrice.PriceName == "汽",
+                                                                                WaterSteamPrice.IsEnabled == "是").all()
+                    for price in prices:
+                        sttimeArray = time.strptime(price.StartTime, '%Y-%m-%d%H:%M')
+                        endtimeArray = time.strptime(price.EndTime, '%Y-%m-%d%H:%M')
+                        sttime = int(time.mktime(sttimeArray))
+                        endtime = int(time.mktime(endtimeArray))
+                        if sttime<a<endtime:
+                            PriceID = price.ID
+                    inc = IncremenTable()
+                    inc.TagClassValue = key.TagClassValue
+                    inc.CollectionYear = currentyear
+                    inc.CollectionMonth = currentmonth
+                    inc.CollectionDay = currentday
+                    currLiul = Liul - roundtwo(reLiul)
+                    if currLiul < 0:
+                        currLiul = 0
+                    inc.IncremenValue = currLiul
+                    inc.IncremenType = "汽"
+                    inc.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    inc.Unit = unit[0]
+                    # el.EquipmnetID = equip[0]
+                    inc.PriceID = PriceID
+                    db_session.add(inc)
+                    db_session.commit()
                 elif k == "W":
-                    valueS = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "S"))  # 水的累计流量
-                    valueF = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "F"))  # 水的瞬时流量
-                    wat = db_session.query(WaterEnergy).filter(WaterEnergy.TagClassValue == key.TagClassValue).first()
-                    unitf = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "水瞬时流量单位").first()
+                    wLiul = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "S"))  # 水的累计流量
+                    rewLiul = db_session.query(WaterEnergy.SumValue).filter(
+                        WaterEnergy.TagClassValue == key.TagClassValue).order_by(desc("ID")).first()[0]
                     units = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "水累计量体积单位").first()
                     # equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key.TagClassValue).first()
-                    price = db_session.query(PriceList.PriceValue).filter(PriceList.PriceName == "水",
-                                                                          PriceList.IsEnabled == "是").first()
-                    if wat == None:
-                        wa = WaterEnergy()
-                        wa.TagClassValue = key.TagClassValue
-                        wa.CollectionYear = currentyear
-                        wa.CollectionMonth = currentmonth
-                        wa.CollectionDay = currentday
-                        wa.WaterFlow = valueF
-                        wa.WaterSum = valueS
-                        wa.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                        wa.FlowWUnit = unitf[0]
-                        wa.SumWUnit = units[0]
-                        # wa.EquipmnetID = equip[0]
-                        wa.PriceID = price[0]
-                        db_session.add(wa)
-                        db_session.commit()
-                    else:
-                        wa = WaterEnergy()
-                        wa.TagClassValue = key.TagClassValue
-                        wa.CollectionYear = currentyear
-                        wa.CollectionMonth = currentmonth
-                        wa.CollectionDay = currentday
-                        wa.WaterFlow = valueF
-                        wa.WaterSum = valueS
-                        wa.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                        wa.Unit = unit[0]
-                        # wa.EquipmnetID = equip[0]
-                        wa.PriceID = price[0]
-                        db_session.add(wa)
-                        db_session.commit()
+                    prices = db_session.query(WaterSteamPrice).filter(WaterSteamPrice.PriceName == "水",
+                                                                                 WaterSteamPrice.IsEnabled == "是").all()
+                    for price in prices:
+                        sttimeArray = time.strptime(price.StartTime, '%Y-%m-%d%H:%M')
+                        endtimeArray = time.strptime(price.EndTime, '%Y-%m-%d%H:%M')
+                        sttime = int(time.mktime(sttimeArray))
+                        endtime = int(time.mktime(endtimeArray))
+                        if sttime < a < endtime:
+                            PriceID = price.ID
+                    inc = IncremenTable()
+                    inc.TagClassValue = key.TagClassValue
+                    inc.CollectionYear = currentyear
+                    inc.CollectionMonth = currentmonth
+                    inc.CollectionDay = currentday
+                    currwLiul = wLiul - roundtwo(rewLiul)
+                    if currwLiul < 0:
+                        currwLiul = 0
+                    inc.IncremenValue = currwLiul
+                    inc.IncremenType = "水"
+                    inc.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    inc.Unit = unit[0]
+                    # el.EquipmnetID = equip[0]
+                    inc.PriceID = PriceID
+                    db_session.add(inc)
+                    db_session.commit()
             except Exception as e:
                 print("报错tag："+key.TagClassValue+" |报错IP："+key.IP+"  |报错端口："+key.COMNum+"  |错误："+str(e))
                 logger.error(e)
