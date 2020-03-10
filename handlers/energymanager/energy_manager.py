@@ -985,8 +985,89 @@ def energyHistory():
             logger.error(e)
             insertSyslog("error", "能源历史数据查询报错Error：" + str(e), current_user.Name)
 
+class Statistic():
+    def __init__(self, Area, Water, Electric, Steam, CollectDate):
+        self.Area = Area
+        self.Water = Water
+        self.Electric = Electric
+        self.Steam = Steam
+        self.CollectDate = CollectDate
+
+
+@energy.route('/exceloutstatistic', methods=['POST', 'GET'])
+def exceloutstatistic():
+    '''
+    导出统计数据
+    :return:
+    '''
+    data = request.values
+    if request.method == 'GET':
+        StartTime = data.get("StartTime")
+        EndTime = data.get("EndTime")
+        output=exportxstatistic(StartTime,EndTime)
+        resp = make_response(output.getvalue())
+        resp.headers["Content-Disposition"] ="attachment; filename=testing.xlsx"
+        resp.headers['Content-Type'] = 'application/x-xlsx'
+        return resp
+
+def exportxstatistic(StartTime,EndTime):
+    # 创建数据流
+    output = BytesIO()
+    # 创建excel work book
+    writer = pd.ExcelWriter(output, engine='xlsxwriter')
+    workbook = writer.book
+    # 创建excel sheet
+    worksheet = workbook.add_worksheet('sheet1')
+    # cell 样式
+    cell_format = workbook.add_format({
+        'bold': 1,
+        'border': 1,
+        'align': 'center',
+        'valign': 'vcenter',
+        'fg_color': '#006633'})
+
+    col = 0
+    row = 1
+    # 写入列名
+    columns = ['区域', '水累计值', '电总功率', '汽累计值', '统计时间']
+    for item in columns:
+        worksheet.write(0, col, item, cell_format)
+        col += 1
+    AreaNames = db_session.query(AreaTable).filter().all()
+    for i in range(0, len(AreaNames)):
+        oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaNames[i].AreaName).all()
+        elecount = 0.0
+        watcount = 0.0
+        stecount = 0.0
+        for oc in oclass:
+            Tag = oc.TagClassValue[0:1]
+            if Tag == "E":
+                elecount = eletongji(oc, EndTime, StartTime, elecount)
+            elif Tag == "W":
+                watcount = wattongji(oc, EndTime, StartTime, watcount)
+            elif Tag == "S":
+                stecount = stetongji(oc, EndTime, StartTime, stecount)
+        for cum in columns:
+            if cum == '区域':
+                worksheet.write(i+1, columns.index(cum), AreaNames[i].AreaName)
+            if cum == '水累计值':
+                worksheet.write(i+1, columns.index(cum), watcount)
+            if cum == '电总功率':
+                worksheet.write(i+1, columns.index(cum), elecount)
+            if cum == '汽累计值':
+                worksheet.write(i+1, columns.index(cum), stecount)
+            if cum == '统计时间':
+                worksheet.write(i+1, columns.index(cum), datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    writer.close()
+    output.seek(0)
+    return output
+
 @energy.route('/excelout', methods=['POST', 'GET'])
 def excelout():
+    '''
+    导出原始数据
+    :return:
+    '''
     data = request.values
     if request.method == 'GET':
         Area = data.get("Area")

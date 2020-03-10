@@ -1,4 +1,6 @@
 import json
+
+import status as status
 from flask import Blueprint, render_template, request, redirect, session, url_for, flash, make_response
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -11,6 +13,7 @@ from PIL import Image, ImageFont, ImageDraw, ImageFilter
 import random
 from io import BytesIO
 import time
+from models.SystemManagement.system import User
 # from models.SystemManagement.system import User
 
 #flask_login的初始化
@@ -142,3 +145,30 @@ def validate_picture():
     # 模糊下,加个帅帅的滤镜～
     im = im.filter(ImageFilter.FIND_EDGES)
     return im, str
+
+@login_auth.route('/account/userloginauthentication', methods=['GET', 'POST'])
+def userloginauthentication():
+    '''
+    用户登陆认证
+    :return:
+    '''
+    try:
+        if request.method == 'POST':
+            data = request.values
+            WorkNumber = data.get('WorkNumber')
+            password = data.get('password')
+                # 验证账户与密码
+            user = db_session.query(User).filter_by(WorkNumber=WorkNumber).first()
+            if user and (user.confirm_password(password) or user.Password == password):
+                login_user(user)  # login_user(user)调用user_loader()把用户设置到db_session中
+                user.session_id = str(time.time())
+                db_session.commit()
+                return 'OK'
+            else:
+                http_code = status.HTTP_200_INTERNAL_SERVER_ERROR
+                return http_code
+    except Exception as e:
+        print(e)
+        db_session.rollback()
+        logger.error(e)
+        return json.dumps([{"status": "Error:" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
