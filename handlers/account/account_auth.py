@@ -1,6 +1,4 @@
 import json
-
-import status as status
 from flask import Blueprint, render_template, request, redirect, session, url_for, flash, make_response
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -159,14 +157,15 @@ def userloginauthentication():
             password = data.get('password')
                 # 验证账户与密码
             user = db_session.query(User).filter_by(WorkNumber=WorkNumber).first()
+            resp = make_response()
             if user and (user.confirm_password(password) or user.Password == password):
                 login_user(user)  # login_user(user)调用user_loader()把用户设置到db_session中
                 user.session_id = str(time.time())
                 db_session.commit()
-                return 'OK'
+                resp.status = '200'
             else:
-                http_code = status.HTTP_200_INTERNAL_SERVER_ERROR
-                return http_code
+                resp.status = '520'
+            return resp
     except Exception as e:
         print(e)
         db_session.rollback()

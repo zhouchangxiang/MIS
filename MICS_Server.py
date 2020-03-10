@@ -5,6 +5,7 @@ from dbset.account import auth_lib
 from handlers.SystemManagement.calendar import cale
 from handlers.account import account_auth
 from handlers.SystemManagement import user_management, PermissionAssignment,Role_management
+from handlers.energymanager.energy_Electric import energyElectric
 from handlers.main import system_manage
 from handlers.SystemManagement.organization_model import organiza
 from handlers.EquipmentModel.euipment_model import equip
@@ -50,7 +51,8 @@ app.register_blueprint(batch)
 app.register_blueprint(cale)
 #能耗管理
 app.register_blueprint(energy)
-
+#电能管理
+app.register_blueprint(energyElectric)
 @app.route('/')
 @login_required
 def index():
