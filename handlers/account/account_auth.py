@@ -162,10 +162,9 @@ def userloginauthentication():
                 login_user(user)  # login_user(user)调用user_loader()把用户设置到db_session中
                 user.session_id = str(time.time())
                 db_session.commit()
-                resp.status = '200'
+                return 'OK'
             else:
-                resp.status = '520'
-            return resp
+                return '用户名密码错误'
     except Exception as e:
         print(e)
         db_session.rollback()
