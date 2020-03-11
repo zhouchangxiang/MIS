@@ -34,7 +34,7 @@
             <li>
               <el-dropdown class="head-menu-item" trigger="click" @command="handleCommand">
                 <span class="el-dropdown-link">
-                  <i class="el-icon-user-solid el-icon--left"></i>admin<i class="el-icon-arrow-down el-icon--right"></i>
+                  <i class="el-icon-user-solid el-icon--left"></i>{{ this.$store.state.WorkNumber }}<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="a">个人信息</el-dropdown-item>
@@ -80,6 +80,7 @@
 <script>
 var moment = require('moment');
 import screenfull from "screenfull"
+import {mapState} from 'vuex'
 export default {
   name: 'Index',
   data () {
@@ -112,6 +113,13 @@ export default {
     this.getMenuHeight()
   },
   methods:{
+    isLogin() {
+      if (sessionStorage.getItem('WorkNumber')) {
+        this.$store.commit('userStatus',sessionStorage.getItem('WorkNumber'))
+      }else{
+        this.$router.push("/login");
+      }
+    },
     getMenuHeight(){
       this.selfHeight.height = window.innerHeight - 210+'px';
     },
