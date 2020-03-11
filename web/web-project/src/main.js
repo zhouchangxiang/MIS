@@ -33,12 +33,8 @@ new Vue({
   template: '<App/>'
 })
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (store.getters.LoginStatus) {
-      next();
-      return;
-    }
-    next('/login');
+  if (to.meta.isLogin) {  //判断页面是否需要验证登录
+
   }else{
     next()
   }

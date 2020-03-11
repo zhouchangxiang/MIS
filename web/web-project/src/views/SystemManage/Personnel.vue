@@ -185,7 +185,6 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             this.UserForm.tableName = "User"
-            this.UserForm.Creater = "管理员"
             if(this.dialogTitle == "add"){
               this.axios.post("/api/CUID",this.qs.stringify(this.UserForm)).then(res =>{
                 if(res.data == "OK"){
@@ -233,7 +232,6 @@
             this.axios.delete("/api/CUID",{
               params: {
                 tableName: "User",
-                Creater: "管理员",
                 delete_data: JSON.stringify(mulId)
               }
             }).then(res =>{
