@@ -160,31 +160,31 @@ def eletongji(oc, currtime, lasttime, elecount):
     cur = \
         db_session.query(ElectricEnergy.ZGL).filter(
             ElectricEnergy.TagClassValue == oc.TagClassValue,
-            ElectricEnergy.CollectionDate.like("%"+currtime+"%")).order_by(
+            ElectricEnergy.CollectionDate.like("%"+currtime+"%"), ElectricEnergy.ZGL != "0.0", ElectricEnergy.ZGL != "", ElectricEnergy.ZGL != None).order_by(
             desc("CollectionDate")).first()
     las = db_session.query(ElectricEnergy.ZGL).filter(
         ElectricEnergy.TagClassValue == oc.TagClassValue,
-        ElectricEnergy.CollectionDate.like("%"+lasttime+"%")).order_by(desc("CollectionDate")).first()
+        ElectricEnergy.CollectionDate.like("%"+lasttime+"%"), ElectricEnergy.ZGL != "0.0", ElectricEnergy.ZGL != "", ElectricEnergy.ZGL != None).order_by(desc("CollectionDate")).first()
     return curcutlas(cur, las, elecount)
 def wattongji(oc, currtime, lasttime, elecount):
     cur = \
         db_session.query(WaterEnergy.WaterSum).filter(
             WaterEnergy.TagClassValue == oc.TagClassValue,
-            WaterEnergy.CollectionDate.like("%"+currtime+"%")).order_by(
+            WaterEnergy.CollectionDate.like("%"+currtime+"%"), WaterEnergy.WaterSum != "0.0", WaterEnergy.WaterSum != "", WaterEnergy.WaterSum != None).order_by(
             desc("CollectionDate")).first()
     las = db_session.query(WaterEnergy.WaterSum).filter(
         WaterEnergy.TagClassValue == oc.TagClassValue,
-        WaterEnergy.CollectionDate.like("%"+lasttime+"%")).order_by(desc("CollectionDate")).first()
+        WaterEnergy.CollectionDate.like("%"+lasttime+"%"), WaterEnergy.WaterSum != "0.0", WaterEnergy.WaterSum != "", WaterEnergy.WaterSum != None).order_by(desc("CollectionDate")).first()
     return curcutlas(cur, las, elecount)
 def stetongji(oc, currtime, lasttime, elecount):
     cur = \
         db_session.query(SteamEnergy.SumValue).filter(
             SteamEnergy.TagClassValue == oc.TagClassValue,
-            SteamEnergy.CollectionDate.like("%"+currtime+"%")).order_by(
+            SteamEnergy.CollectionDate.like("%"+currtime+"%"), SteamEnergy.SumValue != "0.0", SteamEnergy.SumValue != "", SteamEnergy.SumValue != None).order_by(
             desc("CollectionDate")).first()
     las = db_session.query(SteamEnergy.SumValue).filter(
         SteamEnergy.TagClassValue == oc.TagClassValue,
-        SteamEnergy.CollectionDate.like("%"+lasttime+"%")).order_by(desc("CollectionDate")).first()
+        SteamEnergy.CollectionDate.like("%"+lasttime+"%"), SteamEnergy.SumValue != "0.0", SteamEnergy.SumValue != "", SteamEnergy.SumValue != None).order_by(desc("CollectionDate")).first()
     return curcutlas(cur, las, elecount)
 def energyselect(data):
     if request.method == 'GET':
