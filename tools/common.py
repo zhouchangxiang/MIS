@@ -177,7 +177,7 @@ def select(data):#table, page, rows, fieid, param
     :param rowsnumber: 一页多少行
     :param fieid: 查询字段
     :param param: 查询条件
-    :return: 
+    :return:
     '''
     try:
         current_name = data.get("Creater")

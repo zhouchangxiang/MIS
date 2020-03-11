@@ -57,7 +57,6 @@
         };
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            console.log(this.loginForm.WorkNumber)
             this.axios.post('/api/account/userloginauthentication',this.qs.stringify(params)).then(res =>{
               console.log(res)
               if(res.data == "OK"){
@@ -69,8 +68,7 @@
                 setTimeout(function(){
                   that.$router.push("/")
                 },1000)
-                sessionStorage.setItem('WorkNumber',this.loginForm.WorkNumber)
-                this.$store.dispatch('setUser',this.loginForm.WorkNumber);
+                this.$store.commit('setUser',this.loginForm.WorkNumber);
               }else{
                 this.$message({
                   type: 'info',
