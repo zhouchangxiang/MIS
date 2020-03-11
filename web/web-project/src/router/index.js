@@ -23,19 +23,19 @@ export default new Router({
     {
       path: '/login',
       name: 'login',
-      meta:{ title:'登录' },
+      meta:{ title:'登录',isLogin: false},
       component: Login
     },
     {
       path:"/",
       name: 'index',
-      meta:{ title:'好护士能源管理系统'},
+      meta:{ title:'好护士能源管理系统',isLogin: true},
       component: Index,
       redirect:'/home',
       children:[{
         path:'/home',
         name:'home',
-        meta:{ title:'工作台' },
+        meta:{ title:'工作台',isLogin: true },
         component:Home
       },{
         path:'/EfficiencyAnalysis',
@@ -93,7 +93,7 @@ export default new Router({
     {
       path:'/404',
       name:'404',
-      meta:{ title:'配置页' },
+      meta:{ title:'配置页' ,isLogin: false},
       component:Error
     }
   ]

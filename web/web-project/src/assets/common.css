@@ -1,3 +1,15 @@
+/* 登录页 */
+.login-form .el-input__inner:focus{
+  border: 1px solid #082F4C;
+}
+.remembCheckbox{color:#131414}
+.remembCheckbox .el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner{
+  background-color: #082F4C;
+  border-color: #082F4C;
+}
+.remembCheckbox .el-checkbox__input.is-checked+.el-checkbox__label{
+  color: #082F4C;
+}
 /* 侧边导航栏 */
 .menu-ul .el-menu-item,.el-submenu__title,.el-submenu__title:hover{
   background: #082F4C;

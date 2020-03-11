@@ -17,6 +17,7 @@ import FullCalendar from 'vue-full-calendar'
 Vue.use(FullCalendar)
 import Vue2OrgTree from 'vue2-org-tree'
 Vue.use(Vue2OrgTree)
+import store from './store'
 
 Vue.config.productionTip = false
 Vue.prototype.axios = axios
@@ -27,6 +28,18 @@ Vue.use(VCharts)
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
+})
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (store.getters.LoginStatus) {
+      next();
+      return;
+    }
+    next('/login');
+  }else{
+    next()
+  }
 })
