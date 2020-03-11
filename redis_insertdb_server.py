@@ -96,18 +96,20 @@ def run():
                             EQPName = ""
                         earw.EQPName = EQPName
                         earw.WarningType = "三相电压中缺相"
-                        WarningDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                        earw.WarningDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                         db_session.commit()
                     else:
                         avgI_list = [AI,BI,CI]
-                        percentI = 100*((max(avgI_list) - min(avgI_list))/max(avgI_list))
+                        avgc = max(avgI_list) - min(avgI_list)
+                        if avgc > 0:
+                            percentI = 100*(avgc/max(avgI_list))
                         EQPName = db_session.query(TagClassType).filter(
                             TagClassType.TagClassValue == key.TagClassValue).first()
                         if EQPName != None:
                             EQPName = EQPName[0]
                         else:
                             EQPName = ""
-                        percent = db_session(EarlyWarningPercentMaintain.Percent).filter(EarlyWarningPercentMaintain.AreaName == key.AreaName,
+                        percent = db_session.query(EarlyWarningPercentMaintain.Percent).filter(EarlyWarningPercentMaintain.AreaName == key.AreaName,
                             EarlyWarningPercentMaintain.EQPName == EQPName).first()
                         if percent != None:
                             percent = percent[0]
@@ -124,21 +126,22 @@ def run():
                     #实时预警判断温度是否达到设定值
                     warn = db_session.query(EarlyWarningLimitMaintain).filter(EarlyWarningLimitMaintain.AreaName == key.AreaName,
                                                                        EarlyWarningLimitMaintain.EnergyClass == key.EnergyClass).first()
-                    if valueWD < warn.LowerLimit or valueWD > warn.UpperLimit:
-                        earw = EarlyWarning()
-                        earw.AreaName = key.AreaName
-                        EQPName = db_session.query(TagClassType).filter(TagClassType.TagClassValue == key.TagClassValue).first()
-                        if EQPName != None:
-                            EQPName = EQPName[0]
-                        else:
-                            EQPName = ""
-                        earw.EQPName = EQPName
-                        if valueWD < warn.LowerLimit:
-                            earw.WarningType = "温度低于最低限值"
-                        if valueWD > warn.UpperLimit:
-                            earw.WarningType = "温度高于最高限值"
-                        WarningDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                        db_session.commit()
+                    if warn is not None:
+                        if valueWD < warn.LowerLimit or valueWD > warn.UpperLimit:
+                            earw = EarlyWarning()
+                            earw.AreaName = key.AreaName
+                            EQPName = db_session.query(TagClassType).filter(TagClassType.TagClassValue == key.TagClassValue).first()
+                            if EQPName != None:
+                                EQPName = EQPName[0]
+                            else:
+                                EQPName = ""
+                            earw.EQPName = EQPName
+                            if valueWD < warn.LowerLimit:
+                                earw.WarningType = "温度低于最低限值"
+                            if valueWD > warn.UpperLimit:
+                                earw.WarningType = "温度高于最高限值"
+                            WarningDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                            db_session.commit()
 
                     valueF = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "F"))  # 蒸汽瞬时流量
                     valueS = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "S"))  # 蒸汽累计流量
@@ -164,7 +167,7 @@ def run():
                         sl.SumUnit = units[0]
                         # sl.EquipmnetID = equip[0]
                         sl.PriceID = price[0]
-                        s1.Volume = Volume
+                        sl.Volume = Volume
                         db_session.add(sl)
                         db_session.commit()
                     else:
@@ -180,7 +183,7 @@ def run():
                         sl.SumUnit = units[0]
                         # sl.EquipmnetID = equip[0]
                         sl.PriceID = price[0]
-                        s1.Volume = Volume
+                        sl.Volume = Volume
                         db_session.add(sl)
                         db_session.commit()
                 elif k == "W":
@@ -216,7 +219,8 @@ def run():
                         wa.WaterFlow = valueF
                         wa.WaterSum = valueS
                         wa.CollectionDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                        wa.Unit = unit[0]
+                        wa.FlowWUnit = unitf[0]
+                        wa.SumWUnit = units[0]
                         # wa.EquipmnetID = equip[0]
                         wa.PriceID = price[0]
                         db_session.add(wa)
