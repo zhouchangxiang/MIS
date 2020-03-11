@@ -928,7 +928,21 @@ class IncremenTable(Base):
     # 采集天:
     CollectionDay = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+#电价比重维护表
+class ElectricProportion(Base):
+    __tablename__ = "ElectricProportion"
 
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 比例类型:
+    ProportionType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 比例值:
+    Proportion = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 创建时间:
+    CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 
 

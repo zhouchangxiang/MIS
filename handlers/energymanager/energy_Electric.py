@@ -10,7 +10,7 @@ import calendar
 from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable, Equipment, \
     PriceList, AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
-    AreaTimeEnergyColour
+    AreaTimeEnergyColour, ElectricProportion
 from tools.common import insert,delete,update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger,insertSyslog
@@ -140,7 +140,12 @@ def eletongji(oc, currtime, lasttime, elecount):
     las = db_session.query(ElectricEnergy.ZGL).filter(
         ElectricEnergy.TagClassValue == oc.TagClassValue,
         ElectricEnergy.CollectionDate.like("%"+lasttime+"%")).order_by(desc("CollectionDate")).first()
-    return curcutlas(cur, las, elecount)
+    cutv = curcutlas(cur, las, elecount)
+    proportion = db_session.query(ElectricProportion.Proportion).filter(ElectricProportion.ProportionType == "电").first()
+    if proportion is not None:
+        return float(proportion)*cutv
+    else:
+        return cutv
 def energyselect(data):
     if request.method == 'GET':
         try:
@@ -463,12 +468,6 @@ def energyPreview():
                 if Tag == "E":
                     elecount = eletongji(oc, currmonth, zerocurrMonth, elecount)
                     lastelecount = eletongji(oc, lastYMonth, zerolastYMonth, lastelecount)
-                elif Tag == "W":
-                    watcount = wattongji(oc, currmonth, zerocurrMonth, watcount)
-                    lastwatcount = wattongji(oc, lastYMonth, zerolastYMonth, lastwatcount)
-                elif Tag == "S":
-                    stecount = stetongji(oc, currmonth, zerocurrMonth, stecount)
-                    laststecount = stetongji(oc, lastYMonth, zerolastYMonth, laststecount)
             curryeartotal = round(elecount + watcount + stecount, 2)
             lastyeartotal = round(lastelecount + lastwatcount + laststecount, 2)
             dir["thisYearCon"] =curryeartotal#年能耗量
@@ -496,12 +495,6 @@ def energyPreview():
                 if Tag == "E":
                     thisMonthCon = eletongji(oc, currday, zerocurrday, thisMonthCon)
                     lastMonthCon = eletongji(oc, lastMday, zerolastMday, lastMonthCon)
-                elif Tag == "W":
-                    thisMonthCon = wattongji(oc, currday, zerocurrday, thisMonthCon)
-                    lastMonthCon = wattongji(oc, lastMday, zerolastMday, lastMonthCon)
-                elif Tag == "S":
-                    thisMonthCon = stetongji(oc, currday, zerocurrday, thisMonthCon)
-                    lastMonthCon = stetongji(oc, lastMday, zerolastMday, lastMonthCon)
             currMont = round(thisMonthCon, 2)
             lastMont = round(lastMonthCon, 2)
             dir["thisMonthCon"] = currMont#本月能耗量
@@ -532,10 +525,6 @@ def energyPreview():
                     Tag = oc.TagClassValue[0:1]
                     if Tag == "E":
                         count = eletongji(oc, currdayxin, lastdayxin, count)
-                    elif Tag == "W":
-                        count = wattongji(oc, currdayxin, lastdayxin, count)
-                    elif Tag == "S":
-                        count = stetongji(oc, currdayxin, lastdayxin, count)
                 month_data_dir["本月能耗"] = count
                 lastcount = 0.0
                 lastMondayxin = strlastMonth(currmonth) + "-" + addzero(j)
@@ -545,10 +534,6 @@ def energyPreview():
                     Tag = oc.TagClassValue[0:1]
                     if Tag == "E":
                         lastcount = eletongji(oc, lastMondayxin, laMondayxin, lastcount)
-                    elif Tag == "W":
-                        lastcount = wattongji(oc, lastMondayxin, laMondayxin, lastcount)
-                    elif Tag == "S":
-                        lastcount = stetongji(oc, lastMondayxin, laMondayxin, lastcount)
                 month_data_dir["上月能耗"] = lastcount
                 month_data_list.append(month_data_dir)
             dir["lastMonthRow"] = month_data_list
@@ -563,12 +548,6 @@ def energyPreview():
                 if Tag == "E":
                     comparedaycount = eletongji(oc, compareday, lastcompareday, comparedaycount)
                     currdaycounts = eletongji(oc, currday, lastday, currdaycounts)
-                elif Tag == "W":
-                    comparedaycount = wattongji(oc, compareday, lastcompareday, comparedaycount)
-                    currdaycounts = wattongji(oc, currday, lastday, currdaycounts)
-                elif Tag == "S":
-                    comparedaycount = stetongji(oc, compareday, lastcompareday, comparedaycount)
-                    currdaycounts = stetongji(oc, currday, lastday, currdaycounts)
             dir["compareDateCon"] = round(comparedaycount, 2)
             pccss = comparedaycount - currdaycounts
             if pccss > 0:
@@ -604,12 +583,6 @@ def energyPreview():
                     if Tag == "E":
                         current_countr = eletongji(oc, currhour, lasthour, current_countr)
                         compare_count = eletongji(oc, comparehour, comparelasthour, compare_count)
-                    elif Tag == "W":
-                        current_countr = wattongji(oc, currhour, lasthour, current_countr)
-                        compare_count = wattongji(oc, comparehour, comparelasthour, compare_count)
-                    elif Tag == "S":
-                        current_countr = stetongji(oc, currhour, lasthour, current_countr)
-                        compare_count = stetongji(oc, comparehour, comparelasthour, compare_count)
                 compare_dict["今日能耗"] = str(current_countr)
                 compare_dict["对比日能耗"] = str(compare_count)
                 time_list.append(compare_dict)
@@ -673,10 +646,6 @@ def areaTimeEnergy():
                         Tag = oc.TagClassValue[0:1]
                         if Tag == "E":
                             vlaue = eletongji(oc, currhour, lasthour, vlaue)
-                        elif Tag == "W":
-                            vlaue = wattongji(oc, currhour, lasthour, vlaue)
-                        elif Tag == "S":
-                            vlaue = stetongji(oc, currhour, lasthour, vlaue)
                     if vlaue < float(stop) or vlaue == float(stop):
                         colour = colour + "#ECF1F4"
                     elif vlaue < float(low) or vlaue == float(low):

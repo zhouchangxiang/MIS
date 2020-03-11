@@ -131,26 +131,6 @@ def energymoney(count, name):
     for pr in prices:
         if pr.PriceName == name:
             return float(count)*float(pr.PriceValue)
-def eletongji(oc, currtime, lasttime, elecount):
-    cur = \
-        db_session.query(ElectricEnergy.ZGL).filter(
-            ElectricEnergy.TagClassValue == oc.TagClassValue,
-            ElectricEnergy.CollectionDate.like("%"+currtime+"%")).order_by(
-            desc("CollectionDate")).first()
-    las = db_session.query(ElectricEnergy.ZGL).filter(
-        ElectricEnergy.TagClassValue == oc.TagClassValue,
-        ElectricEnergy.CollectionDate.like("%"+lasttime+"%")).order_by(desc("CollectionDate")).first()
-    return curcutlas(cur, las, elecount)
-def wattongji(oc, currtime, lasttime, elecount):
-    cur = \
-        db_session.query(WaterEnergy.WaterSum).filter(
-            WaterEnergy.TagClassValue == oc.TagClassValue,
-            WaterEnergy.CollectionDate.like("%"+currtime+"%")).order_by(
-            desc("CollectionDate")).first()
-    las = db_session.query(WaterEnergy.WaterSum).filter(
-        WaterEnergy.TagClassValue == oc.TagClassValue,
-        WaterEnergy.CollectionDate.like("%"+lasttime+"%")).order_by(desc("CollectionDate")).first()
-    return curcutlas(cur, las, elecount)
 def stetongji(oc, currtime, lasttime, elecount):
     cur = \
         db_session.query(SteamEnergy.SumValue).filter(
@@ -160,7 +140,11 @@ def stetongji(oc, currtime, lasttime, elecount):
     las = db_session.query(SteamEnergy.SumValue).filter(
         SteamEnergy.TagClassValue == oc.TagClassValue,
         SteamEnergy.CollectionDate.like("%"+lasttime+"%")).order_by(desc("CollectionDate")).first()
-    return curcutlas(cur, las, elecount)
+    cutvalue = curcutlas(cur, las, elecount)
+    if cutvalue != 0.0 and cutvalue is not None:
+        return cutvalue/1000
+    else:
+        return cutvalue
 def energyselect(data):
     if request.method == 'GET':
         try:
