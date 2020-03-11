@@ -55,7 +55,6 @@ def insert(data):
     if isinstance(data, dict) and len(data) > 0:
         try:
             tableName = str(data.get("tableName"))
-            current_name = data.get("Creater")
             obj = Base.classes.get(tableName)
             ss = obj()
             for key in data:
@@ -73,10 +72,10 @@ def insert(data):
             db_session.add(ss)
             aud = AuditTrace()
             aud.TableName = tableName
-            aud.Operation = current_name + " 对表" + tableName + "添加一条数据！"
-            aud.DeitalMSG = "用户：" + current_name + " 对表" + tableName + "添加一条数据！"+json.dumps(data.to_dict())
+            aud.Operation = current_user.Name + " 对表" + tableName + "添加一条数据！"
+            aud.DeitalMSG = "用户：" + current_user.Name + " 对表" + tableName + "添加一条数据！"+json.dumps(data.to_dict())
             aud.ReviseDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            aud.User = current_name
+            aud.User = current_user.Name
             db_session.add(aud)
             db_session.commit()
             return 'OK'
@@ -84,7 +83,7 @@ def insert(data):
             print(e)
             db_session.rollback()
             logger.error(e)
-            insertSyslog("error", "%s数据添加报错："%tableName + str(e), current_name)
+            insertSyslog("error", "%s数据添加报错："%tableName + str(e), current_user.Name)
             return json.dumps('数据添加失败！')
 
 def delete(data):
@@ -94,7 +93,6 @@ def delete(data):
     '''
     try:
         tableName = str(data.get("tableName"))
-        current_name = data.get("Creater")
         jsonstr = json.dumps(data.to_dict())
         if len(jsonstr) > 10:
             jstr = data.get("delete_data")
@@ -105,22 +103,22 @@ def delete(data):
                     db_session.execute(sql)
                     aud = AuditTrace()
                     aud.TableName = tableName
-                    aud.Operation = current_name + " 对表" + tableName + "中的ID为"+key+"的数据做了删除操作！"
-                    aud.DeitalMSG = "用户：" + current_name + " 对表" + tableName + "中的ID为"+key+"的数据做了删除操作！"
+                    aud.Operation = current_user.Name + " 对表" + tableName + "中的ID为"+key+"的数据做了删除操作！"
+                    aud.DeitalMSG = "用户：" + current_user.Name + " 对表" + tableName + "中的ID为"+key+"的数据做了删除操作！"
                     aud.ReviseDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                    aud.User = current_name
+                    aud.User = current_user.Name
                     db_session.add(aud)
                     db_session.commit()
                 except Exception as ee:
                     print(ee)
                     db_session.rollback()
-                    insertSyslog("error", "删除户ID为"+str(id)+"报错Error：" + str(ee), current_name)
+                    insertSyslog("error", "删除户ID为"+str(id)+"报错Error：" + str(ee), current_user.Name)
                     return json.dumps("删除用户报错", cls=AlchemyEncoder,ensure_ascii=False)
             return 'OK'
     except Exception as e:
         db_session.rollback()
         logger.error(e)
-        insertSyslog("error", "%s数据删除报错："%tableName + str(e), current_name)
+        insertSyslog("error", "%s数据删除报错："%tableName + str(e), current_user.Name)
         return json.dumps('数据删除失败！')
 
 def update(data):
@@ -131,7 +129,6 @@ def update(data):
     if isinstance(data, dict) and len(data) > 0:
         try:
             tableName = str(data.get("tableName"))
-            current_name = data.get("Creater")
             obj = Base.classes.get(tableName)
             ss = obj()
             if tableName == "User":
@@ -155,10 +152,10 @@ def update(data):
                 db_session.add(oclass)
                 aud = AuditTrace()
                 aud.TableName = tableName
-                aud.Operation =current_name+" 对表"+tableName+"的数据做了更新操作！"
-                aud.DeitalMSG = "用户："+current_name+" 对表"+tableName+"ID为："+data.get('ID')+"做了更新操作："+json.dumps(data.to_dict())
+                aud.Operation =current_user.Name+" 对表"+tableName+"的数据做了更新操作！"
+                aud.DeitalMSG = "用户："+current_user.Name+" 对表"+tableName+"ID为："+data.get('ID')+"做了更新操作："+json.dumps(data.to_dict())
                 aud.ReviseDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                aud.User = current_name
+                aud.User = current_user.Name
                 db_session.add(aud)
                 db_session.commit()
                 return 'OK'
@@ -167,7 +164,7 @@ def update(data):
         except Exception as e:
             db_session.rollback()
             logger.error(e)
-            insertSyslog("error", "%s数据更新报错："%tableName + str(e), current_name)
+            insertSyslog("error", "%s数据更新报错："%tableName + str(e), current_user.Name)
             return json.dumps('数据更新失败！', cls=AlchemyEncoder, ensure_ascii=False)
 
 def select(data):#table, page, rows, fieid, param
@@ -180,7 +177,6 @@ def select(data):#table, page, rows, fieid, param
     :return: 
     '''
     try:
-        current_name = data.get("Creater")
         pages = int(data.get("offset"))
         rowsnumber = int(data.get("limit"))
         param = data.get("field")
@@ -210,12 +206,15 @@ def select(data):#table, page, rows, fieid, param
     except Exception as e:
         print(e)
         logger.error(e)
-        insertSyslog("error", "查询报错Error：" + str(e), current_name)
+        insertSyslog("error", "查询报错Error：" + str(e), current_user.Name)
 
-# 精确查询
 def accurateSelect(data):
+    '''
+    精确查询
+    :param data:
+    :return:
+    '''
     try:
-        current_name = data.get("Creater")
         pages = int(data.get("offset"))
         rowsnumber = int(data.get("limit"))
         param = data.get("field")
@@ -247,7 +246,7 @@ def accurateSelect(data):
     except Exception as e:
         print(e)
         logger.error(e)
-        insertSyslog("error", "查询报错Error：" + str(e), current_name)
+        insertSyslog("error", "查询报错Error：" + str(e), current_user.Name)
 
 def FuzzyQuery(tablename, params):
     '''
