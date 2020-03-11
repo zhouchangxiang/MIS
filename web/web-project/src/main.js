@@ -32,10 +32,3 @@ new Vue({
   components: { App },
   template: '<App/>'
 })
-router.beforeEach((to, from, next) => {
-  if (to.meta.isLogin) {  //判断页面是否需要验证登录
-
-  }else{
-    next()
-  }
-})

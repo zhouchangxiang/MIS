@@ -23,7 +23,7 @@ export default new Router({
     {
       path: '/login',
       name: 'login',
-      meta:{ title:'登录',isLogin: false},
+      meta:{ title:'登录'},
       component: Login
     },
     {

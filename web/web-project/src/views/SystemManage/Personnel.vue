@@ -39,6 +39,9 @@
                 <el-form-item label="创建时间">
                   <span>{{ props.row.CreateTime }}</span>
                 </el-form-item>
+                <el-form-item label="最近在线时间">
+                  <span>{{ props.row.LastLoginTime }}</span>
+                </el-form-item>
               </el-form>
             </template>
           </el-table-column>
