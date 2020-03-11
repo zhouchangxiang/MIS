@@ -33,7 +33,7 @@
                 <el-form-item label="密码">
                   <span>{{ props.row.Password }}</span>
                 </el-form-item>
-                <el-form-item label="创建用户">
+                <el-form-item label="创建人">
                   <span>{{ props.row.Creater }}</span>
                 </el-form-item>
                 <el-form-item label="创建时间">
@@ -95,6 +95,7 @@
 </template>
 
 <script>
+  var moment = require('moment');
   export default {
     name: "Personnel",
     data(){
@@ -161,7 +162,9 @@
             WorkNumber:"",
             StationName:"",
             OrganizationName:"",
-            FactoryName:""
+            FactoryName:"",
+            Creater: sessionStorage.getItem('UserName'),
+            CreateTime:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
           }
         }else if(val == "edit"){
           if(this.multipleSelection.length == 1){
@@ -189,6 +192,7 @@
           if (valid) {
             this.UserForm.tableName = "User"
             if(this.dialogTitle == "add"){
+              console.log(this.UserForm)
               this.axios.post("/api/CUID",this.qs.stringify(this.UserForm)).then(res =>{
                 if(res.data == "OK"){
                   this.getTableData()
