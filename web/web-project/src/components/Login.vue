@@ -62,7 +62,6 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             this.axios.post('/api/account/userloginauthentication',this.qs.stringify(params)).then(res =>{
-              console.log(res)
               if(res.data == "OK"){
                 this.$message({
                   message: "登录成功",
