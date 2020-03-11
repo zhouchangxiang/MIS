@@ -57,10 +57,8 @@
         };
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.axios.post('/api/account/userloginauthentication',{
-              WorkNumber:this.loginForm.WorkNumber,
-              password:this.loginForm.password
-            }).then(res =>{
+            console.log(this.loginForm.WorkNumber)
+            this.axios.post('/api/account/userloginauthentication',this.qs.stringify(params)).then(res =>{
               console.log(res)
               if(res.data == "OK"){
                 this.$message({

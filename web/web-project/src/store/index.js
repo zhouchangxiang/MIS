@@ -22,7 +22,7 @@ export default new Vuex.Store({
   },
   actions: {
     setUser ({commit},user) {
-      commit('userStatus',user)
+      commit('handleUser',user)
     }
   },
   getters:{
