@@ -34,7 +34,7 @@
             <li>
               <el-dropdown class="head-menu-item" trigger="click" @command="handleCommand">
                 <span class="el-dropdown-link">
-                  <i class="el-icon-user-solid el-icon--left"></i>{{ this.$store.state.WorkNumber }}<i class="el-icon-arrow-down el-icon--right"></i>
+                  <i class="el-icon-user-solid el-icon--left"></i>{{ this.$store.state.UserName }}<i class="el-icon-arrow-down el-icon--right"></i>
                 </span>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item command="a">个人信息</el-dropdown-item>
@@ -111,15 +111,24 @@ export default {
   created(){
     window.addEventListener('resize', this.getMenuHeight);
     this.getMenuHeight()
+    if(sessionStorage.getItem("LoginStatus")) {
+      this.$store.commit('setUser',sessionStorage.getItem('WorkNumber'))
+      var params = {
+        tableName: "User",
+        ID:sessionStorage.getItem('UserId'),
+        Status:"在线"
+      }
+      this.axios.put("/api/CUID",this.qs.stringify(params)).then(res =>{
+        var data = JSON.parse(res.data)
+        console.log(res)
+      },res =>{
+        console.log("请求错误")
+      })
+    }else{
+      this.$router.push("/login");
+    }
   },
   methods:{
-    isLogin() {
-      if (sessionStorage.getItem('WorkNumber')) {
-        this.$store.commit('userStatus',sessionStorage.getItem('WorkNumber'))
-      }else{
-        this.$router.push("/login");
-      }
-    },
     getMenuHeight(){
       this.selfHeight.height = window.innerHeight - 210+'px';
     },

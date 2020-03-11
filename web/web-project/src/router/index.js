@@ -29,13 +29,13 @@ export default new Router({
     {
       path:"/",
       name: 'index',
-      meta:{ title:'好护士能源管理系统',isLogin: true},
+      meta:{ title:'好护士能源管理系统'},
       component: Index,
       redirect:'/home',
       children:[{
         path:'/home',
         name:'home',
-        meta:{ title:'工作台',isLogin: true },
+        meta:{ title:'工作台'},
         component:Home
       },{
         path:'/EfficiencyAnalysis',
