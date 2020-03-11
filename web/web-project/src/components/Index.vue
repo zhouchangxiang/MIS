@@ -116,13 +116,11 @@ export default {
       var params = {
         tableName: "User",
         ID:sessionStorage.getItem('UserId'),
-        Status:"在线"
+        LastLoginTime:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
       }
       this.axios.put("/api/CUID",this.qs.stringify(params)).then(res =>{
-        var data = JSON.parse(res.data)
-        console.log(res)
       },res =>{
-        console.log("请求错误")
+        console.log("修改登录时间时请求错误")
       })
     }else{
       this.$router.push("/login");
@@ -144,6 +142,7 @@ export default {
       if(command == "a"){
         this.dialogUserVisible = true
       }else if(command == "b"){
+        this.$store.commit('removeUser')
         this.$router.replace("/login")
       }
     },

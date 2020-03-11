@@ -40,6 +40,8 @@ export default new Vuex.Store({
       state.LoginStatus = false;
       sessionStorage.removeItem('WorkNumber')
       sessionStorage.removeItem('LoginStatus')
+      sessionStorage.removeItem('UserId')
+      sessionStorage.removeItem('UserName')
     }
   },
   actions: {},
