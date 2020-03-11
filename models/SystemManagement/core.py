@@ -892,14 +892,17 @@ class SteamEnergy(Base):
 	#温度:
 	WD = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
 	
-	#蒸汽瞬时值:
+	#蒸汽瞬时值（单位：kg/h）:
 	FlowValue = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
 	
-	#蒸汽累计值:
+	#蒸汽重量累计值（单位：kg）:
 	SumValue = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
 	
 	#累计量体积单位:
 	SumUnit = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+
+	# 体积（单位：m3:
+	Volume = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 	
 #SteamEnergy_END:
 

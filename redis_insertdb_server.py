@@ -142,6 +142,7 @@ def run():
 
                     valueF = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "F"))  # 蒸汽瞬时流量
                     valueS = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "S"))  # 蒸汽累计流量
+                    Volume = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "V"))  # 蒸汽体积
 
                     ste = db_session.query(SteamEnergy).filter(SteamEnergy.TagClassValue == key.TagClassValue).first()
                     unitf = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽瞬时流量单位").first()
@@ -163,6 +164,7 @@ def run():
                         sl.SumUnit = units[0]
                         # sl.EquipmnetID = equip[0]
                         sl.PriceID = price[0]
+                        s1.Volume = Volume
                         db_session.add(sl)
                         db_session.commit()
                     else:
@@ -178,6 +180,7 @@ def run():
                         sl.SumUnit = units[0]
                         # sl.EquipmnetID = equip[0]
                         sl.PriceID = price[0]
+                        s1.Volume = Volume
                         db_session.add(sl)
                         db_session.commit()
                 elif k == "W":
