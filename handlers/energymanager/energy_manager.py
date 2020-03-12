@@ -1039,7 +1039,7 @@ def exportxstatistic(StartTime,EndTime):
     col = 0
     row = 1
     # 写入列名
-    columns = ['区域', '水累计值', '电总功率', '汽累计值', '统计时间']
+    columns = ['区域', '水累计值', '电总功率', '汽累计值', '统计开始时间', '统计截止时间']
     for item in columns:
         worksheet.write(0, col, item, cell_format)
         col += 1
@@ -1061,13 +1061,15 @@ def exportxstatistic(StartTime,EndTime):
             if cum == '区域':
                 worksheet.write(i+1, columns.index(cum), AreaNames[i].AreaName)
             if cum == '水累计值':
-                worksheet.write(i+1, columns.index(cum), watcount)
+                worksheet.write(i+1, columns.index(cum), str(watcount)+"kW·h")
             if cum == '电总功率':
-                worksheet.write(i+1, columns.index(cum), elecount)
+                worksheet.write(i+1, columns.index(cum), str(elecount)+"t")
             if cum == '汽累计值':
-                worksheet.write(i+1, columns.index(cum), stecount)
-            if cum == '统计时间':
-                worksheet.write(i+1, columns.index(cum), datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                worksheet.write(i+1, columns.index(cum), str(stecount)+"t")
+            if cum == '统计开始时间':
+                worksheet.write(i+1, columns.index(cum), datetime.strptime(StartTime,"%Y-%m-%d %H:%M"))
+            if cum == '统计截止时间':
+                worksheet.write(i+1, columns.index(cum), datetime.strptime(EndTime,"%Y-%m-%d %H:%M"))
     writer.close()
     output.seek(0)
     return output
