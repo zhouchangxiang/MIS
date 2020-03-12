@@ -10,7 +10,7 @@ import calendar
 from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable, Equipment, \
     PriceList, AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
-    AreaTimeEnergyColour
+    AreaTimeEnergyColour, ElectricProportion
 from tools.common import insert,delete,update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger,insertSyslog
@@ -112,7 +112,7 @@ def appendcur(cur, las):
         else:
             return round(diff, 2)
 
-def curcutlas(cur, las, count):
+def curcutlas(cur, las, count, energy):
     if cur is None:
         return count
     else:
@@ -121,11 +121,17 @@ def curcutlas(cur, las, count):
             las = 0.0
         else:
             las = las[0]
+        if energy == "水":
+            cur = abs(float(cur))
+            las = abs(float(las))
         diff = round(float(cur) - float(las), 2)
         if diff < 0:
             return count
         else:
-             return round(count + diff, 2)
+            propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
+            if propor is not None:
+                pro = float(propor.Proportion)
+                return round(count + diff * pro, 2)
 def energymoney(count, name):
     prices = db_session.query(PriceList).filter(PriceList.IsEnabled == "是").all()
     for pr in prices:
@@ -140,11 +146,7 @@ def wattongji(oc, currtime, lasttime, elecount):
     las = db_session.query(WaterEnergy.WaterSum).filter(
         WaterEnergy.TagClassValue == oc.TagClassValue,
         WaterEnergy.CollectionDate.like("%"+lasttime+"%")).order_by(desc("CollectionDate")).first()
-    cutvalue = curcutlas(cur, las, elecount)
-    if cutvalue != 0.0 and cutvalue is not None:
-        return cutvalue/1000
-    else:
-        return cutvalue
+    return curcutlas(cur, las, elecount)
 def energyselect(data):
     if request.method == 'GET':
         try:
