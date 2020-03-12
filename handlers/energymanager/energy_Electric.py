@@ -112,7 +112,7 @@ def appendcur(cur, las):
         else:
             return round(diff, 2)
 
-def curcutlas(cur, las, count):
+def curcutlas(cur, las, count, energy):
     if cur is None:
         return count
     else:
@@ -121,11 +121,18 @@ def curcutlas(cur, las, count):
             las = 0.0
         else:
             las = las[0]
+        if energy == "水":
+            cur = abs(float(cur))
+            las = abs(float(las))
         diff = round(float(cur) - float(las), 2)
         if diff < 0:
             return count
         else:
-             return round(count + diff, 2)
+            propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
+            if propor is not None:
+                pro = float(propor.Proportion)
+                return round(count + diff * pro, 2)
+
 def energymoney(count, name):
     prices = db_session.query(PriceList).filter(PriceList.IsEnabled == "是").all()
     for pr in prices:
@@ -140,12 +147,7 @@ def eletongji(oc, currtime, lasttime, elecount):
     las = db_session.query(ElectricEnergy.ZGL).filter(
         ElectricEnergy.TagClassValue == oc.TagClassValue,
         ElectricEnergy.CollectionDate.like("%"+lasttime+"%")).order_by(desc("CollectionDate")).first()
-    cutv = curcutlas(cur, las, elecount)
-    proportion = db_session.query(ElectricProportion.Proportion).filter(ElectricProportion.ProportionType == "电").first()
-    if proportion is not None:
-        return float(proportion)*cutv
-    else:
-        return cutv
+    return curcutlas(cur, las, elecount, "电")
 def energyselect(data):
     if request.method == 'GET':
         try:
