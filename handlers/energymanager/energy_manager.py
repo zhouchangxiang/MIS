@@ -21,6 +21,7 @@ import numpy as np
 import pandas as pd
 from io import BytesIO
 from flask import Flask, send_file,make_response
+import math
 
 energy = Blueprint('energy', __name__, template_folder='templates')
 
@@ -137,7 +138,7 @@ def appendcur(cur, las):
         else:
             return round(diff, 2)
 
-def curcutlas(cur, las, count):
+def curcutlas(cur, las, count, energy):
     if cur is None:
         return count
     else:
@@ -146,11 +147,19 @@ def curcutlas(cur, las, count):
             las = 0.0
         else:
             las = las[0]
+        if energy == "水":
+            cur = abs(float(cur))
+            las = abs(float(las))
         diff = round(float(cur) - float(las), 2)
         if diff < 0:
             return count
         else:
-             return round(count + diff, 2)
+            propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
+            if propor is not None:
+                pro = float(propor.Proportion)
+                return round(count + diff * pro, 2)
+
+
 def energymoney(count, name):
     prices = db_session.query(PriceList).filter(PriceList.IsEnabled == "是").all()
     for pr in prices:
@@ -165,13 +174,8 @@ def eletongji(oc, currtime, lasttime, elecount):
     las = db_session.query(ElectricEnergy.ZGL).filter(
         ElectricEnergy.TagClassValue == oc.TagClassValue,
         ElectricEnergy.CollectionDate.like("%"+lasttime+"%"), ElectricEnergy.ZGL != "0.0", ElectricEnergy.ZGL != "", ElectricEnergy.ZGL != None).order_by(desc("CollectionDate")).first()
-    cutv = curcutlas(cur, las, elecount)
-    proportion = db_session.query(ElectricProportion.Proportion).filter(
-        ElectricProportion.ProportionType == "电").first()
-    if proportion is not None:
-        return float(proportion) * cutv
-    else:
-        return cutv
+    return curcutlas(cur, las, elecount, "电")
+
 def wattongji(oc, currtime, lasttime, elecount):
     cur = \
         db_session.query(WaterEnergy.WaterSum).filter(
@@ -181,11 +185,7 @@ def wattongji(oc, currtime, lasttime, elecount):
     las = db_session.query(WaterEnergy.WaterSum).filter(
         WaterEnergy.TagClassValue == oc.TagClassValue,
         WaterEnergy.CollectionDate.like("%"+lasttime+"%"), WaterEnergy.WaterSum != "0.0", WaterEnergy.WaterSum != "", WaterEnergy.WaterSum != None).order_by(desc("CollectionDate")).first()
-    cutvalue = curcutlas(cur, las, elecount)
-    if cutvalue != 0.0 and cutvalue is not None:
-        return cutvalue / 1000
-    else:
-        return cutvalue
+    return curcutlas(cur, las, elecount, "水")
 def stetongji(oc, currtime, lasttime, elecount):
     cur = \
         db_session.query(SteamEnergy.SumValue).filter(
@@ -195,11 +195,7 @@ def stetongji(oc, currtime, lasttime, elecount):
     las = db_session.query(SteamEnergy.SumValue).filter(
         SteamEnergy.TagClassValue == oc.TagClassValue,
         SteamEnergy.CollectionDate.like("%"+lasttime+"%"), SteamEnergy.SumValue != "0.0", SteamEnergy.SumValue != "", SteamEnergy.SumValue != None).order_by(desc("CollectionDate")).first()
-    cutvalue = curcutlas(cur, las, elecount)
-    if cutvalue != 0.0 and cutvalue is not None:
-        return cutvalue / 1000
-    else:
-        return cutvalue
+    return curcutlas(cur, las, elecount, "汽")
 def energyselect(data):
     if request.method == 'GET':
         try:
