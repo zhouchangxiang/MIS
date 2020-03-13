@@ -14,24 +14,25 @@
               <el-col :span="7" style="white-space:nowrap;">
                 <ul class="card-body-ul">
                   <li><span class="text-size-large text-color-info">本日耗电量</span><span class="text-size-mini text-color-info-shallow">（截止12：00）</span></li>
-                  <li class="text-size-big text-color-warning">1256.25kwh</li>
+                  <li class="text-size-big text-color-warning">{{ todayCon }}</li>
                   <li><span class="text-size-mini text-color-info-shallow">对比</span>
                     <el-date-picker v-model="CompareDate" align="right" type="date" placeholder="选择日期" :picker-options="pickerOptions" @change="getEnergyPreview" :clearable="false" size="mini" style="width: 130px"></el-date-picker>
                   </li>
-                  <li><span class="text-size-small text-color-primary">1256.25kwh</span><span class="text-size-mini text-color-danger" style="margin-left: 20px;">+9.5%<i class="el-icon-top"></i></span></li>
+                  <li><span class="text-size-small text-color-primary">{{ compareDateCon }}</span>
+                    <span class="text-size-mini text-color-danger" style="margin-left: 20px;">{{ comparePer }}<i class="el-icon-top"></i></span></li>
                 </ul>
               </el-col>
               <el-col :span="9" style="white-space:nowrap;">
                 <ul class="card-body-ul" style="display: inline-block;">
                   <li><span class="text-size-large text-color-info">本月耗电量</span></li>
-                  <li class="text-size-big text-color-warning">1256.25kwh</li>
+                  <li class="text-size-big text-color-warning">{{ thisMonthCon }}</li>
                   <li style="margin-top: 15px;">
                     <span class="text-size-mini text-color-info-shallow">上月同期</span>
-                    <span class="text-size-mini text-color-info">4543.56 kwh</span>
+                    <span class="text-size-mini text-color-info">{{ lastMonthCon }}</span>
                   </li>
                   <li>
                     <span class="text-size-mini text-color-info-shallow">上月同期</span>
-                    <span class="text-size-mini text-color-success">+9.5%<i class="el-icon-bottom"></i></span>
+                    <span class="text-size-mini text-color-success">{{ lastMonthCompare }}<i class="el-icon-bottom"></i></span>
                   </li>
                 </ul>
                 <ve-line :data="contrastMonthChartData" :settings="contrastMonthChartSettings" :extend="contrastMonthChartExtend" width="120px" height="100px" :legend-visible="false" style="display: inline-block;"></ve-line>
@@ -42,11 +43,11 @@
                     <span class="text-size-large text-color-info">年累计耗电量</span>
                     <span class="text-size-mini text-color-warning">kwh</span>
                   </li>
-                  <li class="text-size-big text-color-warning">1256.25kwh</li>
+                  <li class="text-size-big text-color-warning">{{ thisYearCon }}</li>
                   <li style="margin-top: 15px;">
                     <span class="text-size-mini text-color-info-shallow">上年同期</span>
-                    <span class="text-size-mini text-color-info">4543.56 kwh</span>
-                    <span style="margin-left: 20px;" class="text-size-mini text-color-danger">+9.5%<i class="el-icon-top"></i></span>
+                    <span class="text-size-mini text-color-info">{{ lastYearCon }}</span>
+                    <span style="margin-left: 20px;" class="text-size-mini text-color-danger">{{ lastYearCompare }}<i class="el-icon-top"></i></span>
                   </li>
                 </ul>
               </el-col>
@@ -306,32 +307,26 @@
           }]
         },
         CompareDate:Date.now() - 3600 * 1000 * 24, //默认对比日期
+        todayCon:"", //本日能耗量
+        compareDateCon:"", //选择日期的能耗
+        comparePer:"", //对比今天能耗的百分比
+        comparePerState:"", //对比今天能耗上升/下降
+        thisMonthCon:"", //本月能耗量
+        lastMonthCon:"", //上月同期能耗量
+        lastMonthCompare:"", //上月同期百分比
+        lastMonthCompareState:"", //上月同期上升还是下降
         contrastMonthChartData:{
-          columns: ['日期', '上月能耗', '本月能耗'],
-          rows: [
-            { '日期': '1日', '上月能耗': 1393, '本月能耗': 1093},
-            { '日期': '2日', '上月能耗': 3530, '本月能耗': 3230},
-            { '日期': '3日', '上月能耗': 2923, '本月能耗': 2623},
-            { '日期': '4日', '上月能耗': 1723, '本月能耗': 1423},
-            { '日期': '5日', '上月能耗': 3792, '本月能耗': 3492},
-            { '日期': '6日', '上月能耗': 4593, '本月能耗': 4293},
-            { '日期': '7日', '上月能耗': 4593, '本月能耗': 4293},
-            { '日期': '8日', '上月能耗': 4783, '本月能耗': 4453},
-          ]
+          columns: ['时间', '上月能耗', '本月能耗'],
+          rows:[]
         },
         realtimeChartData:{
-          columns: ['日期', '上月能耗', '本月能耗'],
-          rows: [
-            { '日期': '1日', '上月能耗': 1393, '本月能耗': 1093},
-            { '日期': '2日', '上月能耗': 3530, '本月能耗': 3230},
-            { '日期': '3日', '上月能耗': 2923, '本月能耗': 2623},
-            { '日期': '4日', '上月能耗': 1723, '本月能耗': 1423},
-            { '日期': '5日', '上月能耗': 3792, '本月能耗': 3492},
-            { '日期': '6日', '上月能耗': 4593, '本月能耗': 4293},
-            { '日期': '7日', '上月能耗': 4593, '本月能耗': 4293},
-            { '日期': '8日', '上月能耗': 4783, '本月能耗': 4453},
-          ]
+          columns: ['时间', '今日能耗', '对比日能耗'],
+          rows:[]
         },
+        thisYearCon: "", //年能耗量
+        lastYearCon: "", //上年同期能耗
+        lastYearCompare: "", //上年同期百分比
+        lastYearCompareState: "", //上年同期上升/下降
         colorBarOption:[
           {name: "新建综合制剂楼", value0: 2342,value4: 4234,value8: 2232,value12: 235,value16: 2042,value20: 264, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'},
           {name: "提取二车间", value0: 2342,value4: 2342,value8: 2342,value12: 2342,value16: 2342,value20: 2342, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'},
@@ -395,16 +390,31 @@
 
     },
     methods: {
-      getEnergyPreview() {
+      getEnergyPreview() {  //获取能耗预览内的数据
         this.axios.get('/api/energyPreview',{
           params: {
-              energyType: this.previewEnergyValue,
-              compareDate: moment(this.CompareDate).format('YYYY-MM-DD')
+            energyType: this.previewEnergyValue,
+            compareDate: moment(this.CompareDate).format('YYYY-MM-DD')
           }
-        }).then(function (response) {
-            console.log(response);
+        }).then(res => {
+          console.log(res);
+          var data = res.data
+          //this.todayCon = data.
+          this.compareDateCon = data.compareDateCon
+          this.comparePerState = data.comparePerState
+          this.comparePer = data.comparePer
+          this.thisMonthCon = data.thisMonthCon
+          this.lastMonthCon = data.lastMonthCon
+          this.lastMonthCompare = data.lastMonthCompare
+          this.lastMonthCompareState = data.lastMonthCompareState
+          this.contrastMonthChartData.rows = data.lastMonthRow
+          this.realtimeChartData.rows = data.compareTodayRow
+          this.thisYearCon = data.thisYearCon
+          this.lastYearCon = data.lastYearCon
+          this.lastYearCompare = data.lastYearCompare
+          this.lastYearCompareState = data.lastYearCompareState
         }).catch(function (error) {
-            console.log(error);
+          console.log(error);
         });
       },
       getAreaTime() {
