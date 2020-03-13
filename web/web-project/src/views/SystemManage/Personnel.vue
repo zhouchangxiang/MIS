@@ -1,14 +1,19 @@
 <template>
-  <el-row style="height: 100%;background: #fff;">
-    <el-col :span="24" style="height: 100%;padding: 15px;">
+  <el-row style="background: #fff;">
+    <el-col :span="24" style="padding: 15px;">
       <el-row>
         <el-col :span="24">
           <el-form :inline="true">
             <el-form-item>
-              <el-input placeholder="请输入搜索内容" size="small"></el-input>
+              <el-select v-model="region" placeholder="请选择搜索字段" size="small">
+                <el-option v-for="(item,index) in regionList" :label="item.label" :value="item.value" :key="index"></el-option>
+              </el-select>
             </el-form-item>
             <el-form-item>
-              <el-button type="success" icon="el-icon-search" size="small">搜索</el-button>
+              <el-input placeholder="请输入搜索内容" size="small" v-model="searchVal"></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="success" icon="el-icon-search" size="small" @click="searchTab">搜索</el-button>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" size="small" @click="openDialog('add')">添加</el-button>
@@ -118,7 +123,13 @@
           WorkNumber:[
             {required: true, message: '请输入工号', trigger: 'blur'}
           ]
-        }
+        },
+        region:"",
+        regionList:[
+          {label:"用户名",value:"Name"},
+          {label:"工号",value:"WorkNumber"}
+        ],
+        searchVal:""
       }
     },
     mounted() {
@@ -150,6 +161,23 @@
       },
       handleSelectionChange(val){  //选择行数
         this.multipleSelection = val;
+      },
+      searchTab(){
+        this.axios.get("/api/CUID",{
+          params: {
+            tableName: "User",
+            field:this.region,
+            fieldvalue:this.searchVal,
+            limit:this.pagesize,
+            offset:this.currentPage - 1
+          }
+        }).then(res =>{
+          var data = JSON.parse(res.data)
+          this.tableData = data.rows
+          this.total = data.total
+        },res =>{
+          console.log("请求错误")
+        })
       },
       openDialog(val){
         this.dialogTitle = val
