@@ -1012,8 +1012,8 @@ def exceloutstatistic():
     '''
     data = request.values
     if request.method == 'GET':
-        StartTime = data.get("StartTime")
-        EndTime = data.get("EndTime")
+        StartTime = data.get("StartTime")[0:15]
+        EndTime = data.get("EndTime")[0:15]
         output=exportxstatistic(StartTime,EndTime)
         resp = make_response(output.getvalue())
         resp.headers["Content-Disposition"] ="attachment; filename=testing.xlsx"
@@ -1061,15 +1061,15 @@ def exportxstatistic(StartTime,EndTime):
             if cum == '区域':
                 worksheet.write(i+1, columns.index(cum), AreaNames[i].AreaName)
             if cum == '水累计值':
-                worksheet.write(i+1, columns.index(cum), str(watcount)+"kW·h")
+                worksheet.write(i+1, columns.index(cum), str(watcount)+"t")
             if cum == '电总功率':
-                worksheet.write(i+1, columns.index(cum), str(elecount)+"t")
+                worksheet.write(i+1, columns.index(cum), str(elecount)+"kW·h")
             if cum == '汽累计值':
                 worksheet.write(i+1, columns.index(cum), str(stecount)+"t")
             if cum == '统计开始时间':
-                worksheet.write(i+1, columns.index(cum), datetime.strptime(StartTime,"%Y-%m-%d %H:%M"))
+                worksheet.write(i+1, columns.index(cum), StartTime+"0:00")
             if cum == '统计截止时间':
-                worksheet.write(i+1, columns.index(cum), datetime.strptime(EndTime,"%Y-%m-%d %H:%M"))
+                worksheet.write(i+1, columns.index(cum), EndTime+"0:00")
     writer.close()
     output.seek(0)
     return output
