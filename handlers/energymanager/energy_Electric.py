@@ -432,8 +432,8 @@ def energyselect(data):
             insertSyslog("error", "能耗查询报错Error：" + str(e), current_user.Name)
             return json.dumps([{"status": "Error：" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
 
-@energyElectric.route('/energyPreview', methods=['POST', 'GET'])
-def energyPreview():
+@energyElectric.route('/energyElectricPreview', methods=['POST', 'GET'])
+def energyElectricPreview():
     '''
     能耗预览
     :return:
@@ -595,8 +595,8 @@ def energyPreview():
             logger.error(e)
             insertSyslog("error", "能耗预览查询报错Error：" + str(e), current_user.Name)
 
-@energyElectric.route('/areaTimeEnergy', methods=['POST', 'GET'])
-def areaTimeEnergy():
+@energyElectric.route('/areaTimeElectricEnergy', methods=['POST', 'GET'])
+def areaTimeElectricEnergy():
     '''
     区域时段能耗
     :return:
@@ -667,8 +667,8 @@ def areaTimeEnergy():
             logger.error(e)
             insertSyslog("error", "区域时段能耗查询报错Error：" + str(e), current_user.Name)
 
-@energyElectric.route('/trendChart', methods=['POST', 'GET'])
-def trendChart():
+@energyElectric.route('/trendElectricChart', methods=['POST', 'GET'])
+def trendElectricChart():
     '''
     趋势图
     :return:
@@ -717,8 +717,8 @@ def trendChart():
             logger.error(e)
             insertSyslog("error", "区域时段能耗查询报错Error：" + str(e), current_user.Name)
 
-@energyElectric.route('/energyHistory', methods=['POST', 'GET'])
-def energyHistory():
+@energyElectric.route('/energyElectricHistory', methods=['POST', 'GET'])
+def energyElectricHistory():
     '''
     能源历史数据
     :return:

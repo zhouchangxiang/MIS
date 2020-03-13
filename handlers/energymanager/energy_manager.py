@@ -1016,7 +1016,7 @@ def exceloutstatistic():
         EndTime = data.get("EndTime")
         output=exportxstatistic(StartTime,EndTime)
         resp = make_response(output.getvalue())
-        resp.headers["Content-Disposition"] ="attachment; filename=testing.xlsx"
+        resp.headers["Content-Disposition"] ="attachment; filename=各车间水电汽用量情况.xlsx"
         resp.headers['Content-Type'] = 'application/x-xlsx'
         return resp
 
