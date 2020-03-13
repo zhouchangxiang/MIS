@@ -10,7 +10,7 @@ import calendar
 from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable, Equipment, \
     PriceList, AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
-    AreaTimeEnergyColour
+    AreaTimeEnergyColour, ElectricProportion
 from tools.common import insert,delete,update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger,insertSyslog
@@ -21,6 +21,7 @@ import numpy as np
 import pandas as pd
 from io import BytesIO
 from flask import Flask, send_file,make_response
+import math
 
 energy = Blueprint('energy', __name__, template_folder='templates')
 
@@ -137,7 +138,7 @@ def appendcur(cur, las):
         else:
             return round(diff, 2)
 
-def curcutlas(cur, las, count):
+def curcutlas(cur, las, count, energy):
     if cur is None:
         return count
     else:
@@ -146,11 +147,19 @@ def curcutlas(cur, las, count):
             las = 0.0
         else:
             las = las[0]
+        if energy == "水":
+            cur = abs(float(cur))
+            las = abs(float(las))
         diff = round(float(cur) - float(las), 2)
         if diff < 0:
             return count
         else:
-             return round(count + diff, 2)
+            propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
+            if propor is not None:
+                pro = float(propor.Proportion)
+                return round(count + diff * pro, 2)
+
+
 def energymoney(count, name):
     prices = db_session.query(PriceList).filter(PriceList.IsEnabled == "是").all()
     for pr in prices:
@@ -165,7 +174,8 @@ def eletongji(oc, currtime, lasttime, elecount):
     las = db_session.query(ElectricEnergy.ZGL).filter(
         ElectricEnergy.TagClassValue == oc.TagClassValue,
         ElectricEnergy.CollectionDate.like("%"+lasttime+"%"), ElectricEnergy.ZGL != "0.0", ElectricEnergy.ZGL != "", ElectricEnergy.ZGL != None).order_by(desc("CollectionDate")).first()
-    return curcutlas(cur, las, elecount)
+    return curcutlas(cur, las, elecount, "电")
+
 def wattongji(oc, currtime, lasttime, elecount):
     cur = \
         db_session.query(WaterEnergy.WaterSum).filter(
@@ -175,7 +185,7 @@ def wattongji(oc, currtime, lasttime, elecount):
     las = db_session.query(WaterEnergy.WaterSum).filter(
         WaterEnergy.TagClassValue == oc.TagClassValue,
         WaterEnergy.CollectionDate.like("%"+lasttime+"%"), WaterEnergy.WaterSum != "0.0", WaterEnergy.WaterSum != "", WaterEnergy.WaterSum != None).order_by(desc("CollectionDate")).first()
-    return curcutlas(cur, las, elecount)
+    return curcutlas(cur, las, elecount, "水")
 def stetongji(oc, currtime, lasttime, elecount):
     cur = \
         db_session.query(SteamEnergy.SumValue).filter(
@@ -185,7 +195,7 @@ def stetongji(oc, currtime, lasttime, elecount):
     las = db_session.query(SteamEnergy.SumValue).filter(
         SteamEnergy.TagClassValue == oc.TagClassValue,
         SteamEnergy.CollectionDate.like("%"+lasttime+"%"), SteamEnergy.SumValue != "0.0", SteamEnergy.SumValue != "", SteamEnergy.SumValue != None).order_by(desc("CollectionDate")).first()
-    return curcutlas(cur, las, elecount)
+    return curcutlas(cur, las, elecount, "汽")
 def energyselect(data):
     if request.method == 'GET':
         try:
@@ -1002,11 +1012,11 @@ def exceloutstatistic():
     '''
     data = request.values
     if request.method == 'GET':
-        StartTime = data.get("StartTime")
-        EndTime = data.get("EndTime")
+        StartTime = data.get("StartTime")[0:15]
+        EndTime = data.get("EndTime")[0:15]
         output=exportxstatistic(StartTime,EndTime)
         resp = make_response(output.getvalue())
-        resp.headers["Content-Disposition"] ="attachment; filename=testing.xlsx"
+        resp.headers["Content-Disposition"] ="attachment; filename=consumption.xlsx"
         resp.headers['Content-Type'] = 'application/x-xlsx'
         return resp
 
@@ -1018,18 +1028,19 @@ def exportxstatistic(StartTime,EndTime):
     workbook = writer.book
     # 创建excel sheet
     worksheet = workbook.add_worksheet('sheet1')
-    # cell 样式
+
     cell_format = workbook.add_format({
+        'font_size': 18,
         'bold': 1,
         'border': 1,
         'align': 'center',
         'valign': 'vcenter',
         'fg_color': '#006633'})
-
+    worksheet.set_column('A:F', 24)
     col = 0
     row = 1
     # 写入列名
-    columns = ['区域', '水累计值', '电总功率', '汽累计值', '统计时间']
+    columns = ['区域', '水累计值', '电总功率', '汽累计值', '统计开始时间', '统计截止时间']
     for item in columns:
         worksheet.write(0, col, item, cell_format)
         col += 1
@@ -1051,13 +1062,15 @@ def exportxstatistic(StartTime,EndTime):
             if cum == '区域':
                 worksheet.write(i+1, columns.index(cum), AreaNames[i].AreaName)
             if cum == '水累计值':
-                worksheet.write(i+1, columns.index(cum), watcount)
+                worksheet.write(i+1, columns.index(cum), str(watcount)+"t")
             if cum == '电总功率':
-                worksheet.write(i+1, columns.index(cum), elecount)
+                worksheet.write(i+1, columns.index(cum), str(elecount)+"kW·h")
             if cum == '汽累计值':
-                worksheet.write(i+1, columns.index(cum), stecount)
-            if cum == '统计时间':
-                worksheet.write(i+1, columns.index(cum), datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                worksheet.write(i+1, columns.index(cum), str(stecount)+"t")
+            if cum == '统计开始时间':
+                worksheet.write(i+1, columns.index(cum), StartTime+"0:00")
+            if cum == '统计截止时间':
+                worksheet.write(i+1, columns.index(cum), EndTime+"0:00")
     writer.close()
     output.seek(0)
     return output
