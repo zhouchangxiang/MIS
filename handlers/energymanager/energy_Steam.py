@@ -147,7 +147,7 @@ def stetongji(oc, currtime, lasttime, elecount):
         SteamEnergy.TagClassValue == oc.TagClassValue,
         SteamEnergy.CollectionDate.like("%"+lasttime+"%")).order_by(desc("CollectionDate")).first()
     return curcutlas(cur, las, elecount, "汽")
-def energyselect(data):
+def energySteamSelect(data):
     if request.method == 'GET':
         try:
             dir = {}
@@ -178,9 +178,9 @@ def energyselect(data):
                 diyr = {}
                 diyz = []
                 if Area is not None and Area != "":
-                    oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass, TagDetail.AreaName == Area).all()
+                    oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == "汽", TagDetail.AreaName == Area).all()
                 else:
-                    oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
+                    oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == "汽").all()
                 if datime == "年":
                     if ModelFlag == "数据报表":
                         currentyear = CurrentTime[0:4]
@@ -249,8 +249,6 @@ def energyselect(data):
                         Tag = oc.TagClassValue[0:1]
                         if Tag == "S":
                             stecount = stetongji(oc, currday, lastday, elecount)
-                dir["ElectricValue"] = elecount
-                dir["WaterValue"] = watcount
                 dir["SteamValue"] = stecount
             elif ModelFlag == "成本展示":
                 oclass = db_session.query(TagDetail).filter().all()
@@ -274,19 +272,11 @@ def energyselect(data):
                 dir["SteamValue"] = round(energymoney(stecount, "汽"), 2)
                 dir["ZCB"] = round(energymoney(elecount, "电") + energymoney(watcount, "水") + energymoney(stecount, "汽"), 2)
                 #饼图
-                dice = {}
                 ztotal = round(energymoney(elecount, "电") + energymoney(watcount, "水") + energymoney(stecount, "汽"), 2)
-                dice["name"] = "电"
-                dice["y"] = float('{:.2f}'.format(round(energymoney(elecount, "电"), 2)/ztotal*100))
-                dicw = {}
-                dicw["name"] = "水"
-                dicw["y"] = float('{:.2f}'.format(round(energymoney(watcount, "水"), 2)/ztotal*100))
                 dics = {}
                 dics["name"] = "汽"
                 dics["y"] = float('{:.2f}'.format(round(energymoney(stecount, "汽"), 2)/ztotal*100))
                 datadic = []
-                datadic.append(dice)
-                datadic.append(dicw)
                 datadic.append(dics)
                 dir["data"] = datadic
             elif ModelFlag == "区域成本":
@@ -313,46 +303,10 @@ def energyselect(data):
                         Tag = oc.TagClassValue[0:1]
                         if Tag == "S":
                             stecount = stetongji(oc, currday, lastday, elecount)
-                chenbY = [round(energymoney(elecount, "电"), 2),round(energymoney(watcount, "水"), 2),round(energymoney(stecount, "汽"), 2)]
-                chenbX = ["电","水","汽"]
+                chenbY = [round(energymoney(stecount, "汽"), 2)]
+                chenbX = ["汽"]
                 dir["X"] = chenbX
                 dir["Y"] = chenbY
-            elif ModelFlag == "区域成本排名":
-                AreaNames = db_session.query(AreaTable.AreaName).filter().all()
-                diarea = {}
-                for AreaName in AreaNames:
-                    oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaName[0]).all()
-                    if datime == "年":
-                        currentyear = CurrentTime[0:4]
-                        lastyear = str(int(curryear) - 1)
-                        for oc in oclass:
-                            Tag = oc.TagClassValue[0:1]
-                            if Tag == "S":
-                                stecount = stetongji(oc, curryear, lastyear, elecount)
-                    elif datime == "月":
-                        currentmonth = CurrentTime[0:7]
-                        lastM = strlastMonth(currentmonth)
-                        for oc in oclass:
-                            Tag = oc.TagClassValue[0:1]
-                            if Tag == "S":
-                                stecount = stetongji(oc, currmonth, lastmonth, elecount)
-                    elif datime == "日":
-                        currentday = CurrentTime[0:10]
-                        vv = datetime.datetime.strptime(currday, "%Y-%m-%d")
-                        lastday = str(vv + datetime.timedelta(days=-1))[0:10]
-                        for oc in oclass:
-                            Tag = oc.TagClassValue[0:1]
-                            if Tag == "S":
-                                stecount = stetongji(oc, currday, lastday, elecount)
-                    diarea[AreaName[0]] = round((energymoney(elecount, "电") +  energymoney(watcount, "水") + energymoney(stecount, "汽")), 2)
-                areavs = sorted(diarea.items(), key=lambda x: float(x[1]), reverse=True)
-                areax = []
-                areay = []
-                for i in areavs:
-                    areax.append(i[0])
-                    areay.append(float(i[1]))
-                dir["X"] = areax
-                dir["Y"] = areay
             elif ModelFlag == "电能负荷率":
                 dir["a"]=""
             elif ModelFlag == "在线检测情况":

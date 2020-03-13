@@ -5,9 +5,9 @@ from dbset.account import auth_lib
 from handlers.SystemManagement.calendar import cale
 from handlers.account import account_auth
 from handlers.SystemManagement import user_management, PermissionAssignment,Role_management
-from handlers.energymanager.energy_Electric import energyElectric
-from handlers.energymanager.energy_Steam import energySteam
-from handlers.energymanager.energy_Water import energyWater
+from handlers.energymanager.energy_Electric import energyElectric, energyElectricSelect
+from handlers.energymanager.energy_Steam import energySteam, energySteamSelect
+from handlers.energymanager.energy_Water import energyWater, energyWaterSelect
 from handlers.main import system_manage
 from handlers.SystemManagement.organization_model import organiza
 from handlers.EquipmentModel.euipment_model import equip
@@ -178,7 +178,19 @@ api.add_resource(CUID, '/CUID/<cuid_id>')
 class ENERGY(Resource):
     def get(self):
         return energyselect(request.values)
+class WATER(Resource):
+    def get(self):
+        return energyWaterSelect(request.values)
+class STEAM(Resource):
+    def get(self):
+            return energySteamSelect(request.values)
+class ELECTRIC(Resource):
+    def get(self):
+        return energyElectricSelect(request.values)
 api.add_resource(ENERGY, '/energyall')
+api.add_resource(WATER, '/energywater')
+api.add_resource(STEAM, '/energysteam')
+api.add_resource(ELECTRIC, '/energyelectric')
 
 if __name__ == '__main__':
     from livereload import Server

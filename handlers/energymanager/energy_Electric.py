@@ -148,7 +148,7 @@ def eletongji(oc, currtime, lasttime, elecount):
         ElectricEnergy.TagClassValue == oc.TagClassValue,
         ElectricEnergy.CollectionDate.like("%"+lasttime+"%")).order_by(desc("CollectionDate")).first()
     return curcutlas(cur, las, elecount, "电")
-def energyselect(data):
+def energyElectricSelect(data):
     if request.method == 'GET':
         try:
             dir = {}
@@ -179,9 +179,9 @@ def energyselect(data):
                 diyr = {}
                 diyz = []
                 if Area is not None and Area != "":
-                    oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass, TagDetail.AreaName == Area).all()
+                    oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == "电", TagDetail.AreaName == Area).all()
                 else:
-                    oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
+                    oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == "电").all()
                 if datime == "年":
                     if ModelFlag == "数据报表":
                         currentyear = CurrentTime[0:4]
@@ -280,16 +280,8 @@ def energyselect(data):
                 ztotal = round(energymoney(elecount, "电") + energymoney(watcount, "水") + energymoney(stecount, "汽"), 2)
                 dice["name"] = "电"
                 dice["y"] = float('{:.2f}'.format(round(energymoney(elecount, "电"), 2)/ztotal*100))
-                dicw = {}
-                dicw["name"] = "水"
-                dicw["y"] = float('{:.2f}'.format(round(energymoney(watcount, "水"), 2)/ztotal*100))
-                dics = {}
-                dics["name"] = "汽"
-                dics["y"] = float('{:.2f}'.format(round(energymoney(stecount, "汽"), 2)/ztotal*100))
                 datadic = []
                 datadic.append(dice)
-                datadic.append(dicw)
-                datadic.append(dics)
                 dir["data"] = datadic
             elif ModelFlag == "区域成本":
                 oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == Area).all()
@@ -319,42 +311,6 @@ def energyselect(data):
                 chenbX = ["电","水","汽"]
                 dir["X"] = chenbX
                 dir["Y"] = chenbY
-            elif ModelFlag == "区域成本排名":
-                AreaNames = db_session.query(AreaTable.AreaName).filter().all()
-                diarea = {}
-                for AreaName in AreaNames:
-                    oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaName[0]).all()
-                    if datime == "年":
-                        currentyear = CurrentTime[0:4]
-                        lastyear = str(int(curryear) - 1)
-                        for oc in oclass:
-                            Tag = oc.TagClassValue[0:1]
-                            if Tag == "E":
-                                elecount = eletongji(oc, curryear, lastyear, elecount)
-                    elif datime == "月":
-                        currentmonth = CurrentTime[0:7]
-                        lastM = strlastMonth(currentmonth)
-                        for oc in oclass:
-                            Tag = oc.TagClassValue[0:1]
-                            if Tag == "E":
-                                elecount = eletongji(oc, currmonth, lastmonth, elecount)
-                    elif datime == "日":
-                        currentday = CurrentTime[0:10]
-                        vv = datetime.datetime.strptime(currday, "%Y-%m-%d")
-                        lastday = str(vv + datetime.timedelta(days=-1))[0:10]
-                        for oc in oclass:
-                            Tag = oc.TagClassValue[0:1]
-                            if Tag == "E":
-                                elecount = eletongji(oc, currday, lastday, elecount)
-                    diarea[AreaName[0]] = round((energymoney(elecount, "电") +  energymoney(watcount, "水") + energymoney(stecount, "汽")), 2)
-                areavs = sorted(diarea.items(), key=lambda x: float(x[1]), reverse=True)
-                areax = []
-                areay = []
-                for i in areavs:
-                    areax.append(i[0])
-                    areay.append(float(i[1]))
-                dir["X"] = areax
-                dir["Y"] = areay
             elif ModelFlag == "电能负荷率":
                 dir["a"]=""
             elif ModelFlag == "在线检测情况":
@@ -383,8 +339,6 @@ def energyselect(data):
                             watstatuss = watstatuss + 1
                 data_list = []
                 data_list.append({"name": "电表", "online": elestatuss, "rate": int(100 * (elestatuss/elestatust))})
-                data_list.append({"name": "水表", "online": watstatuss, "rate": int(100 * (watstatuss / watstatust))})
-                data_list.append({"name": "汽表", "online": stestatuss, "rate": int(100 * (stestatuss / stestatust))})
                 return json.dumps(data_list, cls=AlchemyEncoder, ensure_ascii=False)
             elif ModelFlag == "单位批次能耗":
                 curryear = str(currentyear)

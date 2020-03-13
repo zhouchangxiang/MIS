@@ -1016,7 +1016,7 @@ def exceloutstatistic():
         EndTime = data.get("EndTime")[0:15]
         output=exportxstatistic(StartTime,EndTime)
         resp = make_response(output.getvalue())
-        resp.headers["Content-Disposition"] ="attachment; filename=各车间水电汽用量情况.xlsx"
+        resp.headers["Content-Disposition"] ="attachment; filename=consumption.xlsx"
         resp.headers['Content-Type'] = 'application/x-xlsx'
         return resp
 
@@ -1028,14 +1028,15 @@ def exportxstatistic(StartTime,EndTime):
     workbook = writer.book
     # 创建excel sheet
     worksheet = workbook.add_worksheet('sheet1')
-    # cell 样式
+
     cell_format = workbook.add_format({
+        'font_size': 18,
         'bold': 1,
         'border': 1,
         'align': 'center',
         'valign': 'vcenter',
         'fg_color': '#006633'})
-
+    worksheet.set_column('A:F', 24)
     col = 0
     row = 1
     # 写入列名
