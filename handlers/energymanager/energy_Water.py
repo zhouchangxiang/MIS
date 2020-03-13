@@ -336,7 +336,8 @@ def energyWaterSelect(data):
                         counte = counte + bat.ElectricConsumption
                 elif TimeClass == "本月":
                     currmonth = str(currentyear) + "-" + addzero(int(currentmonth))
-                    BatchMaintain
+                    db_session.query(BatchMaintain).filter(BatchMaintain.BrandName == "").all()
+
                     WaterSteamBatchMaintain
                 elif TimeClass == "本年":
                     curryear = str(currentyear)
