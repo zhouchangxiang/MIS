@@ -138,15 +138,15 @@ def energymoney(count, name):
     for pr in prices:
         if pr.PriceName == name:
             return float(count)*float(pr.PriceValue)
-def eletongji(oc, currtime, lasttime, elecount):
+def eletongji(oc, StartTime, EndTime, elecount):
     cur = \
         db_session.query(ElectricEnergy.ZGL).filter(
             ElectricEnergy.TagClassValue == oc.TagClassValue,
-            ElectricEnergy.CollectionDate.like("%"+currtime+"%")).order_by(
+            ElectricEnergy.CollectionDate.like("%"+EndTime+"%")).order_by(
             desc("CollectionDate")).first()
     las = db_session.query(ElectricEnergy.ZGL).filter(
         ElectricEnergy.TagClassValue == oc.TagClassValue,
-        ElectricEnergy.CollectionDate.like("%"+lasttime+"%")).order_by(desc("CollectionDate")).first()
+        ElectricEnergy.CollectionDate.like("%"+StartTime+"%")).order_by(("CollectionDate")).first()
     return curcutlas(cur, las, elecount, "电")
 def energyElectricSelect(data):
     if request.method == 'GET':
@@ -156,6 +156,8 @@ def energyElectricSelect(data):
             Area = data.get("Area")
             StartTime = data.get("StartTime")
             EndTime = data.get("EndTime")
+            if EndTime is None:
+                EndTime = StartTime
             elecount = 0.0
             if Area is not None and Area != "":
                 oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == "电",
@@ -166,6 +168,8 @@ def energyElectricSelect(data):
                 elecount = eletongji(oc, StartTime, EndTime, elecount)
             dir["elctric"] = elecount
             dir["type"] = "电"
+            unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "电").first()[0]
+            dir["unit"] = unit
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)

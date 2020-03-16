@@ -137,15 +137,15 @@ def energymoney(count, name):
     for pr in prices:
         if pr.PriceName == name:
             return float(count)*float(pr.PriceValue)
-def wattongji(oc, currtime, lasttime, elecount):
+def wattongji(oc, EndTime, StartTime, elecount):
     cur = \
         db_session.query(WaterEnergy.WaterSum).filter(
             WaterEnergy.TagClassValue == oc.TagClassValue,
-            WaterEnergy.CollectionDate.like("%"+currtime+"%")).order_by(
+            WaterEnergy.CollectionDate.like("%"+EndTime+"%")).order_by(
             desc("CollectionDate")).first()
     las = db_session.query(WaterEnergy.WaterSum).filter(
         WaterEnergy.TagClassValue == oc.TagClassValue,
-        WaterEnergy.CollectionDate.like("%"+lasttime+"%")).order_by(desc("CollectionDate")).first()
+        WaterEnergy.CollectionDate.like("%"+StartTime+"%")).order_by(("CollectionDate")).first()
     return curcutlas(cur, las, elecount)
 def energyWaterSelect(data):
     if request.method == 'GET':
@@ -155,6 +155,8 @@ def energyWaterSelect(data):
             Area = data.get("Area")
             StartTime = data.get("StartTime")
             EndTime = data.get("EndTime")
+            if EndTime is None:
+                EndTime = StartTime
             watcount = 0.0
             if Area is not None and Area != "":
                 oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == "水",
@@ -165,6 +167,8 @@ def energyWaterSelect(data):
                 watcount = wattongji(oc, StartTime, EndTime, watcount)
             dir["type"] = "水"
             dir["wattongji"] = wattongji
+            unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "水").first()[0]
+            dir["unit"] = unit
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)

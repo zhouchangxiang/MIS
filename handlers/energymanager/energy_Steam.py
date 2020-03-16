@@ -137,15 +137,15 @@ def energymoney(count, name):
     for pr in prices:
         if pr.PriceName == name:
             return float(count)*float(pr.PriceValue)
-def stetongji(oc, currtime, lasttime, elecount):
+def stetongji(oc, StartTime, EndTime, elecount):
     cur = \
         db_session.query(SteamEnergy.SumValue).filter(
             SteamEnergy.TagClassValue == oc.TagClassValue,
-            SteamEnergy.CollectionDate.like("%"+currtime+"%")).order_by(
+            SteamEnergy.CollectionDate.like("%"+EndTime+"%")).order_by(
             desc("CollectionDate")).first()
     las = db_session.query(SteamEnergy.SumValue).filter(
         SteamEnergy.TagClassValue == oc.TagClassValue,
-        SteamEnergy.CollectionDate.like("%"+lasttime+"%")).order_by(desc("CollectionDate")).first()
+        SteamEnergy.CollectionDate.like("%"+StartTime+"%")).order_by(("CollectionDate")).first()
     return curcutlas(cur, las, elecount, "汽")
 def energySteamSelect(data):
     if request.method == 'GET':
@@ -155,6 +155,8 @@ def energySteamSelect(data):
             Area = data.get("Area")
             StartTime = data.get("StartTime")
             EndTime = data.get("EndTime")
+            if EndTime is None:
+                EndTime = StartTime
             stecount = 0.0
             if Area is not None and Area != "":
                 oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == "汽",
@@ -165,6 +167,8 @@ def energySteamSelect(data):
                 stecount = stetongji(oc, StartTime, EndTime, stecount)
             dir["type"] = "汽"
             dir["stecount"] = stecount
+            unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽").first()[0]
+            dir["unit"] = unit
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
