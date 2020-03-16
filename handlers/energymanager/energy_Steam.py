@@ -141,11 +141,11 @@ def stetongji(oc, StartTime, EndTime, elecount):
     cur = \
         db_session.query(SteamEnergy.SumValue).filter(
             SteamEnergy.TagClassValue == oc.TagClassValue,
-            SteamEnergy.CollectionDate.like("%"+EndTime+"%")).order_by(
+            SteamEnergy.CollectionDate.like("%"+EndTime+"%"), SteamEnergy.SumValue != "0.0", SteamEnergy.SumValue != "", SteamEnergy.SumValue != None).order_by(
             desc("CollectionDate")).first()
     las = db_session.query(SteamEnergy.SumValue).filter(
         SteamEnergy.TagClassValue == oc.TagClassValue,
-        SteamEnergy.CollectionDate.like("%"+StartTime+"%")).order_by(("CollectionDate")).first()
+        SteamEnergy.CollectionDate.like("%"+StartTime+"%"), SteamEnergy.SumValue != "0.0", SteamEnergy.SumValue != "", SteamEnergy.SumValue != None).order_by(("CollectionDate")).first()
     return curcutlas(cur, las, elecount, "汽")
 def energySteamSelect(data):
     if request.method == 'GET':

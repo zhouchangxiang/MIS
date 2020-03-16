@@ -141,11 +141,11 @@ def wattongji(oc, EndTime, StartTime, elecount):
     cur = \
         db_session.query(WaterEnergy.WaterSum).filter(
             WaterEnergy.TagClassValue == oc.TagClassValue,
-            WaterEnergy.CollectionDate.like("%"+EndTime+"%")).order_by(
+            WaterEnergy.CollectionDate.like("%"+EndTime+"%"), WaterEnergy.WaterSum != "0.0", WaterEnergy.WaterSum != "", WaterEnergy.WaterSum != None).order_by(
             desc("CollectionDate")).first()
     las = db_session.query(WaterEnergy.WaterSum).filter(
         WaterEnergy.TagClassValue == oc.TagClassValue,
-        WaterEnergy.CollectionDate.like("%"+StartTime+"%")).order_by(("CollectionDate")).first()
+        WaterEnergy.CollectionDate.like("%"+StartTime+"%"), WaterEnergy.WaterSum != "0.0", WaterEnergy.WaterSum != "", WaterEnergy.WaterSum != None).order_by(("CollectionDate")).first()
     return curcutlas(cur, las, elecount)
 def energyWaterSelect(data):
     if request.method == 'GET':
