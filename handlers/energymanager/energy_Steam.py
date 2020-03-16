@@ -163,6 +163,7 @@ def energySteamSelect(data):
                 oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == "汽").all()
             for oc in oclass:
                 stecount = stetongji(oc, StartTime, EndTime, stecount)
+            dir["type"] = "汽"
             dir["stecount"] = stecount
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:

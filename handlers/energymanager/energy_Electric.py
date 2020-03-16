@@ -165,6 +165,7 @@ def energyElectricSelect(data):
             for oc in oclass:
                 elecount = eletongji(oc, StartTime, EndTime, elecount)
             dir["elctric"] = elecount
+            dir["type"] = "电"
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)

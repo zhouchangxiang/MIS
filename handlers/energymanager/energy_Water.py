@@ -163,6 +163,7 @@ def energyWaterSelect(data):
                 oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == "水").all()
             for oc in oclass:
                 watcount = wattongji(oc, StartTime, EndTime, watcount)
+            dir["type"] = "水"
             dir["wattongji"] = wattongji
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
