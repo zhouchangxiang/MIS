@@ -13,7 +13,7 @@
             <el-row :gutter="10">
               <el-col :span="7" style="white-space:nowrap;">
                 <ul class="card-body-ul">
-                  <li><span class="text-size-large text-color-info">本日耗{{ previewEnergyValue }}量</span><span class="text-size-mini text-color-info-shallow">（截止12：00）</span></li>
+                  <li><span class="text-size-large text-color-info">本日耗{{ previewEnergyValue }}量</span><span class="text-size-mini text-color-info-shallow">（截止{{ nowTime }}）</span></li>
                   <li class="text-size-big text-color-warning">{{ todayCon }}<span class="text-size-normol">{{ unit }}</span></li>
                   <li><span class="text-size-mini text-color-info-shallow">对比</span>
                     <el-date-picker v-model="CompareDate" align="right" type="date" placeholder="选择日期" :picker-options="pickerOptions" @change="getEnergyPreview" :clearable="false" size="mini" style="width: 130px"></el-date-picker>
@@ -24,7 +24,7 @@
               </el-col>
               <el-col :span="9" style="white-space:nowrap;">
                 <ul class="card-body-ul float-left">
-                  <li><span class="text-size-large text-color-info">本月耗{{ previewEnergyValue }}量</span></li>
+                  <li><span class="text-size-large text-color-info">本月耗{{ previewEnergyValue }}量<span class="text-size-mini text-color-info-shallow">（截止{{ nowDate }}）</span></span></li>
                   <li class="text-size-big text-color-warning">{{ thisMonthCon }}<span class="text-size-normol">{{ unit }}</span></li>
                   <li style="margin-top: 15px;">
                     <span class="text-size-mini text-color-info-shallow">上月同期</span>
@@ -305,6 +305,8 @@
             }
           }]
         },
+        nowTime:"", //当前时间整分
+        nowDate:"", //当前日时间整分
         CompareDate:Date.now() - 3600 * 1000 * 24, //默认对比日期
         unit:"", //当前数据单位
         todayCon:"", //本日能耗量
@@ -404,29 +406,35 @@
         }else if(this.previewEnergyValue == "汽"){
           api = "/api/energysteam"
         }
-        var today = moment(this.CompareDate).format('YYYY-MM-DD')
-        var compareDate = moment(this.compareDateCon).format('YYYY-MM-DD')
-        var thisStartMonth = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD')
-        var thisEndMonth = moment().month(moment().month()).endOf('month').format('YYYY-MM-DD')
-        var lastStartMonth = moment().month(moment().month() - 1).startOf('month').format('YYYY-MM-DD')
-        var lastEndMonth = moment().month(moment().month() - 1).endOf('month').format('YYYY-MM-DD')
+        var nowTime = moment().format('HH:mm').substring(0,4) + "0"
+        var nowDate = moment().format('MM-DD') + " " + nowTime
+        var thisDate = moment().format('DD')
+        var thisMonth = moment().format('MM-DD')
+        var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
+        var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
+        var compareDateStartTime = moment(this.CompareDate).format('YYYY-MM-DD') + " 00:00"
+        var compareDateEndTime = moment(this.CompareDate).format('YYYY-MM-DD') + " " + nowTime
+        var thisStartMonth = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm')
+        var lastStartMonth = moment().month(moment().month() - 1).startOf('month').format('YYYY-MM-DD HH:mm')
+        var lastEndMonth = moment().month(moment().month() - 1).endOf('month').format('YYYY-MM-DD').substring(0,7) + "-" + thisDate + " " + nowTime
         var thisStartYear = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD')
-        var thisEndYear = moment().year(moment().year()).endOf('year').format('YYYY-MM-DD')
-        var lastStartYear = moment().year(moment().year() - 1).startOf('year').format('YYYY-MM-DD')
-        var lastEndYear = moment().year(moment().year() - 1).endOf('year').format('YYYY-MM-DD')
+        var lastStartYear = moment().year(moment().year() - 1).startOf('year').format('YYYY-MM-DD HH:mm')
+        var lastEndYear = moment().year(moment().year() - 1).endOf('year').format('YYYY-MM-DD').substring(0,4) + "-" + thisMonth + " " + nowTime
+        this.nowTime = nowTime
+        this.nowDate = nowDate
         //获取当天能耗
-        this.axios.get(api,{params: {StartTime: today}}).then(res => {
+        this.axios.get(api,{params: {StartTime: todayStartTime,EndTime:todayEndTime}}).then(res => {
           var data = JSON.parse(res.data)
           this.todayCon = data.elctric
           this.unit = data.unit
         })
         //获取选择天能耗
-        this.axios.get(api,{params: {StartTime: compareDate}}).then(res => {
+        this.axios.get(api,{params: {StartTime: compareDateStartTime,EndTime:compareDateEndTime}}).then(res => {
           var data = JSON.parse(res.data)
           this.compareDateCon = data.elctric
         })
         //获取当月能耗
-        this.axios.get(api,{params: {StartTime: thisStartMonth,EndTime:thisEndMonth}}).then(res => {
+        this.axios.get(api,{params: {StartTime: thisStartMonth,EndTime:todayEndTime}}).then(res => {
           var data = JSON.parse(res.data)
           this.thisMonthCon = data.elctric
         })
@@ -436,7 +444,7 @@
           this.lastMonthCon = data.elctric
         })
         //获取当年能耗
-        this.axios.get(api,{params: {StartTime: thisStartYear,EndTime:thisEndYear}}).then(res => {
+        this.axios.get(api,{params: {StartTime: thisStartYear,EndTime:todayEndTime}}).then(res => {
           var data = JSON.parse(res.data)
           this.thisYearCon = data.elctric
         })
@@ -447,15 +455,15 @@
         })
       },
       getAreaTime() {
-        this.axios.get('/api/areaTimeEnergy',{
-          params: {
-              energyType: this.areaTimeEnergyValue,
-          }
-        }).then(function (response) {
-            console.log(response);
-        }).catch(function (error) {
-            console.log(error);
-        });
+        // this.axios.get('/api/areaTimeEnergy',{
+        //   params: {
+        //       energyType: this.areaTimeEnergyValue,
+        //   }
+        // }).then(function (response) {
+        //     console.log(response);
+        // }).catch(function (error) {
+        //     console.log(error);
+        // });
       },
       openSystemCheckupDialog(){ //打开系统体检
         this.systemCheckupDialogVisible = true
