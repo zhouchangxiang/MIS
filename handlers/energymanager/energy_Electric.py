@@ -142,11 +142,11 @@ def eletongji(oc, StartTime, EndTime, elecount):
     cur = \
         db_session.query(ElectricEnergy.ZGL).filter(
             ElectricEnergy.TagClassValue == oc.TagClassValue,
-            ElectricEnergy.CollectionDate.like("%"+EndTime+"%")).order_by(
+            ElectricEnergy.CollectionDate.like("%"+EndTime+"%"), ElectricEnergy.ZGL != "0.0", ElectricEnergy.ZGL != "", ElectricEnergy.ZGL != None).order_by(
             desc("CollectionDate")).first()
     las = db_session.query(ElectricEnergy.ZGL).filter(
         ElectricEnergy.TagClassValue == oc.TagClassValue,
-        ElectricEnergy.CollectionDate.like("%"+StartTime+"%")).order_by(("CollectionDate")).first()
+        ElectricEnergy.CollectionDate.like("%"+StartTime+"%"), ElectricEnergy.ZGL != "0.0", ElectricEnergy.ZGL != "", ElectricEnergy.ZGL != None).order_by(("CollectionDate")).first()
     return curcutlas(cur, las, elecount, "电")
 def energyElectricSelect(data):
     if request.method == 'GET':
@@ -158,6 +158,8 @@ def energyElectricSelect(data):
             EndTime = data.get("EndTime")
             if EndTime is None:
                 EndTime = StartTime
+            StartTime = data.get("StartTime")[0:15]
+            EndTime = data.get("EndTime")[0:15]
             elecount = 0.0
             if Area is not None and Area != "":
                 oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == "电",

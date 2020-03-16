@@ -165,36 +165,36 @@ def energymoney(count, name):
     for pr in prices:
         if pr.PriceName == name:
             return float(count)*float(pr.PriceValue)
-def eletongji(oc, currtime, lasttime, elecount):
+def eletongji(oc, StartTime, EndTime, elecount):
     cur = \
         db_session.query(ElectricEnergy.ZGL).filter(
             ElectricEnergy.TagClassValue == oc.TagClassValue,
-            ElectricEnergy.CollectionDate.like("%"+currtime+"%"), ElectricEnergy.ZGL != "0.0", ElectricEnergy.ZGL != "", ElectricEnergy.ZGL != None).order_by(
+            ElectricEnergy.CollectionDate.like("%"+EndTime+"%"), ElectricEnergy.ZGL != "0.0", ElectricEnergy.ZGL != "", ElectricEnergy.ZGL != None).order_by(
             desc("CollectionDate")).first()
     las = db_session.query(ElectricEnergy.ZGL).filter(
         ElectricEnergy.TagClassValue == oc.TagClassValue,
-        ElectricEnergy.CollectionDate.like("%"+lasttime+"%"), ElectricEnergy.ZGL != "0.0", ElectricEnergy.ZGL != "", ElectricEnergy.ZGL != None).order_by(desc("CollectionDate")).first()
+        ElectricEnergy.CollectionDate.like("%"+StartTime+"%"), ElectricEnergy.ZGL != "0.0", ElectricEnergy.ZGL != "", ElectricEnergy.ZGL != None).order_by(("CollectionDate")).first()
     return curcutlas(cur, las, elecount, "电")
 
-def wattongji(oc, currtime, lasttime, elecount):
+def wattongji(oc, StartTime, EndTime, elecount):
     cur = \
         db_session.query(WaterEnergy.WaterSum).filter(
             WaterEnergy.TagClassValue == oc.TagClassValue,
-            WaterEnergy.CollectionDate.like("%"+currtime+"%"), WaterEnergy.WaterSum != "0.0", WaterEnergy.WaterSum != "", WaterEnergy.WaterSum != None).order_by(
+            WaterEnergy.CollectionDate.like("%"+EndTime+"%"), WaterEnergy.WaterSum != "0.0", WaterEnergy.WaterSum != "", WaterEnergy.WaterSum != None).order_by(
             desc("CollectionDate")).first()
     las = db_session.query(WaterEnergy.WaterSum).filter(
         WaterEnergy.TagClassValue == oc.TagClassValue,
-        WaterEnergy.CollectionDate.like("%"+lasttime+"%"), WaterEnergy.WaterSum != "0.0", WaterEnergy.WaterSum != "", WaterEnergy.WaterSum != None).order_by(desc("CollectionDate")).first()
+        WaterEnergy.CollectionDate.like("%"+StartTime+"%"), WaterEnergy.WaterSum != "0.0", WaterEnergy.WaterSum != "", WaterEnergy.WaterSum != None).order_by(("CollectionDate")).first()
     return curcutlas(cur, las, elecount, "水")
-def stetongji(oc, currtime, lasttime, elecount):
+def stetongji(oc, StartTime, EndTime, elecount):
     cur = \
         db_session.query(SteamEnergy.SumValue).filter(
             SteamEnergy.TagClassValue == oc.TagClassValue,
-            SteamEnergy.CollectionDate.like("%"+currtime+"%"), SteamEnergy.SumValue != "0.0", SteamEnergy.SumValue != "", SteamEnergy.SumValue != None).order_by(
+            SteamEnergy.CollectionDate.like("%"+EndTime+"%"), SteamEnergy.SumValue != "0.0", SteamEnergy.SumValue != "", SteamEnergy.SumValue != None).order_by(
             desc("CollectionDate")).first()
     las = db_session.query(SteamEnergy.SumValue).filter(
         SteamEnergy.TagClassValue == oc.TagClassValue,
-        SteamEnergy.CollectionDate.like("%"+lasttime+"%"), SteamEnergy.SumValue != "0.0", SteamEnergy.SumValue != "", SteamEnergy.SumValue != None).order_by(desc("CollectionDate")).first()
+        SteamEnergy.CollectionDate.like("%"+StartTime+"%"), SteamEnergy.SumValue != "0.0", SteamEnergy.SumValue != "", SteamEnergy.SumValue != None).order_by(("CollectionDate")).first()
     return curcutlas(cur, las, elecount, "汽")
 def energyselect(data):
     if request.method == 'GET':
@@ -1053,11 +1053,11 @@ def exportxstatistic(StartTime,EndTime):
         for oc in oclass:
             Tag = oc.TagClassValue[0:1]
             if Tag == "E":
-                elecount = eletongji(oc, EndTime, StartTime, elecount)
+                elecount = eletongji(oc, StartTime, EndTime, elecount)
             elif Tag == "W":
-                watcount = wattongji(oc, EndTime, StartTime, watcount)
+                watcount = wattongji(oc, StartTime, EndTime, watcount)
             elif Tag == "S":
-                stecount = stetongji(oc, EndTime, StartTime, stecount)
+                stecount = stetongji(oc, StartTime, EndTime, stecount)
         for cum in columns:
             if cum == '区域':
                 worksheet.write(i+1, columns.index(cum), AreaNames[i].AreaName)
