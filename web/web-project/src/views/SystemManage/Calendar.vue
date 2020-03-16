@@ -11,8 +11,9 @@
                     @dateClick="handleDateClick"
                     @eventClick="handleEventClick"
                     @eventDrop="handleEventDrop"
+                    @eventResize="handleEventResize"
       />
-      <el-dialog title="添加日程" :visible.sync="dialogTableVisible">
+      <el-dialog title="添加日程" :visible.sync="dialogTableVisible" width="30%">
         <el-radio-group v-model="team" size="small">
           <el-radio-button v-for="(item,index) in teamList" :label="item.label" :value="item.value" :key="index"></el-radio-button>
         </el-radio-group>
@@ -87,9 +88,8 @@
         this.dialogTableVisible = true
       },
       handleEventClick(e) {  //点击日程删除
-        console.log(e)
         var ID = {
-          id:e.event._def.extendedProps.ID
+          id:e.event.extendedProps.ID
         }
         this.$confirm('此操作将永久删除该日程, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -119,10 +119,10 @@
           });
         });
       },
-      handleEventDrop(e){
+      handleEventDrop(e){   //拖动日程
         var newDate = e.event.start
         var oldDate = e.oldEvent.start
-        console.log(newDate,oldDate)
+        console.log(e,newDate,oldDate)
       },
       addSave(){
         var params = {
@@ -148,6 +148,9 @@
         },res =>{
           console.log("请求错误")
         })
+      },
+      handleEventResize(event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view){  //拖动改变日程长度
+        console.log(event)
       }
     }
   }

@@ -13,40 +13,39 @@
             <el-row :gutter="10">
               <el-col :span="7" style="white-space:nowrap;">
                 <ul class="card-body-ul">
-                  <li><span class="text-size-large text-color-info">本日耗电量</span><span class="text-size-mini text-color-info-shallow">（截止12：00）</span></li>
-                  <li class="text-size-big text-color-warning">{{ todayCon }}</li>
+                  <li><span class="text-size-large text-color-info">本日耗{{ previewEnergyValue }}量</span><span class="text-size-mini text-color-info-shallow">（截止12：00）</span></li>
+                  <li class="text-size-big text-color-warning">{{ todayCon }}<span class="text-size-normol">{{ unit }}</span></li>
                   <li><span class="text-size-mini text-color-info-shallow">对比</span>
                     <el-date-picker v-model="CompareDate" align="right" type="date" placeholder="选择日期" :picker-options="pickerOptions" @change="getEnergyPreview" :clearable="false" size="mini" style="width: 130px"></el-date-picker>
                   </li>
-                  <li><span class="text-size-small text-color-primary">{{ compareDateCon }}</span>
+                  <li><span class="text-size-small text-color-primary">{{ compareDateCon }}{{ unit }}</span>
                     <span class="text-size-mini text-color-danger" style="margin-left: 20px;">{{ comparePer }}</span></li>
                 </ul>
               </el-col>
               <el-col :span="9" style="white-space:nowrap;">
-                <ul class="card-body-ul" style="display: inline-block;">
-                  <li><span class="text-size-large text-color-info">本月耗电量</span></li>
-                  <li class="text-size-big text-color-warning">{{ thisMonthCon }}</li>
+                <ul class="card-body-ul float-left">
+                  <li><span class="text-size-large text-color-info">本月耗{{ previewEnergyValue }}量</span></li>
+                  <li class="text-size-big text-color-warning">{{ thisMonthCon }}<span class="text-size-normol">{{ unit }}</span></li>
                   <li style="margin-top: 15px;">
                     <span class="text-size-mini text-color-info-shallow">上月同期</span>
-                    <span class="text-size-mini text-color-info">{{ lastMonthCon }}</span>
+                    <span class="text-size-mini text-color-info">{{ lastMonthCon }}{{ unit }}</span>
                   </li>
                   <li>
                     <span class="text-size-mini text-color-info-shallow">上月同期</span>
                     <span class="text-size-mini text-color-success">{{ lastMonthCompare }}</span>
                   </li>
                 </ul>
-                <ve-line :data="contrastMonthChartData" :settings="contrastMonthChartSettings" :extend="contrastMonthChartExtend" width="120px" height="100px" :legend-visible="false" style="display: inline-block;"></ve-line>
+                <ve-line class="float-left" :data="contrastMonthChartData" :settings="contrastMonthChartSettings" :extend="contrastMonthChartExtend" width="120px" height="100px" :legend-visible="false"></ve-line>
               </el-col>
               <el-col :span="8" style="white-space:nowrap;">
                 <ul class="card-body-ul">
                   <li>
-                    <span class="text-size-large text-color-info">年累计耗电量</span>
-                    <span class="text-size-mini text-color-warning">kwh</span>
+                    <span class="text-size-large text-color-info">年累计耗{{ previewEnergyValue }}量</span>
                   </li>
-                  <li class="text-size-big text-color-warning">{{ thisYearCon }}</li>
+                  <li class="text-size-big text-color-warning">{{ thisYearCon }}<span class="text-size-normol">{{ unit }}</span></li>
                   <li style="margin-top: 15px;">
                     <span class="text-size-mini text-color-info-shallow">上年同期</span>
-                    <span class="text-size-mini text-color-info">{{ lastYearCon }}</span>
+                    <span class="text-size-mini text-color-info">{{ lastYearCon }}{{ unit }}</span>
                     <span style="margin-left: 20px;" class="text-size-mini text-color-danger">{{ lastYearCompare }}</span>
                   </li>
                 </ul>
@@ -307,9 +306,9 @@
           }]
         },
         CompareDate:Date.now() - 3600 * 1000 * 24, //默认对比日期
+        unit:"", //当前数据单位
         todayCon:"", //本日能耗量
         compareDateCon:"", //选择日期的能耗
-        comparePer:"", //对比今天能耗的百分比
         comparePerState:"", //对比今天能耗上升/下降
         thisMonthCon:"", //本月能耗量
         lastMonthCon:"", //上月同期能耗量
@@ -386,8 +385,14 @@
       this.getEnergyPreview()
       this.getAreaTime()
     },
-    mounted(){
-
+    computed:{ //计算属性
+      comparePer(){
+        if(this.todayCon > 0){
+          return ((this.todayCon - this.compareDateCon) / this.todayCon).toFixed(4) * 100 + "%"
+        }else{
+          return 0
+        }
+      }
     },
     methods: {
       getEnergyPreview() {  //获取能耗预览内的数据
@@ -399,31 +404,47 @@
         }else if(this.previewEnergyValue == "汽"){
           api = "/api/energysteam"
         }
-        this.axios.get(api,{
-          params: {
-            ModelFlag:"能耗预览",
-            compareDate: moment(this.CompareDate).format('YYYY-MM-DD')
-          }
-        }).then(res => {
-          console.log(res);
-          var data = res.data
-          //this.todayCon = data.
-          this.compareDateCon = data.compareDateCon
-          this.comparePerState = data.comparePerState
-          this.comparePer = data.comparePer
-          this.thisMonthCon = data.thisMonthCon
-          this.lastMonthCon = data.lastMonthCon
-          this.lastMonthCompare = data.lastMonthCompare
-          this.lastMonthCompareState = data.lastMonthCompareState
-          this.contrastMonthChartData.rows = data.lastMonthRow
-          this.realtimeChartData.rows = data.compareTodayRow
-          this.thisYearCon = data.thisYearCon
-          this.lastYearCon = data.lastYearCon
-          this.lastYearCompare = data.lastYearCompare
-          this.lastYearCompareState = data.lastYearCompareState
-        }).catch(function (error) {
-          console.log(error);
-        });
+        var today = moment(this.CompareDate).format('YYYY-MM-DD')
+        var compareDate = moment(this.compareDateCon).format('YYYY-MM-DD')
+        var thisStartMonth = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD')
+        var thisEndMonth = moment().month(moment().month()).endOf('month').format('YYYY-MM-DD')
+        var lastStartMonth = moment().month(moment().month() - 1).startOf('month').format('YYYY-MM-DD')
+        var lastEndMonth = moment().month(moment().month() - 1).endOf('month').format('YYYY-MM-DD')
+        var thisStartYear = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD')
+        var thisEndYear = moment().year(moment().year()).endOf('year').format('YYYY-MM-DD')
+        var lastStartYear = moment().year(moment().year() - 1).startOf('year').format('YYYY-MM-DD')
+        var lastEndYear = moment().year(moment().year() - 1).endOf('year').format('YYYY-MM-DD')
+        //获取当天能耗
+        this.axios.get(api,{params: {StartTime: today}}).then(res => {
+          var data = JSON.parse(res.data)
+          this.todayCon = data.elctric
+          this.unit = data.unit
+        })
+        //获取选择天能耗
+        this.axios.get(api,{params: {StartTime: compareDate}}).then(res => {
+          var data = JSON.parse(res.data)
+          this.compareDateCon = data.elctric
+        })
+        //获取当月能耗
+        this.axios.get(api,{params: {StartTime: thisStartMonth,EndTime:thisEndMonth}}).then(res => {
+          var data = JSON.parse(res.data)
+          this.thisMonthCon = data.elctric
+        })
+        //获取上月能耗
+        this.axios.get(api,{params: {StartTime: lastStartMonth,EndTime:lastEndMonth}}).then(res => {
+          var data = JSON.parse(res.data)
+          this.lastMonthCon = data.elctric
+        })
+        //获取当年能耗
+        this.axios.get(api,{params: {StartTime: thisStartYear,EndTime:thisEndYear}}).then(res => {
+          var data = JSON.parse(res.data)
+          this.thisYearCon = data.elctric
+        })
+        //获取上一年能耗
+        this.axios.get(api,{params: {StartTime: lastStartYear,EndTime:lastEndYear}}).then(res => {
+          var data = JSON.parse(res.data)
+          this.lastYearCon = data.elctric
+        })
       },
       getAreaTime() {
         this.axios.get('/api/areaTimeEnergy',{
