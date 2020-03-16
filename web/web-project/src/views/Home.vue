@@ -19,7 +19,7 @@
                     <el-date-picker v-model="CompareDate" align="right" type="date" placeholder="选择日期" :picker-options="pickerOptions" @change="getEnergyPreview" :clearable="false" size="mini" style="width: 130px"></el-date-picker>
                   </li>
                   <li><span class="text-size-small text-color-primary">{{ compareDateCon }}</span>
-                    <span class="text-size-mini text-color-danger" style="margin-left: 20px;">{{ comparePer }}<i class="el-icon-top"></i></span></li>
+                    <span class="text-size-mini text-color-danger" style="margin-left: 20px;">{{ comparePer }}</span></li>
                 </ul>
               </el-col>
               <el-col :span="9" style="white-space:nowrap;">
@@ -32,7 +32,7 @@
                   </li>
                   <li>
                     <span class="text-size-mini text-color-info-shallow">上月同期</span>
-                    <span class="text-size-mini text-color-success">{{ lastMonthCompare }}<i class="el-icon-bottom"></i></span>
+                    <span class="text-size-mini text-color-success">{{ lastMonthCompare }}</span>
                   </li>
                 </ul>
                 <ve-line :data="contrastMonthChartData" :settings="contrastMonthChartSettings" :extend="contrastMonthChartExtend" width="120px" height="100px" :legend-visible="false" style="display: inline-block;"></ve-line>
@@ -47,7 +47,7 @@
                   <li style="margin-top: 15px;">
                     <span class="text-size-mini text-color-info-shallow">上年同期</span>
                     <span class="text-size-mini text-color-info">{{ lastYearCon }}</span>
-                    <span style="margin-left: 20px;" class="text-size-mini text-color-danger">{{ lastYearCompare }}<i class="el-icon-top"></i></span>
+                    <span style="margin-left: 20px;" class="text-size-mini text-color-danger">{{ lastYearCompare }}</span>
                   </li>
                 </ul>
               </el-col>
@@ -391,9 +391,17 @@
     },
     methods: {
       getEnergyPreview() {  //获取能耗预览内的数据
-        this.axios.get('/api/energyPreview',{
+        var api = ""
+        if(this.previewEnergyValue == "电"){
+          api = "/api/energyelectric"
+        }else if(this.previewEnergyValue == "水"){
+          api = "/api/energywater"
+        }else if(this.previewEnergyValue == "汽"){
+          api = "/api/energysteam"
+        }
+        this.axios.get(api,{
           params: {
-            energyType: this.previewEnergyValue,
+            ModelFlag:"能耗预览",
             compareDate: moment(this.CompareDate).format('YYYY-MM-DD')
           }
         }).then(res => {

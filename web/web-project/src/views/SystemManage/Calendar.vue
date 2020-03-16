@@ -96,7 +96,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.axios.get("/api/CUID",{
+          this.axios.delete("/api/CUID",{
             params: {
               tableName: "plantCalendarScheduling",
               delete_data:JSON.stringify(ID),
