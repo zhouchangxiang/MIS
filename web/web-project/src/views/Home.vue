@@ -13,40 +13,52 @@
             <el-row :gutter="10">
               <el-col :span="7" style="white-space:nowrap;">
                 <ul class="card-body-ul">
-                  <li><span class="text-size-large text-color-info">本日耗{{ previewEnergyValue }}量</span><span class="text-size-mini text-color-info-shallow">（截止{{ nowTime }}）</span></li>
-                  <li class="text-size-big text-color-warning">{{ todayCon }}<span class="text-size-normol">{{ unit }}</span></li>
+                  <li><span class="text-size-large text-color-info">本日耗{{ previewEnergyValue }}量</span>
+                    <span class="text-size-mini text-color-info-shallow">（截止{{ nowTime }}）</span>
+                    <span class="text-size-normol text-color-warning">{{ unit }}</span></li>
+                  <li class="text-size-big text-color-warning">{{ todayCon }}</li>
                   <li><span class="text-size-mini text-color-info-shallow">对比</span>
                     <el-date-picker v-model="CompareDate" align="right" type="date" placeholder="选择日期" :picker-options="pickerOptions" @change="getEnergyPreview" :clearable="false" size="mini" style="width: 130px"></el-date-picker>
                   </li>
-                  <li><span class="text-size-small text-color-primary">{{ compareDateCon }}{{ unit }}</span>
-                    <span class="text-size-mini text-color-danger" style="margin-left: 20px;">{{ comparePer }}</span></li>
+                  <li><span class="text-size-small text-color-primary">{{ compareDateCon }}</span>
+                    <span class="text-size-mini" :class="todayCon-compareDateCon>0?'text-color-danger':'text-color-success'" style="margin-left: 20px;">{{ comparePer }}</span></li>
                 </ul>
               </el-col>
               <el-col :span="9" style="white-space:nowrap;">
-                <ul class="card-body-ul float-left">
-                  <li><span class="text-size-large text-color-info">本月耗{{ previewEnergyValue }}量<span class="text-size-mini text-color-info-shallow">（截止{{ nowDate }}）</span></span></li>
-                  <li class="text-size-big text-color-warning">{{ thisMonthCon }}<span class="text-size-normol">{{ unit }}</span></li>
-                  <li style="margin-top: 15px;">
-                    <span class="text-size-mini text-color-info-shallow">上月同期</span>
-                    <span class="text-size-mini text-color-info">{{ lastMonthCon }}{{ unit }}</span>
-                  </li>
-                  <li>
-                    <span class="text-size-mini text-color-info-shallow">上月同期</span>
-                    <span class="text-size-mini text-color-success">{{ lastMonthCompare }}</span>
-                  </li>
-                </ul>
-                <ve-line class="float-left" :data="contrastMonthChartData" :settings="contrastMonthChartSettings" :extend="contrastMonthChartExtend" width="120px" height="100px" :legend-visible="false"></ve-line>
+                <el-col :span="24">
+                  <span class="text-size-large text-color-info">本月耗{{ previewEnergyValue }}量</span>
+                  <span class="text-size-mini text-color-info-shallow">（截止{{ nowDate }}）</span>
+                  <span class="text-size-normol text-color-warning">{{ unit }}</span>
+                </el-col>
+                <el-col :span="12">
+                  <ul class="card-body-ul">
+                    <li></li>
+                    <li class="text-size-big text-color-warning">{{ thisMonthCon }}</li>
+                    <li style="margin-top: 15px;">
+                      <span class="text-size-mini text-color-info-shallow">上月同期</span>
+                      <span class="text-size-mini text-color-info">{{ lastMonthCon }}</span>
+                    </li>
+                    <li>
+                      <span class="text-size-mini text-color-info-shallow">上月同期</span>
+                      <span class="text-size-mini" :class="thisMonthCon-lastMonthCon>0?'text-color-danger':'text-color-success'">{{ lastMonthCompare }}</span>
+                    </li>
+                  </ul>
+                </el-col>
+                <el-col :span="12">
+                  <ve-line :data="contrastMonthChartData" :settings="contrastMonthChartSettings" :extend="contrastMonthChartExtend" width="120px" height="100px" :legend-visible="false"></ve-line>
+                </el-col>
               </el-col>
               <el-col :span="8" style="white-space:nowrap;">
                 <ul class="card-body-ul">
                   <li>
                     <span class="text-size-large text-color-info">年累计耗{{ previewEnergyValue }}量</span>
+                    <span class="text-size-normol text-color-warning">{{ unit }}</span>
                   </li>
-                  <li class="text-size-big text-color-warning">{{ thisYearCon }}<span class="text-size-normol">{{ unit }}</span></li>
+                  <li class="text-size-big text-color-warning">{{ thisYearCon }}</li>
                   <li style="margin-top: 15px;">
                     <span class="text-size-mini text-color-info-shallow">上年同期</span>
-                    <span class="text-size-mini text-color-info">{{ lastYearCon }}{{ unit }}</span>
-                    <span style="margin-left: 20px;" class="text-size-mini text-color-danger">{{ lastYearCompare }}</span>
+                    <span class="text-size-mini text-color-info">{{ lastYearCon }}</span>
+                    <span style="margin-left: 20px;" class="text-size-mini" :class="thisYearCon-lastYearCon>0?'text-color-danger':'text-color-success'">{{ lastYearCompare }}</span>
                   </li>
                 </ul>
               </el-col>
@@ -311,11 +323,8 @@
         unit:"", //当前数据单位
         todayCon:"", //本日能耗量
         compareDateCon:"", //选择日期的能耗
-        comparePerState:"", //对比今天能耗上升/下降
         thisMonthCon:"", //本月能耗量
         lastMonthCon:"", //上月同期能耗量
-        lastMonthCompare:"", //上月同期百分比
-        lastMonthCompareState:"", //上月同期上升还是下降
         contrastMonthChartData:{
           columns: ['时间', '上月能耗', '本月能耗'],
           rows:[]
@@ -326,8 +335,6 @@
         },
         thisYearCon: "", //年能耗量
         lastYearCon: "", //上年同期能耗
-        lastYearCompare: "", //上年同期百分比
-        lastYearCompareState: "", //上年同期上升/下降
         colorBarOption:[
           {name: "新建综合制剂楼", value0: 2342,value4: 4234,value8: 2232,value12: 235,value16: 2042,value20: 264, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'},
           {name: "提取二车间", value0: 2342,value4: 2342,value8: 2342,value12: 2342,value16: 2342,value20: 2342, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'},
@@ -390,9 +397,38 @@
     computed:{ //计算属性
       comparePer(){
         if(this.todayCon > 0){
-          return ((this.todayCon - this.compareDateCon) / this.todayCon).toFixed(4) * 100 + "%"
+          var compare = (this.todayCon - this.compareDateCon) / this.todayCon * 100
+          if(this.todayCon - this.compareDateCon > 0){
+            return "+" + compare.toFixed(2) + "%"
+          }else{
+            return compare.toFixed(2) + "%"
+          }
         }else{
-          return 0
+          return 0 + "%"
+        }
+      },
+      lastMonthCompare(){
+        if(this.thisMonthCon > 0){
+          var compare = (this.thisMonthCon - this.lastMonthCon) / this.thisMonthCon * 100
+          if(this.thisMonthCon - this.lastMonthCon > 0){
+            return "+" + compare.toFixed(2) + "%"
+          }else{
+            return compare.toFixed(2) + "%"
+          }
+        }else{
+          return 0 + "%"
+        }
+      },
+      lastYearCompare(){
+        if(this.thisYearCon > 0){
+          var compare = (this.thisYearCon - this.lastYearCon) / this.thisYearCon * 100
+          if(this.thisYearCon - this.lastYearCon > 0){
+            return "+" + compare.toFixed(2) + "%"
+          }else{
+            return compare.toFixed(2) + "%"
+          }
+        }else{
+          return 0 + "%"
         }
       }
     },

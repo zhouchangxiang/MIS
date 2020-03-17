@@ -22,7 +22,7 @@
             </el-form-item>
           </el-form>
         </div>
-        <div class="login-form-submit" @click="submitForm('ruleForm')">登录</div>
+        <div class="login-form-submit" :class="isSubLoadding?'submitLoadding':''" @click="submitForm('ruleForm')">登录</div>
       </div>
     </div>
   </el-container>
@@ -47,7 +47,8 @@
           password:[
             {required: true, message: '请输入密码', trigger: 'blur'}
           ]
-        }
+        },
+        isSubLoadding:false,
       }
     },
     mounted(){
@@ -61,31 +62,37 @@
         };
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.axios.post('/api/account/userloginauthentication',this.qs.stringify(params)).then(res =>{
-              if(res.data == "OK"){
-                this.$message({
-                  message: "登录成功",
-                  type: 'success'
-                });
-                var that = this;
-                setTimeout(function(){
-                  that.$router.push("/")
-                },1000)
-                this.$store.commit('setUser',this.loginForm.WorkNumber);
-                if(this.loginForm.rememb){
-                  this.setCookie(this.loginForm.WorkNumber,this.loginForm.password,this.loginForm.rememb,7)
+            if(this.isSubLoadding == false){
+              this.isSubLoadding = true
+              this.axios.post('/api/account/userloginauthentication',this.qs.stringify(params)).then(res =>{
+                if(res.data == "OK"){
+                  this.$message({
+                    message: "登录成功",
+                    type: 'success'
+                  });
+                  var that = this;
+                  this.isSubLoadding = true
+                  setTimeout(function(){
+                    that.$router.push("/")
+                  },1000)
+                  this.$store.commit('setUser',this.loginForm.WorkNumber);
+                  if(this.loginForm.rememb){
+                    this.setCookie(this.loginForm.WorkNumber,this.loginForm.password,this.loginForm.rememb,7)
+                  }else{
+                    this.clearCookie()
+                  }
                 }else{
-                  this.clearCookie()
+                  this.$message({
+                    type: 'info',
+                    message: res.data
+                  });
+                  this.isSubLoadding = true
                 }
-              }else{
-                this.$message({
-                  type: 'info',
-                  message: res.data
-                });
-              }
-            },res =>{
-              console.log("请求错误")
-            })
+              },res =>{
+                console.log("请求错误")
+                this.isSubLoadding = true
+              })
+            }
           }
         })
       },
@@ -188,5 +195,10 @@
     margin: 0 auto;
     cursor: pointer;
     z-index: 1;
+  }
+  .login-form-submit.submitLoadding{
+    background: #EEEEEE;
+    color: rgba(8,47,76,0.58);
+    cursor: not-allowed;
   }
 </style>
