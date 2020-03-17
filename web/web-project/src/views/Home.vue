@@ -392,7 +392,6 @@
     },
     created(){
       this.getEnergyPreview()
-      this.getAreaTime()
     },
     computed:{ //计算属性
       comparePer(){
@@ -435,6 +434,7 @@
     methods: {
       getEnergyPreview() {  //获取能耗预览内的数据
         var api = ""
+        var that = this
         if(this.previewEnergyValue == "电"){
           api = "/api/energyelectric"
         }else if(this.previewEnergyValue == "水"){
@@ -458,54 +458,26 @@
         var lastEndYear = moment().year(moment().year() - 1).endOf('year').format('YYYY-MM-DD').substring(0,4) + "-" + thisMonth + " " + nowTime
         this.nowTime = nowTime
         this.nowDate = nowDate
-        //获取当天能耗
-        this.axios.get(api,{params: {StartTime: todayStartTime,EndTime:todayEndTime}}).then(res => {
-          var data = JSON.parse(res.data)
-          this.todayCon = data.elctric
-          this.unit = data.unit
-        })
-        //获取选择天能耗
-        this.axios.get(api,{params: {StartTime: compareDateStartTime,EndTime:compareDateEndTime}}).then(res => {
-          var data = JSON.parse(res.data)
-          this.compareDateCon = data.elctric
-        })
-        //获取当月能耗
-        this.axios.get(api,{params: {StartTime: thisStartMonth,EndTime:todayEndTime}}).then(res => {
-          var data = JSON.parse(res.data)
-          this.thisMonthCon = data.elctric
-        })
-        //获取上月能耗
-        this.axios.get(api,{params: {StartTime: lastStartMonth,EndTime:lastEndMonth}}).then(res => {
-          var data = JSON.parse(res.data)
-          this.lastMonthCon = data.elctric
-        })
-        //获取当年能耗
-        this.axios.get(api,{params: {StartTime: thisStartYear,EndTime:todayEndTime}}).then(res => {
-          var data = JSON.parse(res.data)
-          this.thisYearCon = data.elctric
-        })
-        //获取上一年能耗
-        this.axios.get(api,{params: {StartTime: lastStartYear,EndTime:lastEndYear}}).then(res => {
-          var data = JSON.parse(res.data)
-          this.lastYearCon = data.elctric
-        })
-        //获取月份对比图表
-        this.axios.get(api,{params: {StartTime: lastStartYear,EndTime:lastEndYear}}).then(res => {
-          var data = JSON.parse(res.data)
-          this.lastYearCon = data.elctric
-        })
-      },
-      getAreaTime() {
-        this.axios.get('/api/energyall',{
-          params: {
-            ModelFlag: "能耗预览",
-            CompareDate:moment(this.CompareDate).format('YYYY-MM-DD')
-          }
-        }).then(function (res) {
-            console.log(res);
-        }).catch(function (error) {
-            console.log(error);
-        });
+        this.axios.all([
+          this.axios.get(api,{params: {StartTime: todayStartTime,EndTime:todayEndTime}}),//获取今天能耗
+          this.axios.get(api,{params: {StartTime: compareDateStartTime,EndTime:compareDateEndTime}}),//获取对比天能耗
+          this.axios.get(api,{params: {StartTime: thisStartMonth,EndTime:todayEndTime}}),//获取本月能耗
+          this.axios.get(api,{params: {StartTime: lastStartMonth,EndTime:lastEndMonth}}),//获取上月能耗
+          this.axios.get(api,{params: {StartTime: thisStartYear,EndTime:todayEndTime}}),//获取当年能耗
+          this.axios.get(api,{params: {StartTime: lastStartYear,EndTime:lastEndYear}}),//获取上一年能耗
+          this.axios.get('/api/energyall',{
+            params: {ModelFlag: "能耗预览",CompareDate:moment(this.CompareDate).format('YYYY-MM-DD'),EnergyClass:this.previewEnergyValue}
+          })//获取对比图表
+        ]).then(this.axios.spread(function(todayCon,compareDateCon,thisMonthCon,lastMonthCon,thisYearCon,lastYearCon,compareData){
+          that.todayCon = JSON.parse(todayCon.data).elctric
+          that.unit = JSON.parse(todayCon.data).unit
+          that.compareDateCon = JSON.parse(compareDateCon.data).elctric
+          that.thisMonthCon = JSON.parse(thisMonthCon.data).elctric
+          that.lastMonthCon = JSON.parse(lastMonthCon.data).elctric
+          that.thisYearCon = JSON.parse(thisYearCon.data).elctric
+          that.lastYearCon = JSON.parse(lastYearCon.data).elctric
+          console.log(JSON.parse(compareData.data))
+        }))
       },
       openSystemCheckupDialog(){ //打开系统体检
         this.systemCheckupDialogVisible = true
