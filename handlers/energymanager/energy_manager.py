@@ -221,68 +221,65 @@ def energyselect(data):
             elecount = 0.0
             watcount = 0.0
             stecount = 0.0
-            if ModelFlag == "能耗趋势":
+            if ModelFlag == "能耗趋势" or ModelFlag == "数据报表":
                 dix = []
+                dixcompare = []
                 diy = []
+                diycompare = []
                 diyr = {}
                 diyz = []
+                diyrcompare = {}
+                diyzcompare = []
                 if Area is not None and Area != "":
                     oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass, TagDetail.AreaName == Area).all()
                 else:
                     oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
-                if datime == "年":
-                    for j in range(1, int(currentmonth) + 1):
-                        currM = str(currentyear) + "-" + addzero(j)
-                        lastM = strlastMonth(currM)
-                        dix.append(str(j))
-                        count = 0.0
-                        for oc in oclass:
-                            Tag = oc.TagClassValue[0:1]
-                            if Tag == "E":
-                                count = eletongji(oc, lastM, currM, count)
-                            elif Tag == "W":
-                                count = wattongji(oc, lastM, currM, count)
-                            elif Tag == "S":
-                                count = stetongji(oc, lastM, currM, count)
-                        diyz.append(count)
-                elif datime == "月":
-                    for j in range(1, int(currentday) + 1):
-                        currday = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(j)
-                        vv = datetime.datetime.strptime(currday, "%Y-%m-%d")
-                        lastday = str(vv + datetime.timedelta(days=-1))[0:10]
-                        dix.append(str(j))
-                        count = 0.0
-                        for oc in oclass:
-                            Tag = oc.TagClassValue[0:1]
-                            if Tag == "E":
-                                count = eletongji(oc, lastday, currday, count)
-                            elif Tag == "W":
-                                count = wattongji(oc, lastday, currday, count)
-                            elif Tag == "S":
-                                count = stetongji(oc, lastday, currday, count)
-                        diyz.append(count)
-                elif datime == "日":
-                    for j in range(0, currenthour):
-                        currhour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
-                            int(currentday)) + " " + addzero(j)
-                        vv = datetime.datetime.strptime(currhour, "%Y-%m-%d %H")
-                        lasthour = str((vv + datetime.timedelta(hours=-1)).strftime("%Y-%m-%d %H:%M:%S"))[0:13]
-                        dix.append(str(j))
-                        count = 0.0
-                        for oc in oclass:
-                            Tag = oc.TagClassValue[0:1]
-                            if Tag == "E":
-                                count = eletongji(oc, lasthour, currhour, count)
-                            elif Tag == "W":
-                                count = wattongji(oc, lasthour, currhour, count)
-                            elif Tag == "S":
-                                count = stetongji(oc, lasthour, currhour, count)
-                        diyz.append(count)
+                compareday = data.get("CompareDate")
+                for j in range(0, 24):
+                    lastdaycurrhour = str(compareday) + " " + addzero(j)
+                    vv = datetime.datetime.strptime(lastdaycurrhour, "%Y-%m-%d %H")
+                    lastdalasthour = str((vv + datetime.timedelta(hours=-1)).strftime("%Y-%m-%d %H:%M:%S"))[0:13]
+                    dixcompare.append(str(j))
+                    count = 0.0
+                    for oc in oclass:
+                        Tag = oc.TagClassValue[0:1]
+                        if Tag == "E":
+                            count = eletongji(oc, lastdalasthour, lastdaycurrhour, count)
+                        elif Tag == "W":
+                            count = wattongji(oc, lastdalasthour, lastdaycurrhour, count)
+                        elif Tag == "S":
+                            count = stetongji(oc, lastdalasthour, lastdaycurrhour, count)
+                    diyzcompare.append(count)
+                # if ModelFlag == "数据报表":
+                #     currentyear = CurrentTime[0:4]
+                #     currentmonth = CurrentTime[5:7]
+                #     currentday = CurrentTime[8:10]
+                for j in range(0, 24):
+                    currhour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
+                        int(currentday)) + " " + addzero(j)
+                    vv = datetime.datetime.strptime(currhour, "%Y-%m-%d %H")
+                    lasthour = str((vv + datetime.timedelta(hours=-1)).strftime("%Y-%m-%d %H:%M:%S"))[0:13]
+                    dix.append(str(j))
+                    count = 0.0
+                    for oc in oclass:
+                        Tag = oc.TagClassValue[0:1]
+                        if Tag == "E":
+                            count = eletongji(oc, lasthour, currhour, count)
+                        elif Tag == "W":
+                            count = wattongji(oc, lasthour, currhour, count)
+                        elif Tag == "S":
+                            count = stetongji(oc, lasthour, currhour, count)
+                    diyz.append(count)
                 diyr["name"] = EnergyClass
                 diyr["data"] = diyz
+                diyrcompare["name"] = EnergyClass
+                diyrcompare["data"] = diyzcompare
                 dir["X"] = dix
+                dir["Xcompare"] = dixcompare
                 diy.append(diyr)
+                diycompare.append(diyrcompare)
                 dir["Y"] = diy
+                dir["Ycompare"] = diycompare
                 unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == EnergyClass).first()[0]
                 dir["unit"] = unit
             elif ModelFlag == "区域能耗":
@@ -567,14 +564,14 @@ def energyPreview():
             for oc in oclass:
                 Tag = oc.TagClassValue[0:1]
                 if Tag == "E":
-                    elecount = eletongji(oc, currmonth, zerocurrMonth, elecount)
-                    lastelecount = eletongji(oc, lastYMonth, zerolastYMonth, lastelecount)
+                    elecount = eletongji(oc, zerocurrMonth, currmonth, elecount)
+                    lastelecount = eletongji(oc, zerolastYMonth, lastYMonth, lastelecount)
                 elif Tag == "W":
-                    watcount = wattongji(oc, currmonth, zerocurrMonth, watcount)
-                    lastwatcount = wattongji(oc, lastYMonth, zerolastYMonth, lastwatcount)
+                    watcount = wattongji(oc, zerocurrMonth, currmonth, watcount)
+                    lastwatcount = wattongji(oc, zerolastYMonth, lastYMonth, lastwatcount)
                 elif Tag == "S":
-                    stecount = stetongji(oc, currmonth, zerocurrMonth, stecount)
-                    laststecount = stetongji(oc, lastYMonth, zerolastYMonth, laststecount)
+                    stecount = stetongji(oc, zerocurrMonth, currmonth, stecount)
+                    laststecount = stetongji(oc, zerolastYMonth, lastYMonth, laststecount)
             curryeartotal = round(elecount + watcount + stecount, 2)
             lastyeartotal = round(lastelecount + lastwatcount + laststecount, 2)
             dir["thisYearCon"] =curryeartotal#年能耗量
@@ -659,7 +656,7 @@ def energyPreview():
                 month_data_list.append(month_data_dir)
             dir["lastMonthRow"] = month_data_list
             # elif datime == "日":
-            compareday = data.get("compareDate")
+            compareday = data.get("CompareDate")
             cv = datetime.datetime.strptime(compareday, "%Y-%m-%d")
             lastcompareday = str(cv + datetime.timedelta(days=-1))[0:10]
             comparedaycount = 0.0
