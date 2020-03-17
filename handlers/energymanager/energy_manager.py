@@ -221,7 +221,7 @@ def energyselect(data):
             elecount = 0.0
             watcount = 0.0
             stecount = 0.0
-            if ModelFlag == "能耗趋势" or ModelFlag == "数据报表":
+            if ModelFlag == "能耗趋势":
                 dix = []
                 diy = []
                 diyr = {}
@@ -231,8 +231,6 @@ def energyselect(data):
                 else:
                     oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
                 if datime == "年":
-                    if ModelFlag == "数据报表":
-                        currentyear = CurrentTime[0:4]
                     for j in range(1, int(currentmonth) + 1):
                         currM = str(currentyear) + "-" + addzero(j)
                         lastM = strlastMonth(currM)
@@ -241,16 +239,13 @@ def energyselect(data):
                         for oc in oclass:
                             Tag = oc.TagClassValue[0:1]
                             if Tag == "E":
-                                count = eletongji(oc, currM, lastM, count)
+                                count = eletongji(oc, lastM, currM, count)
                             elif Tag == "W":
-                                count = wattongji(oc, currM, lastM, count)
+                                count = wattongji(oc, lastM, currM, count)
                             elif Tag == "S":
-                                count = stetongji(oc, currM, lastM, count)
+                                count = stetongji(oc, lastM, currM, count)
                         diyz.append(count)
                 elif datime == "月":
-                    if ModelFlag == "数据报表":
-                        currentyear = CurrentTime[0:4]
-                        currentmonth = CurrentTime[5:7]
                     for j in range(1, int(currentday) + 1):
                         currday = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(j)
                         vv = datetime.datetime.strptime(currday, "%Y-%m-%d")
@@ -260,17 +255,13 @@ def energyselect(data):
                         for oc in oclass:
                             Tag = oc.TagClassValue[0:1]
                             if Tag == "E":
-                                count = eletongji(oc, currday, lastday, count)
+                                count = eletongji(oc, lastday, currday, count)
                             elif Tag == "W":
-                                count = wattongji(oc, currday, lastday, count)
+                                count = wattongji(oc, lastday, currday, count)
                             elif Tag == "S":
-                                count = stetongji(oc, currday, lastday, count)
+                                count = stetongji(oc, lastday, currday, count)
                         diyz.append(count)
                 elif datime == "日":
-                    if ModelFlag == "数据报表":
-                        currentyear = CurrentTime[0:4]
-                        currentmonth = CurrentTime[5:7]
-                        currentday = CurrentTime[8:10]
                     for j in range(0, currenthour):
                         currhour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
                             int(currentday)) + " " + addzero(j)
@@ -281,11 +272,11 @@ def energyselect(data):
                         for oc in oclass:
                             Tag = oc.TagClassValue[0:1]
                             if Tag == "E":
-                                count = eletongji(oc, currhour, lasthour, count)
+                                count = eletongji(oc, lasthour, currhour, count)
                             elif Tag == "W":
-                                count = wattongji(oc, currhour, lasthour, count)
+                                count = wattongji(oc, lasthour, currhour, count)
                             elif Tag == "S":
-                                count = stetongji(oc, currhour, lasthour, count)
+                                count = stetongji(oc, lasthour, currhour, count)
                         diyz.append(count)
                 diyr["name"] = EnergyClass
                 diyr["data"] = diyz
