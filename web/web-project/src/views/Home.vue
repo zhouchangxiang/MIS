@@ -489,17 +489,23 @@
           var data = JSON.parse(res.data)
           this.lastYearCon = data.elctric
         })
+        //获取月份对比图表
+        this.axios.get(api,{params: {StartTime: lastStartYear,EndTime:lastEndYear}}).then(res => {
+          var data = JSON.parse(res.data)
+          this.lastYearCon = data.elctric
+        })
       },
       getAreaTime() {
-        // this.axios.get('/api/areaTimeEnergy',{
-        //   params: {
-        //       energyType: this.areaTimeEnergyValue,
-        //   }
-        // }).then(function (response) {
-        //     console.log(response);
-        // }).catch(function (error) {
-        //     console.log(error);
-        // });
+        this.axios.get('/api/energyall',{
+          params: {
+            ModelFlag: "能耗预览",
+            CompareDate:moment(this.CompareDate).format('YYYY-MM-DD')
+          }
+        }).then(function (res) {
+            console.log(res);
+        }).catch(function (error) {
+            console.log(error);
+        });
       },
       openSystemCheckupDialog(){ //打开系统体检
         this.systemCheckupDialogVisible = true
