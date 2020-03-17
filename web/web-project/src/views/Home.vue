@@ -401,7 +401,7 @@
           if(this.todayCon - this.compareDateCon > 0){
             return "+" + compare.toFixed(2) + "%"
           }else{
-            return "-" + compare.toFixed(2) + "%"
+            return compare.toFixed(2) + "%"
           }
         }else{
           return 0 + "%"
@@ -413,7 +413,7 @@
           if(this.thisMonthCon - this.lastMonthCon > 0){
             return "+" + compare.toFixed(2) + "%"
           }else{
-            return "-" + compare.toFixed(2) + "%"
+            return compare.toFixed(2) + "%"
           }
         }else{
           return 0 + "%"
@@ -425,7 +425,7 @@
           if(this.thisYearCon - this.lastYearCon > 0){
             return "+" + compare.toFixed(2) + "%"
           }else{
-            return "-" + compare.toFixed(2) + "%"
+            return compare.toFixed(2) + "%"
           }
         }else{
           return 0 + "%"
