@@ -221,7 +221,7 @@ def energyselect(data):
             elecount = 0.0
             watcount = 0.0
             stecount = 0.0
-            if ModelFlag == "能耗趋势" or ModelFlag == "数据报表":
+            if ModelFlag == "能耗预览" or ModelFlag == "数据报表":
                 dix = []
                 dixcompare = []
                 diy = []
