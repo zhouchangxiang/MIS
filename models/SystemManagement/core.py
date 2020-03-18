@@ -267,6 +267,9 @@ class plantCalendarScheduling(Base):
 	
 	#时间:
 	start = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = False)
+
+	#结束:
+	end = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=False)
 	
 #plantCalendarScheduling_END:
 
