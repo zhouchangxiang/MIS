@@ -266,10 +266,10 @@ class plantCalendarScheduling(Base):
 	title = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
 	
 	#时间:
-	start = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = False)
+	start = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
 
 	#结束:
-	end = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=False)
+	end = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 	
 #plantCalendarScheduling_END:
 

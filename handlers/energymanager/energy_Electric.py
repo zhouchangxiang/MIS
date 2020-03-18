@@ -144,14 +144,14 @@ def eletongji(oc, StartTime, EndTime, elecount):
     recur = db_session.execute(sqlcur).fetchall()
     relas = db_session.execute(sqllas).fetchall()
     db_session.close()
-    if recur is not None:
+    if len(recur) > 0:
         cur = recur[0]
     else:
-        cur = 0
-    if relas is not None:
+        cur = None
+    if len(relas) > 0:
         las = relas[0]
     else:
-        las = 0
+        las = None
     return curcutlas(cur, las, elecount, "电")
 def energyElectricSelect(data):
     if request.method == 'GET':
