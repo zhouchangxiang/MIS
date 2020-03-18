@@ -71,7 +71,7 @@
                     type: 'success'
                   });
                   var that = this;
-                  this.isSubLoadding = true
+                  this.isSubLoadding = false
                   setTimeout(function(){
                     that.$router.push("/")
                   },1000)
@@ -86,11 +86,11 @@
                     type: 'info',
                     message: res.data
                   });
-                  this.isSubLoadding = true
+                  this.isSubLoadding = false
                 }
               },res =>{
                 console.log("请求错误")
-                this.isSubLoadding = true
+                this.isSubLoadding = false
               })
             }
           }

@@ -34,6 +34,7 @@
   import '@fullcalendar/core/main.css';
   import '@fullcalendar/daygrid/main.css';
   import '@fullcalendar/timegrid/main.css';
+  var moment = require('moment');
   export default {
     name: "Calendar",
     components: {
@@ -149,8 +150,35 @@
           console.log("请求错误")
         })
       },
-      handleEventResize(event, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view){  //拖动改变日程长度
-        console.log(event)
+      handleEventResize(e){  //拖动改变日程长度
+        var startDate = moment(e.event.start).format('YYYY-MM-DD')
+        var EndDate = moment(e.event.end).subtract(1, "days").format('YYYY-MM-DD')
+        var params = {
+          tableName: "plantCalendarScheduling",
+          ID:e.event.extendedProps.ID,
+          title:e.event.title,
+          start:startDate,
+          end:EndDate,
+          color:e.event.backgroundColor
+        }
+        this.axios.put("/api/CUID",this.qs.stringify(params)).then(res =>{
+          console.log(res)
+          if(res.data == "OK"){
+            this.getData()
+            this.$message({
+              type: 'success',
+              message: "修改成功"
+            });
+          }else{
+            this.$message({
+              type: 'info',
+              message: res.data
+            });
+            this.getData()
+          }
+        },res =>{
+          console.log("请求错误")
+        })
       }
     }
   }
