@@ -138,14 +138,19 @@ def energymoney(count, name):
         if pr.PriceName == name:
             return float(count)*float(pr.PriceValue)
 def stetongji(oc, StartTime, EndTime, elecount):
-    cur = \
-        db_session.query(SteamEnergy.SumValue).filter(
-            SteamEnergy.TagClassValue == oc.TagClassValue,
-            SteamEnergy.CollectionDate.like("%"+EndTime+"%"), SteamEnergy.SumValue != "0.0", SteamEnergy.SumValue != "", SteamEnergy.SumValue != None).order_by(
-            desc("CollectionDate")).first()
-    las = db_session.query(SteamEnergy.SumValue).filter(
-        SteamEnergy.TagClassValue == oc.TagClassValue,
-        SteamEnergy.CollectionDate.like("%"+StartTime+"%"), SteamEnergy.SumValue != "0.0", SteamEnergy.SumValue != "", SteamEnergy.SumValue != None).order_by(("CollectionDate")).first()
+    sqlcur = "SELECT TOP 1 [SumValue] FROM [DB_MICS].[dbo].[SteamEnergy] with (INDEX =IX_SteamEnergy) WHERE [SteamEnergy].[TagClassValue] = " + "'" + oc.TagClassValue + "'" + " AND [SteamEnergy].[CollectionDate] LIKE " + "'" + "%" + EndTime + "%" + "'" + " AND [SteamEnergy].[SumValue] != " + "'" + "0.0" + "'" + " AND [SteamEnergy].[SumValue] != " + "'" + "" + "'" + " AND [SteamEnergy].[SumValue] IS NOT NULL ORDER BY [SteamEnergy].[CollectionDate] DESC"
+    sqllas = "SELECT TOP 1 [SumValue] FROM [DB_MICS].[dbo].[SteamEnergy] with (INDEX =IX_SteamEnergy) WHERE [SteamEnergy].[TagClassValue] = " + "'" + oc.TagClassValue + "'" + " AND [SteamEnergy].[CollectionDate] LIKE " + "'" + "%" + StartTime + "%" + "'" + " AND [SteamEnergy].[SumValue] != " + "'" + "0.0" + "'" + " AND [SteamEnergy].[SumValue] != " + "'" + "" + "'" + " AND [SteamEnergy].[SumValue] IS NOT NULL ORDER BY [SteamEnergy].[CollectionDate]"
+    recur = db_session.execute(sqlcur).fetchall()
+    relas = db_session.execute(sqllas).fetchall()
+    db_session.close()
+    if recur is not None:
+        cur = recur[0]
+    else:
+        cur = 0
+    if relas is not None:
+        las = relas[0]
+    else:
+        las = 0
     return curcutlas(cur, las, elecount, "汽")
 def energySteamSelect(data):
     if request.method == 'GET':

@@ -139,14 +139,19 @@ def energymoney(count, name):
         if pr.PriceName == name:
             return float(count)*float(pr.PriceValue)
 def eletongji(oc, StartTime, EndTime, elecount):
-    cur = \
-        db_session.query(ElectricEnergy.ZGL).filter(
-            ElectricEnergy.TagClassValue == oc.TagClassValue,
-            ElectricEnergy.CollectionDate.like("%"+EndTime+"%"), ElectricEnergy.ZGL != "0.0", ElectricEnergy.ZGL != "", ElectricEnergy.ZGL != None).order_by(
-            desc("CollectionDate")).first()
-    las = db_session.query(ElectricEnergy.ZGL).filter(
-        ElectricEnergy.TagClassValue == oc.TagClassValue,
-        ElectricEnergy.CollectionDate.like("%"+StartTime+"%"), ElectricEnergy.ZGL != "0.0", ElectricEnergy.ZGL != "", ElectricEnergy.ZGL != None).order_by(("CollectionDate")).first()
+    sqlcur = "SELECT TOP 1 [ZGL] FROM [DB_MICS].[dbo].[ElectricEnergy] with (INDEX =IX_ElectricEnergy) WHERE [ElectricEnergy].[TagClassValue] = " + "'" + oc.TagClassValue + "'" + " AND [ElectricEnergy].[CollectionDate] LIKE " + "'" + "%" + EndTime + "%" + "'" + " AND [ElectricEnergy].[ZGL] != " + "'" + "0.0" + "'" + " AND [ElectricEnergy].[ZGL] != " + "'" + "" + "'" + " AND [ElectricEnergy].[ZGL] IS NOT NULL ORDER BY [ElectricEnergy].[CollectionDate] DESC"
+    sqllas = "SELECT TOP 1 [ZGL] FROM [DB_MICS].[dbo].[ElectricEnergy] with (INDEX =IX_ElectricEnergy) WHERE [ElectricEnergy].[TagClassValue] = " + "'" + oc.TagClassValue + "'" + " AND [ElectricEnergy].[CollectionDate] LIKE " + "'" + "%" + StartTime + "%" + "'" + " AND [ElectricEnergy].[ZGL] != " + "'" + "0.0" + "'" + " AND [ElectricEnergy].[ZGL] != " + "'" + "" + "'" + " AND [ElectricEnergy].[ZGL] IS NOT NULL ORDER BY [ElectricEnergy].[CollectionDate]"
+    recur = db_session.execute(sqlcur).fetchall()
+    relas = db_session.execute(sqllas).fetchall()
+    db_session.close()
+    if recur is not None:
+        cur = recur[0]
+    else:
+        cur = 0
+    if relas is not None:
+        las = relas[0]
+    else:
+        las = 0
     return curcutlas(cur, las, elecount, "电")
 def energyElectricSelect(data):
     if request.method == 'GET':

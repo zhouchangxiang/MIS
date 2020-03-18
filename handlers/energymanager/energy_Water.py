@@ -138,14 +138,19 @@ def energymoney(count, name):
         if pr.PriceName == name:
             return float(count)*float(pr.PriceValue)
 def wattongji(oc, EndTime, StartTime, elecount):
-    cur = \
-        db_session.query(WaterEnergy.WaterSum).filter(
-            WaterEnergy.TagClassValue == oc.TagClassValue,
-            WaterEnergy.CollectionDate.like("%"+EndTime+"%"), WaterEnergy.WaterSum != "0.0", WaterEnergy.WaterSum != "", WaterEnergy.WaterSum != None).order_by(
-            desc("CollectionDate")).first()
-    las = db_session.query(WaterEnergy.WaterSum).filter(
-        WaterEnergy.TagClassValue == oc.TagClassValue,
-        WaterEnergy.CollectionDate.like("%"+StartTime+"%"), WaterEnergy.WaterSum != "0.0", WaterEnergy.WaterSum != "", WaterEnergy.WaterSum != None).order_by(("CollectionDate")).first()
+    sqlcur = "SELECT TOP 1 [WaterSum] FROM [DB_MICS].[dbo].[WaterEnergy] with (INDEX =IX_WaterEnergy) WHERE [WaterEnergy].[TagClassValue] = " + "'" + oc.TagClassValue + "'" + " AND [WaterEnergy].[CollectionDate] LIKE " + "'" + "%" + EndTime + "%" + "'" + " AND [WaterEnergy].[WaterSum] != " + "'" + "0.0" + "'" + " AND [WaterEnergy].[WaterSum] != " + "'" + "" + "'" + " AND [WaterEnergy].[WaterSum] IS NOT NULL ORDER BY [WaterEnergy].[CollectionDate] DESC"
+    sqllas = "SELECT TOP 1 [WaterSum] FROM [DB_MICS].[dbo].[WaterEnergy] with (INDEX =IX_WaterEnergy) WHERE [WaterEnergy].[TagClassValue] = " + "'" + oc.TagClassValue + "'" + " AND [WaterEnergy].[CollectionDate] LIKE " + "'" + "%" + StartTime + "%" + "'" + " AND [WaterEnergy].[WaterSum] != " + "'" + "0.0" + "'" + " AND [WaterEnergy].[WaterSum] != " + "'" + "" + "'" + " AND [WaterEnergy].[WaterSum] IS NOT NULL ORDER BY [WaterEnergy].[CollectionDate]"
+    recur = db_session.execute(sqlcur).fetchall()
+    relas = db_session.execute(sqllas).fetchall()
+    db_session.close()
+    if recur is not None:
+        cur = recur[0]
+    else:
+        cur = 0
+    if relas is not None:
+        las = relas[0]
+    else:
+        las = 0
     return curcutlas(cur, las, elecount)
 def energyWaterSelect(data):
     if request.method == 'GET':
