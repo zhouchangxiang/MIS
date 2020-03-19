@@ -4,7 +4,6 @@
         <el-form :inline="true" :model="formParameters">
           <el-form-item label="时间：">
             <el-date-picker type="date" v-model="formParameters.date" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false"></el-date-picker>
-            <el-checkbox v-model="AllArea" style="margin-left: 10px;">整厂区</el-checkbox>
           </el-form-item>
           <el-form-item style="float: right;">
             <el-radio-group v-model="formParameters.energy" fill="#082F4C" size="small">
@@ -13,7 +12,7 @@
           </el-form-item>
         </el-form>
       </el-col>
-      <el-col :span="24" v-if="AllArea == false">
+      <el-col :span="24" v-if="newAreaName.areaName != '整厂区'">
         <el-col :span="18">
           <div class="energyDataCard">
             <ve-line :data="chartData" :settings="chartSettings" :extend="ChartExtend"></ve-line>
@@ -132,7 +131,7 @@
           </div>
         </el-col>
       </el-col>
-      <el-col :span="24" v-if="AllArea == true">
+      <el-col :span="24" v-if="newAreaName.areaName == '整厂区'">
         <el-col :span="18">
           <div class="energyDataCard">
             <ve-line :data="chartData" :settings="chartSettings" :extend="ChartExtend"></ve-line>
@@ -191,6 +190,7 @@
 <script>
     export default {
       name: "AreaPeriodTime",
+      inject:['newAreaName'],
       data(){
         this.chartSettings = {
           area:true
@@ -275,6 +275,12 @@
           ],
           contrastDate:Date.now()
         }
+      },
+      created(){
+
+      },
+      methods:{
+
       }
     }
 </script>

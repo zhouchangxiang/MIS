@@ -71,7 +71,7 @@
             </el-row>
             <el-row>
               <el-col :span="24">
-                  <ve-line :data="realtimeChartData" :settings="realtimeChartSettings" :extend="realtimeChartExtend" height="260px" :legend-visible="false"></ve-line>
+                  <ve-line :data="realtimeChartData" :extend="realtimeChartExtend" height="260px" :legend-visible="false"></ve-line>
               </el-col>
             </el-row>
           </div>
@@ -93,7 +93,7 @@
               </ul>
               <ul class="gradientList">
                 <li v-for="item in colorBarOption">
-                  <p>{{ item.name }}</p>
+                  <p class="text-size-small text-color-info">{{ item.name }}</p>
                   <el-popover trigger="hover">
                     <div>0-4点：{{ item.value0 }}</div>
                     <div>4-8点：{{ item.value4 }}</div>
@@ -112,7 +112,13 @@
               <span><i class="el-icon-odometer el-icon--left" style="color: #FB3A06;"></i>电能负荷率</span>
             </div>
             <div class="home-card-body" style="height:280px;text-align: center">
-              <ve-gauge :data="electricLoadRateChartData" :settings="electricLoadRateChartSettings" :extend="electricLoadRateChartExtend" height="220px"></ve-gauge>
+              <ul class="colorBar">
+                <li><i class="bg-tall"></i><span>差</span></li>
+                <li><i class="bg-center"></i><span>中</span></li>
+                <li><i class="bg-fine"></i><span>良</span></li>
+                <li><i class="bg-best"></i><span>优</span></li>
+              </ul>
+              <ve-gauge :data="electricLoadRateChartData" :extend="electricLoadRateChartExtend" height="200px"></ve-gauge>
               <el-select class="" v-model="electricLoadRateTime" size="small" style="width: 80px;">
                 <el-option v-for="(item,index) in electricLoadRateTimeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
@@ -218,62 +224,6 @@
   export default {
     name: "Home",
     data(){
-      this.contrastMonthChartSettings = { //本月对比上月能耗图表配置
-        area: true,
-      }
-      this.contrastMonthChartExtend = {
-        yAxis:{
-          show:false
-        },
-        xAxis:{
-          show:false
-        },
-        grid:{
-          left: '-40px',
-          right: '0',
-          bottom: '-20px',
-          top:'0'
-        },
-        series: {
-          smooth: false
-        }
-      }
-      this.realtimeChartSettings = { //今日对比能耗图表配置
-
-      }
-      this.realtimeChartExtend = {
-        grid:{
-          left: '-40px',
-          right: '0',
-          bottom: '0',
-          top:'20px'
-        },
-        series: {
-          smooth: false
-        }
-      }
-      this.electricLoadRateChartSettings = { //电能负荷率图表配置
-        dataType: {
-          '占比': 'percent'
-        },
-        seriesMap: {
-          '占比': {
-            min: 0,
-            max: 1
-          }
-        }
-      }
-      this.electricLoadRateChartExtend = {
-        grid:{
-          left: '0',
-          right: '0',
-          bottom: '-40px',
-          top:'0'
-        },
-        series: {
-          smooth: false
-        }
-      }
       return{
         previewEnergyOptions: [{
           value: '电',
@@ -335,6 +285,37 @@
         },
         thisYearCon: "", //年能耗量
         lastYearCon: "", //上年同期能耗
+        contrastMonthChartSettings: { //本月对比上月能耗图表配置
+          area: true,
+        },
+        contrastMonthChartExtend: {
+          yAxis:{
+            show:false
+          },
+          xAxis:{
+            show:false
+          },
+          grid:{
+            left: '-40px',
+            right: '0',
+            bottom: '-20px',
+            top:'0'
+          },
+          series: {
+            smooth: false
+          }
+        },
+        realtimeChartExtend: { //今日对比能耗图表配置
+          grid:{
+            left: '-40px',
+            right: '0',
+            bottom: '0',
+            top:'20px'
+          },
+          series: {
+            smooth: false
+          }
+        },
         colorBarOption:[
           {name: "新建综合制剂楼", value0: 2342,value4: 4234,value8: 2232,value12: 235,value16: 2042,value20: 264, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'},
           {name: "提取二车间", value0: 2342,value4: 2342,value8: 2342,value12: 2342,value16: 2342,value20: 2342, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'},
@@ -344,8 +325,43 @@
         electricLoadRateChartData:{
           columns: ['type', 'value'],
           rows: [
-            { type: '占比', value: 0.8 }
+            { type: '占比', value: 45 }
           ]
+        },
+        electricLoadRateChartExtend: { //电能负荷率图表配置
+          series: {
+            min: 0,
+            max: 100,
+            radius: '90%',
+            axisLine:{ //轴线
+              lineStyle: {
+                width: 10,
+                color:[[0.3, '#FB3A06'], [0.5, '#FB8A06'], [0.8, '#228AD5'], [1, '#15CC48']]
+              }
+            },
+            splitLine:{ //分割线
+              length: 20,
+                lineStyle: {
+                  color: 'auto'
+                }
+            },
+            axisTick: { //刻度
+              length: 15,
+              lineStyle: {
+                color: 'auto'
+              }
+            },
+            axisLabel:{  //刻度标签
+              color: '#082F4C',
+            },
+            detail:{ //显示数据
+              formatter: '{value}%',
+              fontWeight: 'bold',
+              color: '#082F4C',
+              fontSize:24,
+              offsetCenter:["0","75%"]
+            }
+          }
         },
         electricLoadRateTimeOptions: [{ //电能负荷率下拉框
           value: '选项1',
@@ -465,9 +481,9 @@
           this.axios.get(api,{params: {StartTime: lastStartMonth,EndTime:lastEndMonth}}),//获取上月能耗
           this.axios.get(api,{params: {StartTime: thisStartYear,EndTime:todayEndTime}}),//获取当年能耗
           this.axios.get(api,{params: {StartTime: lastStartYear,EndTime:lastEndYear}}),//获取上一年能耗
-          this.axios.get('/api/energyall',{
-            params: {ModelFlag: "能耗预览",CompareDate:moment(this.CompareDate).format('YYYY-MM-DD'),EnergyClass:this.previewEnergyValue}
-          })//获取对比图表
+          // this.axios.get('/api/energyall',{
+          //   params: {ModelFlag: "能耗预览",CompareDate:moment(this.CompareDate).format('YYYY-MM-DD'),EnergyClass:this.previewEnergyValue}
+          // })//获取对比图表
         ]).then(this.axios.spread(function(todayCon,compareDateCon,thisMonthCon,lastMonthCon,thisYearCon,lastYearCon,compareData){
           that.todayCon = JSON.parse(todayCon.data).elctric
           that.unit = JSON.parse(todayCon.data).unit
@@ -476,7 +492,7 @@
           that.lastMonthCon = JSON.parse(lastMonthCon.data).elctric
           that.thisYearCon = JSON.parse(thisYearCon.data).elctric
           that.lastYearCon = JSON.parse(lastYearCon.data).elctric
-          console.log(JSON.parse(compareData.data))
+          // console.log(JSON.parse(compareData.data))
         }))
       },
       openSystemCheckupDialog(){ //打开系统体检
@@ -566,20 +582,21 @@
   }
   .colorBar li{
     display: inline-block;
-    margin-right: 20px;
+    margin-right: 10px;
+    margin-bottom: 5px;
   }
   .colorBar li i{
     display: inline-block;
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
     border-radius: 2px;
-    margin-right: 15px;
+    margin-right: 5px;
     vertical-align: middle;
   }
   .colorBar li span{
     display: inline-block;
     color: #082F4C;
-    font-size: 16px;
+    font-size: 14px;
     vertical-align: middle;
   }
   .bg-dead{
@@ -593,6 +610,12 @@
   }
   .bg-tall{
     background-color: #FB3A06;
+  }
+  .bg-fine{
+    background-color: #228AD5;
+  }
+  .bg-best{
+    background-color: #15CC48;
   }
   .gradientList li{
     margin-top: 10px;

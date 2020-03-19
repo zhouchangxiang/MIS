@@ -160,7 +160,7 @@
         }
       },
       created(){
-        console.log(this.$route.query.areaName)
+
       },
       methods: {
         getCommodityPreview() {

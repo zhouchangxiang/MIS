@@ -121,9 +121,32 @@
         });
       },
       handleEventDrop(e){   //拖动日程
-        var newDate = e.event.start
-        var oldDate = e.oldEvent.start
-        console.log(e,newDate,oldDate)
+        var startDate = moment(e.event.start).format('YYYY-MM-DD')
+        var EndDate = moment(e.event.end).format('YYYY-MM-DD')
+        var params = {
+          tableName: "plantCalendarScheduling",
+          ID:e.event.extendedProps.ID,
+          title:e.event.title,
+          start:startDate,
+          end:EndDate,
+          color:e.event.backgroundColor
+        }
+        this.axios.put("/api/CUID",this.qs.stringify(params)).then(res =>{
+          if(res.data == "OK"){
+            this.getData()
+            this.$message({
+              type: 'success',
+              message: "修改成功"
+            });
+          }else{
+            this.$message({
+              type: 'info',
+              message: res.data
+            });
+          }
+        },res =>{
+          console.log("请求错误")
+        })
       },
       addSave(){
         var params = {
@@ -152,7 +175,7 @@
       },
       handleEventResize(e){  //拖动改变日程长度
         var startDate = moment(e.event.start).format('YYYY-MM-DD')
-        var EndDate = moment(e.event.end).subtract(1, "days").format('YYYY-MM-DD')
+        var EndDate = moment(e.event.end).format('YYYY-MM-DD')
         var params = {
           tableName: "plantCalendarScheduling",
           ID:e.event.extendedProps.ID,
@@ -162,7 +185,6 @@
           color:e.event.backgroundColor
         }
         this.axios.put("/api/CUID",this.qs.stringify(params)).then(res =>{
-          console.log(res)
           if(res.data == "OK"){
             this.getData()
             this.$message({
