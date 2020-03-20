@@ -67,7 +67,7 @@
         </el-dialog>
       </el-header>
       <!-- 页面主体 -->
-      <el-main>
+      <el-main style="clear: both;">
         <transition name="move" mode="out-in">
          <!--渲染子页面-->
           <router-view :key="$route.fullPath"></router-view>

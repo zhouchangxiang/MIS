@@ -142,6 +142,7 @@
   }
   .login-mask-bg{
     position: absolute;
+    top: 0;
     width: 100%;
     height: 100%;
     background: #082F4C;
