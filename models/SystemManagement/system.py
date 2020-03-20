@@ -892,7 +892,7 @@ class ElectricPrice(Base):
     Description = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
 
 #增量表
-class IncremenTable(Base):
+class IncrementTable(Base):
     __tablename__ = "IncremenTable"
 
     # ID:
@@ -927,6 +927,12 @@ class IncremenTable(Base):
 
     # 采集天:
     CollectionDay = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集时:
+    CollectionHour = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 区域:
+    AreaCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 #电价比重维护表
 class ElectricProportion(Base):

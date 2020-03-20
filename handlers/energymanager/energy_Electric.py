@@ -153,6 +153,11 @@ def eletongji(oc, StartTime, EndTime, elecount):
     else:
         las = None
     return curcutlas(cur, las, elecount, "电")
+
+# def electongjixin(tag_list, StartTime, EndTime)
+#     sqlcur = "select SUM(Cast(ZGL as float)) as aa from ElectricEnergy where ElectricEnergy.TagClassValue in (tag_list) AND ElectricEnergy.CollectionDate like "+StartTime+" order by "
+#     sqllas =
+
 def energyElectricSelect(data):
     if request.method == 'GET':
         try:
@@ -177,6 +182,8 @@ def energyElectricSelect(data):
             dir["type"] = "电"
             unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "电").first()[0]
             dir["unit"] = unit
+            print(dir)
+            print(datetime.datetime.now())
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)

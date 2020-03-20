@@ -165,29 +165,26 @@ def energymoney(count, name):
     for pr in prices:
         if pr.PriceName == name:
             return float(count)*float(pr.PriceValue)
-def eletongji(oc, StartTime, EndTime, elecount):
-    sqlcur = "SELECT TOP 1 [ZGL] FROM [DB_MICS].[dbo].[ElectricEnergy] with (INDEX =IX_ElectricEnergy) WHERE [ElectricEnergy].[TagClassValue] = "+"'"+oc.TagClassValue+"'"+" AND [ElectricEnergy].[CollectionDate] LIKE "+"'"+"%"+EndTime+"%"+"'"+" AND [ElectricEnergy].[ZGL] != "+"'"+"0.0"+"'"+" AND [ElectricEnergy].[ZGL] != "+"'"+""+"'"+" AND [ElectricEnergy].[ZGL] IS NOT NULL ORDER BY [ElectricEnergy].[CollectionDate] DESC"
-    sqllas = "SELECT TOP 1 [ZGL] FROM [DB_MICS].[dbo].[ElectricEnergy] with (INDEX =IX_ElectricEnergy) WHERE [ElectricEnergy].[TagClassValue] = " + "'" + oc.TagClassValue + "'" + " AND [ElectricEnergy].[CollectionDate] LIKE " + "'" + "%" + StartTime + "%" + "'" + " AND [ElectricEnergy].[ZGL] != " + "'" + "0.0" + "'" + " AND [ElectricEnergy].[ZGL] != " + "'" + "" + "'" + " AND [ElectricEnergy].[ZGL] IS NOT NULL ORDER BY [ElectricEnergy].[CollectionDate]"
-    recur = db_session.execute(sqlcur).fetchall()
-    relas = db_session.execute(sqllas).fetchall()
+def eletongji(oc_list, StartTime, EndTime, energy, dat):
+    propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
+    pro = float(propor.Proportion)
+    if dat == "时":
+        for i in range(24):
+            if i != 1:
+                sql = sql + "union" + "select ISNULL((select SUM(Cast(a.ZGL as float)) as aa from (select TagClassValue,ZGL from (select *, ROW_NUMBER() over(partition by b.TagClassValue order by cast(b.CollectionDate as datetime) asc) rowNum from [DB_MICS].[dbo].[ElectricEnergy] b with (INDEX =IX_ElectricEnergy) where b.TagClassValue in (" + "'" + oc_list + "'" + ") and b.CollectionDate like " + "'" + "%" + EndTime + "%" + "'" +" and ZGL is not null and ZGL != ''and ZGL != '0.0') as s where s.rowNum<=1) a),0) - ISNULL((select SUM(Cast(a.ZGL as float)) as bb from (select TagClassValue,ZGL from (select *, ROW_NUMBER() over(partition by b.TagClassValue order by cast(b.CollectionDate as datetime) desc) rowNum from [DB_MICS].[dbo].[ElectricEnergy] b  with (INDEX =IX_ElectricEnergy) where b.TagClassValue in (" + "'" + oc_list + "'" + ") and b.CollectionDate like " + "'" + "%" + EndTime + "%" + "'" +" and b.ZGL is not null and b.ZGL != ''and b.ZGL != '0.0') as s where s.rowNum<=1) a),0)"
+            else:
+                sql = "select ISNULL((select SUM(Cast(a.ZGL as float)) as aa from (select TagClassValue,ZGL from (select *, ROW_NUMBER() over(partition by b.TagClassValue order by cast(b.CollectionDate as datetime) asc) rowNum from [DB_MICS].[dbo].[ElectricEnergy] b with (INDEX =IX_ElectricEnergy) where b.TagClassValue in (" + "'" + oc_list + "'" + ") and b.CollectionDate like " + "'" + "%" + EndTime + "%" + "'" + " and ZGL is not null and ZGL != ''and ZGL != '0.0') as s where s.rowNum<=1) a),0) - ISNULL((select SUM(Cast(a.ZGL as float)) as bb from (select TagClassValue,ZGL from (select *, ROW_NUMBER() over(partition by b.TagClassValue order by cast(b.CollectionDate as datetime) desc) rowNum from [DB_MICS].[dbo].[ElectricEnergy] b  with (INDEX =IX_ElectricEnergy) where b.TagClassValue in (" + "'" + oc_list + "'" + ") and b.CollectionDate like " + "'" + "%" + EndTime + "%" + "'" + " and b.ZGL is not null and b.ZGL != ''and b.ZGL != '0.0') as s where s.rowNum<=1) a),0)"
+    else:
+        sql = "select ISNULL((select SUM(Cast(a.ZGL as float)) as aa from (select TagClassValue,ZGL from (select *, ROW_NUMBER() over(partition by b.TagClassValue order by cast(b.CollectionDate as datetime) asc) rowNum from [DB_MICS].[dbo].[ElectricEnergy] b with (INDEX =IX_ElectricEnergy) where b.TagClassValue in (" + "'" + oc_list + "'" + ") and b.CollectionDay = " + "'"  + EndTime + "'" + " and ZGL is not null and ZGL != ''and ZGL != '0.0') as s where s.rowNum<=1) a),0) - ISNULL((select SUM(Cast(a.ZGL as float)) as bb from (select TagClassValue,ZGL from (select *, ROW_NUMBER() over(partition by b.TagClassValue order by cast(b.CollectionDate as datetime) desc) rowNum from [DB_MICS].[dbo].[ElectricEnergy] b  with (INDEX =IX_ElectricEnergy) where b.TagClassValue in (" + "'" + oc_list + "'" + ") and b.CollectionDay = " + "'" + EndTime + "'" + " and b.ZGL is not null and b.ZGL != ''and b.ZGL != '0.0') as s where s.rowNum<=1) a),0)"
+    rediff = db_session.execute(sql).fetchall()
     db_session.close()
-    if len(recur) > 0:
-        cur = recur[0]
+    if len(rediff) > 0:
+        if rediff[0][0] != 0.0 and rediff[0][0] != None:
+            return round(float(rediff[0][0]) * pro, 2)
+        else:
+            return 0.0
     else:
-        cur = None
-    if len(relas) > 0:
-        las = relas[0]
-    else:
-        las = None
-    # cur = \
-    #     db_session.query(ElectricEnergy.ZGL).filter(
-    #         ElectricEnergy.TagClassValue == oc.TagClassValue,
-    #         ElectricEnergy.CollectionDate.like("%"+EndTime+"%"), ElectricEnergy.ZGL != "0.0", ElectricEnergy.ZGL != "", ElectricEnergy.ZGL != None).order_by(
-    #         desc("CollectionDate")).first()
-    # las = db_session.query(ElectricEnergy.ZGL).filter(
-    #     ElectricEnergy.TagClassValue == oc.TagClassValue,
-    #     ElectricEnergy.CollectionDate.like("%"+StartTime+"%"), ElectricEnergy.ZGL != "0.0", ElectricEnergy.ZGL != "", ElectricEnergy.ZGL != None).order_by(("CollectionDate")).first()
-    return curcutlas(cur, las, elecount, "电")
+        return 0.0
 
 def wattongji(oc, StartTime, EndTime, elecount):
     sqlcur = "SELECT TOP 1 [WaterSum] FROM [DB_MICS].[dbo].[WaterEnergy] with (INDEX =IX_WaterEnergy) WHERE [WaterEnergy].[TagClassValue] = " + "'" + oc.TagClassValue + "'" + " AND [WaterEnergy].[CollectionDate] LIKE " + "'" + "%" + EndTime + "%" + "'" + " AND [WaterEnergy].[WaterSum] != " + "'" + "0.0" + "'" + " AND [WaterEnergy].[WaterSum] != " + "'" + "" + "'" + " AND [WaterEnergy].[WaterSum] IS NOT NULL ORDER BY [WaterEnergy].[CollectionDate] DESC"
@@ -238,6 +235,7 @@ def stetongji(oc, StartTime, EndTime, elecount):
 def energyselect(data):
     if request.method == 'GET':
         try:
+            print(datetime.datetime.now())
             dir = {}
             currentyear = datetime.datetime.now().year
             currentmonth = datetime.datetime.now().month
@@ -264,8 +262,16 @@ def energyselect(data):
                 dir_list = []
                 dir_month_list = []
                 oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
+                oc_list = ""
+                n = 1
+                for oc in oclass:
+                    if n != 1:
+                        oc_list = oc_list + "," + str(oc.TagClassValue)
+                    else:
+                        oc_list = str(oc.TagClassValue)
+                    n = n + 1
                 compareday = data.get("CompareDate")
-                for j in range(0, 24):
+                for j in range(24):
                     dir_list_dict = {}
                     dir_list_dict["日期"] = str(j)
                     comparehour = str(compareday) + " " + addzero(j)
@@ -275,42 +281,35 @@ def energyselect(data):
                         int(currentday)) + " " + addzero(j)
                     vv = datetime.datetime.strptime(currhour, "%Y-%m-%d %H")
                     lasthour = str((vv + datetime.timedelta(hours=-1)).strftime("%Y-%m-%d %H:%M:%S"))[0:13]
-                    count = 0.0
-                    comperacount = 0.0
-                    for oc in oclass:
-                        Tag = oc.TagClassValue[0:1]
-                        if Tag == "E":
-                            count = eletongji(oc, lasthour, currhour, count)
-                            comperacount = eletongji(oc, lastcomparehour, lastcomparehour, comperacount)
-                        elif Tag == "W":
-                            count = wattongji(oc, lasthour, currhour, count)
-                            comperacount = wattongji(oc, lastcomparehour, lastcomparehour, comperacount)
-                        elif Tag == "S":
-                            count = stetongji(oc, lasthour, currhour, count)
-                            comperacount = stetongji(oc, lastcomparehour, lastcomparehour, comperacount)
+                    if EnergyClass == "电":
+                        count = eletongji(oc_list, lasthour, currhour, EnergyClass, "时")
+                        comperacount = eletongji(oc_list, lastcomparehour, comparehour, EnergyClass, "时")
+                    elif EnergyClass == "水":
+                        count = wattongji(oc_list, lasthour, currhour, EnergyClass, "时")
+                        comperacount = wattongji(oc_list, lastcomparehour, comparehour, EnergyClass, "时")
+                    elif EnergyClass == "汽":
+                        count = stetongji(oc_list, lasthour, currhour, EnergyClass, "时")
+                        comperacount = stetongji(oc_list, lastcomparehour, comparehour, EnergyClass, "时")
                     dir_list_dict["今日能耗"] = count
                     dir_list_dict["对比日能耗"] = comperacount
                     dir_list.append(dir_list_dict)
+                print(datetime.datetime.now())
                 for i in range(1, 32):
                     dirmonth_list_dict = {}
                     currmonthday = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(int(i))
                     lastmonthcurrday = strlastMonth(str(currentyear) + "-" + addzero(int(currentmonth))) + "-" + addzero(int(i))
                     dirmonth_list_dict["日期"] = str(currmonthday)
-                    monthcount = 0.0
-                    lastmonthcount = 0.0
-                    for oc in oclass:
-                        Tag = oc.TagClassValue[0:1]
-                        if Tag == "E":
-                            monthcount = eletongji(oc, currmonthday, currmonthday, monthcount)
-                            lastmonthcount = eletongji(oc, lastmonthcurrday, lastmonthcurrday, lastmonthcount)
-                        elif Tag == "W":
-                            monthcount = wattongji(oc, currmonthday, currmonthday, monthcount)
-                            lastmonthcount = wattongji(oc, lastmonthcurrday, lastmonthcurrday, lastmonthcount)
-                        elif Tag == "S":
-                            monthcount = stetongji(oc, currmonthday, currmonthday, monthcount)
-                            lastmonthcount = stetongji(oc, lastmonthcurrday, lastmonthcurrday, lastmonthcount)
-                    dirmonth_list_dict["上月能耗"] = count
-                    dirmonth_list_dict["本月能耗"] = comperacount
+                    if EnergyClass == "电":
+                        monthcount = eletongji(oc_list, currmonthday, currmonthday, EnergyClass, "月")
+                        lastmonthcount = eletongji(oc_list, lastmonthcurrday, currmonthday, EnergyClass, "月")
+                    elif EnergyClass == "水":
+                        monthcount = wattongji(oc_list, currmonthday, currmonthday, EnergyClass, "月")
+                        lastmonthcount = wattongji(oc_list, lastmonthcurrday, currmonthday, EnergyClass, "月")
+                    elif EnergyClass == "汽":
+                        monthcount = stetongji(oc_list, currmonthday, currmonthday, EnergyClass, "月")
+                        lastmonthcount = stetongji(oc_list, lastmonthcurrday, currmonthday, EnergyClass, "月")
+                    dirmonth_list_dict["上月能耗"] = monthcount
+                    dirmonth_list_dict["本月能耗"] = lastmonthcount
                     dir_month_list.append(dirmonth_list_dict)
                 dir["compareTodayRow"] = dir_list
                 dir["lastMonthRow"] = dir_month_list
@@ -554,6 +553,8 @@ def energyselect(data):
                     list_bad.append(i.key)
                 dir["连接通畅数"] = conngoods
                 dir["连接阻塞数"] = connbads
+            print(dir)
+            print(datetime.datetime.now())
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
