@@ -216,7 +216,7 @@ def energyselect(data):
                 compareday = data.get("CompareDate")
                 for j in range(24):
                     dir_list_dict = {}
-                    dir_list_dict["'"+"日期"+"'"] = str(j)
+                    dir_list_dict["时间"] = str(j)
                     comparehour = str(compareday) + " " +addzero(j)+ ":59:59"
                     lastcomparehour = str(compareday) + " " +addzero(j)+ ":00:00"
                     currhour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
@@ -225,8 +225,8 @@ def energyselect(data):
                         int(currentday)) + " " + addzero(j)+":00:00"
                     count = energyStatistics(oc_list, lasthour, currhour, EnergyClass)
                     comperacount = energyStatistics(oc_list, lastcomparehour, comparehour, EnergyClass)
-                    dir_list_dict["'"+"今日能耗"+"'"] = count
-                    dir_list_dict["'"+"对比日能耗"+"'"] = comperacount
+                    dir_list_dict["今日能耗"] = count
+                    dir_list_dict["对比日能耗"] = comperacount
                     dir_list.append(dir_list_dict)
                 curmonthdays = str(getMonthFirstDayAndLastDay(currentyear, currentmonth)[1])[8:10]
                 lasmonthdays = str(getMonthFirstDayAndLastDay(strlastMonth(str(currentyear) + "-" + addzero(int(currentmonth)))[0:4], strlastMonth(str(currentyear) + "-" + addzero(int(currentmonth)))[5:7])[1])[8:10]
@@ -238,7 +238,7 @@ def energyselect(data):
                     lastmonthcurrday = strlastMonth(str(currentyear) + "-" + addzero(int(currentmonth))) + "-" + addzero(int(i))+" 23:59:59"
                     lastmonthlasday = strlastMonth(
                         str(currentyear) + "-" + addzero(int(currentmonth))) + "-" + addzero(int(i)) + " 00:0:00"
-                    dirmonth_list_dict["'"+"日期"+"'"] = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(int(i))
+                    dirmonth_list_dict["日期"] = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(int(i))
                     if i <= int(curmonthdays):
                         monthcount = energyStatistics(oc_list, currmonthlasday, currmonthcurrday, EnergyClass)
                     else:
@@ -247,8 +247,8 @@ def energyselect(data):
                         lastmonthcount = energyStatistics(oc_list, lastmonthlasday, lastmonthcurrday, EnergyClass)
                     else:
                         lastmonthcount = 0.0
-                    dirmonth_list_dict["'"+"上月能耗"+"'"] = lastmonthcount
-                    dirmonth_list_dict["'"+"本月能耗"+"'"] = monthcount
+                    dirmonth_list_dict["上月能耗"] = lastmonthcount
+                    dirmonth_list_dict["本月能耗"] = monthcount
                     dir_month_list.append(dirmonth_list_dict)
                 dir["compareTodayRow"] = dir_list
                 dir["lastMonthRow"] = dir_month_list
