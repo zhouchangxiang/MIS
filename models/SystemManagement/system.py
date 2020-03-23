@@ -917,7 +917,7 @@ class IncrementTable(Base):
     TagClassValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 采集时间:
-    CollectionDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    CollectionDate = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
 
     # 采集年:
     CollectionYear = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
