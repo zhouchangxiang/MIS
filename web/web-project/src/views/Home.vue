@@ -492,7 +492,10 @@
           that.lastMonthCon = JSON.parse(lastMonthCon.data).elctric
           that.thisYearCon = JSON.parse(thisYearCon.data).elctric
           that.lastYearCon = JSON.parse(lastYearCon.data).elctric
-          console.log(JSON.parse(compareData.data))
+          var chartData = JSON.parse(compareData.data)
+          console.log(chartData)
+          that.contrastMonthChartData.rows = chartData.lastMonthRow
+          that.realtimeChartData.rows = chartData.compareTodayRow
         }))
       },
       openSystemCheckupDialog(){ //打开系统体检
