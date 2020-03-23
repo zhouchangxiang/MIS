@@ -1,48 +1,40 @@
 <template>
   <el-row style="height: 100%;background: #fff;">
     <el-col :span="24">
-        <vue2-org-tree
-          :data="treeData"
-          :horizontal="true"
-          :collapsable="false"
-          :render-content="renderContent"
-          @on-node-click="onNodeClick"/>
+      <TreeChart :json="treeData"/>
     </el-col>
-    <div v-if='showBox'>
-      <ul class='show-parent' :style="{left: tranLeft, top: tranTop}">
-        <li @click="addNode">添加子节点</li>
-        <li @click="editNode">修改</li>
-        <li @click="delNode">删除</li>
-      </ul>
-    </div>
   </el-row>
 </template>
 
 <script>
+  import TreeChart from 'vue-tree-chart'
   export default {
     name: "Organization",
+    components: {
+      TreeChart
+    },
     data(){
       return {
         treeData: {
           id: 0,
-          label: "XXX科技有限公司",
+          name: "XXX科技有限公司",
           children: [
-            {id: 2,label: "产品研发部",
+            {id: 2,name: "产品研发部",
               children: [
-                {id: 5,label: "研发-前端"},
-                {id: 6,label: "研发-后端"},
-                {id: 9,label: "UI设计"},
-                {id: 10,label: "产品经理"}
+                {id: 5,name: "研发-前端"},
+                {id: 6,name: "研发-后端"},
+                {id: 9,name: "UI设计"},
+                {id: 10,name: "产品经理"}
               ]
             },
-            {id: 3,label: "销售部",
+            {id: 3,name: "销售部",
               children: [
-                {id: 7,label: "销售一部"},
-                {id: 8,label: "销售二部"}
+                {id: 7,name: "销售一部"},
+                {id: 8,name: "销售二部"}
               ]
             },
-            {id: 4,label: "财务部"},
-            {id: 9,label: "HR人事"}
+            {id: 4,name: "财务部"},
+            {id: 9,name: "HR人事"}
           ]
         },
         showBox: false,

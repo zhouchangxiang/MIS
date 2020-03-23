@@ -481,9 +481,9 @@
           this.axios.get(api,{params: {StartTime: lastStartMonth,EndTime:lastEndMonth}}),//获取上月能耗
           this.axios.get(api,{params: {StartTime: thisStartYear,EndTime:todayEndTime}}),//获取当年能耗
           this.axios.get(api,{params: {StartTime: lastStartYear,EndTime:lastEndYear}}),//获取上一年能耗
-          // this.axios.get('/api/energyall',{
-          //   params: {ModelFlag: "能耗预览",CompareDate:moment(this.CompareDate).format('YYYY-MM-DD'),EnergyClass:this.previewEnergyValue}
-          // })//获取对比图表
+          this.axios.get('/api/energyall',{
+            params: {ModelFlag: "能耗预览",CompareDate:moment(this.CompareDate).format('YYYY-MM-DD'),EnergyClass:this.previewEnergyValue}
+          })//获取对比图表
         ]).then(this.axios.spread(function(todayCon,compareDateCon,thisMonthCon,lastMonthCon,thisYearCon,lastYearCon,compareData){
           that.todayCon = JSON.parse(todayCon.data).elctric
           that.unit = JSON.parse(todayCon.data).unit
@@ -492,7 +492,7 @@
           that.lastMonthCon = JSON.parse(lastMonthCon.data).elctric
           that.thisYearCon = JSON.parse(thisYearCon.data).elctric
           that.lastYearCon = JSON.parse(lastYearCon.data).elctric
-          // console.log(JSON.parse(compareData.data))
+          console.log(JSON.parse(compareData.data))
         }))
       },
       openSystemCheckupDialog(){ //打开系统体检
