@@ -171,7 +171,7 @@ def energyStatistics(oc_list, StartTime, EndTime, energy):
         else:
             return 0.0
     else:
-        return 0.0
+        return None
 def energyStatisticstotal(oc_list, StartTime, EndTime):
     propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
     pro = float(propor.Proportion)
@@ -184,7 +184,7 @@ def energyStatisticstotal(oc_list, StartTime, EndTime):
         else:
             return 0.0
     else:
-        return 0.0
+        return None
 def energyselect(data):
     if request.method == 'GET':
         try:
@@ -403,18 +403,19 @@ def areaTimeEnergy():
                             vlaue = energyStatistics(oc_list, lasthour, currhour, EnergyClass)
                         dict_valuelist = {}
                         dict_valuelist["date"] = str(j)
-                        if vlaue == 0.0 or vlaue < 0:
+                        if vlaue == None or vlaue < 0:
                             colour = colour +","+ wu
-                        elif 0<vlaue < float(stop) or vlaue == float(stop):
+                        elif 0<=vlaue <= float(stop):
                             colour = colour +","+ stopColourValue
-                        elif vlaue < float(low) or vlaue == float(low):
+                        elif float(low)<=vlaue<float(middle):
                             colour = colour +","+ lowColourValue
-                        elif  vlaue < float(middle) or vlaue == float(middle):
+                        elif float(middle)<=vlaue < float(high):
                             colour = colour +","+ middleColourValue
-                        elif vlaue < float(high) or vlaue == float(high):
+                        elif vlaue > float(high) or vlaue == float(high):
                             colour = colour +","+ highColourValue
                         dict_valuelist["value"] = round(vlaue, 2)
                         valuelist.append(dict_valuelist)
+                    print(colour)
                     value_dirc["valuelist"] = valuelist
                     value_dirc["backgroundColor"] = "-webkit-linear-gradient(left," + colour[1:] + ")"
                     araeY_list.append(value_dirc)
