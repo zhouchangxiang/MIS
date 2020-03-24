@@ -8,6 +8,7 @@ import Home from '@/views/home'
 import EfficiencyAnalysis from '@/views/energy/EfficiencyAnalysis'
 import DataReport from '@/views/energy/DataReport'
 import Areas from '@/views/energy/Areas'
+import MaintainedBoard from '@/views/MaintainedTable/MaintainedBoard'
 import Organization from '@/views/SystemManage/Organization'
 import Factory from '@/views/SystemManage/Factory'
 import Role from '@/views/SystemManage/Role'
@@ -47,6 +48,11 @@ export default new Router({
         name:'DataReport',
         meta:{ title:'综合报表' },
         component:DataReport
+      },{
+        path:'/MaintainedBoard',
+        name:'MaintainedBoard',
+        meta:{ title:'综合维护表' },
+        component:MaintainedBoard
       },{
         path:'/Areas',
         name:'Areas',

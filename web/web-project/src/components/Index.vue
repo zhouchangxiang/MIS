@@ -139,7 +139,7 @@ export default {
     getMenuHeight(){
       this.selfHeight.height = window.innerHeight - 210+'px';
     },
-    clickSubMenu(areaName,url){
+    clickSubMenu(areaName,url){  //点击左菜单跳转
       this.areaObj.areaName = areaName
       this.$router.push({
         path:url,
@@ -148,7 +148,7 @@ export default {
         }
       })
     },
-    handleCommand(command) {
+    handleCommand(command) {  //判断用户下拉点击
       if(command == "a"){
         this.dialogUserVisible = true
       }else if(command == "b"){
@@ -156,7 +156,7 @@ export default {
         this.$router.replace("/login")
       }
     },
-    iconToggle() {
+    iconToggle() {  //折叠菜单
       this.isCollapse = !this.isCollapse
       if(this.isCollapse){
         this.sideIcon = 'el-icon-arrow-right'
@@ -166,7 +166,10 @@ export default {
         $(".left-aside").animate({"width":"180px"})
       }
     },
-    clickMainMenu(index){
+    getAreaOfMenu(){
+      
+    },
+    clickMainMenu(index){  //切换模块
       this.isactive = index
       if(index == 0) {
         this.subMenulist = [
@@ -187,7 +190,8 @@ export default {
             ]
           },
           {name: "能效分析", icon: "el-icon-time", url: "/EfficiencyAnalysis"},
-          {name: "综合报表", icon: "el-icon-document", url: "/DataReport"}
+          {name: "综合报表", icon: "el-icon-document", url: "/DataReport"},
+          {name: "综合维护表", icon: "el-icon-document", url: "/MaintainedBoard"},
         ]
       }else if(index == 1){
         this.subMenulist = [
@@ -200,12 +204,12 @@ export default {
         ]
       }
     },
-    beforeDestroy() {
+    beforeDestroy() {  //时间定时器
       if (this.timer) {
         clearInterval(this.timer);
       }
     },
-    getFullCreeen () {
+    getFullCreeen () {  //全屏
       if (screenfull.isEnabled) {
         screenfull.toggle()
         if(screenfull.isFullscreen){
