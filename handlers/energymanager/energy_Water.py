@@ -99,11 +99,6 @@ def strlastMonth(currmonth):
         else:
             la = str(las)
         return str0 + "-" + la
-def energymoney(count, name):
-    prices = db_session.query(PriceList).filter(PriceList.IsEnabled == "是").all()
-    for pr in prices:
-        if pr.PriceName == name:
-            return float(count)*float(pr.PriceValue)
 def energyWaterSelect(data):
     if request.method == 'GET':
         try:
