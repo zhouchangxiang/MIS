@@ -118,6 +118,7 @@ export default {
     this.clickMainMenu(this.isactive)
   },
   created(){
+    this.getAreaOfMenu()
     window.addEventListener('resize', this.getMenuHeight);
     this.getMenuHeight()
     if(sessionStorage.getItem("LoginStatus")) {
@@ -167,7 +168,16 @@ export default {
       }
     },
     getAreaOfMenu(){
-      
+      var params = {
+        tableName: "AreaTable",
+        limit:10000,
+        offset:0
+      }
+      this.axios.get("/api/CUID",this.qs.stringify(params)).then(res =>{
+        console.log(res)
+      },res =>{
+        console.log("获取车间时请求错误")
+      })
     },
     clickMainMenu(index){  //切换模块
       this.isactive = index
