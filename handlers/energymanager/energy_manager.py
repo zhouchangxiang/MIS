@@ -254,15 +254,11 @@ def energyselect(data):
                 dir["lastMonthRow"] = dir_month_list
             elif ModelFlag == "区域能耗":
                 oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == Area).all()
+                oc_list = []
+                for oc in oclass:
+                    oc_list.append(oc.TagClassValue)
                 if datime == "年":
-                    for oc in oclass:
-                        Tag = oc.TagClassValue[0:1]
-                        if Tag == "E":
-                            elecount = eletongji(oc, curryear, lastyear, elecount)
-                        elif Tag == "W":
-                            watcount = wattongji(oc, curryear, lastyear, elecount)
-                        elif Tag == "S":
-                            stecount = stetongji(oc, curryear, lastyear, elecount)
+                    count = energyStatistics(oc_list, lastyear, curryear, EnergyClass)
                 elif datime == "月":
                     for oc in oclass:
                         Tag = oc.TagClassValue[0:1]
@@ -711,7 +707,6 @@ def areaTimeEnergy():
             currenthour = datetime.datetime.now().hour
             EnergyClass = data.get("energyType")
             currdate = data.get("date")#当前时间
-            compareDate = data.get("compareDate")#对比日期
             AreaNames = db_session.query(AreaTable.AreaName).filter().all()
             diarea = {}
             araeY_list = []
@@ -721,6 +716,9 @@ def areaTimeEnergy():
                 value_dirc = {}
                 oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaName[0],
                                                             TagDetail.EnergyClass == EnergyClass).all()
+                oc_list = []
+                for oc in oc_list:
+                    oc_list.append(oc.TagClassValue)
                 colourclass = db_session.query(AreaTimeEnergyColour).filter(AreaTimeEnergyColour.AreaName == AreaName[0]).all()
                 stop = ""
                 high = ""
@@ -743,15 +741,7 @@ def areaTimeEnergy():
                     lasthour = str((vv + datetime.timedelta(hours=-1)).strftime("%Y-%m-%d %H:%M:%S"))[0:13]
                     dict_valuelist = {}
                     dict_valuelist["date"] = str(j)
-                    vlaue = 0.0
-                    for oc in oclass:
-                        Tag = oc.TagClassValue[0:1]
-                        if Tag == "E":
-                            vlaue = eletongji(oc, currhour, lasthour, vlaue)
-                        elif Tag == "W":
-                            vlaue = wattongji(oc, currhour, lasthour, vlaue)
-                        elif Tag == "S":
-                            vlaue = stetongji(oc, currhour, lasthour, vlaue)
+                    vlaue = energyStatistics(oc_list, lasthour, currhour, EnergyClass)
                     if vlaue < float(stop) or vlaue == float(stop):
                         colour = colour + "#ECF1F4"
                     elif vlaue < float(low) or vlaue == float(low):
