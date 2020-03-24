@@ -500,7 +500,10 @@
         }))
       },
       getAreaTimeEnergy(){
-        this.axios.get("/api/areaTimeEnergy",{params: {energyType: this.areaTimeEnergyValue}}).then(res => {
+        // var params = {
+        //   energyType: this.areaTimeEnergyValue
+        // }
+        this.axios.get("/api/areaTimeEnergy",{params:{energyType: this.areaTimeEnergyValue}}).then(res => {
           console.log(res)
         })
       },

@@ -1,11 +1,11 @@
 <template>
-    $END$
+
 </template>
 
 <script>
-    export default {
-        name: "AreaTimeRange"
-    }
+  export default {
+    name: "AreaTimeRange"
+  }
 </script>
 
 <style scoped>
