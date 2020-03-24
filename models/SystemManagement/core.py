@@ -496,51 +496,6 @@ class Unit(Base):
 #Unit_END:
 
 
-#PriceList_START:
-class PriceList(Base):
-	__tablename__ = "PriceList" 
-	
-	#ID:
-	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
-	
-	#价格名称:
-	PriceName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#价格值:
-	PriceValue = Column(Float(53), primary_key = False, autoincrement = False, nullable = True)
-	
-	#价格类型:
-	PriceType = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#是否启用:
-	IsEnabled = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#开始时间:
-	StartTime = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#结束时间:
-	EndTime = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#备注:
-	Description = Column(Unicode(100), primary_key = False, autoincrement = False, nullable = True)
-	
-#PriceList_END:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 #BrandAreaTable_START:
