@@ -832,8 +832,11 @@ class AreaTimeEnergyColour(Base):
     # 区域:
     AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+    # 颜色值:
+    ColourSum = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
     # 颜色:
-    Colour = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    ColourValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 区域时段颜色分类:
     ColourName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
