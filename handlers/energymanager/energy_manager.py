@@ -706,7 +706,6 @@ def areaTimeEnergy():
             currentday = datetime.datetime.now().day
             currenthour = datetime.datetime.now().hour
             EnergyClass = data.get("energyType")
-            currdate = data.get("date")#当前时间
             AreaNames = db_session.query(AreaTable.AreaName).filter().all()
             diarea = {}
             araeY_list = []
