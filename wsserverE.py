@@ -14,7 +14,7 @@ import datetime
 from dbset.database.db_operate import db_session
 from models.SystemManagement.system import ElectricSiteURL
 from models.SystemManagement.core import TagDetail, Unit
-from dbset.log.BK2TLogger import logger,insertSyslog
+from dbset.log.BK2TLogger import logger, insertSyslog
 
 
 def get_headers(data):
