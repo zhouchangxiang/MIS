@@ -404,19 +404,19 @@ def areaTimeEnergy():
                         dict_valuelist = {}
                         dict_valuelist["date"] = str(j)
                         if vlaue == 0.0 or vlaue < 0:
-                            colour = colour + wu
+                            colour = colour +","+ wu
                         elif 0<vlaue < float(stop) or vlaue == float(stop):
-                            colour = colour + stopColourValue
+                            colour = colour +","+ stopColourValue
                         elif vlaue < float(low) or vlaue == float(low):
-                            colour = colour + lowColourValue
+                            colour = colour +","+ lowColourValue
                         elif  vlaue < float(middle) or vlaue == float(middle):
-                            colour = colour + middleColourValue
+                            colour = colour +","+ middleColourValue
                         elif vlaue < float(high) or vlaue == float(high):
-                            colour = colour + highColourValue
+                            colour = colour +","+ highColourValue
                         dict_valuelist["value"] = round(vlaue, 2)
                         valuelist.append(dict_valuelist)
                     value_dirc["valuelist"] = valuelist
-                    value_dirc["backgroundColor"] = "-webkit-linear-gradient(left," + colour + ")"
+                    value_dirc["backgroundColor"] = "-webkit-linear-gradient(left," + colour[1:] + ")"
                     araeY_list.append(value_dirc)
                 else:
                     value_dirc["valuelist"] = []
