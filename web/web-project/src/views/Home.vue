@@ -80,7 +80,7 @@
           <el-col :span="10">
             <div class="home-card-head">
               <span><i class="el-icon-guide el-icon--left" style="color: #228AD5;"></i>区域时段能耗</span>
-              <el-select class="card-head-select" v-model="areaTimeEnergyValue" placeholder="请选择">
+              <el-select class="card-head-select" v-model="areaTimeEnergyValue" placeholder="请选择" @change="getAreaTimeEnergy">
                 <el-option v-for="(item,index) in areaTimeEnergyOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </div>
@@ -276,7 +276,7 @@
         thisMonthCon:"", //本月能耗量
         lastMonthCon:"", //上月同期能耗量
         contrastMonthChartData:{
-          columns: ['时间', '上月能耗', '本月能耗'],
+          columns: ['日期', '上月能耗', '本月能耗'],
           rows:[]
         },
         realtimeChartData:{
@@ -408,6 +408,8 @@
     },
     created(){
       this.getEnergyPreview()
+      this.getAreaTimeEnergy()
+      this.getOnLineEq()
     },
     computed:{ //计算属性
       comparePer(){
@@ -493,10 +495,19 @@
           that.thisYearCon = JSON.parse(thisYearCon.data).elctric
           that.lastYearCon = JSON.parse(lastYearCon.data).elctric
           var chartData = JSON.parse(compareData.data)
-          console.log(chartData)
           that.contrastMonthChartData.rows = chartData.lastMonthRow
           that.realtimeChartData.rows = chartData.compareTodayRow
         }))
+      },
+      getAreaTimeEnergy(){
+        this.axios.get("/api/areaTimeEnergy",{params: {energyType: this.areaTimeEnergyValue}}).then(res => {
+          console.log(res)
+        })
+      },
+      getOnLineEq(){
+        this.axios.get("/api/energyall").then(res => {
+          console.log(res)
+        })
       },
       openSystemCheckupDialog(){ //打开系统体检
         this.systemCheckupDialogVisible = true
