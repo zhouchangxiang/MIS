@@ -59,6 +59,8 @@ app.register_blueprint(energyElectric)
 app.register_blueprint(energySteam)
 #水能管理
 app.register_blueprint(energyWater)
+#手机管理
+app.register_blueprint(mobilemanager)
 @app.route('/')
 @login_required
 def index():
