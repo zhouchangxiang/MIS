@@ -18,6 +18,7 @@ from handlers.batchmanager.batch_manager import batch
 from tools.common import insert, delete, update, select, accurateSelect
 from handlers.energymanager.energy_manager import energy, energyselect
 from flask_login import current_user
+from handlers.mobile.Mobilemanager import mobilemanager
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
