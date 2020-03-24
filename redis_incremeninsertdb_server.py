@@ -9,17 +9,18 @@ from flask import Blueprint, render_template, request, make_response
 import json
 import datetime
 from sqlalchemy import desc
-from dbset.database.db_operate import db_session,pool
+from dbset.database.db_operate import db_session, pool
 from dbset.main.BSFramwork import AlchemyEncoder
-from flask_login import login_required, logout_user, login_user,current_user,LoginManager
+from flask_login import login_required, logout_user, login_user, current_user, LoginManager
 import arrow
 from models.SystemManagement.core import RedisKey, TagClassType, ElectricEnergy, Unit, PriceList, SteamEnergy, \
     WaterEnergy, TagDetail, Equipment
 from models.SystemManagement.system import EarlyWarningLimitMaintain, EarlyWarning, EarlyWarningPercentMaintain, \
     ElectricPrice, IncrementTable, WaterSteamPrice
-from tools.common import insert,delete,update
+from tools.common import insert, delete, update
 from dbset.database import constant
-from dbset.log.BK2TLogger import logger,insertSyslog
+from dbset.log.BK2TLogger import logger, insertSyslog
+
 
 def run():
     while True:
@@ -84,11 +85,13 @@ def run():
                 key.IncrementFlag = "1"
                 db_session.commit()
         except Exception as e:
-            print("写入增量库报错："+str(e))
+            print("写入增量库报错：" + str(e))
             logger.errro(e)
-            insertSyslog("error", "写入增量库报错Error：" + str(e),"")
+            insertSyslog("error", "写入增量库报错Error：" + str(e), "")
         finally:
             pass
         print("数据开始写入增量库结束")
+
+
 if __name__ == '__main__':
     run()
