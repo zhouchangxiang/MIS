@@ -1,9 +1,10 @@
-import os,configparser
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CONFIG_DIR = os.path.join(BASE_DIR,r'database\config.ini')
-config = configparser.ConfigParser()
-config.read(CONFIG_DIR,encoding='UTF-8')
+import configparser
+import os
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CONFIG_DIR = os.path.join(BASE_DIR, r'database\config.ini')
+config = configparser.ConfigParser()
+config.read(CONFIG_DIR, encoding='UTF-8')
 
 REDIS_HOST = config['data_realtime_server']['host']
 REDIS_TABLENAME = config['data_realtime_server']['tablename']
@@ -22,6 +23,7 @@ OUTPUT_COMPARE_INPUT = config['output_compare']['input']
 OUTPUT_COMPARE_OUTPUT = config['output_compare']['output']
 OUTPUT_COMPARE_SAMPLE = config['output_compare']['sampling_quantity']
 
+
 def transform_dict(position):
     if position:
         dict_ = dict()
@@ -29,11 +31,12 @@ def transform_dict(position):
             dict_[key] = eval(position)[key]
         return dict_
 
+
 MONITOR_TRANSPORT_BLUE_TAG = transform_dict("config['transport_section_blue']")
 MONITOR_TRANSPORT_RED_TAG = transform_dict("config['transport_section_red']")
 
 CPK_TAG_LIST = config['CPK_Tag']
-SINGLE_CONCENTRATION_TAG =transform_dict("config['Single_effect_concentration']")
+SINGLE_CONCENTRATION_TAG = transform_dict("config['Single_effect_concentration']")
 ALCOHOLPRECIPITATION_TAG = transform_dict("config['AlcoholPrecipitation']")
 
 materia_tracing_A_drug = config['materia_tracing_A_drug']
@@ -45,10 +48,8 @@ Decocting_A_EquipID = eval(config['EquipID']['Decocting_A'])
 Decocting_B_EquipID = eval(config['EquipID']['Decocting_B'])
 AlcoholEquipID = eval(config['EquipID']['Alcohol'])
 
-
-CONFIG_retxt = os.path.join(BASE_DIR,r'database\redistxt.ini')
+CONFIG_retxt = os.path.join(BASE_DIR, r'database\redistxt.ini')
 config_retxt = configparser.ConfigParser()
-config_retxt.read(CONFIG_retxt,encoding='UTF-8')
-
+config_retxt.read(CONFIG_retxt, encoding='UTF-8')
 
 REDIS_retxt = config_retxt['BK']

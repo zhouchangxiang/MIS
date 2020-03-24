@@ -1,13 +1,24 @@
-from flask import Blueprint
+from flask import Blueprint, jsonify
 from flask import Blueprint, render_template, request, make_response, send_file
 import json
 
+from flask_login import current_user
 from sqlalchemy import desc
 
-from dbset.database.db_operate import db_session,pool
+from dbset.database.db_operate import db_session, pool
+from dbset.log.BK2TLogger import logger, insertSyslog
+from dbset.main.BSFramwork import AlchemyEncoder
 from models.SystemManagement.core import BrandAreaTable
+from models.SystemManagement.system import BatchInfo
 
 mobilemanager = Blueprint('mobile', __name__, template_folder='templates')
+
+
+@mobilemanager.route('/', methods=['POST', 'GET'])
+def index():
+    data = {'name': 'huangxiongjin', 'age': 25}
+    return jsonify(data)
+
 
 @mobilemanager.route('/energyPreview', methods=['POST', 'GET'])
 def BatchMaterialTracing():
@@ -23,7 +34,7 @@ def BatchMaterialTracing():
                 begin = data.get('begin')
                 end = data.get('end')
                 BatchNum = data.get('BatchNum')
-                if (BatchNum == "" or BatchNum == None):
+                if BatchNum == "" or BatchNum == None:
                     BrandAreaTable
                     total = db_session.query(BatchInfo).filter(BatchInfo.CreateDate.between(begin, end)).order_by(
                         desc("CreateDate")).count()
