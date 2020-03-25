@@ -1,13 +1,13 @@
 from flask import Flask
 from flask_script import Manager
 
-from handlers.mobile.views import mobilemanager
+from handlers.mobile.views import mobile
 
 app = Flask(__name__)
 manage = Manager(app)
 
 # 手机管理
-app.register_blueprint(mobilemanager, url_prefix='/mobile')
+app.register_blueprint(mobile, url_prefix='/api/accounts')
 
 
 @app.route('/')
