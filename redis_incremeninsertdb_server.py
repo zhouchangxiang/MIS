@@ -24,7 +24,7 @@ from dbset.log.BK2TLogger import logger, insertSyslog
 
 def run():
     while True:
-        # time.sleep(60)
+        time.sleep(60)
         print("数据开始写入增量数据库")
         try:
             elekeys = db_session.query(ElectricEnergy).filter(ElectricEnergy.IncrementFlag == "0").order_by(("ID")).all()
