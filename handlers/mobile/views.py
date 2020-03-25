@@ -1,55 +1,59 @@
-from flask import Blueprint, jsonify
-from flask import Blueprint, render_template, request, make_response, send_file
 import json
+import uuid
+import pickle
+import redis
 
-from flask_login import current_user
-from sqlalchemy import desc
+from flask import jsonify
+from flask import Blueprint, request
+from datetime import datetime
+from werkzeug.security import check_password_hash
 
-from dbset.database.db_operate import db_session, pool
-from dbset.log.BK2TLogger import logger, insertSyslog
+from dbset.database.db_operate import db_session
+from dbset.log.BK2TLogger import logger
 from dbset.main.BSFramwork import AlchemyEncoder
-from models.SystemManagement.core import BrandAreaTable
-from models.SystemManagement.system import BatchInfo
+from models.SystemManagement.system import User
 
-mobilemanager = Blueprint('mobile', __name__, template_folder='templates')
+mobile = Blueprint('mobile', __name__, template_folder='templates')
 
 
-@mobilemanager.route('/', methods=['POST', 'GET'])
+class Redis:
+
+    @staticmethod
+    def connect():
+        return redis.StrictRedis(host='localhost', port=6379)
+
+    @staticmethod
+    def set_data(red, key, data):
+        return red.set(key, pickle.dumps(data), ex=604800)
+
+    @staticmethod
+    def get_data(red, key):
+        return pickle.loads(red.get(key)) if red.get(key) else '身份验证失败'
+
+
+@mobile.route('/login', methods=['POST'])
+def login():
+    try:
+        json_data = request.get_json()
+        user = db_session.query(User).filter_by(WorkNumber=json_data['WorkNumber']).first()
+        if user and check_password_hash(user.Password, json_data['Password']):
+            token = uuid.uuid4().hex
+            user.LastLoginTime = datetime.now()
+            Redis.set_data(Redis.connect(), token, user.id)
+            db_session.add(user)
+            db_session.commit()
+            return jsonify({'code': 1001, 'msg': '登录成功', 'data': {'token': token}})
+        else:
+            return jsonify({'code': 2001, 'msg': '账号或密码错误'})
+    except Exception as e:
+        print(e)
+        db_session.rollback()
+        logger.error(e)
+        return json.dumps([{"status": "Error:" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
+
+
+@mobile.route('/', methods=['GET'])
 def index():
-    data = {'name': 'huangxiongjin', 'age': 25}
-    return jsonify(data)
-
-
-@mobilemanager.route('/energyPreview', methods=['POST', 'GET'])
-def BatchMaterialTracing():
-    if request.method == 'GET':
-        data = request.values
-        try:
-            jsonstr = json.dumps(data.to_dict())
-            if len(jsonstr) > 10:
-                pages = int(data.get("offset"))
-                rowsnumber = int(data.get("limit"))
-                inipage = pages * rowsnumber + 0
-                endpage = pages * rowsnumber + rowsnumber
-                begin = data.get('begin')
-                end = data.get('end')
-                BatchNum = data.get('BatchNum')
-                if BatchNum == "" or BatchNum == None:
-                    BrandAreaTable
-                    total = db_session.query(BatchInfo).filter(BatchInfo.CreateDate.between(begin, end)).order_by(
-                        desc("CreateDate")).count()
-                    oclass = db_session.query(BatchInfo).filter(BatchInfo.CreateDate.between(begin, end)).order_by(
-                        desc("CreateDate")).all()[inipage:endpage]
-                else:
-                    total = db_session.query(BatchInfo).filter(BatchInfo.BatchNum.like("%" + BatchNum + "%"),
-                                                               BatchInfo.CreateDate.between(begin, end)).order_by(
-                        desc("CreateDate")).count()
-                    oclass = db_session.query(BatchInfo).filter(BatchInfo.BatchNum.like("%" + BatchNum + "%"),
-                                                                BatchInfo.CreateDate.between(begin, end)).order_by(
-                        desc("CreateDate")).all()[inipage:endpage]
-                jsonoclass = json.dumps(oclass, cls=AlchemyEncoder, ensure_ascii=False)
-                return '{"total"' + ":" + str(total) + ',"rows"' + ":\n" + jsonoclass + "}"
-        except Exception as e:
-            print(e)
-            logger.error(e)
-            insertSyslog("error", "/BatchInfoSearch查询报错Error：" + str(e), current_user.Name)
+    token = request.headers.get('token')
+    result = Redis.get_data(Redis.connect(), token)
+    return jsonify({'code': 1003, 'msg': '获取数据成功', 'data': result})

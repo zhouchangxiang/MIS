@@ -3,24 +3,24 @@ from flask import Blueprint, render_template, request, make_response, send_file
 import json
 import datetime
 from sqlalchemy import desc
-from dbset.database.db_operate import db_session,pool
+from dbset.database.db_operate import db_session, pool
 from dbset.main.BSFramwork import AlchemyEncoder
-from flask_login import login_required, logout_user, login_user,current_user,LoginManager
+from flask_login import login_required, logout_user, login_user, current_user, LoginManager
 import calendar
 from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable, Equipment, \
     AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
     AreaTimeEnergyColour, ElectricProportion
-from tools.common import insert,delete,update
+from tools.common import insert, delete, update
 from dbset.database import constant
-from dbset.log.BK2TLogger import logger,insertSyslog
+from dbset.log.BK2TLogger import logger, insertSyslog
 import datetime
 import arrow
 import time
 import numpy as np
 import pandas as pd
 from io import BytesIO
-from flask import Flask, send_file,make_response
+from flask import Flask, send_file, make_response
 import math
 
 energy = Blueprint('energy', __name__, template_folder='templates')
@@ -29,49 +29,67 @@ arro = arrow.now()
 pool = redis.ConnectionPool(host=constant.REDIS_HOST)
 redis_conn = redis.Redis(connection_pool=pool)
 
+
 @energy.route('/energyRedisData')
 def energyRedisData():
     return render_template('./energyRedisData.html')
+
+
 @energy.route('/energyDataChart')
 def energyDataChart():
     return render_template('./energyDataChart.html')
+
+
 @energy.route('/energyAreaTable')
 def energyAreaTable():
     return render_template('./energyAreaTable.html')
+
+
 @energy.route('/costCenter')
 def costCenter():
     return render_template('./costCenter.html')
-#器件管理
+
+
+# 器件管理
 @energy.route('/DeviceManage')
 def DeviceManage():
     return render_template('./DeviceManage.html')
-#价格管理
+
+
+# 价格管理
 @energy.route('/PriceManage')
 def PriceManage():
     return render_template('./PriceManage.html')
-#单位管理
+
+
+# 单位管理
 @energy.route('/UnitManage')
 def UnitManage():
     return render_template('./UnitManage.html')
 
+
 from datetime import timedelta
-def getWeekDaysByNum(m, n):#获取第几周到第几周每周的第一天和最后一天
+
+
+def getWeekDaysByNum(m, n):  # 获取第几周到第几周每周的第一天和最后一天
     # 当前日期
     now = datetime.now().date()
     dayDict = {}
     for x in range(m, n + 1):
-    	#前几周
+        # 前几周
         if x < 0:
             lDay = now - timedelta(days=now.weekday() + (7 * abs(x)))
-        #本周
+        # 本周
         elif x == 0:
             lDay = now - timedelta(days=now.weekday())
-        #后几周
+        # 后几周
         else:
             lDay = now + timedelta(days=(7 - now.weekday()) + 7 * (x - 1))
         rDay = lDay + timedelta(days=6)
         dayDict[x] = [str(lDay), str(rDay)]
     return dayDict
+
+
 def getMonthFirstDayAndLastDay(year, month):
     """
     :param year: 年份，默认是本年，可传int或str类型
@@ -96,21 +114,30 @@ def getMonthFirstDayAndLastDay(year, month):
     firstDay = datetime.date(year=year, month=month, day=1)
     lastDay = datetime.date(year=year, month=month, day=monthRange)
     return firstDay, lastDay
+
+
 def addzero(j):
     if j < 10:
         return "0" + str(j)
     else:
         return str(j)
+<<<<<<< HEAD
 def returnb(rod):
     if rod == None or rod == "" or rod == b'':
         return ""
     else:
         return rod.decode()
+=======
+
+
+>>>>>>> 8aca85f16d21aa702aae7247279d34880aaf7718
 def accumulation(EnergyValues):
     eleY = 0.0
     for EnergyValue in EnergyValues:
         eleY = eleY + float(EnergyValue[0])
     return eleY
+
+
 def strlastMonth(currmonth):
     curr = currmonth.split("-")
     str0 = curr[0]
@@ -120,7 +147,7 @@ def strlastMonth(currmonth):
     else:
         str00 = str1
     if str00 == "1":
-        return str(int(str0)-1)+"-"+"12"
+        return str(int(str0) - 1) + "-" + "12"
     else:
         las = int(str00) - 1
         if las < 10:
@@ -128,6 +155,8 @@ def strlastMonth(currmonth):
         else:
             la = str(las)
         return str0 + "-" + la
+
+
 def appendcur(cur, las):
     if cur is None:
         return 0.0
@@ -142,6 +171,7 @@ def appendcur(cur, las):
             return 0.0
         else:
             return round(diff, 2)
+
 
 def curcutlas(cur, las, count, energy):
     if cur is None:
@@ -164,10 +194,13 @@ def curcutlas(cur, las, count, energy):
                 pro = float(propor.Proportion)
                 return round(count + diff * pro, 2)
 
+
 def energyStatistics(oc_list, StartTime, EndTime, energy):
     propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
     pro = float(propor.Proportion)
-    sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementTable] t with (INDEX =IX_IncrementTable)  WHERE t.TagClassValue in ("+str(oc_list)[1:-1]+") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+    sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementTable] t with (INDEX =IX_IncrementTable)  WHERE t.TagClassValue in (" + str(
+        oc_list)[
+                                                                                                                                                                       1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
     re = db_session.execute(sql).fetchall()
     db_session.close()
     if len(re) > 0:
@@ -177,10 +210,13 @@ def energyStatistics(oc_list, StartTime, EndTime, energy):
             return 0.0
     else:
         return None
+
+
 def energyStatisticstotal(oc_list, StartTime, EndTime):
     propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
     pro = float(propor.Proportion)
-    sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementTable] t with (INDEX =IX_IncrementTable)  WHERE t.TagClassValue in ("+str(oc_list)[1:-1]+") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+    sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementTable] t with (INDEX =IX_IncrementTable)  WHERE t.TagClassValue in (" + str(
+        oc_list)[1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
     re = db_session.execute(sql).fetchall()
     db_session.close()
     if len(re) > 0:
@@ -190,6 +226,8 @@ def energyStatisticstotal(oc_list, StartTime, EndTime):
             return 0.0
     else:
         return None
+
+
 def energyselect(data):
     if request.method == 'GET':
         try:
@@ -227,28 +265,34 @@ def energyselect(data):
                 for j in range(24):
                     dir_list_dict = {}
                     dir_list_dict["时间"] = str(j)
-                    comparehour = str(compareday) + " " +addzero(j)+ ":59:59"
-                    lastcomparehour = str(compareday) + " " +addzero(j)+ ":00:00"
+                    comparehour = str(compareday) + " " + addzero(j) + ":59:59"
+                    lastcomparehour = str(compareday) + " " + addzero(j) + ":00:00"
                     currhour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
-                        int(currentday)) + " " + addzero(j)+":59:59"
+                        int(currentday)) + " " + addzero(j) + ":59:59"
                     lasthour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
-                        int(currentday)) + " " + addzero(j)+":00:00"
+                        int(currentday)) + " " + addzero(j) + ":00:00"
                     count = energyStatistics(oc_list, lasthour, currhour, EnergyClass)
                     comperacount = energyStatistics(oc_list, lastcomparehour, comparehour, EnergyClass)
                     dir_list_dict["今日能耗"] = count
                     dir_list_dict["对比日能耗"] = comperacount
                     dir_list.append(dir_list_dict)
                 curmonthdays = str(getMonthFirstDayAndLastDay(currentyear, currentmonth)[1])[8:10]
-                lasmonthdays = str(getMonthFirstDayAndLastDay(strlastMonth(str(currentyear) + "-" + addzero(int(currentmonth)))[0:4], strlastMonth(str(currentyear) + "-" + addzero(int(currentmonth)))[5:7])[1])[8:10]
+                lasmonthdays = str(
+                    getMonthFirstDayAndLastDay(strlastMonth(str(currentyear) + "-" + addzero(int(currentmonth)))[0:4],
+                                               strlastMonth(str(currentyear) + "-" + addzero(int(currentmonth)))[5:7])[
+                        1])[8:10]
                 for i in range(1, 32):
                     dirmonth_list_dict = {}
-                    currmonthcurrday = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(int(i))+" 23:59:59"
+                    currmonthcurrday = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
+                        int(i)) + " 23:59:59"
                     currmonthlasday = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
                         int(i)) + " 00:00:00"
-                    lastmonthcurrday = strlastMonth(str(currentyear) + "-" + addzero(int(currentmonth))) + "-" + addzero(int(i))+" 23:59:59"
+                    lastmonthcurrday = strlastMonth(
+                        str(currentyear) + "-" + addzero(int(currentmonth))) + "-" + addzero(int(i)) + " 23:59:59"
                     lastmonthlasday = strlastMonth(
                         str(currentyear) + "-" + addzero(int(currentmonth))) + "-" + addzero(int(i)) + " 00:0:00"
-                    dirmonth_list_dict["日期"] = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(int(i))
+                    dirmonth_list_dict["日期"] = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
+                        int(i))
                     if i <= int(curmonthdays):
                         monthcount = energyStatistics(oc_list, currmonthlasday, currmonthcurrday, EnergyClass)
                     else:
@@ -263,7 +307,7 @@ def energyselect(data):
                 dir["compareTodayRow"] = dir_list
                 dir["lastMonthRow"] = dir_month_list
             elif ModelFlag == "电能负荷率":
-                dir["a"]=""
+                dir["a"] = ""
             elif ModelFlag == "在线检测情况":
                 # pipe = redis_conn.pipeline(transaction=False)
                 oclass = db_session.query(TagDetail).filter().all()
@@ -289,9 +333,15 @@ def energyselect(data):
                         if ret == "1":
                             watstatuss = watstatuss + 1
                 data_list = []
+<<<<<<< HEAD
                 data_list.append({"name": "电表", "online": elestatuss, "rate": int(100 * (elestatuss/elestatust)), "total":elestatust})
                 data_list.append({"name": "水表", "online": watstatuss, "rate": int(100 * (watstatuss / watstatust)), "total":watstatust})
                 data_list.append({"name": "汽表", "online": stestatuss, "rate": int(100 * (stestatuss / stestatust)), "total":stestatust})
+=======
+                data_list.append({"name": "电表", "online": elestatuss, "rate": int(100 * (elestatuss / elestatust))})
+                data_list.append({"name": "水表", "online": watstatuss, "rate": int(100 * (watstatuss / watstatust))})
+                data_list.append({"name": "汽表", "online": stestatuss, "rate": int(100 * (stestatuss / stestatust))})
+>>>>>>> 8aca85f16d21aa702aae7247279d34880aaf7718
                 return json.dumps(data_list, cls=AlchemyEncoder, ensure_ascii=False)
             elif ModelFlag == "单位批次能耗":
                 curryear = str(currentyear)
@@ -302,7 +352,8 @@ def energyselect(data):
                     re = getWeekDaysByNum(0, 0)
                     first_week_day = re[0][0]
                     end_week_day = re[0][1]
-                    bats = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(first_week_day,end_week_day)).all()
+                    bats = db_session.query(BatchMaintain).filter(
+                        BatchMaintain.ProductionDate.between(first_week_day, end_week_day)).all()
                     countw = 0.0
                     counte = 0.0
                     for bat in bats:
@@ -321,12 +372,12 @@ def energyselect(data):
                 dir["data"] = oclass
             elif ModelFlag == "电能负荷率":
                 aa = "aa"
-                #电能负荷率 = 当前视在功率 / 额定功率
+                # 电能负荷率 = 当前视在功率 / 额定功率
             elif ModelFlag == "系统体检":
                 pipe = redis_conn.pipeline(transaction=False)
                 pipe.hget("hash_key", "leizhu900516")
                 result = pipe.execute()
-                conngoods = pipe.hget("run_status","1")
+                conngoods = pipe.hget("run_status", "1")
                 connbads = pipe.hget("run_status", "0")
                 list_bad = []
                 for i in connbads:
@@ -338,6 +389,7 @@ def energyselect(data):
             print(e)
             insertSyslog("error", "能耗查询报错Error：" + str(e), current_user.Name)
             return json.dumps([{"status": "Error：" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
+
 
 @energy.route('/areaTimeEnergy', methods=['POST', 'GET'])
 def areaTimeEnergy():
@@ -369,8 +421,9 @@ def areaTimeEnergy():
                 oc_list = []
                 for oc in oclass:
                     oc_list.append(oc.TagClassValue)
-                if len(oc_list)>0:
-                    colourclass = db_session.query(AreaTimeEnergyColour).filter(AreaTimeEnergyColour.AreaName == AreaName[0]).all()
+                if len(oc_list) > 0:
+                    colourclass = db_session.query(AreaTimeEnergyColour).filter(
+                        AreaTimeEnergyColour.AreaName == AreaName[0]).all()
                     stop = ""
                     high = ""
                     middle = ""
@@ -407,15 +460,15 @@ def areaTimeEnergy():
                         dict_valuelist = {}
                         dict_valuelist["date"] = str(j)
                         if vlaue == None or vlaue < 0:
-                            colour = colour +","+ wu
-                        elif 0<=vlaue <= float(stop):
-                            colour = colour +","+ stopColourValue
-                        elif float(low)<=vlaue<float(middle):
-                            colour = colour +","+ lowColourValue
-                        elif float(middle)<=vlaue < float(high):
-                            colour = colour +","+ middleColourValue
+                            colour = colour + "," + wu
+                        elif 0 <= vlaue <= float(stop):
+                            colour = colour + "," + stopColourValue
+                        elif float(low) <= vlaue < float(middle):
+                            colour = colour + "," + lowColourValue
+                        elif float(middle) <= vlaue < float(high):
+                            colour = colour + "," + middleColourValue
                         elif vlaue > float(high) or vlaue == float(high):
-                            colour = colour +","+ highColourValue
+                            colour = colour + "," + highColourValue
                         dict_valuelist["value"] = round(vlaue, 2)
                         valuelist.append(dict_valuelist)
                     print(colour)
@@ -435,6 +488,7 @@ def areaTimeEnergy():
             print(e)
             logger.error(e)
             insertSyslog("error", "区域时段能耗查询报错Error：" + str(e), current_user.Name)
+
 
 @energy.route('/trendChart', methods=['POST', 'GET'])
 def trendChart():
@@ -486,6 +540,7 @@ def trendChart():
             logger.error(e)
             insertSyslog("error", "区域时段能耗查询报错Error：" + str(e), current_user.Name)
 
+
 @energy.route('/energyHistory', methods=['POST', 'GET'])
 def energyHistory():
     '''
@@ -508,26 +563,30 @@ def energyHistory():
             dir["Unit"] = uni
             if Energy == "水":
                 # 能耗历史数据
-                CollectionDates = db_session.query(WaterEnergy.CollectionDate).distinct().filter(WaterEnergy.CollectionDate.between(StartTime,EndTime)).order_by(("CollectionDate")).all()
+                CollectionDates = db_session.query(WaterEnergy.CollectionDate).distinct().filter(
+                    WaterEnergy.CollectionDate.between(StartTime, EndTime)).order_by(("CollectionDate")).all()
                 for CollectionDate in CollectionDates:
                     dicss = []
                     timeArray = time.strptime(CollectionDate[0], "%Y-%m-%d %H:%M:%S")
                     timeStamp = int(time.mktime(timeArray))
                     dicss.append(1000 * timeStamp)
-                    watEnergyValues = db_session.query(WaterEnergy.WaterFlow).filter(WaterEnergy.CollectionDate == CollectionDate[0]).all()
+                    watEnergyValues = db_session.query(WaterEnergy.WaterFlow).filter(
+                        WaterEnergy.CollectionDate == CollectionDate[0]).all()
                     towatEnergyValue = 0.0
                     for watEnergyValue in watEnergyValues:
                         towatEnergyValue = towatEnergyValue + float(watEnergyValue[0])
                     dicss.append(round(float(towatEnergyValue), 2))
                     diy.append(dicss)
-                #区域能耗排名
+                # 区域能耗排名
                 AreaNames = db_session.query(AreaTable.AreaName).filter().all()
                 totalflow = 0.0
                 for AreaName in AreaNames:
-                    TagClassValues = db_session.query(TagDetail.TagClassValue).filter(TagDetail.AreaName == AreaName[0]).all()
+                    TagClassValues = db_session.query(TagDetail.TagClassValue).filter(
+                        TagDetail.AreaName == AreaName[0]).all()
                     engsum = 0.0
                     for TagClassValue in TagClassValues:
-                        watEnergyValues = db_session.query(WaterEnergy.WaterFlow).filter(WaterEnergy.TagClassValue == TagClassValue,
+                        watEnergyValues = db_session.query(WaterEnergy.WaterFlow).filter(
+                            WaterEnergy.TagClassValue == TagClassValue,
                             WaterEnergy.CollectionDate.between(StartTime, EndTime)).all()
                         engsum = engsum + accumulation(watEnergyValues)
                     eng[AreaName[0]] = str(round(engsum, 2))
@@ -535,7 +594,8 @@ def energyHistory():
                 # 累积量
                 dir["total"] = str(round(totalflow, 2))
             elif Energy == "电":
-                CollectionDates = db_session.query(ElectricEnergy.CollectionDate).distinct().filter(ElectricEnergy.CollectionDate.between(StartTime,EndTime)).order_by(("CollectionDate")).all()
+                CollectionDates = db_session.query(ElectricEnergy.CollectionDate).distinct().filter(
+                    ElectricEnergy.CollectionDate.between(StartTime, EndTime)).order_by(("CollectionDate")).all()
                 for CollectionDate in CollectionDates:
                     dicss = []
                     timeArray = time.strptime(CollectionDate[0], "%Y-%m-%d %H:%M:%S")
@@ -620,6 +680,7 @@ def energyHistory():
             logger.error(e)
             insertSyslog("error", "能源历史数据查询报错Error：" + str(e), current_user.Name)
 
+
 class Statistic():
     def __init__(self, Area, Water, Electric, Steam, CollectDate):
         self.Area = Area
@@ -639,13 +700,14 @@ def exceloutstatistic():
     if request.method == 'GET':
         StartTime = data.get("StartTime")[0:15]
         EndTime = data.get("EndTime")[0:15]
-        output=exportxstatistic(StartTime,EndTime)
+        output = exportxstatistic(StartTime, EndTime)
         resp = make_response(output.getvalue())
-        resp.headers["Content-Disposition"] ="attachment; filename=consumption.xlsx"
+        resp.headers["Content-Disposition"] = "attachment; filename=consumption.xlsx"
         resp.headers['Content-Type'] = 'application/x-xlsx'
         return resp
 
-def exportxstatistic(StartTime,EndTime):
+
+def exportxstatistic(StartTime, EndTime):
     # 创建数据流
     output = BytesIO()
     # 创建excel work book
@@ -685,20 +747,21 @@ def exportxstatistic(StartTime,EndTime):
                 stecount = stetongji(oc, StartTime, EndTime, stecount)
         for cum in columns:
             if cum == '区域':
-                worksheet.write(i+1, columns.index(cum), AreaNames[i].AreaName)
+                worksheet.write(i + 1, columns.index(cum), AreaNames[i].AreaName)
             if cum == '水累计值':
-                worksheet.write(i+1, columns.index(cum), str(watcount)+"t")
+                worksheet.write(i + 1, columns.index(cum), str(watcount) + "t")
             if cum == '电总功率':
-                worksheet.write(i+1, columns.index(cum), str(elecount)+"kW·h")
+                worksheet.write(i + 1, columns.index(cum), str(elecount) + "kW·h")
             if cum == '汽累计值':
-                worksheet.write(i+1, columns.index(cum), str(stecount)+"t")
+                worksheet.write(i + 1, columns.index(cum), str(stecount) + "t")
             if cum == '统计开始时间':
-                worksheet.write(i+1, columns.index(cum), StartTime+"0:00")
+                worksheet.write(i + 1, columns.index(cum), StartTime + "0:00")
             if cum == '统计截止时间':
-                worksheet.write(i+1, columns.index(cum), EndTime+"0:00")
+                worksheet.write(i + 1, columns.index(cum), EndTime + "0:00")
     writer.close()
     output.seek(0)
     return output
+
 
 @energy.route('/excelout', methods=['POST', 'GET'])
 def excelout():
@@ -711,14 +774,14 @@ def excelout():
         Area = data.get("Area")
         EnergyClass = data.get("EnergyClass")
         CurrentTime = data.get("CurrentTime")
-        output=exportx(Area,EnergyClass,CurrentTime)
+        output = exportx(Area, EnergyClass, CurrentTime)
         resp = make_response(output.getvalue())
-        resp.headers["Content-Disposition"] ="attachment; filename=testing.xlsx"
+        resp.headers["Content-Disposition"] = "attachment; filename=testing.xlsx"
         resp.headers['Content-Type'] = 'application/x-xlsx'
         return resp
 
 
-def exportx(Area,EnergyClass,CurrentTime):
+def exportx(Area, EnergyClass, CurrentTime):
     # 创建数据流
     output = BytesIO()
     # 创建excel work book
@@ -743,11 +806,14 @@ def exportx(Area,EnergyClass,CurrentTime):
     # 写入列名
     if EnergyClass == "水":
         columns = ['单位', '仪表ID', '价格ID', '采集点', '采集时间', '采集年', '采集月', '采集天', '瞬时流量', '累计流量']
-        oclass = db_session.query(WaterEnergy).filter(WaterEnergy.TagClassValue.in_(tag), WaterEnergy.CollectionDate.like("%"+CurrentTime+"%")).all()
+        oclass = db_session.query(WaterEnergy).filter(WaterEnergy.TagClassValue.in_(tag),
+                                                      WaterEnergy.CollectionDate.like("%" + CurrentTime + "%")).all()
     elif EnergyClass == "电":
-        columns = ['单位', '仪表ID', '价格ID', '采集点', '采集时间', '采集年', '采集月', '采集天', '总功率', 'A相电压', 'A相电流', 'B相电压', 'B相电流', 'C相电压', 'C相电压']
+        columns = ['单位', '仪表ID', '价格ID', '采集点', '采集时间', '采集年', '采集月', '采集天', '总功率', 'A相电压', 'A相电流', 'B相电压', 'B相电流',
+                   'C相电压', 'C相电压']
         oclass = db_session.query(ElectricEnergy).filter(ElectricEnergy.TagClassValue.in_(tag),
-                                                         ElectricEnergy.CollectionDate.like("%" + CurrentTime + "%")).all()
+                                                         ElectricEnergy.CollectionDate.like(
+                                                             "%" + CurrentTime + "%")).all()
     else:
         columns = ['蒸汽值', '单位', '仪表ID', '价格ID', '采集点', '采集时间', '采集年', '采集月', '采集天', '温度', '蒸汽瞬时值', '蒸汽累计值']
         oclass = db_session.query(SteamEnergy).filter(SteamEnergy.TagClassValue.in_(tag),
@@ -756,7 +822,7 @@ def exportx(Area,EnergyClass,CurrentTime):
         worksheet.write(0, col, item, cell_format)
         col += 1
     # 写入数据
-    for i in range(1,len(oclass)):
+    for i in range(1, len(oclass)):
         if EnergyClass == "水":
             for cum in columns:
                 if cum == '单位':

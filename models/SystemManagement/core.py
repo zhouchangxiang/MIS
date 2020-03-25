@@ -747,6 +747,7 @@ class TagDetail(Base):
 
 # ElectricEnergy_START:
 class ElectricEnergy(Base):
+    """电能"""
     __tablename__ = "ElectricEnergy"
 
     # ID:
@@ -812,6 +813,7 @@ class ElectricEnergy(Base):
 
 # SteamEnergy_START:
 class SteamEnergy(Base):
+    """蒸汽能量"""
     __tablename__ = "SteamEnergy"
 
     # ID:
@@ -871,6 +873,7 @@ class SteamEnergy(Base):
 
 # WaterEnergy_START:
 class WaterEnergy(Base):
+    """水能"""
     __tablename__ = "WaterEnergy"
 
     # ID:
