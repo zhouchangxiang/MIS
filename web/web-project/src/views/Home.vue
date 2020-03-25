@@ -142,14 +142,14 @@
           </div>
           <div class="home-card-body" style="height: 300px;">
             <el-table :data="ralTimeWarningTableData" size="mini" height="232px" max-height="232px" style="width: 100%">
-              <el-table-column prop="area" label="区域"></el-table-column>
-              <el-table-column prop="name" label="设备"></el-table-column>
-              <el-table-column prop="type" label="状态">
+              <el-table-column prop="AreaName" label="区域"></el-table-column>
+              <el-table-column prop="EQPName" label="设备"></el-table-column>
+              <el-table-column prop="WarningType" label="状态">
                 <template slot-scope="scope">
-                  <span class="text-size-mini text-color-warning">{{ scope.row.type }}</span>
+                  <span class="text-size-mini text-color-warning">{{ scope.row.WarningType }}</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="date" label="时间"></el-table-column>
+              <el-table-column prop="WarningDate" label="时间"></el-table-column>
             </el-table>
             <span class="text-size-mini text-color-primary" style="float: right;margin-top: 15px;">更多记录<i class="el-icon-d-arrow-right el-icon--right"></i></span>
           </div>
@@ -364,18 +364,8 @@
           label: '本年'
         }],
         electricLoadRateTime:'本日', //默认下拉
-        onlineEquipmentOption:[ //在线情况采集
-          {name:"交换机",online:11,total:12,rate:80},
-          {name:"电表",online:6,total:12,rate:70},
-          {name:"水表",online:8,total:12,rate:40},
-          {name:"汽表",online:15,total:15,rate:100},
-        ],
-        ralTimeWarningTableData:[ //实时预警表格数据
-          {area:"新建综合制剂楼",name:"汽表2",type:"温度不正常",date:"2020-01-02 12:05"},
-          {area:"新建综合制剂楼",name:"汽表4",type:"温度不正常",date:"2020-01-02 12:05"},
-          {area:"新建综合制剂楼",name:"电表1",type:"三项电流不平衡",date:"2020-01-02 12:05"},
-          {area:"新建综合制剂楼",name:"汽表2",type:"温度不正常",date:"2020-01-02 12:05"}
-        ],
+        onlineEquipmentOption:[], //在线情况采集
+        ralTimeWarningTableData:[],//实时预警表格数据
         lotsEnergyValue:"本日",
         lotsEnergyOptions:[{ //电能负荷率下拉框
           value: '选项1',
@@ -497,8 +487,13 @@
         })
       },
       getOnLineEq(){
-        this.axios.get("/api/energyall").then(res => {
+        this.axios.get("/api/energyall",{params:{ModelFlag:"在线检测情况"}}).then(res => {
           console.log(res)
+          this.onlineEquipmentOption = res.data
+        })
+        this.axios.get("/api/energyall",{params:{ModelFlag:"实时预警"}}).then(res => {
+          var data = JSON.parse(res.data)
+          this.ralTimeWarningTableData = data.data
         })
       },
       openSystemCheckupDialog(){ //打开系统体检
