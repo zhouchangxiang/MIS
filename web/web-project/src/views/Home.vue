@@ -92,15 +92,10 @@
                 <li><i class="bg-tall"></i><span>高</span></li>
               </ul>
               <ul class="gradientList">
-                <li v-for="item in colorBarOption">
-                  <p class="text-size-small text-color-info">{{ item.name }}</p>
+                <li v-for="(item,index) in colorBarOption" v-if="index<4">
+                  <p class="text-size-small text-color-info">{{ item.AreaName }}</p>
                   <el-popover trigger="hover">
-                    <div>0-4点：{{ item.value0 }}</div>
-                    <div>4-8点：{{ item.value4 }}</div>
-                    <div>8-12点：{{ item.value8 }}</div>
-                    <div>12-16点：{{ item.value12 }}</div>
-                    <div>16-20点：{{ item.value16 }}</div>
-                    <div>20-24点：{{ item.value20 }}</div>
+                    <div v-for="valueItem in item.valuelist">{{ valueItem.date }}点：{{ valueItem.value }}</div>
                     <div slot="reference" class="gradientColorItem" :style='{background:item.backgroundColor}'></div>
                   </el-popover>
                 </li>
@@ -316,12 +311,7 @@
             smooth: false
           }
         },
-        colorBarOption:[
-          {name: "新建综合制剂楼", value0: 2342,value4: 4234,value8: 2232,value12: 235,value16: 2042,value20: 264, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'},
-          {name: "提取二车间", value0: 2342,value4: 2342,value8: 2342,value12: 2342,value16: 2342,value20: 2342, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'},
-          {name: "新建综合制剂楼", value0: 2342,value4: 2342,value8: 2342,value12: 2342,value16: 2342,value20: 2342, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'},
-          {name: "新建综合制剂楼", value0: 2342,value4: 2342,value8: 2342,value12: 2342,value16: 2342,value20: 2342, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'}
-        ],
+        colorBarOption:[],
         electricLoadRateChartData:{
           columns: ['type', 'value'],
           rows: [
@@ -500,11 +490,12 @@
         }))
       },
       getAreaTimeEnergy(){
-        // var params = {
-        //   energyType: this.areaTimeEnergyValue
-        // }
-        this.axios.get("/api/areaTimeEnergy",{params:{energyType: this.areaTimeEnergyValue}}).then(res => {
+        var params = {
+          energyType: this.areaTimeEnergyValue
+        }
+        this.axios.get("/api/areaTimeEnergy",{params:params}).then(res => {
           console.log(res.data)
+          this.colorBarOption = res.data
         })
       },
       getOnLineEq(){

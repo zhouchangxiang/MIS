@@ -193,6 +193,7 @@
           params.StartTime = todayStartTime
           params.EndTime = todayEndTime
           params.Area = this.newAreaName.areaName
+
         }
         this.axios.all([
           this.axios.get("/api/energyelectric",{params: params}),//获取今天电
