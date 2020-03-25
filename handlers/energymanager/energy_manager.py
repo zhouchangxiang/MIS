@@ -352,13 +352,11 @@ def areaTimeEnergy():
             EnergyClass = data.get("energyType")
             compareday = data.get("CompareDate")
             AreaNames = db_session.query(AreaTable.AreaName).filter().all()
-            diarea = {}
             araeY_list = []
             wit = db_session.query(AreaTimeEnergyColour).filter(
                 AreaTimeEnergyColour.ColourName == "无").first()
             wu = wit.ColourValue
             for AreaName in AreaNames:
-                diarea["name"] = AreaName[0]
                 valuelist = []
                 value_dirc = {}
                 oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaName[0],
@@ -416,10 +414,12 @@ def areaTimeEnergy():
                         dict_valuelist["value"] = round(vlaue, 2)
                         valuelist.append(dict_valuelist)
                     print(colour)
+                    value_dirc["AreaName"] = AreaName[0]
                     value_dirc["valuelist"] = valuelist
                     value_dirc["backgroundColor"] = "-webkit-linear-gradient(left," + colour[1:] + ")"
                     araeY_list.append(value_dirc)
                 else:
+                    value_dirc["AreaName"] = AreaName[0]
                     value_dirc["valuelist"] = []
                     value_dirc["backgroundColor"] = "-webkit-linear-gradient(left," + wu + ")"
                     araeY_list.append(value_dirc)
