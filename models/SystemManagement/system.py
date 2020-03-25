@@ -927,7 +927,7 @@ class ElectricPrice(Base):
 
 # 增量表
 class IncrementTable(Base):
-    __tablename__ = "IncremenTable"
+    __tablename__ = "IncrementTable"
 
     # ID:
     ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)

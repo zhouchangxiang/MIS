@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from dbset.log.BK2TLogger import logger
 from dbset.main.BSFramwork import AlchemyEncoder
-from flask_login import login_required, logout_user, login_user,current_user,LoginManager
+from flask_login import login_required, logout_user, login_user, current_user, LoginManager
 from sqlalchemy.exc import InvalidRequestError
 from dbset.database.db_operate import db_session
 from PIL import Image, ImageFont, ImageDraw, ImageFilter
@@ -12,9 +12,10 @@ import random
 from io import BytesIO
 import time
 from models.SystemManagement.system import User
+
 # from models.SystemManagement.system import User
 
-#flask_login的初始化
+# flask_login的初始化
 login_manager = LoginManager()
 login_manager.db_session_protection = 'strong'
 login_manager.login_view = 'login_auth.login'
@@ -22,9 +23,12 @@ login_manager.login_view = 'login_auth.login'
 login_auth = Blueprint('login_auth', __name__, template_folder='templates')
 
 '''登录'''
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return db_session.query(User).filter_by(id=int(user_id)).first()
+
 
 @login_auth.route('/account/login', methods=['GET', 'POST'])
 def login():
@@ -35,7 +39,7 @@ def login():
             data = request.values
             WorkNumber = data.get('WorkNumber')
             password = data.get('password')
-                # 验证账户与密码
+            # 验证账户与密码
             user = db_session.query(User).filter_by(WorkNumber=WorkNumber).first()
             if user and (user.confirm_password(password) or user.Password == password):
                 login_user(user)  # login_user(user)调用user_loader()把用户设置到db_session中
@@ -76,6 +80,7 @@ def logout():
     # user.Status = "0"
     return redirect(url_for('login_auth.login'))
 
+
 # from wtforms import StringField,SubmitField
 # from wtforms.validators import Required, DataRequired
 #
@@ -114,13 +119,14 @@ def get_code():
     session['image'] = str
     return response
 
+
 def validate_picture():
     total = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345789'
     # 图片大小130 x 50
     width = 130
     heighth = 50
     # 先生成一个新图片对象
-    im = Image.new('RGB',(width, heighth), 'white')
+    im = Image.new('RGB', (width, heighth), 'white')
     # 设置字体
     font = ImageFont.truetype("symbol.ttf", 16, encoding="symb")
     # 创建draw对象
@@ -130,19 +136,20 @@ def validate_picture():
     for item in range(5):
         text = random.choice(total)
         str += text
-        draw.text((5+random.randint(4,7)+20*item,5+random.randint(3,7)), text=text, fill='black' )
+        draw.text((5 + random.randint(4, 7) + 20 * item, 5 + random.randint(3, 7)), text=text, fill='black')
 
     # 划几根干扰线
     for num in range(8):
-        x1 = random.randint(0, width/2)
-        y1 = random.randint(0, heighth/2)
+        x1 = random.randint(0, width / 2)
+        y1 = random.randint(0, heighth / 2)
         x2 = random.randint(0, width)
-        y2 = random.randint(heighth/2, heighth)
-        draw.line(((x1, y1),(x2, y2)), fill='black', width=1)
+        y2 = random.randint(heighth / 2, heighth)
+        draw.line(((x1, y1), (x2, y2)), fill='black', width=1)
 
     # 模糊下,加个帅帅的滤镜～
     im = im.filter(ImageFilter.FIND_EDGES)
     return im, str
+
 
 @login_auth.route('/account/userloginauthentication', methods=['GET', 'POST'])
 def userloginauthentication():
@@ -155,7 +162,7 @@ def userloginauthentication():
             data = request.values
             WorkNumber = data.get('WorkNumber')
             password = data.get('password')
-                # 验证账户与密码
+            # 验证账户与密码
             user = db_session.query(User).filter_by(WorkNumber=WorkNumber).first()
             resp = make_response()
             if user and (user.confirm_password(password) or user.Password == password):
