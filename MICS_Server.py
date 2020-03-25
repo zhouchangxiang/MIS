@@ -18,7 +18,6 @@ from handlers.batchmanager.batch_manager import batch
 from tools.common import insert, delete, update, select, accurateSelect
 from handlers.energymanager.energy_manager import energy, energyselect
 from flask_login import current_user
-from handlers.mobile.views import mobilemanager
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
@@ -60,8 +59,6 @@ app.register_blueprint(energyElectric)
 app.register_blueprint(energySteam)
 # 水能管理
 app.register_blueprint(energyWater)
-# 手机管理
-app.register_blueprint(mobilemanager, url_prefix='/mobile')
 
 
 @app.route('/')
