@@ -101,6 +101,11 @@ def addzero(j):
         return "0" + str(j)
     else:
         return str(j)
+def returnb(rod):
+    if rod == None or rod == "" or rod == b'':
+        return ""
+    else:
+        return rod.decode()
 def accumulation(EnergyValues):
     eleY = 0.0
     for EnergyValue in EnergyValues:
@@ -270,7 +275,7 @@ def energyselect(data):
                 stestatuss = 0
                 for i in oclass:
                     Tag = i.TagClassValue[0:1]
-                    ret = redis_conn.hget("run_status", i.TagClassValue)
+                    ret = returnb(redis_conn.hget("run_status", i.TagClassValue))
                     if Tag == "E":
                         elestatust = elestatust + 1
                         if ret == "1":
@@ -284,9 +289,9 @@ def energyselect(data):
                         if ret == "1":
                             watstatuss = watstatuss + 1
                 data_list = []
-                data_list.append({"name": "电表", "online": elestatuss, "rate": int(100 * (elestatuss/elestatust))})
-                data_list.append({"name": "水表", "online": watstatuss, "rate": int(100 * (watstatuss / watstatust))})
-                data_list.append({"name": "汽表", "online": stestatuss, "rate": int(100 * (stestatuss / stestatust))})
+                data_list.append({"name": "电表", "online": elestatuss, "rate": int(100 * (elestatuss/elestatust)), "total":elestatust})
+                data_list.append({"name": "水表", "online": watstatuss, "rate": int(100 * (watstatuss / watstatust)), "total":watstatust})
+                data_list.append({"name": "汽表", "online": stestatuss, "rate": int(100 * (stestatuss / stestatust)), "total":stestatust})
                 return json.dumps(data_list, cls=AlchemyEncoder, ensure_ascii=False)
             elif ModelFlag == "单位批次能耗":
                 curryear = str(currentyear)
