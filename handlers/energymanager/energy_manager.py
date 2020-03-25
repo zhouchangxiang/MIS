@@ -159,12 +159,6 @@ def curcutlas(cur, las, count, energy):
                 pro = float(propor.Proportion)
                 return round(count + diff * pro, 2)
 
-
-def energymoney(count, name):
-    prices = db_session.query(PriceList).filter(PriceList.IsEnabled == "是").all()
-    for pr in prices:
-        if pr.PriceName == name:
-            return float(count)*float(pr.PriceValue)
 def energyStatistics(oc_list, StartTime, EndTime, energy):
     propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
     pro = float(propor.Proportion)
@@ -177,7 +171,7 @@ def energyStatistics(oc_list, StartTime, EndTime, energy):
         else:
             return 0.0
     else:
-        return 0.0
+        return None
 def energyStatisticstotal(oc_list, StartTime, EndTime):
     propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
     pro = float(propor.Proportion)
@@ -190,7 +184,7 @@ def energyStatisticstotal(oc_list, StartTime, EndTime):
         else:
             return 0.0
     else:
-        return 0.0
+        return None
 def energyselect(data):
     if request.method == 'GET':
         try:
@@ -349,60 +343,88 @@ def areaTimeEnergy():
     if request.method == 'GET':
         data = request.values
         try:
+            print(datetime.datetime.now())
             dir = {}
             currentyear = datetime.datetime.now().year
             currentmonth = datetime.datetime.now().month
             currentday = datetime.datetime.now().day
             currenthour = datetime.datetime.now().hour
             EnergyClass = data.get("energyType")
+            compareday = data.get("CompareDate")
             AreaNames = db_session.query(AreaTable.AreaName).filter().all()
-            diarea = {}
             araeY_list = []
+            wit = db_session.query(AreaTimeEnergyColour).filter(
+                AreaTimeEnergyColour.ColourName == "无").first()
+            wu = wit.ColourValue
             for AreaName in AreaNames:
-                diarea["name"] = AreaName[0]
                 valuelist = []
                 value_dirc = {}
                 oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaName[0],
                                                             TagDetail.EnergyClass == EnergyClass).all()
                 oc_list = []
-                for oc in oc_list:
+                for oc in oclass:
                     oc_list.append(oc.TagClassValue)
-                colourclass = db_session.query(AreaTimeEnergyColour).filter(AreaTimeEnergyColour.AreaName == AreaName[0]).all()
-                stop = ""
-                high = ""
-                middle = ""
-                low = ""
-                for co in colourclass:
-                    if co.ColourName == "停":
-                        stop = co.Colour
-                    elif co.ColourName == "高":
-                        high = co.Colour
-                    elif co.ColourName == "中":
-                        middle = co.Colour
-                    elif co.ColourName == "低":
-                        low = co.Colour
-                colour = ""
-                for j in range(0, currenthour):
-                    currhour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
-                        int(currentday)) + " " + addzero(j)
-                    vv = datetime.datetime.strptime(currhour, "%Y-%m-%d %H")
-                    lasthour = str((vv + datetime.timedelta(hours=-1)).strftime("%Y-%m-%d %H:%M:%S"))[0:13]
-                    dict_valuelist = {}
-                    dict_valuelist["date"] = str(j)
-                    vlaue = energyStatistics(oc_list, lasthour, currhour, EnergyClass)
-                    if vlaue < float(stop) or vlaue == float(stop):
-                        colour = colour + "#ECF1F4"
-                    elif vlaue < float(low) or vlaue == float(low):
-                        colour = colour + "#F5E866"
-                    elif  vlaue < float(middle) or vlaue == float(middle):
-                        colour = colour + "#FBBA06"
-                    elif vlaue < float(high) or vlaue == float(high):
-                        colour = colour + "#FB3A06"
-                    dict_valuelist["value"] = round(vlaue, 2)
-                    valuelist.append(dict_valuelist)
-                value_dirc["valuelist"] = valuelist
-                value_dirc["backgroundColor"] = "-webkit-linear-gradient(left," + colour + ")"
-                araeY_list.append(value_dirc)
+                if len(oc_list)>0:
+                    colourclass = db_session.query(AreaTimeEnergyColour).filter(AreaTimeEnergyColour.AreaName == AreaName[0]).all()
+                    stop = ""
+                    high = ""
+                    middle = ""
+                    low = ""
+                    stopColourValue = ""
+                    highColourValue = ""
+                    middleColourValue = ""
+                    lowColourValue = ""
+                    for co in colourclass:
+                        if co.ColourName == "停":
+                            stop = co.ColourSum
+                            stopColourValue = co.ColourValue
+                        elif co.ColourName == "高":
+                            high = co.ColourSum
+                            highColourValue = co.ColourValue
+                        elif co.ColourName == "中":
+                            middle = co.ColourSum
+                            middleColourValue = co.ColourValue
+                        elif co.ColourName == "低":
+                            low = co.ColourSum
+                            lowColourValue = co.ColourValue
+                    colour = ""
+                    for j in range(0, 24):
+                        if compareday != None and compareday != "":
+                            comparehour = str(compareday) + " " + addzero(j) + ":59:59"
+                            lastcomparehour = str(compareday) + " " + addzero(j) + ":00:00"
+                            vlaue = energyStatistics(oc_list, lastcomparehour, comparehour, EnergyClass)
+                        else:
+                            currhour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
+                                int(currentday)) + " " + addzero(j) + ":59:59"
+                            lasthour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
+                                int(currentday)) + " " + addzero(j) + ":00:00"
+                            vlaue = energyStatistics(oc_list, lasthour, currhour, EnergyClass)
+                        dict_valuelist = {}
+                        dict_valuelist["date"] = str(j)
+                        if vlaue == None or vlaue < 0:
+                            colour = colour +","+ wu
+                        elif 0<=vlaue <= float(stop):
+                            colour = colour +","+ stopColourValue
+                        elif float(low)<=vlaue<float(middle):
+                            colour = colour +","+ lowColourValue
+                        elif float(middle)<=vlaue < float(high):
+                            colour = colour +","+ middleColourValue
+                        elif vlaue > float(high) or vlaue == float(high):
+                            colour = colour +","+ highColourValue
+                        dict_valuelist["value"] = round(vlaue, 2)
+                        valuelist.append(dict_valuelist)
+                    print(colour)
+                    value_dirc["AreaName"] = AreaName[0]
+                    value_dirc["valuelist"] = valuelist
+                    value_dirc["backgroundColor"] = "-webkit-linear-gradient(left," + colour[1:] + ")"
+                    araeY_list.append(value_dirc)
+                else:
+                    value_dirc["AreaName"] = AreaName[0]
+                    value_dirc["valuelist"] = []
+                    value_dirc["backgroundColor"] = "-webkit-linear-gradient(left," + wu + ")"
+                    araeY_list.append(value_dirc)
+            print(araeY_list)
+            print(datetime.datetime.now())
             return json.dumps(araeY_list, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)

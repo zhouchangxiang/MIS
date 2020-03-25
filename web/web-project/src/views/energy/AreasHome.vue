@@ -10,7 +10,7 @@
           </el-col>
           <el-col :span="18">
             <div class="itemMarginBottom text-size-normol text-color-info-shallow">本日耗电量</div>
-            <div class="itemMarginBottom text-size-big text-color-info">5751.52kwh</div>
+            <div class="itemMarginBottom text-size-big text-color-info">{{ todayElectricity }}</div>
             <div class="itemMarginBottom">
               <span class="text-size-mini text-color-info-shallow">今日电费</span>
               <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
@@ -31,7 +31,7 @@
           </el-col>
           <el-col :span="18">
             <div class="itemMarginBottom text-size-normol text-color-info-shallow">本日耗水量</div>
-            <div class="itemMarginBottom text-size-big text-color-info">5751.52kwh</div>
+            <div class="itemMarginBottom text-size-big text-color-info">{{ todayWater }}</div>
             <div class="itemMarginBottom">
               <span class="text-size-mini text-color-info-shallow">今日水费</span>
               <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
@@ -52,7 +52,7 @@
           </el-col>
           <el-col :span="18">
             <div class="itemMarginBottom text-size-normol text-color-info-shallow">本日耗汽量</div>
-            <div class="itemMarginBottom text-size-big text-color-info">5751.52kwh</div>
+            <div class="itemMarginBottom text-size-big text-color-info">{{ todaySteam }}</div>
             <div class="itemMarginBottom">
               <span class="text-size-mini text-color-info-shallow">今日汽费</span>
               <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
@@ -124,26 +124,15 @@
 </template>
 
 <script>
+  var moment = require('moment');
   export default {
     name: "AreasHome",
     inject:['newAreaName'],
     data(){
-      this.batchChartSettings = {
-        radius: [20,40],
-        offsetY:"50px",
-        label:{
-          show:false
-        },
-        labelLine:{
-          show:false
-        }
-      }
-      this.batchChartExtend = {
-        legend:{
-          show:false
-        }
-      }
       return {
+        todayElectricity:"",
+        todayWater:"",
+        todaySteam:"",
         EnergyOptions: [{
           value: '电',
           label: '电能'
@@ -161,6 +150,21 @@
           {Name:"药品C",Batch:"JUSA2374627"},
           {Name:"药品D",Batch:"JUSA2374627"},
         ],
+        batchChartSettings: {
+          radius: [20,40],
+          offsetY:"50px",
+          label:{
+            show:false
+          },
+          labelLine:{
+            show:false
+          }
+        },
+        batchChartExtend: {
+          legend:{
+            show:false
+          }
+        },
         ringChartData: {
           columns: ['日期', '访问用户'],
           rows: [
@@ -173,7 +177,38 @@
       }
     },
     created(){
-      console.log(this.newAreaName)
+      this.getEnergyPreview()
+    },
+    methods:{
+      getEnergyPreview(){
+        var that = this
+        var nowTime = moment().format('HH:mm').substring(0,4) + "0"
+        var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
+        var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
+        var params = {}
+        if(this.newAreaName.areaName == "整厂区"){
+          params.StartTime = todayStartTime
+          params.EndTime = todayEndTime
+        }else{
+          params.StartTime = todayStartTime
+          params.EndTime = todayEndTime
+          params.Area = this.newAreaName.areaName
+
+        }
+        this.axios.all([
+          this.axios.get("/api/energyelectric",{params: params}),//获取今天电
+          this.axios.get("/api/energywater",{params: params}),//获取今天水
+          this.axios.get("/api/energysteam",{params: params}),//获取今天汽
+        ]).then(this.axios.spread(function(todayElectricity,todayWater,todaySteam){
+          var todayElectricityData = JSON.parse(todayElectricity.data)
+          var todayWaterData = JSON.parse(todayWater.data)
+          var todaySteamData = JSON.parse(todaySteam.data)
+          console.log(todayElectricityData)
+          that.todayElectricity = todayElectricityData.elctric +""+ todayElectricityData.unit
+          that.todayWater = todayWaterData.wattongji +""+ todayWaterData.unit
+          that.todaySteam = todaySteamData.stecount +""+ todaySteamData.unit
+        }))
+      }
     }
   }
 </script>
