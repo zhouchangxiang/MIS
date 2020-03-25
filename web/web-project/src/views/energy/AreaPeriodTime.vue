@@ -3,8 +3,7 @@
       <el-col :span="24">
         <el-form :inline="true" :model="formParameters">
           <el-form-item label="时间：">
-            <el-date-picker type="date" v-model="formParameters.date" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false"></el-date-picker>
-            <el-checkbox v-model="AllArea" style="margin-left: 10px;">整厂区</el-checkbox>
+            <el-date-picker type="date" v-model="formParameters.date" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false" @change="changeDate"></el-date-picker>
           </el-form-item>
           <el-form-item style="float: right;">
             <el-radio-group v-model="formParameters.energy" fill="#082F4C" size="small">
@@ -13,7 +12,7 @@
           </el-form-item>
         </el-form>
       </el-col>
-      <el-col :span="24" v-if="AllArea == false">
+      <el-col :span="24" v-if="newAreaName.areaName != '整厂区'">
         <el-col :span="18">
           <div class="energyDataCard">
             <ve-line :data="chartData" :settings="chartSettings" :extend="ChartExtend"></ve-line>
@@ -132,7 +131,7 @@
           </div>
         </el-col>
       </el-col>
-      <el-col :span="24" v-if="AllArea == true">
+      <el-col :span="24" v-if="newAreaName.areaName == '整厂区'">
         <el-col :span="18">
           <div class="energyDataCard">
             <ve-line :data="chartData" :settings="chartSettings" :extend="ChartExtend"></ve-line>
@@ -169,15 +168,10 @@
               <li><i class="bg-tall"></i><span>高</span></li>
             </ul>
             <ul class="gradientList">
-              <li v-for="item in colorBarOption">
-                <p>{{ item.name }}</p>
+              <li v-for="(item,index) in colorBarOption">
+                <p class="text-size-small text-color-info">{{ item.AreaName }}</p>
                 <el-popover trigger="hover">
-                  <div>0-4点：{{ item.value0 }}</div>
-                  <div>4-8点：{{ item.value4 }}</div>
-                  <div>8-12点：{{ item.value8 }}</div>
-                  <div>12-16点：{{ item.value12 }}</div>
-                  <div>16-20点：{{ item.value16 }}</div>
-                  <div>20-24点：{{ item.value20 }}</div>
+                  <div v-for="valueItem in item.valuelist">{{ valueItem.date }}点：{{ valueItem.value }}</div>
                   <div slot="reference" class="gradientColorItem" :style='{background:item.backgroundColor}'></div>
                 </el-popover>
               </li>
@@ -189,13 +183,31 @@
 </template>
 
 <script>
-    export default {
-      name: "AreaPeriodTime",
-      data(){
-        this.chartSettings = {
+  var moment = require('moment');
+  export default {
+    name: "AreaPeriodTime",
+    inject:['newAreaName'],
+    data(){
+      return {
+        formParameters:{
+          date:Date.now(),
+          energy:"电能"
+        },
+        energyList:[
+          {name:"电能",id:1},
+          {name:"水能",id:2},
+          {name:"汽能",id:3},
+        ],
+        pickerOptions:{
+          disabledDate(time) {
+            return time.getTime() > Date.now();
+          }
+        },
+        AllArea:false,
+        chartSettings: {
           area:true
-        }
-        this.ChartExtend = {
+        },
+        ChartExtend: {
           title:{
             text:"能耗趋势"
           },
@@ -208,75 +220,72 @@
           series:{
             smooth: false
           }
-        }
-        return {
-          formParameters:{
-            date:Date.now(),
-            energy:"电能"
-          },
-          energyList:[
-            {name:"电能",id:1},
-            {name:"水能",id:2},
-            {name:"汽能",id:3},
-          ],
-          pickerOptions:{
-            disabledDate(time) {
-              return time.getTime() > Date.now();
-            }
-          },
-          AllArea:false,
-          chartData:{
-            columns:["时间","能耗量"],
-            rows:[
-              {"时间":"00:00","能耗量":273},
-              {"时间":"01:00","能耗量":303},
-              {"时间":"02:00","能耗量":333},
-              {"时间":"03:00","能耗量":293},
-              {"时间":"04:00","能耗量":223},
-              {"时间":"05:00","能耗量":313},
-              {"时间":"06:00","能耗量":365},
-              {"时间":"07:00","能耗量":""},
-              {"时间":"08:00","能耗量":""},
-              {"时间":"09:00","能耗量":""},
-              {"时间":"10:00","能耗量":""},
-              {"时间":"11:00","能耗量":""},
-              {"时间":"12:00","能耗量":""}
-            ]
-          },
-          electricAnalyze:{
-            sharpTime:3,
-            sharp:100,
-            peakTime:7,
-            peak:87.5,
-            total:553524.5,
-            poiseTime:6,
-            poise:33.3,
-            ebbTime:8,
-            ebb:12.5,
-            average:0.89,
-          },
-          rationalAnalyze:{
-            sharpTime:3,
-            sharp:100,
-            peakTime:7,
-            peak:87.5,
-            poiseTime:6,
-            poise:33.3,
-            ebbTime:8,
-            ebb:12.5,
-            total:553524.5,
-            average:0.89
-          },
-          colorBarOption:[
-            {name: "新建综合制剂楼", value0: 2342,value4: 4234,value8: 2232,value12: 235,value16: 2042,value20: 264, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'},
-            {name: "提取二车间", value0: 2342,value4: 2342,value8: 2342,value12: 2342,value16: 2342,value20: 2342, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'},
-            {name: "新建综合制剂楼", value0: 2342,value4: 2342,value8: 2342,value12: 2342,value16: 2342,value20: 2342, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'},
-            {name: "新建综合制剂楼", value0: 2342,value4: 2342,value8: 2342,value12: 2342,value16: 2342,value20: 2342, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'}
-          ],
-          contrastDate:Date.now()
-        }
+        },
+        chartData:{
+          columns:["时间","能耗量"],
+          rows:[
+            {"时间":"00:00","能耗量":273},
+            {"时间":"01:00","能耗量":303},
+            {"时间":"02:00","能耗量":333},
+            {"时间":"03:00","能耗量":293},
+            {"时间":"04:00","能耗量":223},
+            {"时间":"05:00","能耗量":313},
+            {"时间":"06:00","能耗量":365},
+            {"时间":"07:00","能耗量":""},
+            {"时间":"08:00","能耗量":""},
+            {"时间":"09:00","能耗量":""},
+            {"时间":"10:00","能耗量":""},
+            {"时间":"11:00","能耗量":""},
+            {"时间":"12:00","能耗量":""}
+          ]
+        },
+        electricAnalyze:{
+          sharpTime:3,
+          sharp:100,
+          peakTime:7,
+          peak:87.5,
+          total:553524.5,
+          poiseTime:6,
+          poise:33.3,
+          ebbTime:8,
+          ebb:12.5,
+          average:0.89,
+        },
+        rationalAnalyze:{
+          sharpTime:3,
+          sharp:100,
+          peakTime:7,
+          peak:87.5,
+          poiseTime:6,
+          poise:33.3,
+          ebbTime:8,
+          ebb:12.5,
+          total:553524.5,
+          average:0.89
+        },
+        colorBarOption:[],
+        contrastDate:Date.now()
       }
+    },
+    created(){
+      this.getAreaTimeEnergy()
+    },
+    methods:{
+      changeDate(){
+        this.getAreaTimeEnergy()
+      },
+      getAreaTimeEnergy(){
+        var params = {
+          energyType: this.areaTimeEnergyValue,
+          CompareDate:moment(this.formParameters.date).format('YYYY-MM-DD')
+        }
+        this.axios.get("/api/areaTimeEnergy",{params:params}).then(res => {
+          console.log(res.data)
+          this.colorBarOption = res.data
+        })
+      },
     }
+  }
 </script>
 
 <style scoped>

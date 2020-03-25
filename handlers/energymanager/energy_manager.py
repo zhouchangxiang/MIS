@@ -8,7 +8,7 @@ from dbset.main.BSFramwork import AlchemyEncoder
 from flask_login import login_required, logout_user, login_user,current_user,LoginManager
 import calendar
 from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable, Equipment, \
-    PriceList, AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
+    AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
     AreaTimeEnergyColour, ElectricProportion
 from tools.common import insert,delete,update
@@ -159,82 +159,32 @@ def curcutlas(cur, las, count, energy):
                 pro = float(propor.Proportion)
                 return round(count + diff * pro, 2)
 
-
-def energymoney(count, name):
-    prices = db_session.query(PriceList).filter(PriceList.IsEnabled == "是").all()
-    for pr in prices:
-        if pr.PriceName == name:
-            return float(count)*float(pr.PriceValue)
-def eletongji(oc, StartTime, EndTime, elecount):
-    sqlcur = "SELECT TOP 1 [ZGL] FROM [DB_MICS].[dbo].[ElectricEnergy] with (INDEX =IX_ElectricEnergy) WHERE [ElectricEnergy].[TagClassValue] = "+"'"+oc.TagClassValue+"'"+" AND [ElectricEnergy].[CollectionDate] LIKE "+"'"+"%"+EndTime+"%"+"'"+" AND [ElectricEnergy].[ZGL] != "+"'"+"0.0"+"'"+" AND [ElectricEnergy].[ZGL] != "+"'"+""+"'"+" AND [ElectricEnergy].[ZGL] IS NOT NULL ORDER BY [ElectricEnergy].[CollectionDate] DESC"
-    sqllas = "SELECT TOP 1 [ZGL] FROM [DB_MICS].[dbo].[ElectricEnergy] with (INDEX =IX_ElectricEnergy) WHERE [ElectricEnergy].[TagClassValue] = " + "'" + oc.TagClassValue + "'" + " AND [ElectricEnergy].[CollectionDate] LIKE " + "'" + "%" + StartTime + "%" + "'" + " AND [ElectricEnergy].[ZGL] != " + "'" + "0.0" + "'" + " AND [ElectricEnergy].[ZGL] != " + "'" + "" + "'" + " AND [ElectricEnergy].[ZGL] IS NOT NULL ORDER BY [ElectricEnergy].[CollectionDate]"
-    recur = db_session.execute(sqlcur).fetchall()
-    relas = db_session.execute(sqllas).fetchall()
+def energyStatistics(oc_list, StartTime, EndTime, energy):
+    propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
+    pro = float(propor.Proportion)
+    sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementTable] t with (INDEX =IX_IncrementTable)  WHERE t.TagClassValue in ("+str(oc_list)[1:-1]+") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+    re = db_session.execute(sql).fetchall()
     db_session.close()
-    if len(recur) > 0:
-        cur = recur[0]
+    if len(re) > 0:
+        if re[0][0] != 0.0 and re[0][0] != None:
+            return round(float(re[0][0]) * pro, 2)
+        else:
+            return 0.0
     else:
-        cur = None
-    if len(relas) > 0:
-        las = relas[0]
-    else:
-        las = None
-    # cur = \
-    #     db_session.query(ElectricEnergy.ZGL).filter(
-    #         ElectricEnergy.TagClassValue == oc.TagClassValue,
-    #         ElectricEnergy.CollectionDate.like("%"+EndTime+"%"), ElectricEnergy.ZGL != "0.0", ElectricEnergy.ZGL != "", ElectricEnergy.ZGL != None).order_by(
-    #         desc("CollectionDate")).first()
-    # las = db_session.query(ElectricEnergy.ZGL).filter(
-    #     ElectricEnergy.TagClassValue == oc.TagClassValue,
-    #     ElectricEnergy.CollectionDate.like("%"+StartTime+"%"), ElectricEnergy.ZGL != "0.0", ElectricEnergy.ZGL != "", ElectricEnergy.ZGL != None).order_by(("CollectionDate")).first()
-    return curcutlas(cur, las, elecount, "电")
-
-def wattongji(oc, StartTime, EndTime, elecount):
-    sqlcur = "SELECT TOP 1 [WaterSum] FROM [DB_MICS].[dbo].[WaterEnergy] with (INDEX =IX_WaterEnergy) WHERE [WaterEnergy].[TagClassValue] = " + "'" + oc.TagClassValue + "'" + " AND [WaterEnergy].[CollectionDate] LIKE " + "'" + "%" + EndTime + "%" + "'" + " AND [WaterEnergy].[WaterSum] != " + "'" + "0.0" + "'" + " AND [WaterEnergy].[WaterSum] != " + "'" + "" + "'" + " AND [WaterEnergy].[WaterSum] IS NOT NULL ORDER BY [WaterEnergy].[CollectionDate] DESC"
-    sqllas = "SELECT TOP 1 [WaterSum] FROM [DB_MICS].[dbo].[WaterEnergy] with (INDEX =IX_WaterEnergy) WHERE [WaterEnergy].[TagClassValue] = " + "'" + oc.TagClassValue + "'" + " AND [WaterEnergy].[CollectionDate] LIKE " + "'" + "%" + StartTime + "%" + "'" + " AND [WaterEnergy].[WaterSum] != " + "'" + "0.0" + "'" + " AND [WaterEnergy].[WaterSum] != " + "'" + "" + "'" + " AND [WaterEnergy].[WaterSum] IS NOT NULL ORDER BY [WaterEnergy].[CollectionDate]"
-    recur = db_session.execute(sqlcur).fetchall()
-    relas = db_session.execute(sqllas).fetchall()
+        return None
+def energyStatisticstotal(oc_list, StartTime, EndTime):
+    propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
+    pro = float(propor.Proportion)
+    sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementTable] t with (INDEX =IX_IncrementTable)  WHERE t.TagClassValue in ("+str(oc_list)[1:-1]+") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+    re = db_session.execute(sql).fetchall()
     db_session.close()
-    if len(recur) > 0:
-        cur = recur[0]
+    if len(re) > 0:
+        if re[0][0] != 0.0 and re[0][0] != None:
+            return round(float(re[0][0]) * pro, 2)
+        else:
+            return 0.0
     else:
-        cur = None
-    if len(relas) > 0:
-        las = relas[0]
-    else:
-        las = None
-    # cur = \
-    #     db_session.query(WaterEnergy.WaterSum).filter(
-    #         WaterEnergy.TagClassValue == oc.TagClassValue,
-    #         WaterEnergy.CollectionDate.like("%"+EndTime+"%"), WaterEnergy.WaterSum != "0.0", WaterEnergy.WaterSum != "", WaterEnergy.WaterSum != None).order_by(
-    #         desc("CollectionDate")).first()
-    # las = db_session.query(WaterEnergy.WaterSum).filter(
-    #     WaterEnergy.TagClassValue == oc.TagClassValue,
-    #     WaterEnergy.CollectionDate.like("%"+StartTime+"%"), WaterEnergy.WaterSum != "0.0", WaterEnergy.WaterSum != "", WaterEnergy.WaterSum != None).order_by(("CollectionDate")).first()
-    return curcutlas(cur, las, elecount, "水")
-def stetongji(oc, StartTime, EndTime, elecount):
-    sqlcur = "SELECT TOP 1 [SumValue] FROM [DB_MICS].[dbo].[SteamEnergy] with (INDEX =IX_SteamEnergy) WHERE [SteamEnergy].[TagClassValue] = " + "'" + oc.TagClassValue + "'" + " AND [SteamEnergy].[CollectionDate] LIKE " + "'" + "%" + EndTime + "%" + "'" + " AND [SteamEnergy].[SumValue] != " + "'" + "0.0" + "'" + " AND [SteamEnergy].[SumValue] != " + "'" + "" + "'" + " AND [SteamEnergy].[SumValue] IS NOT NULL ORDER BY [SteamEnergy].[CollectionDate] DESC"
-    sqllas = "SELECT TOP 1 [SumValue] FROM [DB_MICS].[dbo].[SteamEnergy] with (INDEX =IX_SteamEnergy) WHERE [SteamEnergy].[TagClassValue] = " + "'" + oc.TagClassValue + "'" + " AND [SteamEnergy].[CollectionDate] LIKE " + "'" + "%" + StartTime + "%" + "'" + " AND [SteamEnergy].[SumValue] != " + "'" + "0.0" + "'" + " AND [SteamEnergy].[SumValue] != " + "'" + "" + "'" + " AND [SteamEnergy].[SumValue] IS NOT NULL ORDER BY [SteamEnergy].[CollectionDate]"
-    recur = db_session.execute(sqlcur).fetchall()
-    relas = db_session.execute(sqllas).fetchall()
-    db_session.close()
-    if len(recur) > 0:
-        cur = recur[0]
-    else:
-        cur = None
-    if len(relas) > 0:
-        las = relas[0]
-    else:
-        las = None
-    # cur = \
-    #     db_session.query(SteamEnergy.SumValue).filter(
-    #         SteamEnergy.TagClassValue == oc.TagClassValue,
-    #         SteamEnergy.CollectionDate.like("%"+EndTime+"%"), SteamEnergy.SumValue != "0.0", SteamEnergy.SumValue != "", SteamEnergy.SumValue != None).order_by(
-    #         desc("CollectionDate")).first()
-    # las = db_session.query(SteamEnergy.SumValue).filter(
-    #     SteamEnergy.TagClassValue == oc.TagClassValue,
-    #     SteamEnergy.CollectionDate.like("%"+StartTime+"%"), SteamEnergy.SumValue != "0.0", SteamEnergy.SumValue != "", SteamEnergy.SumValue != None).order_by(("CollectionDate")).first()
-    return curcutlas(cur, las, elecount, "汽")
+        return None
 def energyselect(data):
     if request.method == 'GET':
         try:
@@ -242,6 +192,7 @@ def energyselect(data):
             currentyear = datetime.datetime.now().year
             currentmonth = datetime.datetime.now().month
             currentday = datetime.datetime.now().day
+            currenthour = datetime.datetime.now().hour
             currenthour = datetime.datetime.now().hour
             curryear = str(currentyear)
             lastyear = str(int(curryear) - 1)
@@ -264,225 +215,48 @@ def energyselect(data):
                 dir_list = []
                 dir_month_list = []
                 oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
+                oc_list = []
+                for oc in oclass:
+                    oc_list.append(oc.TagClassValue)
                 compareday = data.get("CompareDate")
-                for j in range(0, 24):
+                for j in range(24):
                     dir_list_dict = {}
-                    dir_list_dict["日期"] = str(j)
-                    comparehour = str(compareday) + " " + addzero(j)
-                    vv = datetime.datetime.strptime(comparehour, "%Y-%m-%d %H")
-                    lastcomparehour = str((vv + datetime.timedelta(hours=-1)).strftime("%Y-%m-%d %H:%M:%S"))[0:13]
+                    dir_list_dict["时间"] = str(j)
+                    comparehour = str(compareday) + " " +addzero(j)+ ":59:59"
+                    lastcomparehour = str(compareday) + " " +addzero(j)+ ":00:00"
                     currhour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
-                        int(currentday)) + " " + addzero(j)
-                    vv = datetime.datetime.strptime(currhour, "%Y-%m-%d %H")
-                    lasthour = str((vv + datetime.timedelta(hours=-1)).strftime("%Y-%m-%d %H:%M:%S"))[0:13]
-                    count = 0.0
-                    comperacount = 0.0
-                    for oc in oclass:
-                        Tag = oc.TagClassValue[0:1]
-                        if Tag == "E":
-                            count = eletongji(oc, lasthour, currhour, count)
-                            comperacount = eletongji(oc, lastcomparehour, lastcomparehour, comperacount)
-                        elif Tag == "W":
-                            count = wattongji(oc, lasthour, currhour, count)
-                            comperacount = wattongji(oc, lastcomparehour, lastcomparehour, comperacount)
-                        elif Tag == "S":
-                            count = stetongji(oc, lasthour, currhour, count)
-                            comperacount = stetongji(oc, lastcomparehour, lastcomparehour, comperacount)
+                        int(currentday)) + " " + addzero(j)+":59:59"
+                    lasthour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
+                        int(currentday)) + " " + addzero(j)+":00:00"
+                    count = energyStatistics(oc_list, lasthour, currhour, EnergyClass)
+                    comperacount = energyStatistics(oc_list, lastcomparehour, comparehour, EnergyClass)
                     dir_list_dict["今日能耗"] = count
                     dir_list_dict["对比日能耗"] = comperacount
                     dir_list.append(dir_list_dict)
+                curmonthdays = str(getMonthFirstDayAndLastDay(currentyear, currentmonth)[1])[8:10]
+                lasmonthdays = str(getMonthFirstDayAndLastDay(strlastMonth(str(currentyear) + "-" + addzero(int(currentmonth)))[0:4], strlastMonth(str(currentyear) + "-" + addzero(int(currentmonth)))[5:7])[1])[8:10]
                 for i in range(1, 32):
                     dirmonth_list_dict = {}
-                    currmonthday = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(int(i))
-                    lastmonthcurrday = strlastMonth(str(currentyear) + "-" + addzero(int(currentmonth))) + "-" + addzero(int(i))
-                    dirmonth_list_dict["日期"] = str(currmonthday)
-                    monthcount = 0.0
-                    lastmonthcount = 0.0
-                    for oc in oclass:
-                        Tag = oc.TagClassValue[0:1]
-                        if Tag == "E":
-                            monthcount = eletongji(oc, currmonthday, currmonthday, monthcount)
-                            lastmonthcount = eletongji(oc, lastmonthcurrday, lastmonthcurrday, lastmonthcount)
-                        elif Tag == "W":
-                            monthcount = wattongji(oc, currmonthday, currmonthday, monthcount)
-                            lastmonthcount = wattongji(oc, lastmonthcurrday, lastmonthcurrday, lastmonthcount)
-                        elif Tag == "S":
-                            monthcount = stetongji(oc, currmonthday, currmonthday, monthcount)
-                            lastmonthcount = stetongji(oc, lastmonthcurrday, lastmonthcurrday, lastmonthcount)
-                    dirmonth_list_dict["上月能耗"] = count
-                    dirmonth_list_dict["本月能耗"] = comperacount
+                    currmonthcurrday = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(int(i))+" 23:59:59"
+                    currmonthlasday = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
+                        int(i)) + " 00:00:00"
+                    lastmonthcurrday = strlastMonth(str(currentyear) + "-" + addzero(int(currentmonth))) + "-" + addzero(int(i))+" 23:59:59"
+                    lastmonthlasday = strlastMonth(
+                        str(currentyear) + "-" + addzero(int(currentmonth))) + "-" + addzero(int(i)) + " 00:0:00"
+                    dirmonth_list_dict["日期"] = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(int(i))
+                    if i <= int(curmonthdays):
+                        monthcount = energyStatistics(oc_list, currmonthlasday, currmonthcurrday, EnergyClass)
+                    else:
+                        monthcount = 0.0
+                    if i <= int(lasmonthdays):
+                        lastmonthcount = energyStatistics(oc_list, lastmonthlasday, lastmonthcurrday, EnergyClass)
+                    else:
+                        lastmonthcount = 0.0
+                    dirmonth_list_dict["上月能耗"] = lastmonthcount
+                    dirmonth_list_dict["本月能耗"] = monthcount
                     dir_month_list.append(dirmonth_list_dict)
                 dir["compareTodayRow"] = dir_list
                 dir["lastMonthRow"] = dir_month_list
-            elif ModelFlag == "区域能耗":
-                oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == Area).all()
-                if datime == "年":
-                    for oc in oclass:
-                        Tag = oc.TagClassValue[0:1]
-                        if Tag == "E":
-                            elecount = eletongji(oc, curryear, lastyear, elecount)
-                        elif Tag == "W":
-                            watcount = wattongji(oc, curryear, lastyear, elecount)
-                        elif Tag == "S":
-                            stecount = stetongji(oc, curryear, lastyear, elecount)
-                elif datime == "月":
-                    for oc in oclass:
-                        Tag = oc.TagClassValue[0:1]
-                        if Tag == "E":
-                            elecount = eletongji(oc, currmonth, lastmonth, elecount)
-                        elif Tag == "W":
-                            watcount = wattongji(oc, currmonth, lastmonth, elecount)
-                        elif Tag == "S":
-                            stecount = stetongji(oc, currmonth, lastmonth, elecount)
-                elif datime == "日":
-                    for oc in oclass:
-                        Tag = oc.TagClassValue[0:1]
-                        if Tag == "E":
-                            elecount = eletongji(oc, currday, lastday, elecount)
-                        elif Tag == "W":
-                            watcount = wattongji(oc, currday, lastday, elecount)
-                        elif Tag == "S":
-                            stecount = stetongji(oc, currday, lastday, elecount)
-                dir["ElectricValue"] = elecount
-                dir["WaterValue"] = watcount
-                dir["SteamValue"] = stecount
-            elif ModelFlag == "成本展示":
-                oclass = db_session.query(TagDetail).filter().all()
-                if datime == "年":
-                    for oc in oclass:
-                        Tag = oc.TagClassValue[0:1]
-                        if Tag == "E":
-                            elecount = eletongji(oc, curryear, lastyear, elecount)
-                        elif Tag == "W":
-                            watcount = wattongji(oc, curryear, lastyear, elecount)
-                        elif Tag == "S":
-                            stecount = stetongji(oc, curryear, lastyear, elecount)
-                elif datime == "月":
-                    for oc in oclass:
-                        Tag = oc.TagClassValue[0:1]
-                        if Tag == "E":
-                            elecount = eletongji(oc, currmonth, lastmonth, elecount)
-                        elif Tag == "W":
-                            watcount = wattongji(oc, currmonth, lastmonth, elecount)
-                        elif Tag == "S":
-                            stecount = stetongji(oc, currmonth, lastmonth, elecount)
-                elif datime == "日":
-                    for oc in oclass:
-                        Tag = oc.TagClassValue[0:1]
-                        if Tag == "E":
-                            elecount = eletongji(oc, currday, lastday, elecount)
-                        elif Tag == "W":
-                            watcount = wattongji(oc, currday, lastday, elecount)
-                        elif Tag == "S":
-                            stecount = stetongji(oc, currday, lastday, elecount)
-                dir["ElectricValue"] = round(energymoney(elecount, "电"), 2)
-                dir["WaterValue"] = round(energymoney(watcount, "水"), 2)
-                dir["SteamValue"] = round(energymoney(stecount, "汽"), 2)
-                dir["ZCB"] = round(energymoney(elecount, "电") + energymoney(watcount, "水") + energymoney(stecount, "汽"), 2)
-                #饼图
-                dice = {}
-                ztotal = round(energymoney(elecount, "电") + energymoney(watcount, "水") + energymoney(stecount, "汽"), 2)
-                dice["name"] = "电"
-                dice["y"] = float('{:.2f}'.format(round(energymoney(elecount, "电"), 2)/ztotal*100))
-                dicw = {}
-                dicw["name"] = "水"
-                dicw["y"] = float('{:.2f}'.format(round(energymoney(watcount, "水"), 2)/ztotal*100))
-                dics = {}
-                dics["name"] = "汽"
-                dics["y"] = float('{:.2f}'.format(round(energymoney(stecount, "汽"), 2)/ztotal*100))
-                datadic = []
-                datadic.append(dice)
-                datadic.append(dicw)
-                datadic.append(dics)
-                dir["data"] = datadic
-            elif ModelFlag == "区域成本":
-                oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == Area).all()
-                if datime == "年":
-                    currentyear = CurrentTime[0:4]
-                    lastyear = str(int(curryear) - 1)
-                    for oc in oclass:
-                        Tag = oc.TagClassValue[0:1]
-                        if Tag == "E":
-                            elecount = eletongji(oc, curryear, lastyear, elecount)
-                        elif Tag == "W":
-                            watcount = wattongji(oc, curryear, lastyear, elecount)
-                        elif Tag == "S":
-                            stecount = stetongji(oc, curryear, lastyear, elecount)
-                elif datime == "月":
-                    currentmonth = CurrentTime[0:7]
-                    lastM = strlastMonth(currentmonth)
-                    for oc in oclass:
-                        Tag = oc.TagClassValue[0:1]
-                        if Tag == "E":
-                            elecount = eletongji(oc, currmonth, lastmonth, elecount)
-                        elif Tag == "W":
-                            watcount = wattongji(oc, currmonth, lastmonth, elecount)
-                        elif Tag == "S":
-                            stecount = stetongji(oc, currmonth, lastmonth, elecount)
-                elif datime == "日":
-                    currentday = CurrentTime[0:10]
-                    vv = datetime.datetime.strptime(currday, "%Y-%m-%d")
-                    lastday = str(vv + datetime.timedelta(days=-1))[0:10]
-                    for oc in oclass:
-                        Tag = oc.TagClassValue[0:1]
-                        if Tag == "E":
-                            elecount = eletongji(oc, currday, lastday, elecount)
-                        elif Tag == "W":
-                            watcount = wattongji(oc, currday, lastday, elecount)
-                        elif Tag == "S":
-                            stecount = stetongji(oc, currday, lastday, elecount)
-                chenbY = [round(energymoney(elecount, "电"), 2),round(energymoney(watcount, "水"), 2),round(energymoney(stecount, "汽"), 2)]
-                chenbX = ["电","水","汽"]
-                dir["X"] = chenbX
-                dir["Y"] = chenbY
-            elif ModelFlag == "区域成本排名":
-                AreaNames = db_session.query(AreaTable.AreaName).filter().all()
-                diarea = {}
-                for AreaName in AreaNames:
-                    oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaName[0]).all()
-                    if datime == "年":
-                        currentyear = CurrentTime[0:4]
-                        lastyear = str(int(curryear) - 1)
-                        for oc in oclass:
-                            Tag = oc.TagClassValue[0:1]
-                            if Tag == "E":
-                                elecount = eletongji(oc, curryear, lastyear, elecount)
-                            elif Tag == "W":
-                                watcount = wattongji(oc, curryear, lastyear, elecount)
-                            elif Tag == "S":
-                                stecount = stetongji(oc, curryear, lastyear, elecount)
-                    elif datime == "月":
-                        currentmonth = CurrentTime[0:7]
-                        lastM = strlastMonth(currentmonth)
-                        for oc in oclass:
-                            Tag = oc.TagClassValue[0:1]
-                            if Tag == "E":
-                                elecount = eletongji(oc, currmonth, lastmonth, elecount)
-                            elif Tag == "W":
-                                watcount = wattongji(oc, currmonth, lastmonth, elecount)
-                            elif Tag == "S":
-                                stecount = stetongji(oc, currmonth, lastmonth, elecount)
-                    elif datime == "日":
-                        currentday = CurrentTime[0:10]
-                        vv = datetime.datetime.strptime(currday, "%Y-%m-%d")
-                        lastday = str(vv + datetime.timedelta(days=-1))[0:10]
-                        for oc in oclass:
-                            Tag = oc.TagClassValue[0:1]
-                            if Tag == "E":
-                                elecount = eletongji(oc, currday, lastday, elecount)
-                            elif Tag == "W":
-                                watcount = wattongji(oc, currday, lastday, elecount)
-                            elif Tag == "S":
-                                stecount = stetongji(oc, currday, lastday, elecount)
-                    diarea[AreaName[0]] = round((energymoney(elecount, "电") +  energymoney(watcount, "水") + energymoney(stecount, "汽")), 2)
-                areavs = sorted(diarea.items(), key=lambda x: float(x[1]), reverse=True)
-                areax = []
-                areay = []
-                for i in areavs:
-                    areax.append(i[0])
-                    areay.append(float(i[1]))
-                dir["X"] = areax
-                dir["Y"] = areay
             elif ModelFlag == "电能负荷率":
                 dir["a"]=""
             elif ModelFlag == "在线检测情况":
@@ -560,201 +334,6 @@ def energyselect(data):
             insertSyslog("error", "能耗查询报错Error：" + str(e), current_user.Name)
             return json.dumps([{"status": "Error：" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
 
-@energy.route('/energyPreview', methods=['POST', 'GET'])
-def energyPreview():
-    '''
-    能耗预览
-    :return:
-    '''
-    if request.method == 'GET':
-        data = request.values
-        try:
-            dir = {}
-            currentyear = datetime.datetime.now().year
-            currentmonth = datetime.datetime.now().month
-            currentday = datetime.datetime.now().day
-            currenthour = datetime.datetime.now().hour
-            curryear = str(currentyear)
-            lastyear = str(int(curryear) - 1)
-            currmonth = str(currentyear) + "-" + addzero(int(currentmonth))
-            lastmonth = strlastMonth(currmonth)
-            currday = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(currentday)
-            vv = datetime.datetime.strptime(currday, "%Y-%m-%d")
-            lastday = str(vv + datetime.timedelta(days=-1))[0:10]
-            EnergyType = data.get("energyType")
-            elecount = 0.0
-            watcount = 0.0
-            stecount = 0.0
-            laststecount = 0.0
-            lastwatcount = 0.0
-            lastelecount = 0.0
-            oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyType).all()
-            # if datime == "年":
-            zerocurrMonth = str(currentyear) + addzero(currentmonth)
-            lastYMonth = str(int(currentyear)-1) + addzero(currentmonth)
-            zerolastYMonth = str(int(currentyear) - 1) + "-01"
-            for oc in oclass:
-                Tag = oc.TagClassValue[0:1]
-                if Tag == "E":
-                    elecount = eletongji(oc, zerocurrMonth, currmonth, elecount)
-                    lastelecount = eletongji(oc, zerolastYMonth, lastYMonth, lastelecount)
-                elif Tag == "W":
-                    watcount = wattongji(oc, zerocurrMonth, currmonth, watcount)
-                    lastwatcount = wattongji(oc, zerolastYMonth, lastYMonth, lastwatcount)
-                elif Tag == "S":
-                    stecount = stetongji(oc, zerocurrMonth, currmonth, stecount)
-                    laststecount = stetongji(oc, zerolastYMonth, lastYMonth, laststecount)
-            curryeartotal = round(elecount + watcount + stecount, 2)
-            lastyeartotal = round(lastelecount + lastwatcount + laststecount, 2)
-            dir["thisYearCon"] =curryeartotal#年能耗量
-            dir["lastYearCon"] =lastyeartotal  # 上年同期能耗
-            cl = curryeartotal - lastyeartotal
-            if cl > 0:
-                percen = round((cl / lastyeartotal) * 100, 2)
-            else:
-                percen = 0
-            dir["lastYearCompare"] = str(percen) + "%"
-            if percen < 0:
-                dir["lastYearCompareState"] = "bottom"
-            elif percen == 0:
-                dir["lastYearCompareState"] = ""
-            else:
-                dir["lastYearCompareState"] = "top"
-            # elif datime == "月":
-            zerocurrday = str(currentyear) + "-" + addzero(int(currentmonth)) + "-01"
-            lastMday = strlastMonth(currmonth) + "-" + addzero(currentday)
-            zerolastMday = strlastMonth(currmonth) + "-01"
-            thisMonthCon = 0.0
-            lastMonthCon = 0.0
-            for oc in oclass:
-                Tag = oc.TagClassValue[0:1]
-                if Tag == "E":
-                    thisMonthCon = eletongji(oc, currday, zerocurrday, thisMonthCon)
-                    lastMonthCon = eletongji(oc, lastMday, zerolastMday, lastMonthCon)
-                elif Tag == "W":
-                    thisMonthCon = wattongji(oc, currday, zerocurrday, thisMonthCon)
-                    lastMonthCon = wattongji(oc, lastMday, zerolastMday, lastMonthCon)
-                elif Tag == "S":
-                    thisMonthCon = stetongji(oc, currday, zerocurrday, thisMonthCon)
-                    lastMonthCon = stetongji(oc, lastMday, zerolastMday, lastMonthCon)
-            currMont = round(thisMonthCon, 2)
-            lastMont = round(lastMonthCon, 2)
-            dir["thisMonthCon"] = currMont#本月能耗量
-            dir["lastMonthCon"] =   lastMont# 上月同期能耗量
-            #上月同期百分比
-            cla = currMont - lastMont
-            if cla > 0:
-                perce = round((cla/lastMont)*100, 2)
-            else:
-                perce = 0
-            dir["lastMonthCompare"] = str(perce) + "%"
-            if perce < 0:
-                dir["lastMonthCompareState"] = "bottom"
-            elif perce == 0:
-                dir["lastMonthCompareState"] = ""
-            else:
-                dir["lastMonthCompareState"] = "top"
-            month_data_list = []
-            month_data_dir = {}
-            for j in range(1, int(currentday) + 1):
-                currdayxin = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(j)
-                vv = datetime.datetime.strptime(currdayxin, "%Y-%m-%d")
-                lastdayxin = str(vv + datetime.timedelta(days=-1))[0:10]
-                month_data_list.append(str(j))
-                count = 0.0
-                month_data_dir["日期"] = currdayxin
-                for oc in oclass:
-                    Tag = oc.TagClassValue[0:1]
-                    if Tag == "E":
-                        count = eletongji(oc, currdayxin, lastdayxin, count)
-                    elif Tag == "W":
-                        count = wattongji(oc, currdayxin, lastdayxin, count)
-                    elif Tag == "S":
-                        count = stetongji(oc, currdayxin, lastdayxin, count)
-                month_data_dir["本月能耗"] = count
-                lastcount = 0.0
-                lastMondayxin = strlastMonth(currmonth) + "-" + addzero(j)
-                mm = datetime.datetime.strptime(currday, "%Y-%m-%d")
-                laMondayxin = str(mm + datetime.timedelta(days=-1))[0:10]
-                for oc in oclass:
-                    Tag = oc.TagClassValue[0:1]
-                    if Tag == "E":
-                        lastcount = eletongji(oc, lastMondayxin, laMondayxin, lastcount)
-                    elif Tag == "W":
-                        lastcount = wattongji(oc, lastMondayxin, laMondayxin, lastcount)
-                    elif Tag == "S":
-                        lastcount = stetongji(oc, lastMondayxin, laMondayxin, lastcount)
-                month_data_dir["上月能耗"] = lastcount
-                month_data_list.append(month_data_dir)
-            dir["lastMonthRow"] = month_data_list
-            # elif datime == "日":
-            compareday = data.get("CompareDate")
-            cv = datetime.datetime.strptime(compareday, "%Y-%m-%d")
-            lastcompareday = str(cv + datetime.timedelta(days=-1))[0:10]
-            comparedaycount = 0.0
-            currdaycounts = 0.0
-            for oc in oclass:
-                Tag = oc.TagClassValue[0:1]
-                if Tag == "E":
-                    comparedaycount = eletongji(oc, compareday, lastcompareday, comparedaycount)
-                    currdaycounts = eletongji(oc, currday, lastday, currdaycounts)
-                elif Tag == "W":
-                    comparedaycount = wattongji(oc, compareday, lastcompareday, comparedaycount)
-                    currdaycounts = wattongji(oc, currday, lastday, currdaycounts)
-                elif Tag == "S":
-                    comparedaycount = stetongji(oc, compareday, lastcompareday, comparedaycount)
-                    currdaycounts = stetongji(oc, currday, lastday, currdaycounts)
-            dir["compareDateCon"] = round(comparedaycount, 2)
-            pccss = comparedaycount - currdaycounts
-            if pccss > 0:
-                percencc = round((pccss/comparedaycount) * 100, 2)
-            else:
-                percencc = 0
-            dir["comparePer"] = str(percencc) + "%"
-            if percencc < 0:
-                dir["comparePerState"] = "bottom"
-            elif percencc == 0:
-                dir["comparePerState"] = ""
-            else:
-                dir["comparePerState"] = "top"
-            currhour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
-                int(currentday)) + " " + addzero(currenthour)
-            currzero = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
-                int(currentday)) + " " + "00"
-            time_list = []
-            compare_dict = {}
-            for j in range(0, currenthour):
-                currhour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
-                    int(currentday)) + " " + addzero(j)
-                vvc = datetime.datetime.strptime(currhour, "%Y-%m-%d %H")
-                lasthour = str((vvc + datetime.timedelta(hours=-1)).strftime("%Y-%m-%d %H:%M:%S"))[0:13]
-                comparehour = compareday + " " + addzero(j)
-                vxc = datetime.datetime.strptime(comparehour, "%Y-%m-%d %H")
-                comparelasthour = str((vxc + datetime.timedelta(hours=-1)).strftime("%Y-%m-%d %H:%M:%S"))[0:13]
-                compare_dict["时间"] = str(j)
-                current_countr = 0.0
-                compare_count = 0.0
-                for oc in oclass:
-                    Tag = oc.TagClassValue[0:1]
-                    if Tag == "E":
-                        current_countr = eletongji(oc, currhour, lasthour, current_countr)
-                        compare_count = eletongji(oc, comparehour, comparelasthour, compare_count)
-                    elif Tag == "W":
-                        current_countr = wattongji(oc, currhour, lasthour, current_countr)
-                        compare_count = wattongji(oc, comparehour, comparelasthour, compare_count)
-                    elif Tag == "S":
-                        current_countr = stetongji(oc, currhour, lasthour, current_countr)
-                        compare_count = stetongji(oc, comparehour, comparelasthour, compare_count)
-                compare_dict["今日能耗"] = str(current_countr)
-                compare_dict["对比日能耗"] = str(compare_count)
-                time_list.append(compare_dict)
-            dir["compareTodayRow"] = time_list
-            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
-        except Exception as e:
-            print(e)
-            logger.error(e)
-            insertSyslog("error", "能耗预览查询报错Error：" + str(e), current_user.Name)
-
 @energy.route('/areaTimeEnergy', methods=['POST', 'GET'])
 def areaTimeEnergy():
     '''
@@ -764,67 +343,88 @@ def areaTimeEnergy():
     if request.method == 'GET':
         data = request.values
         try:
+            print(datetime.datetime.now())
             dir = {}
             currentyear = datetime.datetime.now().year
             currentmonth = datetime.datetime.now().month
             currentday = datetime.datetime.now().day
             currenthour = datetime.datetime.now().hour
             EnergyClass = data.get("energyType")
-            currdate = data.get("date")#当前时间
-            compareDate = data.get("compareDate")#对比日期
+            compareday = data.get("CompareDate")
             AreaNames = db_session.query(AreaTable.AreaName).filter().all()
-            diarea = {}
             araeY_list = []
+            wit = db_session.query(AreaTimeEnergyColour).filter(
+                AreaTimeEnergyColour.ColourName == "无").first()
+            wu = wit.ColourValue
             for AreaName in AreaNames:
-                diarea["name"] = AreaName[0]
                 valuelist = []
                 value_dirc = {}
                 oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaName[0],
                                                             TagDetail.EnergyClass == EnergyClass).all()
-                colourclass = db_session.query(AreaTimeEnergyColour).filter(AreaTimeEnergyColour.AreaName == AreaName[0]).all()
-                stop = ""
-                high = ""
-                middle = ""
-                low = ""
-                for co in colourclass:
-                    if co.ColourName == "停":
-                        stop = co.Colour
-                    elif co.ColourName == "高":
-                        high = co.Colour
-                    elif co.ColourName == "中":
-                        middle = co.Colour
-                    elif co.ColourName == "低":
-                        low = co.Colour
-                colour = ""
-                for j in range(0, currenthour):
-                    currhour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
-                        int(currentday)) + " " + addzero(j)
-                    vv = datetime.datetime.strptime(currhour, "%Y-%m-%d %H")
-                    lasthour = str((vv + datetime.timedelta(hours=-1)).strftime("%Y-%m-%d %H:%M:%S"))[0:13]
-                    dict_valuelist = {}
-                    dict_valuelist["date"] = str(j)
-                    vlaue = 0.0
-                    for oc in oclass:
-                        Tag = oc.TagClassValue[0:1]
-                        if Tag == "E":
-                            vlaue = eletongji(oc, currhour, lasthour, vlaue)
-                        elif Tag == "W":
-                            vlaue = wattongji(oc, currhour, lasthour, vlaue)
-                        elif Tag == "S":
-                            vlaue = stetongji(oc, currhour, lasthour, vlaue)
-                    if vlaue < float(stop) or vlaue == float(stop):
-                        colour = colour + "#ECF1F4"
-                    elif vlaue < float(low) or vlaue == float(low):
-                        colour = colour + "#F5E866"
-                    elif  vlaue < float(middle) or vlaue == float(middle):
-                        colour = colour + "#FBBA06"
-                    elif vlaue < float(high) or vlaue == float(high):
-                        colour = colour + "#FB3A06"
-                    dict_valuelist["value"] = round(vlaue, 2)
-                    valuelist.append(dict_valuelist)
-                value_dirc["valuelist"] = valuelist
-                value_dirc["backgroundColor"] = "-webkit-linear-gradient(left," + colour + ")"
-                araeY_list.append(value_dirc)
+                oc_list = []
+                for oc in oclass:
+                    oc_list.append(oc.TagClassValue)
+                if len(oc_list)>0:
+                    colourclass = db_session.query(AreaTimeEnergyColour).filter(AreaTimeEnergyColour.AreaName == AreaName[0]).all()
+                    stop = ""
+                    high = ""
+                    middle = ""
+                    low = ""
+                    stopColourValue = ""
+                    highColourValue = ""
+                    middleColourValue = ""
+                    lowColourValue = ""
+                    for co in colourclass:
+                        if co.ColourName == "停":
+                            stop = co.ColourSum
+                            stopColourValue = co.ColourValue
+                        elif co.ColourName == "高":
+                            high = co.ColourSum
+                            highColourValue = co.ColourValue
+                        elif co.ColourName == "中":
+                            middle = co.ColourSum
+                            middleColourValue = co.ColourValue
+                        elif co.ColourName == "低":
+                            low = co.ColourSum
+                            lowColourValue = co.ColourValue
+                    colour = ""
+                    for j in range(0, 24):
+                        if compareday != None and compareday != "":
+                            comparehour = str(compareday) + " " + addzero(j) + ":59:59"
+                            lastcomparehour = str(compareday) + " " + addzero(j) + ":00:00"
+                            vlaue = energyStatistics(oc_list, lastcomparehour, comparehour, EnergyClass)
+                        else:
+                            currhour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
+                                int(currentday)) + " " + addzero(j) + ":59:59"
+                            lasthour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
+                                int(currentday)) + " " + addzero(j) + ":00:00"
+                            vlaue = energyStatistics(oc_list, lasthour, currhour, EnergyClass)
+                        dict_valuelist = {}
+                        dict_valuelist["date"] = str(j)
+                        if vlaue == None or vlaue < 0:
+                            colour = colour +","+ wu
+                        elif 0<=vlaue <= float(stop):
+                            colour = colour +","+ stopColourValue
+                        elif float(low)<=vlaue<float(middle):
+                            colour = colour +","+ lowColourValue
+                        elif float(middle)<=vlaue < float(high):
+                            colour = colour +","+ middleColourValue
+                        elif vlaue > float(high) or vlaue == float(high):
+                            colour = colour +","+ highColourValue
+                        dict_valuelist["value"] = round(vlaue, 2)
+                        valuelist.append(dict_valuelist)
+                    print(colour)
+                    value_dirc["AreaName"] = AreaName[0]
+                    value_dirc["valuelist"] = valuelist
+                    value_dirc["backgroundColor"] = "-webkit-linear-gradient(left," + colour[1:] + ")"
+                    araeY_list.append(value_dirc)
+                else:
+                    value_dirc["AreaName"] = AreaName[0]
+                    value_dirc["valuelist"] = []
+                    value_dirc["backgroundColor"] = "-webkit-linear-gradient(left," + wu + ")"
+                    araeY_list.append(value_dirc)
+            print(araeY_list)
+            print(datetime.datetime.now())
             return json.dumps(araeY_list, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)

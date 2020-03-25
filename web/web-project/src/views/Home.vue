@@ -71,7 +71,7 @@
             </el-row>
             <el-row>
               <el-col :span="24">
-                  <ve-line :data="realtimeChartData" :settings="realtimeChartSettings" :extend="realtimeChartExtend" height="260px" :legend-visible="false"></ve-line>
+                  <ve-line :data="realtimeChartData" :extend="realtimeChartExtend" height="260px" :legend-visible="false"></ve-line>
               </el-col>
             </el-row>
           </div>
@@ -80,7 +80,7 @@
           <el-col :span="10">
             <div class="home-card-head">
               <span><i class="el-icon-guide el-icon--left" style="color: #228AD5;"></i>区域时段能耗</span>
-              <el-select class="card-head-select" v-model="areaTimeEnergyValue" placeholder="请选择">
+              <el-select class="card-head-select" v-model="areaTimeEnergyValue" placeholder="请选择" @change="getAreaTimeEnergy">
                 <el-option v-for="(item,index) in areaTimeEnergyOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </div>
@@ -92,15 +92,10 @@
                 <li><i class="bg-tall"></i><span>高</span></li>
               </ul>
               <ul class="gradientList">
-                <li v-for="item in colorBarOption">
-                  <p>{{ item.name }}</p>
+                <li v-for="(item,index) in colorBarOption" v-if="index<4">
+                  <p class="text-size-small text-color-info">{{ item.AreaName }}</p>
                   <el-popover trigger="hover">
-                    <div>0-4点：{{ item.value0 }}</div>
-                    <div>4-8点：{{ item.value4 }}</div>
-                    <div>8-12点：{{ item.value8 }}</div>
-                    <div>12-16点：{{ item.value12 }}</div>
-                    <div>16-20点：{{ item.value16 }}</div>
-                    <div>20-24点：{{ item.value20 }}</div>
+                    <div v-for="valueItem in item.valuelist">{{ valueItem.date }}点：{{ valueItem.value }}</div>
                     <div slot="reference" class="gradientColorItem" :style='{background:item.backgroundColor}'></div>
                   </el-popover>
                 </li>
@@ -112,7 +107,13 @@
               <span><i class="el-icon-odometer el-icon--left" style="color: #FB3A06;"></i>电能负荷率</span>
             </div>
             <div class="home-card-body" style="height:280px;text-align: center">
-              <ve-gauge :data="electricLoadRateChartData" :settings="electricLoadRateChartSettings" :extend="electricLoadRateChartExtend" height="220px"></ve-gauge>
+              <ul class="colorBar">
+                <li><i class="bg-tall"></i><span>差</span></li>
+                <li><i class="bg-center"></i><span>中</span></li>
+                <li><i class="bg-fine"></i><span>良</span></li>
+                <li><i class="bg-best"></i><span>优</span></li>
+              </ul>
+              <ve-gauge :data="electricLoadRateChartData" :extend="electricLoadRateChartExtend" height="200px"></ve-gauge>
               <el-select class="" v-model="electricLoadRateTime" size="small" style="width: 80px;">
                 <el-option v-for="(item,index) in electricLoadRateTimeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
@@ -218,62 +219,6 @@
   export default {
     name: "Home",
     data(){
-      this.contrastMonthChartSettings = { //本月对比上月能耗图表配置
-        area: true,
-      }
-      this.contrastMonthChartExtend = {
-        yAxis:{
-          show:false
-        },
-        xAxis:{
-          show:false
-        },
-        grid:{
-          left: '-40px',
-          right: '0',
-          bottom: '-20px',
-          top:'0'
-        },
-        series: {
-          smooth: false
-        }
-      }
-      this.realtimeChartSettings = { //今日对比能耗图表配置
-
-      }
-      this.realtimeChartExtend = {
-        grid:{
-          left: '-40px',
-          right: '0',
-          bottom: '0',
-          top:'20px'
-        },
-        series: {
-          smooth: false
-        }
-      }
-      this.electricLoadRateChartSettings = { //电能负荷率图表配置
-        dataType: {
-          '占比': 'percent'
-        },
-        seriesMap: {
-          '占比': {
-            min: 0,
-            max: 1
-          }
-        }
-      }
-      this.electricLoadRateChartExtend = {
-        grid:{
-          left: '0',
-          right: '0',
-          bottom: '-40px',
-          top:'0'
-        },
-        series: {
-          smooth: false
-        }
-      }
       return{
         previewEnergyOptions: [{
           value: '电',
@@ -326,7 +271,7 @@
         thisMonthCon:"", //本月能耗量
         lastMonthCon:"", //上月同期能耗量
         contrastMonthChartData:{
-          columns: ['时间', '上月能耗', '本月能耗'],
+          columns: ['日期', '上月能耗', '本月能耗'],
           rows:[]
         },
         realtimeChartData:{
@@ -335,17 +280,78 @@
         },
         thisYearCon: "", //年能耗量
         lastYearCon: "", //上年同期能耗
-        colorBarOption:[
-          {name: "新建综合制剂楼", value0: 2342,value4: 4234,value8: 2232,value12: 235,value16: 2042,value20: 264, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'},
-          {name: "提取二车间", value0: 2342,value4: 2342,value8: 2342,value12: 2342,value16: 2342,value20: 2342, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'},
-          {name: "新建综合制剂楼", value0: 2342,value4: 2342,value8: 2342,value12: 2342,value16: 2342,value20: 2342, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'},
-          {name: "新建综合制剂楼", value0: 2342,value4: 2342,value8: 2342,value12: 2342,value16: 2342,value20: 2342, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'}
-        ],
+        contrastMonthChartSettings: { //本月对比上月能耗图表配置
+          area: true,
+        },
+        contrastMonthChartExtend: {
+          yAxis:{
+            show:false
+          },
+          xAxis:{
+            show:false
+          },
+          grid:{
+            left: '-40px',
+            right: '0',
+            bottom: '-20px',
+            top:'0'
+          },
+          series: {
+            smooth: false
+          }
+        },
+        realtimeChartExtend: { //今日对比能耗图表配置
+          grid:{
+            left: '-40px',
+            right: '0',
+            bottom: '0',
+            top:'20px'
+          },
+          series: {
+            smooth: false
+          }
+        },
+        colorBarOption:[],
         electricLoadRateChartData:{
           columns: ['type', 'value'],
           rows: [
-            { type: '占比', value: 0.8 }
+            { type: '占比', value: 45 }
           ]
+        },
+        electricLoadRateChartExtend: { //电能负荷率图表配置
+          series: {
+            min: 0,
+            max: 100,
+            radius: '90%',
+            axisLine:{ //轴线
+              lineStyle: {
+                width: 10,
+                color:[[0.3, '#FB3A06'], [0.5, '#FB8A06'], [0.8, '#228AD5'], [1, '#15CC48']]
+              }
+            },
+            splitLine:{ //分割线
+              length: 20,
+                lineStyle: {
+                  color: 'auto'
+                }
+            },
+            axisTick: { //刻度
+              length: 15,
+              lineStyle: {
+                color: 'auto'
+              }
+            },
+            axisLabel:{  //刻度标签
+              color: '#082F4C',
+            },
+            detail:{ //显示数据
+              formatter: '{value}%',
+              fontWeight: 'bold',
+              color: '#082F4C',
+              fontSize:24,
+              offsetCenter:["0","75%"]
+            }
+          }
         },
         electricLoadRateTimeOptions: [{ //电能负荷率下拉框
           value: '选项1',
@@ -392,6 +398,8 @@
     },
     created(){
       this.getEnergyPreview()
+      this.getAreaTimeEnergy()
+      this.getOnLineEq()
     },
     computed:{ //计算属性
       comparePer(){
@@ -476,8 +484,24 @@
           that.lastMonthCon = JSON.parse(lastMonthCon.data).elctric
           that.thisYearCon = JSON.parse(thisYearCon.data).elctric
           that.lastYearCon = JSON.parse(lastYearCon.data).elctric
-          console.log(JSON.parse(compareData.data))
+          var chartData = JSON.parse(compareData.data)
+          that.contrastMonthChartData.rows = chartData.lastMonthRow
+          that.realtimeChartData.rows = chartData.compareTodayRow
         }))
+      },
+      getAreaTimeEnergy(){
+        var params = {
+          energyType: this.areaTimeEnergyValue
+        }
+        this.axios.get("/api/areaTimeEnergy",{params:params}).then(res => {
+          console.log(res.data)
+          this.colorBarOption = res.data
+        })
+      },
+      getOnLineEq(){
+        this.axios.get("/api/energyall").then(res => {
+          console.log(res)
+        })
       },
       openSystemCheckupDialog(){ //打开系统体检
         this.systemCheckupDialogVisible = true
@@ -566,20 +590,21 @@
   }
   .colorBar li{
     display: inline-block;
-    margin-right: 20px;
+    margin-right: 10px;
+    margin-bottom: 5px;
   }
   .colorBar li i{
     display: inline-block;
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
     border-radius: 2px;
-    margin-right: 15px;
+    margin-right: 5px;
     vertical-align: middle;
   }
   .colorBar li span{
     display: inline-block;
     color: #082F4C;
-    font-size: 16px;
+    font-size: 14px;
     vertical-align: middle;
   }
   .bg-dead{
@@ -593,6 +618,12 @@
   }
   .bg-tall{
     background-color: #FB3A06;
+  }
+  .bg-fine{
+    background-color: #228AD5;
+  }
+  .bg-best{
+    background-color: #15CC48;
   }
   .gradientList li{
     margin-top: 10px;

@@ -13,8 +13,6 @@ import Jqeury from './assets/script/jquery-3.3.1.min'
 import 'font-awesome/css/font-awesome.min.css'
 import moment from 'moment'
 import VCharts from 'v-charts'
-import Vue2OrgTree from 'vue2-org-tree'
-Vue.use(Vue2OrgTree)
 import store from './store'
 
 Vue.config.productionTip = false

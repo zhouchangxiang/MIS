@@ -496,51 +496,6 @@ class Unit(Base):
 #Unit_END:
 
 
-#PriceList_START:
-class PriceList(Base):
-	__tablename__ = "PriceList" 
-	
-	#ID:
-	ID = Column(Integer, primary_key = True, autoincrement = True, nullable = False)
-	
-	#价格名称:
-	PriceName = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#价格值:
-	PriceValue = Column(Float(53), primary_key = False, autoincrement = False, nullable = True)
-	
-	#价格类型:
-	PriceType = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#是否启用:
-	IsEnabled = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#开始时间:
-	StartTime = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#结束时间:
-	EndTime = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
-	
-	#备注:
-	Description = Column(Unicode(100), primary_key = False, autoincrement = False, nullable = True)
-	
-#PriceList_END:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 #BrandAreaTable_START:
@@ -857,6 +812,15 @@ class ElectricEnergy(Base):
 	
 	#C相电压:
 	CI = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+
+	# 计算增量更新标识:
+	IncrementFlag = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+	# 两个相邻采集点上一个采集点ID:
+	PrevID = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+	# 区域:
+	AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 	
 #ElectricEnergy_END:
 
@@ -906,7 +870,16 @@ class SteamEnergy(Base):
 
 	# 体积（单位：m3:
 	Volume = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-	
+
+	# 计算增量更新标识:
+	IncrementFlag = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+	# 两个相邻采集点上一个采集点ID:
+	PrevID = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+	# 区域:
+	AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 #SteamEnergy_END:
 
 
@@ -949,6 +922,15 @@ class WaterEnergy(Base):
 	
 	#水累计量体积单位:
 	SumWUnit = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+
+	# 计算增量更新标识:
+	IncrementFlag = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+	# 两个相邻采集点上一个采集点ID:
+	PrevID = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+	# 区域:
+	AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 	
 #WaterEnergy_END:
 

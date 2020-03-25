@@ -3,24 +3,26 @@ from flask import Blueprint, render_template, request, make_response, send_file
 import json
 import datetime
 from sqlalchemy import desc
-from dbset.database.db_operate import db_session,pool
+from dbset.database.db_operate import db_session, pool
 from dbset.main.BSFramwork import AlchemyEncoder
-from flask_login import login_required, logout_user, login_user,current_user,LoginManager
+from flask_login import login_required, logout_user, login_user, current_user, LoginManager
 import calendar
+
+from handlers.energymanager.energy_manager import energyStatistics
 from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable, Equipment, \
-    PriceList, AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
+    AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
     AreaTimeEnergyColour, ElectricProportion
-from tools.common import insert,delete,update
+from tools.common import insert, delete, update
 from dbset.database import constant
-from dbset.log.BK2TLogger import logger,insertSyslog
+from dbset.log.BK2TLogger import logger, insertSyslog
 import datetime
 import arrow
 import time
 import numpy as np
 import pandas as pd
 from io import BytesIO
-from flask import Flask, send_file,make_response
+from flask import Flask, send_file, make_response
 
 energyElectric = Blueprint('energyElectric', __name__, template_folder='templates')
 
@@ -29,23 +31,27 @@ pool = redis.ConnectionPool(host=constant.REDIS_HOST)
 redis_conn = redis.Redis(connection_pool=pool)
 
 from datetime import timedelta
-def getWeekDaysByNum(m, n):#获取第几周到第几周每周的第一天和最后一天
+
+
+def getWeekDaysByNum(m, n):  # 获取第几周到第几周每周的第一天和最后一天
     # 当前日期
     now = datetime.now().date()
     dayDict = {}
     for x in range(m, n + 1):
-    	#前几周
+        # 前几周
         if x < 0:
             lDay = now - timedelta(days=now.weekday() + (7 * abs(x)))
-        #本周
+        # 本周
         elif x == 0:
             lDay = now - timedelta(days=now.weekday())
-        #后几周
+        # 后几周
         else:
             lDay = now + timedelta(days=(7 - now.weekday()) + 7 * (x - 1))
         rDay = lDay + timedelta(days=6)
         dayDict[x] = [str(lDay), str(rDay)]
     return dayDict
+
+
 def getMonthFirstDayAndLastDay(year, month):
     """
     :param year: 年份，默认是本年，可传int或str类型
@@ -70,16 +76,22 @@ def getMonthFirstDayAndLastDay(year, month):
     firstDay = datetime.date(year=year, month=month, day=1)
     lastDay = datetime.date(year=year, month=month, day=monthRange)
     return firstDay, lastDay
+
+
 def addzero(j):
     if j < 10:
         return "0" + str(j)
     else:
         return str(j)
+
+
 def accumulation(EnergyValues):
     eleY = 0.0
     for EnergyValue in EnergyValues:
         eleY = eleY + float(EnergyValue[0])
     return eleY
+
+
 def strlastMonth(currmonth):
     curr = currmonth.split("-")
     str0 = curr[0]
@@ -89,7 +101,7 @@ def strlastMonth(currmonth):
     else:
         str00 = str1
     if str00 == "1":
-        return str(int(str0)-1)+"-"+"12"
+        return str(int(str0) - 1) + "-" + "12"
     else:
         las = int(str00) - 1
         if las < 10:
@@ -97,62 +109,7 @@ def strlastMonth(currmonth):
         else:
             la = str(las)
         return str0 + "-" + la
-def appendcur(cur, las):
-    if cur is None:
-        return 0.0
-    else:
-        cur = cur[0]
-        if las is None:
-            las = 0.0
-        else:
-            las = las[0]
-        diff = round(float(cur) - float(las), 2)
-        if diff < 0:
-            return 0.0
-        else:
-            return round(diff, 2)
 
-def curcutlas(cur, las, count, energy):
-    if cur is None:
-        return count
-    else:
-        cur = cur[0]
-        if las is None:
-            las = 0.0
-        else:
-            las = las[0]
-        if energy == "水":
-            cur = abs(float(cur))
-            las = abs(float(las))
-        diff = round(float(cur) - float(las), 2)
-        if diff < 0:
-            return count
-        else:
-            propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
-            if propor is not None:
-                pro = float(propor.Proportion)
-                return round(count + diff * pro, 2)
-
-def energymoney(count, name):
-    prices = db_session.query(PriceList).filter(PriceList.IsEnabled == "是").all()
-    for pr in prices:
-        if pr.PriceName == name:
-            return float(count)*float(pr.PriceValue)
-def eletongji(oc, StartTime, EndTime, elecount):
-    sqlcur = "SELECT TOP 1 [ZGL] FROM [DB_MICS].[dbo].[ElectricEnergy] with (INDEX =IX_ElectricEnergy) WHERE [ElectricEnergy].[TagClassValue] = " + "'" + oc.TagClassValue + "'" + " AND [ElectricEnergy].[CollectionDate] LIKE " + "'" + "%" + EndTime + "%" + "'" + " AND [ElectricEnergy].[ZGL] != " + "'" + "0.0" + "'" + " AND [ElectricEnergy].[ZGL] != " + "'" + "" + "'" + " AND [ElectricEnergy].[ZGL] IS NOT NULL ORDER BY [ElectricEnergy].[CollectionDate] DESC"
-    sqllas = "SELECT TOP 1 [ZGL] FROM [DB_MICS].[dbo].[ElectricEnergy] with (INDEX =IX_ElectricEnergy) WHERE [ElectricEnergy].[TagClassValue] = " + "'" + oc.TagClassValue + "'" + " AND [ElectricEnergy].[CollectionDate] LIKE " + "'" + "%" + StartTime + "%" + "'" + " AND [ElectricEnergy].[ZGL] != " + "'" + "0.0" + "'" + " AND [ElectricEnergy].[ZGL] != " + "'" + "" + "'" + " AND [ElectricEnergy].[ZGL] IS NOT NULL ORDER BY [ElectricEnergy].[CollectionDate]"
-    recur = db_session.execute(sqlcur).fetchall()
-    relas = db_session.execute(sqllas).fetchall()
-    db_session.close()
-    if len(recur) > 0:
-        cur = recur[0]
-    else:
-        cur = None
-    if len(relas) > 0:
-        las = relas[0]
-    else:
-        las = None
-    return curcutlas(cur, las, elecount, "电")
 def energyElectricSelect(data):
     if request.method == 'GET':
         try:
@@ -163,25 +120,31 @@ def energyElectricSelect(data):
             EndTime = data.get("EndTime")
             if EndTime is None:
                 EndTime = StartTime
-            StartTime = data.get("StartTime")[0:15]
-            EndTime = data.get("EndTime")[0:15]
+            StartTime = data.get("StartTime")
+            EndTime = data.get("EndTime")
+            energy = "电"
             elecount = 0.0
             if Area is not None and Area != "":
-                oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == "电",
+                oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == energy,
                                                             TagDetail.AreaName == Area).all()
             else:
-                oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == "电").all()
+                oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == energy).all()
+            oc_list = []
             for oc in oclass:
-                elecount = eletongji(oc, StartTime, EndTime, elecount)
+                oc_list.append(oc.TagClassValue)
+            elecount = energyStatistics(oc_list, StartTime, EndTime, energy)
             dir["elctric"] = elecount
             dir["type"] = "电"
-            unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "电").first()[0]
+            unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == energy).first()[0]
             dir["unit"] = unit
+            print(dir)
+            print(datetime.datetime.now())
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
             insertSyslog("error", "能耗查询报错Error：" + str(e), current_user.Name)
             return json.dumps([{"status": "Error：" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
+
 
 @energyElectric.route('/energyElectricPreview', methods=['POST', 'GET'])
 def energyElectricPreview():
@@ -214,7 +177,7 @@ def energyElectricPreview():
             oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyType).all()
             # if datime == "年":
             zerocurrMonth = str(currentyear) + addzero(currentmonth)
-            lastYMonth = str(int(currentyear)-1) + addzero(currentmonth)
+            lastYMonth = str(int(currentyear) - 1) + addzero(currentmonth)
             zerolastYMonth = str(int(currentyear) - 1) + "-01"
             for oc in oclass:
                 Tag = oc.TagClassValue[0:1]
@@ -223,8 +186,8 @@ def energyElectricPreview():
                     lastelecount = eletongji(oc, lastYMonth, zerolastYMonth, lastelecount)
             curryeartotal = round(elecount + watcount + stecount, 2)
             lastyeartotal = round(lastelecount + lastwatcount + laststecount, 2)
-            dir["thisYearCon"] =curryeartotal#年能耗量
-            dir["lastYearCon"] =lastyeartotal  # 上年同期能耗
+            dir["thisYearCon"] = curryeartotal  # 年能耗量
+            dir["lastYearCon"] = lastyeartotal  # 上年同期能耗
             cl = curryeartotal - lastyeartotal
             if cl > 0:
                 percen = round((cl / lastyeartotal) * 100, 2)
@@ -250,12 +213,12 @@ def energyElectricPreview():
                     lastMonthCon = eletongji(oc, lastMday, zerolastMday, lastMonthCon)
             currMont = round(thisMonthCon, 2)
             lastMont = round(lastMonthCon, 2)
-            dir["thisMonthCon"] = currMont#本月能耗量
-            dir["lastMonthCon"] =   lastMont# 上月同期能耗量
-            #上月同期百分比
+            dir["thisMonthCon"] = currMont  # 本月能耗量
+            dir["lastMonthCon"] = lastMont  # 上月同期能耗量
+            # 上月同期百分比
             cla = currMont - lastMont
             if cla > 0:
-                perce = round((cla/lastMont)*100, 2)
+                perce = round((cla / lastMont) * 100, 2)
             else:
                 perce = 0
             dir["lastMonthCompare"] = str(perce) + "%"
@@ -304,7 +267,7 @@ def energyElectricPreview():
             dir["compareDateCon"] = round(comparedaycount, 2)
             pccss = comparedaycount - currdaycounts
             if pccss > 0:
-                percencc = round((pccss/comparedaycount) * 100, 2)
+                percencc = round((pccss / comparedaycount) * 100, 2)
             else:
                 percencc = 0
             dir["comparePer"] = str(percencc) + "%"
@@ -346,6 +309,7 @@ def energyElectricPreview():
             logger.error(e)
             insertSyslog("error", "能耗预览查询报错Error：" + str(e), current_user.Name)
 
+
 @energyElectric.route('/areaTimeElectricEnergy', methods=['POST', 'GET'])
 def areaTimeElectricEnergy():
     '''
@@ -361,8 +325,8 @@ def areaTimeElectricEnergy():
             currentday = datetime.datetime.now().day
             currenthour = datetime.datetime.now().hour
             EnergyClass = data.get("energyType")
-            currdate = data.get("date")#当前时间
-            compareDate = data.get("compareDate")#对比日期
+            currdate = data.get("date")  # 当前时间
+            compareDate = data.get("compareDate")  # 对比日期
             AreaNames = db_session.query(AreaTable.AreaName).filter().all()
             diarea = {}
             araeY_list = []
@@ -372,7 +336,8 @@ def areaTimeElectricEnergy():
                 value_dirc = {}
                 oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaName[0],
                                                             TagDetail.EnergyClass == EnergyClass).all()
-                colourclass = db_session.query(AreaTimeEnergyColour).filter(AreaTimeEnergyColour.AreaName == AreaName[0]).all()
+                colourclass = db_session.query(AreaTimeEnergyColour).filter(
+                    AreaTimeEnergyColour.AreaName == AreaName[0]).all()
                 stop = ""
                 high = ""
                 middle = ""
@@ -403,7 +368,7 @@ def areaTimeElectricEnergy():
                         colour = colour + "#ECF1F4"
                     elif vlaue < float(low) or vlaue == float(low):
                         colour = colour + "#F5E866"
-                    elif  vlaue < float(middle) or vlaue == float(middle):
+                    elif vlaue < float(middle) or vlaue == float(middle):
                         colour = colour + "#FBBA06"
                     elif vlaue < float(high) or vlaue == float(high):
                         colour = colour + "#FB3A06"
@@ -417,6 +382,7 @@ def areaTimeElectricEnergy():
             print(e)
             logger.error(e)
             insertSyslog("error", "区域时段能耗查询报错Error：" + str(e), current_user.Name)
+
 
 @energyElectric.route('/trendElectricChart', methods=['POST', 'GET'])
 def trendElectricChart():
@@ -468,6 +434,7 @@ def trendElectricChart():
             logger.error(e)
             insertSyslog("error", "区域时段能耗查询报错Error：" + str(e), current_user.Name)
 
+
 @energyElectric.route('/energyElectricHistory', methods=['POST', 'GET'])
 def energyElectricHistory():
     '''
@@ -490,26 +457,30 @@ def energyElectricHistory():
             dir["Unit"] = uni
             if Energy == "水":
                 # 能耗历史数据
-                CollectionDates = db_session.query(WaterEnergy.CollectionDate).distinct().filter(WaterEnergy.CollectionDate.between(StartTime,EndTime)).order_by(("CollectionDate")).all()
+                CollectionDates = db_session.query(WaterEnergy.CollectionDate).distinct().filter(
+                    WaterEnergy.CollectionDate.between(StartTime, EndTime)).order_by(("CollectionDate")).all()
                 for CollectionDate in CollectionDates:
                     dicss = []
                     timeArray = time.strptime(CollectionDate[0], "%Y-%m-%d %H:%M:%S")
                     timeStamp = int(time.mktime(timeArray))
                     dicss.append(1000 * timeStamp)
-                    watEnergyValues = db_session.query(WaterEnergy.WaterFlow).filter(WaterEnergy.CollectionDate == CollectionDate[0]).all()
+                    watEnergyValues = db_session.query(WaterEnergy.WaterFlow).filter(
+                        WaterEnergy.CollectionDate == CollectionDate[0]).all()
                     towatEnergyValue = 0.0
                     for watEnergyValue in watEnergyValues:
                         towatEnergyValue = towatEnergyValue + float(watEnergyValue[0])
                     dicss.append(round(float(towatEnergyValue), 2))
                     diy.append(dicss)
-                #区域能耗排名
+                # 区域能耗排名
                 AreaNames = db_session.query(AreaTable.AreaName).filter().all()
                 totalflow = 0.0
                 for AreaName in AreaNames:
-                    TagClassValues = db_session.query(TagDetail.TagClassValue).filter(TagDetail.AreaName == AreaName[0]).all()
+                    TagClassValues = db_session.query(TagDetail.TagClassValue).filter(
+                        TagDetail.AreaName == AreaName[0]).all()
                     engsum = 0.0
                     for TagClassValue in TagClassValues:
-                        watEnergyValues = db_session.query(WaterEnergy.WaterFlow).filter(WaterEnergy.TagClassValue == TagClassValue,
+                        watEnergyValues = db_session.query(WaterEnergy.WaterFlow).filter(
+                            WaterEnergy.TagClassValue == TagClassValue,
                             WaterEnergy.CollectionDate.between(StartTime, EndTime)).all()
                         engsum = engsum + accumulation(watEnergyValues)
                     eng[AreaName[0]] = str(round(engsum, 2))
@@ -517,7 +488,8 @@ def energyElectricHistory():
                 # 累积量
                 dir["total"] = str(round(totalflow, 2))
             elif Energy == "电":
-                CollectionDates = db_session.query(ElectricEnergy.CollectionDate).distinct().filter(ElectricEnergy.CollectionDate.between(StartTime,EndTime)).order_by(("CollectionDate")).all()
+                CollectionDates = db_session.query(ElectricEnergy.CollectionDate).distinct().filter(
+                    ElectricEnergy.CollectionDate.between(StartTime, EndTime)).order_by(("CollectionDate")).all()
                 for CollectionDate in CollectionDates:
                     dicss = []
                     timeArray = time.strptime(CollectionDate[0], "%Y-%m-%d %H:%M:%S")

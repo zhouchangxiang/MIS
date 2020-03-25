@@ -7,8 +7,10 @@ from dbset.database.db_operate import db_session,pool
 from dbset.main.BSFramwork import AlchemyEncoder
 from flask_login import login_required, logout_user, login_user,current_user,LoginManager
 import calendar
+
+from handlers.energymanager.energy_manager import energyStatistics
 from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable, Equipment, \
-    PriceList, AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
+    AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
     AreaTimeEnergyColour, ElectricProportion
 from tools.common import insert,delete,update
@@ -97,61 +99,6 @@ def strlastMonth(currmonth):
         else:
             la = str(las)
         return str0 + "-" + la
-def appendcur(cur, las):
-    if cur is None:
-        return 0.0
-    else:
-        cur = cur[0]
-        if las is None:
-            las = 0.0
-        else:
-            las = las[0]
-        diff = round(float(cur) - float(las), 2)
-        if diff < 0:
-            return 0.0
-        else:
-            return round(diff, 2)
-
-def curcutlas(cur, las, count, energy):
-    if cur is None:
-        return count
-    else:
-        cur = cur[0]
-        if las is None:
-            las = 0.0
-        else:
-            las = las[0]
-        if energy == "水":
-            cur = abs(float(cur))
-            las = abs(float(las))
-        diff = round(float(cur) - float(las), 2)
-        if diff < 0:
-            return count
-        else:
-            propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
-            if propor is not None:
-                pro = float(propor.Proportion)
-                return round(count + diff * pro, 2)
-def energymoney(count, name):
-    prices = db_session.query(PriceList).filter(PriceList.IsEnabled == "是").all()
-    for pr in prices:
-        if pr.PriceName == name:
-            return float(count)*float(pr.PriceValue)
-def stetongji(oc, StartTime, EndTime, elecount):
-    sqlcur = "SELECT TOP 1 [SumValue] FROM [DB_MICS].[dbo].[SteamEnergy] with (INDEX =IX_SteamEnergy) WHERE [SteamEnergy].[TagClassValue] = " + "'" + oc.TagClassValue + "'" + " AND [SteamEnergy].[CollectionDate] LIKE " + "'" + "%" + EndTime + "%" + "'" + " AND [SteamEnergy].[SumValue] != " + "'" + "0.0" + "'" + " AND [SteamEnergy].[SumValue] != " + "'" + "" + "'" + " AND [SteamEnergy].[SumValue] IS NOT NULL ORDER BY [SteamEnergy].[CollectionDate] DESC"
-    sqllas = "SELECT TOP 1 [SumValue] FROM [DB_MICS].[dbo].[SteamEnergy] with (INDEX =IX_SteamEnergy) WHERE [SteamEnergy].[TagClassValue] = " + "'" + oc.TagClassValue + "'" + " AND [SteamEnergy].[CollectionDate] LIKE " + "'" + "%" + StartTime + "%" + "'" + " AND [SteamEnergy].[SumValue] != " + "'" + "0.0" + "'" + " AND [SteamEnergy].[SumValue] != " + "'" + "" + "'" + " AND [SteamEnergy].[SumValue] IS NOT NULL ORDER BY [SteamEnergy].[CollectionDate]"
-    recur = db_session.execute(sqlcur).fetchall()
-    relas = db_session.execute(sqllas).fetchall()
-    db_session.close()
-    if len(recur) > 0:
-        cur = recur[0]
-    else:
-        cur = None
-    if len(relas) > 0:
-        las = relas[0]
-    else:
-        las = None
-    return curcutlas(cur, las, elecount, "汽")
 def energySteamSelect(data):
     if request.method == 'GET':
         try:
@@ -160,19 +107,21 @@ def energySteamSelect(data):
             Area = data.get("Area")
             StartTime = data.get("StartTime")
             EndTime = data.get("EndTime")
+            energy = "汽"
             if EndTime is None:
                 EndTime = StartTime
-            stecount = 0.0
             if Area is not None and Area != "":
-                oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == "汽",
+                oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == energy,
                                                             TagDetail.AreaName == Area).all()
             else:
-                oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == "汽").all()
+                oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == energy).all()
+            oc_list = []
             for oc in oclass:
-                stecount = stetongji(oc, StartTime, EndTime, stecount)
-            dir["type"] = "汽"
+                oc_list.append(oc.TagClassValue)
+            stecount = energyStatistics(oc_list, StartTime, EndTime, energy)
+            dir["type"] = energy
             dir["stecount"] = stecount
-            unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽").first()[0]
+            unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == energy).first()[0]
             dir["unit"] = unit
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
