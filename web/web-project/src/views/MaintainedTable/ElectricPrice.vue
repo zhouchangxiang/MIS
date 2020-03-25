@@ -1,93 +1,90 @@
 <template>
-  <el-row>
-    <el-col :span="24" style="background-color:#FFF;padding: 15px;margin-bottom: 15px;">
-      <el-row>
-        <el-col :span="24">
-          <el-form :inline="true">
-            <el-form-item>
-              <el-select v-model="region" placeholder="请选择搜索字段" size="small">
-                <el-option v-for="(item,index) in regionList" :label="item.label" :value="item.value" :key="index"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item>
-              <el-input placeholder="请输入搜索内容" size="small" v-model="searchVal"></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="success" icon="el-icon-search" size="small" @click="searchTab">搜索</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" size="small" @click="openDialog('add')">添加</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="warning" size="small" @click="openDialog('edit')">修改</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="danger" size="small" @click="del">删除</el-button>
-            </el-form-item>
-          </el-form>
-        </el-col>
-      </el-row>
-      <el-table :data="tableData" border tooltip-effect="dark" @selection-change="handleSelectionChange">
-        <el-table-column type="selection"></el-table-column>
-        <el-table-column prop="ID" label="ID"></el-table-column>
-        <el-table-column prop="PriceValue" label="价格值"></el-table-column>
-        <el-table-column prop="PriceType" label="价格类型"></el-table-column>
-        <el-table-column prop="StartTime" label="开始时间"></el-table-column>
-        <el-table-column prop="EndTime" label="结束时间"></el-table-column>
-        <el-table-column prop="IsEnabled" label="是否启用"></el-table-column>
-        <el-table-column prop="Description" label="描述"></el-table-column>
-      </el-table>
-      <div class="paginationClass">
-        <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
-                       :total="total"
-                       :current-page="currentPage"
-                       :page-sizes="[5,10,20]"
-                       :page-size="pagesize"
-                       @size-change="handleSizeChange"
-                       @current-change="handleCurrentChange">
-        </el-pagination>
-      </div>
-      <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false" width="40%">
-        <el-form :model="submitForm" label-width="80px" :rules="rules" ref="ruleForm">
-          <el-form-item label="ID">
-            <el-input v-model="submitForm.ID" :disabled="true"></el-input>
+  <el-col :span="24" style="background-color:#FFF;padding: 15px;">
+    <el-row>
+      <el-col :span="24">
+        <el-form :inline="true">
+          <el-form-item>
+            <el-select v-model="region" placeholder="请选择搜索字段" size="small">
+              <el-option v-for="(item,index) in regionList" :label="item.label" :value="item.value" :key="index"></el-option>
+            </el-select>
           </el-form-item>
-          <el-form-item label="价格值" prop="PriceValue">
-            <el-input v-model="submitForm.PriceValue"></el-input>
+          <el-form-item>
+            <el-input placeholder="请输入搜索内容" size="small" v-model="searchVal"></el-input>
           </el-form-item>
-          <el-form-item label="价格类型" prop="PriceType">
-            <el-input v-model="submitForm.PriceType"></el-input>
+          <el-form-item>
+            <el-button type="success" icon="el-icon-search" size="small" @click="searchTab">搜索</el-button>
           </el-form-item>
-          <el-form-item label="是否启用" prop="IsEnabled">
-            <el-input v-model="submitForm.IsEnabled"></el-input>
+          <el-form-item>
+            <el-button type="primary" size="small" @click="openDialog('add')">添加</el-button>
           </el-form-item>
-          <el-form-item label="开始时间" prop="StartTime">
-            <el-input v-model="submitForm.StartTime"></el-input>
+          <el-form-item>
+            <el-button type="warning" size="small" @click="openDialog('edit')">修改</el-button>
           </el-form-item>
-          <el-form-item label="结束时间" prop="EndTime">
-            <el-input v-model="submitForm.EndTime"></el-input>
-          </el-form-item>
-          <el-form-item label="描述" prop="Description">
-            <el-input v-model="submitForm.Description"></el-input>
+          <el-form-item>
+            <el-button type="danger" size="small" @click="del">删除</el-button>
           </el-form-item>
         </el-form>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="save('ruleForm')">保存</el-button>
-        </span>
-      </el-dialog>
-    </el-col>
-    <ElectricPrice></ElectricPrice>
-  </el-row>
+      </el-col>
+    </el-row>
+    <el-table :data="tableData" border tooltip-effect="dark" @selection-change="handleSelectionChange">
+      <el-table-column type="selection"></el-table-column>
+      <el-table-column prop="ID" label="ID"></el-table-column>
+      <el-table-column prop="PriceName" label="价格名称"></el-table-column>
+      <el-table-column prop="PriceValue" label="价格值"></el-table-column>
+      <el-table-column prop="PriceType" label="价格类型"></el-table-column>
+      <el-table-column prop="StartTime" label="开始时间"></el-table-column>
+      <el-table-column prop="EndTime" label="结束时间"></el-table-column>
+      <el-table-column prop="IsEnabled" label="是否启用"></el-table-column>
+      <el-table-column prop="Description" label="描述"></el-table-column>
+    </el-table>
+    <div class="paginationClass">
+      <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
+                     :total="total"
+                     :current-page="currentPage"
+                     :page-sizes="[5,10,20]"
+                     :page-size="pagesize"
+                     @size-change="handleSizeChange"
+                     @current-change="handleCurrentChange">
+      </el-pagination>
+    </div>
+    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false" width="40%">
+      <el-form :model="submitForm" label-width="80px" :rules="rules" ref="ruleForm">
+        <el-form-item label="ID">
+          <el-input v-model="submitForm.ID" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="价格名称" prop="PriceName">
+          <el-input v-model="submitForm.PriceName"></el-input>
+        </el-form-item>
+        <el-form-item label="价格值" prop="PriceValue">
+          <el-input v-model="submitForm.PriceValue"></el-input>
+        </el-form-item>
+        <el-form-item label="价格类型" prop="PriceType">
+          <el-input v-model="submitForm.PriceType"></el-input>
+        </el-form-item>
+        <el-form-item label="是否启用" prop="IsEnabled">
+          <el-input v-model="submitForm.IsEnabled"></el-input>
+        </el-form-item>
+        <el-form-item label="开始时间" prop="StartTime">
+          <el-input v-model="submitForm.StartTime"></el-input>
+        </el-form-item>
+        <el-form-item label="结束时间" prop="EndTime">
+          <el-input v-model="submitForm.EndTime"></el-input>
+        </el-form-item>
+        <el-form-item label="描述" prop="Description">
+          <el-input v-model="submitForm.Description"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="save('ruleForm')">保存</el-button>
+      </span>
+    </el-dialog>
+  </el-col>
 </template>
 
 <script>
-  import ElectricPrice from '@/views/MaintainedTable/ElectricPrice'
   export default {
-    name: "EnergyPrices",
-    components:{
-      ElectricPrice
-    },
+    name: "ElectricPrice",
     data(){
       return {
         tableData:[],
@@ -99,6 +96,9 @@
         submitForm:'',
         dialogTitle:'',
         rules:{
+          PriceName:[
+            {required: true, message: '价格名称', trigger: 'blur'}
+          ],
           PriceValue:[
             {required: true, message: '价格值', trigger: 'blur'}
           ],
@@ -108,7 +108,8 @@
         },
         region:"",
         regionList:[
-          {label:"价格类型",value:"PriceType"}
+          {label:"价格名称",value:"PriceName"},
+          {label:"价格类型",value:"PriceType"},
         ],
         searchVal:""
       }
@@ -120,7 +121,7 @@
       getTableData(){
         this.axios.get("/api/CUID",{
           params: {
-            tableName: "WaterSteamPrice",
+            tableName: "ElectricPrice",
             limit:this.pagesize,
             offset:this.currentPage - 1
           }
@@ -146,7 +147,7 @@
       searchTab(){
         this.axios.get("/api/CUID",{
           params: {
-            tableName: "WaterSteamPrice",
+            tableName: "ElectricPrice",
             field:this.region,
             fieldvalue:this.searchVal,
             limit:this.pagesize,
@@ -166,6 +167,7 @@
           this.dialogVisible = true
           this.submitForm = {
             ID:"",
+            PriceName:"",
             PriceValue:"",
             PriceType:"",
             IsEnabled:"",
@@ -179,6 +181,7 @@
             let data = this.multipleSelection[0]
             this.submitForm = {
               ID:data.ID,
+              PriceName:data.PriceName,
               PriceValue:data.PriceValue,
               PriceType:data.PriceType,
               IsEnabled:data.IsEnabled,
@@ -197,7 +200,7 @@
       save(formName){
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.submitForm.tableName = "WaterSteamPrice"
+            this.submitForm.tableName = "ElectricPrice"
             if(this.dialogTitle == "add"){
               this.axios.post("/api/CUID",this.qs.stringify(this.submitForm)).then(res =>{
                 if(res.data == "OK"){
@@ -244,7 +247,7 @@
           }).then(()  => {
             this.axios.delete("/api/CUID",{
               params: {
-                tableName: "WaterSteamPrice",
+                tableName: "ElectricPrice",
                 delete_data: JSON.stringify(mulId)
               }
             }).then(res =>{

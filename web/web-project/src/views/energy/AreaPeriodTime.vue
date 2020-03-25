@@ -168,11 +168,11 @@
               <li><i class="bg-tall"></i><span>高</span></li>
             </ul>
             <ul class="gradientList">
-              <li v-for="(item,index) in colorBarOption">
+              <li v-for="(item,index) in colorBarOption" v-if="index<4">
                 <p class="text-size-small text-color-info">{{ item.AreaName }}</p>
                 <el-popover trigger="hover">
                   <div v-for="valueItem in item.valuelist">{{ valueItem.date }}点：{{ valueItem.value }}</div>
-                  <div slot="reference" class="gradientColorItem" :style='{background:item.backgroundColor}'></div>
+                  <div slot="reference" class="gradientColorItem" :style='{backgroundColor:item.backgroundColor}'></div>
                 </el-popover>
               </li>
             </ul>
@@ -270,15 +270,19 @@
     created(){
       this.getAreaTimeEnergy()
     },
+    mounted(){
+
+    },
     methods:{
       changeDate(){
         this.getAreaTimeEnergy()
       },
       getAreaTimeEnergy(){
         var params = {
-          energyType: this.areaTimeEnergyValue,
+          energyType: this.formParameters.energy,
           CompareDate:moment(this.formParameters.date).format('YYYY-MM-DD')
         }
+        console.log(params)
         this.axios.get("/api/areaTimeEnergy",{params:params}).then(res => {
           console.log(res.data)
           this.colorBarOption = res.data

@@ -484,9 +484,8 @@
           that.lastMonthCon = JSON.parse(lastMonthCon.data).elctric
           that.thisYearCon = JSON.parse(thisYearCon.data).elctric
           that.lastYearCon = JSON.parse(lastYearCon.data).elctric
-          var chartData = JSON.parse(compareData.data)
-          that.contrastMonthChartData.rows = chartData.lastMonthRow
-          that.realtimeChartData.rows = chartData.compareTodayRow
+          that.contrastMonthChartData.rows = JSON.parse(compareData.data).lastMonthRow
+          that.realtimeChartData.rows = JSON.parse(compareData.data).compareTodayRow
         }))
       },
       getAreaTimeEnergy(){
@@ -494,7 +493,6 @@
           energyType: this.areaTimeEnergyValue
         }
         this.axios.get("/api/areaTimeEnergy",{params:params}).then(res => {
-          console.log(res.data)
           this.colorBarOption = res.data
         })
       },
@@ -624,14 +622,6 @@
   }
   .bg-best{
     background-color: #15CC48;
-  }
-  .gradientList li{
-    margin-top: 10px;
-  }
-  .gradientColorItem{
-    width: 100%;
-    height: 16px;
-    margin-top: 10px;
   }
   .el-table--mini td, .el-table--mini th{
     padding: 2px 0;

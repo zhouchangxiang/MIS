@@ -191,5 +191,12 @@
   margin:20px 0;
   text-align: right;
 }
-
-
+/* 渐变色区域时段排版 */
+.gradientList li{
+  margin-top: 10px;
+}
+.gradientColorItem{
+  width: 100%;
+  height: 16px;
+  margin-top: 10px;
+}
