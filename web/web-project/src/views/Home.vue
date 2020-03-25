@@ -491,8 +491,14 @@
           this.onlineEquipmentOption = JSON.parse(res.data)
         })
         this.axios.get("/api/energyall",{params:{ModelFlag:"实时预警"}}).then(res => {
-          var data = JSON.parse(res.data)
-          this.ralTimeWarningTableData = data.data
+          var resData = JSON.parse(res.data)
+          var arr = []
+          for (var i = 0; i < resData.data.length; i++) {
+            if (i < 4 ) {
+              arr.push(resData.data[i]);
+            }
+          }
+          this.ralTimeWarningTableData = arr
         })
       },
       openSystemCheckupDialog(){ //打开系统体检
