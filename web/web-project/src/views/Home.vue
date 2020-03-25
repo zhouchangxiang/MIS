@@ -488,8 +488,7 @@
       },
       getOnLineEq(){
         this.axios.get("/api/energyall",{params:{ModelFlag:"在线检测情况"}}).then(res => {
-          console.log(res)
-          this.onlineEquipmentOption = res.data
+          this.onlineEquipmentOption = JSON.parse(res.data)
         })
         this.axios.get("/api/energyall",{params:{ModelFlag:"实时预警"}}).then(res => {
           var data = JSON.parse(res.data)
