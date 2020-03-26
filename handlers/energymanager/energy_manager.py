@@ -121,16 +121,13 @@ def addzero(j):
         return "0" + str(j)
     else:
         return str(j)
-<<<<<<< HEAD
+
 def returnb(rod):
     if rod == None or rod == "" or rod == b'':
         return ""
     else:
         return rod.decode()
-=======
 
-
->>>>>>> 8aca85f16d21aa702aae7247279d34880aaf7718
 def accumulation(EnergyValues):
     eleY = 0.0
     for EnergyValue in EnergyValues:
@@ -198,9 +195,7 @@ def curcutlas(cur, las, count, energy):
 def energyStatistics(oc_list, StartTime, EndTime, energy):
     propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
     pro = float(propor.Proportion)
-    sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementTable] t with (INDEX =IX_IncrementTable)  WHERE t.TagClassValue in (" + str(
-        oc_list)[
-                                                                                                                                                                       1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+    sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementTable] t with (INDEX =IX_IncrementTable)  WHERE t.TagClassValue in (" + str(oc_list)[1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
     re = db_session.execute(sql).fetchall()
     db_session.close()
     if len(re) > 0:
@@ -215,8 +210,7 @@ def energyStatistics(oc_list, StartTime, EndTime, energy):
 def energyStatisticstotal(oc_list, StartTime, EndTime):
     propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
     pro = float(propor.Proportion)
-    sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementTable] t with (INDEX =IX_IncrementTable)  WHERE t.TagClassValue in (" + str(
-        oc_list)[1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+    sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementTable] t with (INDEX =IX_IncrementTable)  WHERE t.TagClassValue in (" + str(oc_list)[1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
     re = db_session.execute(sql).fetchall()
     db_session.close()
     if len(re) > 0:
@@ -333,15 +327,9 @@ def energyselect(data):
                         if ret == "1":
                             watstatuss = watstatuss + 1
                 data_list = []
-<<<<<<< HEAD
                 data_list.append({"name": "电表", "online": elestatuss, "rate": int(100 * (elestatuss/elestatust)), "total":elestatust})
                 data_list.append({"name": "水表", "online": watstatuss, "rate": int(100 * (watstatuss / watstatust)), "total":watstatust})
                 data_list.append({"name": "汽表", "online": stestatuss, "rate": int(100 * (stestatuss / stestatust)), "total":stestatust})
-=======
-                data_list.append({"name": "电表", "online": elestatuss, "rate": int(100 * (elestatuss / elestatust))})
-                data_list.append({"name": "水表", "online": watstatuss, "rate": int(100 * (watstatuss / watstatust))})
-                data_list.append({"name": "汽表", "online": stestatuss, "rate": int(100 * (stestatuss / stestatust))})
->>>>>>> 8aca85f16d21aa702aae7247279d34880aaf7718
                 return json.dumps(data_list, cls=AlchemyEncoder, ensure_ascii=False)
             elif ModelFlag == "单位批次能耗":
                 curryear = str(currentyear)
