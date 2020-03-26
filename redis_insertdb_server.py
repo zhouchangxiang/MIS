@@ -85,7 +85,10 @@ def run():
                     el.PriceID = PriceID
                     db_session.query(ElectricEnergy)
                     el.PrevID = ele.ID
-                    el.IncrementFlag = "0"
+                    if ZGL == 0.0:
+                        el.IncrementFlag = "1"
+                    else:
+                        el.IncrementFlag = "0"
                     el.AreaName = key.AreaName
                     db_session.add(el)
                     db_session.commit()
@@ -182,7 +185,10 @@ def run():
                     sl.PriceID = PriceID
                     sl.Volume = Volume
                     sl.PrevID = ste.ID
-                    sl.IncrementFlag = "0"
+                    if valueS == 0.0:
+                        sl.IncrementFlag = "1"
+                    else:
+                        sl.IncrementFlag = "0"
                     sl.AreaName = key.AreaName
                     db_session.add(sl)
                     db_session.commit()
@@ -218,7 +224,10 @@ def run():
                     # wa.EquipmnetID = equip[0]
                     wa.PriceID = PriceID
                     wa.PrevID = wat.ID
-                    wa.IncrementFlag = "0"
+                    if valueS == 0.0:
+                        wa.IncrementFlag = "1"
+                    else:
+                        wa.IncrementFlag = "0"
                     wa.AreaName = key.AreaName
                     db_session.add(wa)
                     db_session.commit()
