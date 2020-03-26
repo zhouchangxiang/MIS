@@ -118,7 +118,6 @@ export default {
     this.clickMainMenu(this.isactive)
   },
   created(){
-    this.getAreaOfMenu()
     window.addEventListener('resize', this.getMenuHeight);
     this.getMenuHeight()
     if(sessionStorage.getItem("LoginStatus")) {
@@ -167,38 +166,28 @@ export default {
         $(".left-aside").animate({"width":"180px"})
       }
     },
-    getAreaOfMenu(){
-      var params = {
-        tableName: "AreaTable",
-        limit:10000,
-        offset:0
-      }
-      this.axios.get("/api/CUID",this.qs.stringify(params)).then(res =>{
-        console.log(res)
-      },res =>{
-        console.log("获取车间时请求错误")
-      })
-    },
     clickMainMenu(index){  //切换模块
       this.isactive = index
       if(index == 0) {
+        var params = {
+          tableName: "AreaTable",
+          limit:1000,
+          offset:0
+        }
+        var arr = []
+        this.axios.get("/api/CUID",{params:params}).then(res =>{
+          var resData = JSON.parse(res.data).rows
+          for(var i=0;i < resData.length;i++){
+            arr.push({
+              name:resData[i].AreaName,
+              url:"/Areas?areaName=" + resData[i].AreaName
+            })
+          }
+        },res =>{
+          console.log("获取车间时请求错误")
+        })
         this.subMenulist = [
-          {name: "桓仁厂区", icon: "el-icon-location-outline", children:[
-              {name:"整厂区",url:"/Areas?areaName=整厂区"},
-              {name:"新建综合试剂楼",url:"/Areas?areaName=新建综合试剂楼"},
-              {name:"提取二车间",url:"/Areas?areaName=提取二车间"},
-              {name:"前处理车间",url:"/Areas?areaName=前处理车间"},
-              {name:"研发中心",url:"/Areas?areaName=研发中心"},
-              {name:"生物科技楼",url:"/Areas?areaName=生物科技楼"},
-              {name:"原提取车间",url:"/Areas?areaName=原提取车间"},
-              {name:"锅炉房",url:"/Areas?areaName=锅炉房"},
-              {name:"综合办公楼",url:"/Areas?areaName=综合办公楼"},
-              {name:"综合车间",url:"/Areas?areaName=综合车间"},
-              {name:"污水站",url:"/Areas?areaName=污水站"},
-              {name:"固体制剂车间",url:"/Areas?areaName='固体制剂车间"},
-              {name:"展览馆",url:"/Areas?areaName=展览馆"},
-            ]
-          },
+          {name: "桓仁厂区", icon: "el-icon-location-outline", children:arr},
           {name: "能效分析", icon: "el-icon-time", url: "/EfficiencyAnalysis"},
           {name: "综合报表", icon: "el-icon-document", url: "/DataReport"},
           {name: "综合维护表", icon: "el-icon-document", url: "/MaintainedBoard"},

@@ -135,6 +135,7 @@
         this.getTableData()
       },
       handleSelectionChange(val){  //选择行数
+        console.log(val)
         this.multipleSelection = val;
       },
       searchTab(){
@@ -225,7 +226,7 @@
       del(){
         let mulId = []
         this.multipleSelection.forEach(item=>{
-            mulId.push({id:item.id});
+            mulId.push({id:item.ID});
         })
         if(this.multipleSelection.length >= 1){
           this.$confirm('确定删除所选记录？', '提示', {
