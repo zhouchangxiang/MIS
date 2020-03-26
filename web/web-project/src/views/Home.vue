@@ -467,13 +467,13 @@
             params: {ModelFlag: "能耗预览",CompareDate:moment(this.CompareDate).format('YYYY-MM-DD'),EnergyClass:this.previewEnergyValue}
           })//获取对比图表
         ]).then(this.axios.spread(function(todayCon,compareDateCon,thisMonthCon,lastMonthCon,thisYearCon,lastYearCon,compareData){
-          that.todayCon = JSON.parse(todayCon.data).elctric
+          that.todayCon = JSON.parse(todayCon.data).value
           that.unit = JSON.parse(todayCon.data).unit
-          that.compareDateCon = JSON.parse(compareDateCon.data).elctric
-          that.thisMonthCon = JSON.parse(thisMonthCon.data).elctric
-          that.lastMonthCon = JSON.parse(lastMonthCon.data).elctric
-          that.thisYearCon = JSON.parse(thisYearCon.data).elctric
-          that.lastYearCon = JSON.parse(lastYearCon.data).elctric
+          that.compareDateCon = JSON.parse(compareDateCon.data).value
+          that.thisMonthCon = JSON.parse(thisMonthCon.data).value
+          that.lastMonthCon = JSON.parse(lastMonthCon.data).value
+          that.thisYearCon = JSON.parse(thisYearCon.data).value
+          that.lastYearCon = JSON.parse(lastYearCon.data).value
           that.contrastMonthChartData.rows = JSON.parse(compareData.data).lastMonthRow
           that.realtimeChartData.rows = JSON.parse(compareData.data).compareTodayRow
         }))

@@ -133,7 +133,7 @@ def energyWaterSelect(data):
                 oc_list.append(oc.TagClassValue)
             wattongji = energyStatistics(oc_list, StartTime, EndTime, energy)
             dir["type"] = "水"
-            dir["wattongji"] = wattongji
+            dir["value"] = wattongji
             unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == energy).first()[0]
             dir["unit"] = unit
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
