@@ -8,7 +8,6 @@ from flask import Blueprint, request
 from datetime import datetime
 from werkzeug.security import check_password_hash
 
-from dbset.database.db_operate import db_session
 from dbset.log.BK2TLogger import logger
 from dbset.main.BSFramwork import AlchemyEncoder
 from models.SystemManagement.system import User

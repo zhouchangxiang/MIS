@@ -7,55 +7,75 @@
   <div class="login-body">
     <p>密码登陆</p>
     <div class="login-box">
-     <van-form @submit="onSubmit">
-        <van-field
-          label-width='261px'
-          v-model="username"
-          label='用户名'
-          placeholder="输入登录账号"
-          :rules="[{ required: true, message: '请填写用户名' }]"
-        />
-        <van-field
-          label-width='261px'
-          v-model="password"
-          label="密码"
-          type="password"
-          placeholder="输入登录密码"
-          :rules="[{ required: true, message: '请填写密码' }]"
-        />
-        <div style="margin: 16px;">
-          <van-button round block type="info" native-type="submit">
-            提交
-          </van-button>
-          </div>
-    </van-form>
-
+      <van-cell-group>
+                    <van-field
+                        v-model="username"
+                        required
+                        clearable
+                        type="tel"
+                        label="手机号"
+                        label-width="53px"
+                        left-icon="contact"
+                        right-icon="question-o"
+                        placeholder="输入登录账号"
+                        @click-right-icon="$toast('请填写11位手机号码')"
+                       
+                    />
+                    <van-field
+                        v-model="password"
+                        label="密码"
+                        label-width="53px"
+                        left-icon="closed-eye"
+                        right-icon="question-o"
+                        placeholder="输入登录密码"
+                        required
+                        clearable
+                        @click-right-icon="$toast('请牢记你的输入密码,不要泄露')"
+                   
+                    />
+                    </van-cell-group>
+                <div class='submit'><van-button color="#00FAE7FF" size="large" @click="login">登录</van-button></div>
     </div>
   </div>
   </div>
 </template>
 
 <script>
+import qs from 'qs'
 export default {
-  name: 'HelloWorld',
   data () {
     return {
-        username:'',
-        password:''
+        username: "",
+        password: ""
     }
   },
   methods:{
-    onSubmit(values) {
-      console.log('submit', values);
-    },
+  
+    login: function (e,username,password) {
+        if(this.username == ''){
+          this.$toast("用户名不能为空");
+          return false;
+        }
+        if(this.password == ''){
+          this.$toast("密码不能为空");
+          return false;
+        }else{
+          let comment={worknumber:this.username,password:this.password}
+          let str=qs.stringify(comment)
+          console.log(str)
+          this.$http.post('/api/v2/accounts/login',str).then((value) => {
+            console.log(value)
+          })
+        }
   }
+}
 }
 </script>
 <style scoped>
-p{
+  p,h5{
     margin:0;
     padding:0;
-}
+  }
   .login{
   width:375px;
   height:667px;
@@ -115,14 +135,29 @@ p{
   }
   .login-box{
     position:absolute;
-    top:90px;
+    top:101px;
     left:50%;
+    width:261px;
     transform: translateX(-50%);
   }
-  .van-button--info{
-    background-color:rgba(0,250,231,1);
+  .van-cell{
+    background-color: #7E7F84;
+  }
+  .submit{
+    background-color: #7E7F84;
+    padding-top: 33px;
+  }
+  .van-button{
+    border-radius: 10px;
+  }
+  .van-button__text{
+    width:32px;
+    height:22px;
+    font-size:16px;
+    font-family:PingFang SC;
+    font-weight:400;
+    line-height:22px;
+    color:rgba(30,34,43,1);
     opacity:1;
-    border-radius:8px;
-    border-color: #CEC7C7;
   }
 </style>

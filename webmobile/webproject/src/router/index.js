@@ -4,6 +4,7 @@ import HelloWorld from '@/components/HelloWorld'
 
 Vue.use(Router)
 
+
 export default new Router({
   routes: [
     {
@@ -13,3 +14,9 @@ export default new Router({
     }
   ]
 })
+// Router.beforeEach((to, from, next) => {
+//   if(to.path==="/login") return next()
+//   if(!token) return next('/login')
+//   next()
+ 
+//  })

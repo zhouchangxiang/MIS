@@ -5,12 +5,13 @@ import router from './router'
 
 Vue.config.productionTip = false
 
-import { Button,Form,Field,Icon } from 'vant';
+import "./tools/vantui.js"
 
-Vue.use(Button);
-Vue.use(Form);
-Vue.use(Field);
-Vue.use(Icon );
+import axios from 'axios'
+Vue.prototype.$http=axios
+// import qs from 'qs'
+// Vue.prototype.$qs=qs
+
 
 /* eslint-disable no-new */
 new Vue({
