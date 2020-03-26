@@ -35,14 +35,14 @@ class Redis:
 def login():
     try:
         json_data = request.get_json()
-        user = db_session.query(User).filter_by(WorkNumber=json_data['WorkNumber']).first()
-        if user and check_password_hash(user.Password, json_data['Password']):
+        user = db_session.query(User).filter_by(WorkNumber=json_data['worknumber']).first()
+        if user and check_password_hash(user.Password, json_data['password']):
             token = uuid.uuid4().hex
             user.LastLoginTime = datetime.now()
             Redis.set_data(Redis.connect(), token, user.id)
             db_session.add(user)
             db_session.commit()
-            return jsonify({'code': 1001, 'msg': '登录成功', 'data': {'token': token}})
+            return jsonify({'code': 1001, 'msg': '登录成功', 'data': {'token': token, 'user': user.WorkNumber}})
         else:
             return jsonify({'code': 2001, 'msg': '账号或密码错误'})
     except Exception as e:
