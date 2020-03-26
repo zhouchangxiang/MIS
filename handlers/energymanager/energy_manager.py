@@ -722,17 +722,20 @@ def exportxstatistic(StartTime, EndTime):
     AreaNames = db_session.query(AreaTable).filter().all()
     for i in range(0, len(AreaNames)):
         oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaNames[i].AreaName).all()
-        elecount = 0.0
-        watcount = 0.0
-        stecount = 0.0
+        oce_list = []
+        ocw_list = []
+        ocs_list = []
         for oc in oclass:
             Tag = oc.TagClassValue[0:1]
             if Tag == "E":
-                elecount = eletongji(oc, StartTime, EndTime, elecount)
+                oce_list.append(oc.TagClassValue)
             elif Tag == "W":
-                watcount = wattongji(oc, StartTime, EndTime, watcount)
+                ocw_list.append(oc.TagClassValue)
             elif Tag == "S":
-                stecount = stetongji(oc, StartTime, EndTime, stecount)
+                ocs_list.append(oc.TagClassValue)
+        elecount = energyStatistics(oce_list, StartTime, EndTime, "电")
+        watcount = energyStatistics(ocw_list, StartTime, EndTime, "水")
+        stecount = energyStatistics(ocs_list, StartTime, EndTime, "汽")
         for cum in columns:
             if cum == '区域':
                 worksheet.write(i + 1, columns.index(cum), AreaNames[i].AreaName)
