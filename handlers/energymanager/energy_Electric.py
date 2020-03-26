@@ -133,7 +133,7 @@ def energyElectricSelect(data):
             for oc in oclass:
                 oc_list.append(oc.TagClassValue)
             elecount = energyStatistics(oc_list, StartTime, EndTime, energy)
-            dir["elctric"] = elecount
+            dir["value"] = elecount
             dir["type"] = "电"
             unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == energy).first()[0]
             dir["unit"] = unit

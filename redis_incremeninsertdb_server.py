@@ -40,7 +40,7 @@ def run():
                     prozgl = prozgl[0]
                 else:
                     prozgl = 0
-                inc.IncremenValue = round(float(key.ZGL) - float(prozgl), 2)
+                inc.IncremenValue = abs(round(float(key.ZGL) - float(prozgl), 2))
                 inc.IncremenType = "电"
                 inc.CollectionDate = key.CollectionDate
                 inc.Unit = key.Unit
@@ -63,7 +63,7 @@ def run():
                     proWaterSum = proWaterSum[0]
                 else:
                     proWaterSum = 0
-                inc.IncremenValue = round(float(key.WaterSum) - float(proWaterSum), 2)
+                inc.IncremenValue = abs(round(float(key.WaterSum) - float(proWaterSum), 2))
                 inc.IncremenType = "水"
                 inc.CollectionDate = key.CollectionDate
                 inc.Unit = key.SumWUnit
@@ -86,7 +86,7 @@ def run():
                     proSumValue = proSumValue[0]
                 else:
                     proSumValue = 0
-                inc.IncremenValue = round(float(key.SumValue) - float(proSumValue), 2)
+                inc.IncremenValue = abs(round(float(key.SumValue) - float(proSumValue), 2))
                 inc.IncremenType = "汽"
                 inc.CollectionDate = key.CollectionDate
                 inc.Unit = key.SumUnit
