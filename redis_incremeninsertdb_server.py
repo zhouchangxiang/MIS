@@ -27,7 +27,7 @@ def run():
         time.sleep(60)
         print("数据开始写入增量数据库")
         try:
-            elekeys = db_session.query(ElectricEnergy).filter(ElectricEnergy.IncrementFlag == "0").order_by(("ID")).all()
+            elekeys = db_session.query(ElectricEnergy).filter(ElectricEnergy.IncrementFlag == "0", ElectricEnergy.ZGL != "0.0").order_by(("ID")).all()
             for key in elekeys:
                 inc = IncrementTable()
                 inc.TagClassValue = key.TagClassValue
@@ -50,7 +50,7 @@ def run():
                 db_session.add(inc)
                 key.IncrementFlag = "1"
                 db_session.commit()
-            watkeys = db_session.query(WaterEnergy).filter(WaterEnergy.IncrementFlag == "0").order_by(("ID")).all()
+            watkeys = db_session.query(WaterEnergy).filter(WaterEnergy.IncrementFlag == "0", WaterEnergy.WaterSum != "0.0").order_by(("ID")).all()
             for key in watkeys:
                 inc = IncrementTable()
                 inc.TagClassValue = key.TagClassValue
@@ -73,7 +73,7 @@ def run():
                 db_session.add(inc)
                 key.IncrementFlag = "1"
                 db_session.commit()
-            stekeys = db_session.query(SteamEnergy).filter(SteamEnergy.IncrementFlag == "0").order_by(("ID")).all()
+            stekeys = db_session.query(SteamEnergy).filter(SteamEnergy.IncrementFlag == "0", SteamEnergy.SumValue != "0.0").order_by(("ID")).all()
             for key in stekeys:
                 inc = IncrementTable()
                 inc.TagClassValue = key.TagClassValue

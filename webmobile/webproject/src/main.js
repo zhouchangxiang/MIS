@@ -4,8 +4,7 @@ import App from './App'
 import router from './router'
 
 Vue.config.productionTip = false
-
-import "./tools/vantui.js"
+import './vantui.js'
 
 import axios from 'axios'
 Vue.prototype.$http=axios

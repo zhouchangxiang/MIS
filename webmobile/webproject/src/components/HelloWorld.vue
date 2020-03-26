@@ -60,10 +60,14 @@ export default {
           this.$toast("密码不能为空");
           return false;
         }else{
-          let comment={worknumber:this.username,password:this.password}
+          let comment={'worknumber':this.username,'password':this.password}
           let str=qs.stringify(comment)
           console.log(str)
-          this.$http.post('/api/v2/accounts/login',str).then((value) => {
+          console.log(comment)
+          //this.$http.post('/api/v2/accounts/login',str).then((value) => {
+          //  console.log(value)
+          //})
+          this.$http.post('http://127.0.0.1:6001/v2/accounts/login',str).then((value) => {
             console.log(value)
           })
         }
