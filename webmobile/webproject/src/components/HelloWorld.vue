@@ -63,7 +63,10 @@ export default {
           let comment={worknumber:this.username,password:this.password}
           let str=qs.stringify(comment)
           console.log(str)
-          this.$http.post('/api/v2/accounts/login',str).then((value) => {
+          //this.$http.post('/api/v2/accounts/login',str).then((value) => {
+          //  console.log(value)
+          //})
+          this.$http.post('http://127.0.0.1:6001/v2/accounts/login',str).then((value) => {
             console.log(value)
           })
         }
