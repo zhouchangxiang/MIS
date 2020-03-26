@@ -135,7 +135,6 @@
         this.getTableData()
       },
       handleSelectionChange(val){  //选择行数
-        console.log(val)
         this.multipleSelection = val;
       },
       searchTab(){
@@ -239,7 +238,6 @@
                 delete_data: JSON.stringify(mulId)
               }
             }).then(res =>{
-              console.log(res)
               if(res.data == "OK"){
                 this.$message({
                   type: 'success',

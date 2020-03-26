@@ -177,6 +177,10 @@ export default {
         var arr = []
         this.axios.get("/api/CUID",{params:params}).then(res =>{
           var resData = JSON.parse(res.data).rows
+          arr.push({
+            name:"整厂区",
+            url:"/Areas?areaName=整厂区"
+          })
           for(var i=0;i < resData.length;i++){
             arr.push({
               name:resData[i].AreaName,
@@ -190,7 +194,7 @@ export default {
           {name: "桓仁厂区", icon: "el-icon-location-outline", children:arr},
           {name: "能效分析", icon: "el-icon-time", url: "/EfficiencyAnalysis"},
           {name: "综合报表", icon: "el-icon-document", url: "/DataReport"},
-          {name: "综合维护表", icon: "el-icon-document", url: "/MaintainedBoard"},
+          {name: "综合维护表", icon: "el-icon-s-operation", url: "/MaintainedBoard"},
         ]
       }else if(index == 1){
         this.subMenulist = [

@@ -248,7 +248,6 @@
                 delete_data: JSON.stringify(mulId)
               }
             }).then(res =>{
-              console.log(res)
               if(res.data == "OK"){
                 this.$message({
                   type: 'success',

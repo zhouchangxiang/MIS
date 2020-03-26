@@ -30,9 +30,13 @@
       <el-table :data="tableData" border tooltip-effect="dark" @selection-change="handleSelectionChange">
         <el-table-column type="selection"></el-table-column>
         <el-table-column prop="ID" label="ID"></el-table-column>
-        <el-table-column prop="AreaName" label="区域名称"></el-table-column>
-        <el-table-column prop="AreaCode" label="区域编码"></el-table-column>
-        <el-table-column prop="Desc" label="描述"></el-table-column>
+        <el-table-column prop="AreaName" label="区域"></el-table-column>
+        <el-table-column prop="EQPName" label="设备名称"></el-table-column>
+        <el-table-column prop="UpperLimit" label="上限"></el-table-column>
+        <el-table-column prop="LowerLimit" label="下限"></el-table-column>
+        <el-table-column prop="EnergyClass" label="能源类型"></el-table-column>
+        <el-table-column prop="Descrption" label="描述"></el-table-column>
+        <el-table-column prop="CreateDate" label="时间"></el-table-column>
       </el-table>
       <div class="paginationClass">
         <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
@@ -49,14 +53,26 @@
           <el-form-item label="ID">
             <el-input v-model="submitForm.ID" :disabled="true"></el-input>
           </el-form-item>
-          <el-form-item label="区域名称" prop="AreaName">
+          <el-form-item label="区域" prop="AreaName">
             <el-input v-model="submitForm.AreaName"></el-input>
           </el-form-item>
-          <el-form-item label="区域编码" prop="AreaCode">
-            <el-input v-model="submitForm.AreaCode"></el-input>
+          <el-form-item label="设备名称" prop="EQPName">
+            <el-input v-model="submitForm.EQPName"></el-input>
           </el-form-item>
-          <el-form-item label="描述" prop="Desc">
-            <el-input v-model="submitForm.Desc"></el-input>
+          <el-form-item label="上限" prop="UpperLimit">
+            <el-input v-model="submitForm.UpperLimit"></el-input>
+          </el-form-item>
+          <el-form-item label="下限" prop="LowerLimit">
+            <el-input v-model="submitForm.LowerLimit"></el-input>
+          </el-form-item>
+          <el-form-item label="能源类型" prop="EnergyClass">
+            <el-input v-model="submitForm.EnergyClass"></el-input>
+          </el-form-item>
+          <el-form-item label="描述" prop="Descrption">
+            <el-input v-model="submitForm.Descrption"></el-input>
+          </el-form-item>
+          <el-form-item label="时间" prop="CreateDate">
+            <el-input v-model="submitForm.CreateDate"></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -70,7 +86,7 @@
 
 <script>
   export default {
-    name: "Area",
+    name: "EarlyWarningLimit",
     data(){
       return {
         tableData:[],
@@ -83,12 +99,25 @@
         dialogTitle:'',
         rules:{
           AreaName:[
-            {required: true, message: '区域名称', trigger: 'blur'}
-          ]
+            {required: true, message: '区域', trigger: 'blur'}
+          ],
+          EQPName:[
+            {required: true, message: '设备名称', trigger: 'blur'}
+          ],
+          UpperLimit:[
+            {required: true, message: '上限', trigger: 'blur'}
+          ],
+          LowerLimit:[
+            {required: true, message: '下限', trigger: 'blur'}
+          ],
+          EnergyClass:[
+            {required: true, message: '能源类型', trigger: 'blur'}
+          ],
         },
         region:"",
         regionList:[
-          {label:"区域名称",value:"AreaName"}
+          {label:"区域",value:"AreaName"},
+          {label:"设备名称",value:"EQPName"},
         ],
         searchVal:""
       }
@@ -100,7 +129,7 @@
       getTableData(){
         this.axios.get("/api/CUID",{
           params: {
-            tableName: "AreaTable",
+            tableName: "EarlyWarningLimitMaintain",
             limit:this.pagesize,
             offset:this.currentPage - 1
           }
@@ -126,7 +155,7 @@
       searchTab(){
         this.axios.get("/api/CUID",{
           params: {
-            tableName: "AreaTable",
+            tableName: "EarlyWarningLimitMaintain",
             field:this.region,
             fieldvalue:this.searchVal,
             limit:this.pagesize,
@@ -147,8 +176,12 @@
           this.submitForm = {
             ID:"",
             AreaName:"",
-            AreaCode:"",
-            Desc:"",
+            EQPName:"",
+            UpperLimit:"",
+            LowerLimit:"",
+            EnergyClass:"",
+            Descrption:"",
+            CreateDate:"",
           }
         }else if(val == "edit"){
           if(this.multipleSelection.length == 1){
@@ -157,8 +190,13 @@
             this.submitForm = {
               ID:data.ID,
               AreaName:data.AreaName,
-              AreaCode:data.AreaCode,
-              Desc:data.Desc
+              EQPName:data.EQPName,
+              UpperLimit:data.UpperLimit,
+              LowerLimit:data.LowerLimit,
+              EnergyClass:data.EnergyClass,
+              EnergyClass:data.EnergyClass,
+              Descrption:data.Descrption,
+              CreateDate:data.CreateDate,
             }
           }else{
             this.$message({
@@ -171,7 +209,7 @@
       save(formName){
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.submitForm.tableName = "AreaTable"
+            this.submitForm.tableName = "EarlyWarningLimitMaintain"
             if(this.dialogTitle == "add"){
               this.axios.post("/api/CUID",this.qs.stringify(this.submitForm)).then(res =>{
                 if(res.data == "OK"){
@@ -218,7 +256,7 @@
           }).then(()  => {
             this.axios.delete("/api/CUID",{
               params: {
-                tableName: "AreaTable",
+                tableName: "EarlyWarningLimitMaintain",
                 delete_data: JSON.stringify(mulId)
               }
             }).then(res =>{

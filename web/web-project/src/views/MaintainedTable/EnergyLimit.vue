@@ -30,9 +30,9 @@
       <el-table :data="tableData" border tooltip-effect="dark" @selection-change="handleSelectionChange">
         <el-table-column type="selection"></el-table-column>
         <el-table-column prop="ID" label="ID"></el-table-column>
-        <el-table-column prop="AreaName" label="区域名称"></el-table-column>
-        <el-table-column prop="AreaCode" label="区域编码"></el-table-column>
-        <el-table-column prop="Desc" label="描述"></el-table-column>
+        <el-table-column prop="LimitName" label="名称"></el-table-column>
+        <el-table-column prop="LimitCode" label="编码"></el-table-column>
+        <el-table-column prop="LimitValue" label="限值"></el-table-column>
       </el-table>
       <div class="paginationClass">
         <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
@@ -49,14 +49,14 @@
           <el-form-item label="ID">
             <el-input v-model="submitForm.ID" :disabled="true"></el-input>
           </el-form-item>
-          <el-form-item label="区域名称" prop="AreaName">
-            <el-input v-model="submitForm.AreaName"></el-input>
+          <el-form-item label="名称" prop="LimitName">
+            <el-input v-model="submitForm.LimitName"></el-input>
           </el-form-item>
-          <el-form-item label="区域编码" prop="AreaCode">
-            <el-input v-model="submitForm.AreaCode"></el-input>
+          <el-form-item label="编码" prop="LimitCode">
+            <el-input v-model="submitForm.LimitCode"></el-input>
           </el-form-item>
-          <el-form-item label="描述" prop="Desc">
-            <el-input v-model="submitForm.Desc"></el-input>
+          <el-form-item label="限值" prop="LimitValue">
+            <el-input v-model="submitForm.LimitValue"></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -70,7 +70,7 @@
 
 <script>
   export default {
-    name: "Area",
+    name: "EnergyLimit",
     data(){
       return {
         tableData:[],
@@ -81,14 +81,11 @@
         dialogVisible: false,
         submitForm:'',
         dialogTitle:'',
-        rules:{
-          AreaName:[
-            {required: true, message: '区域名称', trigger: 'blur'}
-          ]
-        },
+        rules:{},
         region:"",
         regionList:[
-          {label:"区域名称",value:"AreaName"}
+          {label:"名称",value:"LimitName"},
+          {label:"编码",value:"LimitCode"}
         ],
         searchVal:""
       }
@@ -100,7 +97,7 @@
       getTableData(){
         this.axios.get("/api/CUID",{
           params: {
-            tableName: "AreaTable",
+            tableName: "LimitTable",
             limit:this.pagesize,
             offset:this.currentPage - 1
           }
@@ -126,7 +123,7 @@
       searchTab(){
         this.axios.get("/api/CUID",{
           params: {
-            tableName: "AreaTable",
+            tableName: "LimitTable",
             field:this.region,
             fieldvalue:this.searchVal,
             limit:this.pagesize,
@@ -146,9 +143,9 @@
           this.dialogVisible = true
           this.submitForm = {
             ID:"",
-            AreaName:"",
-            AreaCode:"",
-            Desc:"",
+            LimitName:"",
+            LimitCode:"",
+            LimitValue:"",
           }
         }else if(val == "edit"){
           if(this.multipleSelection.length == 1){
@@ -156,9 +153,9 @@
             let data = this.multipleSelection[0]
             this.submitForm = {
               ID:data.ID,
-              AreaName:data.AreaName,
-              AreaCode:data.AreaCode,
-              Desc:data.Desc
+              LimitName:data.LimitName,
+              LimitCode:data.LimitCode,
+              LimitValue:data.LimitValue
             }
           }else{
             this.$message({
@@ -171,7 +168,7 @@
       save(formName){
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.submitForm.tableName = "AreaTable"
+            this.submitForm.tableName = "LimitTable"
             if(this.dialogTitle == "add"){
               this.axios.post("/api/CUID",this.qs.stringify(this.submitForm)).then(res =>{
                 if(res.data == "OK"){
@@ -218,7 +215,7 @@
           }).then(()  => {
             this.axios.delete("/api/CUID",{
               params: {
-                tableName: "AreaTable",
+                tableName: "LimitTable",
                 delete_data: JSON.stringify(mulId)
               }
             }).then(res =>{

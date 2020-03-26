@@ -16,6 +16,9 @@
       <PowerLoadRateRange v-if="navOptionsCurrent == 7"></PowerLoadRateRange>
       <EnergyPrices v-if="navOptionsCurrent == 8"></EnergyPrices>
       <UnitConversion v-if="navOptionsCurrent == 9"></UnitConversion>
+      <UnitTable v-if="navOptionsCurrent == 10"></UnitTable>
+      <EnergyLimit v-if="navOptionsCurrent == 11"></EnergyLimit>
+      <EarlyWarningLimit v-if="navOptionsCurrent == 12"></EarlyWarningLimit>
     </el-col>
   </el-row>
 </template>
@@ -31,10 +34,13 @@
   import PowerLoadRateRange from '@/views/MaintainedTable/PowerLoadRateRange'
   import EnergyPrices from '@/views/MaintainedTable/EnergyPrices'
   import UnitConversion from '@/views/MaintainedTable/UnitConversion'
+  import UnitTable from '@/views/MaintainedTable/UnitTable'
+  import EnergyLimit from '@/views/MaintainedTable/EnergyLimit'
+  import EarlyWarningLimit from '@/views/MaintainedTable/EarlyWarningLimit'
   export default {
     name: "MaintainedBoard",
     components:{
-      TradeNameTable,PlanTask,Altitude,FaultRules,SchedulingRules,Area,AreaTimeRange,PowerLoadRateRange,EnergyPrices,UnitConversion
+      TradeNameTable,PlanTask,Altitude,FaultRules,SchedulingRules,Area,AreaTimeRange,PowerLoadRateRange,EnergyPrices,UnitConversion,UnitTable,EnergyLimit,EarlyWarningLimit
     },
     data(){
       return {
@@ -50,6 +56,9 @@
           {name:"电能负荷率范围"},
           {name:"能耗价格"},
           {name:"采集数据的单位换算"},
+          {name:"单位表"},
+          {name:"能耗限度"},
+          {name:"温度预警限度"},
         ],
       }
     },

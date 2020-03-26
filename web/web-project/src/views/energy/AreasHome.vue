@@ -202,10 +202,9 @@
           var todayElectricityData = JSON.parse(todayElectricity.data)
           var todayWaterData = JSON.parse(todayWater.data)
           var todaySteamData = JSON.parse(todaySteam.data)
-          console.log(todayElectricityData)
-          that.todayElectricity = todayElectricityData.elctric +""+ todayElectricityData.unit
-          that.todayWater = todayWaterData.wattongji +""+ todayWaterData.unit
-          that.todaySteam = todaySteamData.stecount +""+ todaySteamData.unit
+          that.todayElectricity = todayElectricityData.value +" "+ todayElectricityData.unit
+          that.todayWater = todayWaterData.value +" "+ todayWaterData.unit
+          that.todaySteam = todaySteamData.value +" "+ todaySteamData.unit
         }))
       }
     }

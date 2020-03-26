@@ -30,9 +30,8 @@
       <el-table :data="tableData" border tooltip-effect="dark" @selection-change="handleSelectionChange">
         <el-table-column type="selection"></el-table-column>
         <el-table-column prop="ID" label="ID"></el-table-column>
-        <el-table-column prop="AreaName" label="区域名称"></el-table-column>
-        <el-table-column prop="AreaCode" label="区域编码"></el-table-column>
-        <el-table-column prop="Desc" label="描述"></el-table-column>
+        <el-table-column prop="UnitName" label="单位名称"></el-table-column>
+        <el-table-column prop="UnitValue" label="单位值"></el-table-column>
       </el-table>
       <div class="paginationClass">
         <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
@@ -49,14 +48,11 @@
           <el-form-item label="ID">
             <el-input v-model="submitForm.ID" :disabled="true"></el-input>
           </el-form-item>
-          <el-form-item label="区域名称" prop="AreaName">
-            <el-input v-model="submitForm.AreaName"></el-input>
+          <el-form-item label="单位名称" prop="UnitName">
+            <el-input v-model="submitForm.UnitName"></el-input>
           </el-form-item>
-          <el-form-item label="区域编码" prop="AreaCode">
-            <el-input v-model="submitForm.AreaCode"></el-input>
-          </el-form-item>
-          <el-form-item label="描述" prop="Desc">
-            <el-input v-model="submitForm.Desc"></el-input>
+          <el-form-item label="单位值" prop="UnitValue">
+            <el-input v-model="submitForm.UnitValue"></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -70,7 +66,7 @@
 
 <script>
   export default {
-    name: "Area",
+    name: "UnitTable",
     data(){
       return {
         tableData:[],
@@ -82,13 +78,16 @@
         submitForm:'',
         dialogTitle:'',
         rules:{
-          AreaName:[
-            {required: true, message: '区域名称', trigger: 'blur'}
+          UnitName:[
+            {required: true, message: '单位名称', trigger: 'blur'}
+          ],
+          UnitValue:[
+            {required: true, message: '单位值', trigger: 'blur'}
           ]
         },
         region:"",
         regionList:[
-          {label:"区域名称",value:"AreaName"}
+          {label:"单位名称",value:"UnitName"}
         ],
         searchVal:""
       }
@@ -100,7 +99,7 @@
       getTableData(){
         this.axios.get("/api/CUID",{
           params: {
-            tableName: "AreaTable",
+            tableName: "Unit",
             limit:this.pagesize,
             offset:this.currentPage - 1
           }
@@ -126,7 +125,7 @@
       searchTab(){
         this.axios.get("/api/CUID",{
           params: {
-            tableName: "AreaTable",
+            tableName: "Unit",
             field:this.region,
             fieldvalue:this.searchVal,
             limit:this.pagesize,
@@ -146,9 +145,8 @@
           this.dialogVisible = true
           this.submitForm = {
             ID:"",
-            AreaName:"",
-            AreaCode:"",
-            Desc:"",
+            UnitName:"",
+            UnitValue:"",
           }
         }else if(val == "edit"){
           if(this.multipleSelection.length == 1){
@@ -156,9 +154,8 @@
             let data = this.multipleSelection[0]
             this.submitForm = {
               ID:data.ID,
-              AreaName:data.AreaName,
-              AreaCode:data.AreaCode,
-              Desc:data.Desc
+              UnitName:data.UnitName,
+              UnitValue:data.UnitValue,
             }
           }else{
             this.$message({
@@ -171,7 +168,7 @@
       save(formName){
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.submitForm.tableName = "AreaTable"
+            this.submitForm.tableName = "Unit"
             if(this.dialogTitle == "add"){
               this.axios.post("/api/CUID",this.qs.stringify(this.submitForm)).then(res =>{
                 if(res.data == "OK"){
@@ -218,7 +215,7 @@
           }).then(()  => {
             this.axios.delete("/api/CUID",{
               params: {
-                tableName: "AreaTable",
+                tableName: "Unit",
                 delete_data: JSON.stringify(mulId)
               }
             }).then(res =>{
