@@ -120,7 +120,7 @@ def energySteamSelect(data):
                 oc_list.append(oc.TagClassValue)
             stecount = energyStatistics(oc_list, StartTime, EndTime, energy)
             dir["type"] = energy
-            dir["stecount"] = stecount
+            dir["value"] = stecount
             unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == energy).first()[0]
             dir["unit"] = unit
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
