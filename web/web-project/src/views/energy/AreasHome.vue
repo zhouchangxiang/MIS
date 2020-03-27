@@ -1,5 +1,14 @@
 <template>
   <el-row :gutter="15">
+    <el-col :span="24">
+      <el-form :model="formParameters">
+        <el-form-item style="float: right;">
+          <el-radio-group v-model="formParameters.EnergyValue" fill="#082F4C" size="small">
+            <el-radio-button v-for="item in EnergyOptions" :key="item.id" :label="item.name"></el-radio-button>
+          </el-radio-group>
+        </el-form-item>
+      </el-form>
+    </el-col>
     <el-col :span="24" style="margin-bottom: 15px;">
       <el-col :span="8">
         <div class="platformContainer">
@@ -65,61 +74,67 @@
         </div>
       </el-col>
     </el-col>
-    <el-col :span="24">
-      <el-col :span="6">
-        <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
-          <div class="chartTile">生产详情</div>
-        </div>
-        <div class="platformContainer" style="margin-bottom:2px;">
-          <el-table :data="batchTableData" style="width: 100%">
-            <el-table-column prop="Name" label="品名"></el-table-column>
-            <el-table-column prop="Batch" label="批次"></el-table-column>
-          </el-table>
-        </div>
-        <div class="platformContainer">
-          <el-col :span="24">
-            <div class="itemMarginBottom">
-              <span class="text-size-normol text-color-info-shallow">今日品名数</span>
-              <span class="text-size-normol text-color-info-shallow float-right">今日总成本</span>
-            </div>
-            <div class="itemMarginBottom">
-              <span class="text-size-normol text-color-info">2</span>
-              <span class="text-size-normol text-color-info float-right">24562.23元</span>
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <div class="itemMarginBottom">
-              <span class="text-size-normol text-color-info-shallow">今日批次数</span>
-            </div>
-            <div class="itemMarginBottom">
-              <span class="text-size-normol text-color-info">5</span>
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <ve-ring :data="ringChartData" :settings="batchChartSettings" :extend="batchChartExtend" width="100%" height="100px"></ve-ring>
-          </el-col>
-        </div>
-      </el-col>
-      <el-col :span="13">
-        <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
-          <div class="chartTile">数据表</div>
-          <el-select v-model="EnergyValue" size="mini">
-            <el-option v-for="item in EnergyOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-        </div>
-        <div class="platformContainer">
+    <!--<el-col :span="24">-->
+      <!--<el-col :span="6">-->
+        <!--<div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">-->
+          <!--<div class="chartTile">生产详情</div>-->
+        <!--</div>-->
+        <!--<div class="platformContainer" style="margin-bottom:2px;">-->
+          <!--<el-table :data="batchTableData" style="width: 100%">-->
+            <!--<el-table-column prop="Name" label="品名"></el-table-column>-->
+            <!--<el-table-column prop="Batch" label="批次"></el-table-column>-->
+          <!--</el-table>-->
+        <!--</div>-->
+        <!--<div class="platformContainer">-->
+          <!--<el-col :span="24">-->
+            <!--<div class="itemMarginBottom">-->
+              <!--<span class="text-size-normol text-color-info-shallow">今日品名数</span>-->
+              <!--<span class="text-size-normol text-color-info-shallow float-right">今日总成本</span>-->
+            <!--</div>-->
+            <!--<div class="itemMarginBottom">-->
+              <!--<span class="text-size-normol text-color-info">2</span>-->
+              <!--<span class="text-size-normol text-color-info float-right">24562.23元</span>-->
+            <!--</div>-->
+          <!--</el-col>-->
+          <!--<el-col :span="12">-->
+            <!--<div class="itemMarginBottom">-->
+              <!--<span class="text-size-normol text-color-info-shallow">今日批次数</span>-->
+            <!--</div>-->
+            <!--<div class="itemMarginBottom">-->
+              <!--<span class="text-size-normol text-color-info">5</span>-->
+            <!--</div>-->
+          <!--</el-col>-->
+          <!--<el-col :span="12">-->
+            <!--<ve-ring :data="ringChartData" :settings="batchChartSettings" :extend="batchChartExtend" width="100%" height="100px"></ve-ring>-->
+          <!--</el-col>-->
+        <!--</div>-->
+      <!--</el-col>-->
+      <!--<el-col :span="13">-->
+        <!--<div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">-->
+          <!--<div class="chartTile">数据表</div>-->
+          <!--<el-select v-model="EnergyValue" size="mini">-->
+            <!--<el-option v-for="item in EnergyOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>-->
+          <!--</el-select>-->
+        <!--</div>-->
+        <!--<div class="platformContainer">-->
 
-        </div>
-      </el-col>
-      <el-col :span="5">
-        <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
-          <div class="chartTile">设备情况</div>
-        </div>
-        <div class="platformContainer">
-
-        </div>
-      </el-col>
-    </el-col>
+        <!--</div>-->
+      <!--</el-col>-->
+      <!--<el-col :span="5">-->
+        <!--<div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">-->
+          <!--<div class="chartTile">设备情况</div>-->
+        <!--</div>-->
+        <!--<div class="platformContainer">-->
+          <!--<ul>-->
+            <!--<li v-for="item in onlineEquipmentOption" style="margin-bottom: 5px;">-->
+              <!--<p class="text-size-normol text-color-info">{{ item.name }}</p>-->
+              <!--<p class="text-size-mini text-color-info-shallow" style="margin-top: 5px;"><span>上线数/总数</span><span style="float: right;">{{ item.online }}/{{ item.total }}</span></p>-->
+              <!--<el-progress :text-inside="true" :stroke-width="16" :percentage="item.rate"></el-progress>-->
+            <!--</li>-->
+          <!--</ul>-->
+        <!--</div>-->
+      <!--</el-col>-->
+    <!--</el-col>-->
   </el-row>
 </template>
 
@@ -140,16 +155,21 @@
         WaterUnit:"",
         SteamUnit:"",
         EnergyOptions: [{
+          id:1,
           value: '电',
-          label: '电能'
+          name: '电能'
         }, {
+          id:2,
           value: '水',
-          label: '水能'
+          name: '水能'
         }, {
+          id:3,
           value: '汽',
-          label: '汽能'
+          name: '汽能'
         }],
-        EnergyValue:'电',
+        formParameters:{
+          EnergyValue:'电',
+        },
         batchTableData:[
           {Name:"药品A",Batch:"JUSA2374627"},
           {Name:"药品B",Batch:"JUSA2374627"},
@@ -179,11 +199,13 @@
             { '日期': '药品C', '访问用户': 2923 },
             { '日期': '药品D', '访问用户': 1723 }
           ]
-        }
+        },
+        onlineEquipmentOption:[], //在线情况采集
       }
     },
     created(){
       this.getEnergyPreview()
+      this.getOnLineEq()
     },
     computed:{
       ElectricityCompare(){
@@ -294,7 +316,12 @@
             that.todaySteam = "无数据"
           }
         }))
-      }
+      },
+      getOnLineEq(){
+        this.axios.get("/api/energyall",{params:{ModelFlag:"在线检测情况"}}).then(res => {
+          this.onlineEquipmentOption = JSON.parse(res.data)
+        })
+      },
     }
   }
 </script>
