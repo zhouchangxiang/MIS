@@ -155,6 +155,10 @@
         WaterUnit:"",
         SteamUnit:"",
         EnergyOptions: [{
+          id:0,
+          value: '',
+          name: '全部'
+        }, {
           id:1,
           value: '电',
           name: '电能'
@@ -168,7 +172,7 @@
           name: '汽能'
         }],
         formParameters:{
-          EnergyValue:'电',
+          EnergyValue:'全部',
         },
         batchTableData:[
           {Name:"药品A",Batch:"JUSA2374627"},
