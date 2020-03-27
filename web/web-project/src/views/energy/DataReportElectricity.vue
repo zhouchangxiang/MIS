@@ -37,11 +37,29 @@
           </el-form-item>
         </el-form>
         <el-table :data="tableData" border tooltip-effect="dark">
-          <el-table-column prop="ID" label="ID"></el-table-column>
+          <el-table-column type="expand">
+            <template slot-scope="props">
+              <el-form label-position="left" class="table-expand">
+                <el-form-item label="ID">
+                  <span>{{ props.row.ID }}</span>
+                </el-form-item>
+                <el-form-item label="仪表ID">
+                  <span>{{ props.row.EquipmnetID }}</span>
+                </el-form-item>
+                <el-form-item label="价格ID">
+                  <span>{{ props.row.PriceID }}</span>
+                </el-form-item>
+                <el-form-item label="计算增量更新标识">
+                  <span>{{ props.row.IncrementFlag }}</span>
+                </el-form-item>
+                <el-form-item label="两个相邻采集点上一个采集点ID">
+                  <span>{{ props.row.PrevID }}</span>
+                </el-form-item>
+              </el-form>
+            </template>
+          </el-table-column>
           <el-table-column prop="Unit" label="单位"></el-table-column>
           <el-table-column prop="PriceValue" label="价格值"></el-table-column>
-          <el-table-column prop="EquipmnetID" label="仪表ID"></el-table-column>
-          <el-table-column prop="PriceID" label="价格ID"></el-table-column>
           <el-table-column prop="TagClassValue" label="采集点"></el-table-column>
           <el-table-column prop="CollectionDate" label="采集时间"></el-table-column>
           <el-table-column prop="CollectionYear" label="采集年"></el-table-column>
@@ -54,8 +72,6 @@
           <el-table-column prop="BI" label="B相电流"></el-table-column>
           <el-table-column prop="CU" label="C相电压"></el-table-column>
           <el-table-column prop="CI" label="C相电流"></el-table-column>
-          <el-table-column prop="IncrementFlag" label="计算增量更新标识"></el-table-column>
-          <el-table-column prop="PrevID" label="两个相邻采集点上一个采集点ID"></el-table-column>
           <el-table-column prop="AreaName" label="区域"></el-table-column>
         </el-table>
         <div class="paginationClass">
@@ -106,6 +122,9 @@
         ],
         searchVal:""
       }
+    },
+    created(){
+      this.getTableData()
     },
     methods:{
       exportExcel(){

@@ -30,26 +30,26 @@
       <el-table :data="tableData" border tooltip-effect="dark" @selection-change="handleSelectionChange">
         <el-table-column type="selection"></el-table-column>
         <el-table-column type="expand">
-            <template slot-scope="props">
-              <el-form label-position="left" class="table-expand">
-                <el-form-item label="ID">
-                  <span>{{ props.row.id }}</span>
-                </el-form-item>
-                <el-form-item label="密码">
-                  <span>{{ props.row.Password }}</span>
-                </el-form-item>
-                <el-form-item label="创建人">
-                  <span>{{ props.row.Creater }}</span>
-                </el-form-item>
-                <el-form-item label="创建时间">
-                  <span>{{ props.row.CreateTime }}</span>
-                </el-form-item>
-                <el-form-item label="最近在线时间">
-                  <span>{{ props.row.LastLoginTime }}</span>
-                </el-form-item>
-              </el-form>
-            </template>
-          </el-table-column>
+          <template slot-scope="props">
+            <el-form label-position="left" class="table-expand">
+              <el-form-item label="ID">
+                <span>{{ props.row.id }}</span>
+              </el-form-item>
+              <el-form-item label="密码">
+                <span>{{ props.row.Password }}</span>
+              </el-form-item>
+              <el-form-item label="创建人">
+                <span>{{ props.row.Creater }}</span>
+              </el-form-item>
+              <el-form-item label="创建时间">
+                <span>{{ props.row.CreateTime }}</span>
+              </el-form-item>
+              <el-form-item label="最近在线时间">
+                <span>{{ props.row.LastLoginTime }}</span>
+              </el-form-item>
+            </el-form>
+          </template>
+        </el-table-column>
         <el-table-column prop="Name" label="用户名"></el-table-column>
         <el-table-column prop="WorkNumber" label="工号"></el-table-column>
         <el-table-column prop="StationName" label="所属岗位"></el-table-column>
