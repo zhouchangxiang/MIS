@@ -3,11 +3,9 @@
     <el-col :span="24">
       <el-form :model="formParameters">
         <el-form-item label="时间：" style="margin-bottom: 0;">
-          <el-radio-group v-model="formParameters.resourceTime" fill="#082F4C" size="mini">
-            <el-radio-button v-for="item in radioTimeList" border :key="item.id" :label="item.name"></el-radio-button>
-          </el-radio-group>
-          <el-date-picker type="date" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false"></el-date-picker> ~
-          <el-date-picker type="date" v-model="formParameters.endDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false"></el-date-picker>
+          <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false"></el-date-picker> ~
+          <el-date-picker type="datetime" v-model="formParameters.endDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false"></el-date-picker>
+          <el-button type="primary" size="mini" style="float: right;" @click="exportExcel">导出所有数据</el-button>
         </el-form-item>
         <el-form-item label="参数：">
           <el-radio-group v-model="formParameters.electricityType" fill="#082F4C" size="mini">
@@ -25,29 +23,67 @@
         <el-button type="primary" size="mini" style="float: right;margin: 9px 0;">导出</el-button>
       </div>
       <div class="platformContainer">
-
+        <el-form :inline="true">
+          <el-form-item>
+            <el-select v-model="region" placeholder="请选择搜索字段" size="small">
+              <el-option v-for="(item,index) in regionList" :label="item.label" :value="item.value" :key="index"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-input placeholder="请输入搜索内容" size="small" v-model="searchVal"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="success" icon="el-icon-search" size="small" @click="searchTab">搜索</el-button>
+          </el-form-item>
+        </el-form>
+        <el-table :data="tableData" border tooltip-effect="dark">
+          <el-table-column prop="ID" label="ID"></el-table-column>
+          <el-table-column prop="Unit" label="单位"></el-table-column>
+          <el-table-column prop="PriceValue" label="价格值"></el-table-column>
+          <el-table-column prop="EquipmnetID" label="仪表ID"></el-table-column>
+          <el-table-column prop="PriceID" label="价格ID"></el-table-column>
+          <el-table-column prop="TagClassValue" label="采集点"></el-table-column>
+          <el-table-column prop="CollectionDate" label="采集时间"></el-table-column>
+          <el-table-column prop="CollectionYear" label="采集年"></el-table-column>
+          <el-table-column prop="CollectionMonth" label="采集月"></el-table-column>
+          <el-table-column prop="CollectionDay" label="采集天"></el-table-column>
+          <el-table-column prop="ZGL" label="总功率"></el-table-column>
+          <el-table-column prop="AU" label="A相电压"></el-table-column>
+          <el-table-column prop="AI" label="A相电流"></el-table-column>
+          <el-table-column prop="BU" label="B相电压"></el-table-column>
+          <el-table-column prop="BI" label="B相电流"></el-table-column>
+          <el-table-column prop="CU" label="C相电压"></el-table-column>
+          <el-table-column prop="CI" label="C相电流"></el-table-column>
+          <el-table-column prop="IncrementFlag" label="计算增量更新标识"></el-table-column>
+          <el-table-column prop="PrevID" label="两个相邻采集点上一个采集点ID"></el-table-column>
+          <el-table-column prop="AreaName" label="区域"></el-table-column>
+        </el-table>
+        <div class="paginationClass">
+          <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
+                         :total="total"
+                         :current-page="currentPage"
+                         :page-sizes="[5,10,20]"
+                         :page-size="pagesize"
+                         @size-change="handleSizeChange"
+                         @current-change="handleCurrentChange">
+          </el-pagination>
+        </div>
       </div>
     </el-col>
   </el-row>
 </template>
 
 <script>
+  var moment = require('moment');
   export default {
     name: "DataReportElectricity",
     data(){
       return {
         formParameters:{
-          resourceTime:"班次",
           startDate:Date.now(),
           endDate:Date.now(),
           electricityType:"电量"
         },
-        radioTimeList:[
-          {name:"班次",id:1},
-          {name:"日",id:2},
-          {name:"周",id:3},
-          {name:"月",id:4},
-        ],
         pickerOptions:{
           disabledDate(time) {
             return time.getTime() > Date.now();
@@ -59,22 +95,89 @@
           {name:"功率",id:3},
         ],
         areaValue:"桓仁厂区",
-        areaOptions:[
-          {value: 0,label: '桓仁厂区'},
-          {value: 1,label: '新建综合试剂楼'},
-          {value: 2,label: '提取二车间'},
-          {value: 3,label: '前处理车间'},
-          {value: 4,label: '研发中心'},
-          {value: 5,label: '生物科技楼'},
-          {value: 6,label: '原提取车间'},
-          {value: 7,label: '锅炉房'},
-          {value: 8,label: '综合办公楼'},
-          {value: 9,label: '综合车间'},
-          {value: 10,label: '污水站'},
-          {value: 11,label: '固体制剂车间'},
-          {value: 12,label: '展览馆'},
-        ]
+        areaOptions:[],
+        tableData:[],
+        total:0,
+        pagesize:5,
+        currentPage:1,
+        region:"",
+        regionList:[
+          {label:"区域",value:"AreaName"}
+        ],
+        searchVal:""
       }
+    },
+    methods:{
+      exportExcel(){
+        var startTime = moment(this.formParameters.startDate).format('YYYY-MM-DD HH:mm:ss')
+        var endTime = moment(this.formParameters.endDate).format('YYYY-MM-DD HH:mm:ss')
+        this.$confirm('确定导出' +startTime+'至'+endTime+'水电气全部记录？', '提示', {
+          type: 'warning'
+        }).then(()  => {
+          this.axios.get("/api/exceloutstatistic",{
+            params: {
+              StartTime: startTime,
+              EndTime: endTime
+            }
+          }).then(res =>{
+            console.log(res)
+            if(res.data == "OK"){
+              this.$message({
+                type: 'success',
+                message: '导出成功'
+              });
+            }
+            this.getTableData()
+          },res =>{
+            console.log("请求错误")
+          })
+        }).catch(()   => {
+          this.$message({
+            type: 'info',
+            message: '已取消导出'
+          });
+        });
+      },
+      getTableData(){
+        this.axios.get("/api/CUID",{
+          params: {
+            tableName: "ElectricEnergy",
+            limit:this.pagesize,
+            offset:this.currentPage - 1
+          }
+        }).then(res =>{
+          var data = JSON.parse(res.data)
+          this.tableData = data.rows
+          this.total = data.total
+        },res =>{
+          console.log("请求错误")
+        })
+      },
+      handleSizeChange(pagesize){ //每页条数切换
+        this.pagesize = pagesize
+        this.getTableData()
+      },
+      handleCurrentChange(currentPage) { // 页码切换
+        this.currentPage = currentPage
+        this.getTableData()
+      },
+      searchTab(){
+        this.axios.get("/api/CUID",{
+          params: {
+            tableName: "ElectricEnergy",
+            field:this.region,
+            fieldvalue:this.searchVal,
+            limit:this.pagesize,
+            offset:this.currentPage - 1
+          }
+        }).then(res =>{
+          var data = JSON.parse(res.data)
+          this.tableData = data.rows
+          this.total = data.total
+        },res =>{
+          console.log("请求错误")
+        })
+      },
     }
   }
 </script>

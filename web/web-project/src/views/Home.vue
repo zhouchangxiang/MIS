@@ -401,7 +401,11 @@
             return compare.toFixed(2) + "%"
           }
         }else{
-          return 0 + "%"
+          if(this.compareDateCon > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
         }
       },
       lastMonthCompare(){
@@ -413,7 +417,11 @@
             return compare.toFixed(2) + "%"
           }
         }else{
-          return 0 + "%"
+          if(this.lastMonthCon > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
         }
       },
       lastYearCompare(){
@@ -425,7 +433,11 @@
             return compare.toFixed(2) + "%"
           }
         }else{
-          return 0 + "%"
+          if(this.lastYearCon > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
         }
       }
     },

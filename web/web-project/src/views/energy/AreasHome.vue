@@ -10,14 +10,14 @@
           </el-col>
           <el-col :span="18">
             <div class="itemMarginBottom text-size-normol text-color-info-shallow">本日耗电量</div>
-            <div class="itemMarginBottom text-size-big text-color-info">{{ todayElectricity }}</div>
+            <div class="itemMarginBottom text-size-big text-color-info">{{ todayElectricity }} {{ ElectricityUnit }}</div>
             <div class="itemMarginBottom">
               <span class="text-size-mini text-color-info-shallow">今日电费</span>
               <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
             </div>
             <div class="itemMarginBottom">
               <span class="text-size-normol text-color-info">523.5元</span>
-              <span class="text-size-normol float-right">+9.5%</span>
+              <span class="text-size-normol float-right" :class="todayElectricity-yesterdayElectricityValue>0?'text-color-danger':'text-color-success'">{{ ElectricityCompare }}</span>
             </div>
           </el-col>
         </div>
@@ -31,14 +31,14 @@
           </el-col>
           <el-col :span="18">
             <div class="itemMarginBottom text-size-normol text-color-info-shallow">本日耗水量</div>
-            <div class="itemMarginBottom text-size-big text-color-info">{{ todayWater }}</div>
+            <div class="itemMarginBottom text-size-big text-color-info">{{ todayWater }} {{ WaterUnit }}</div>
             <div class="itemMarginBottom">
               <span class="text-size-mini text-color-info-shallow">今日水费</span>
               <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
             </div>
             <div class="itemMarginBottom">
               <span class="text-size-normol text-color-info">523.5元</span>
-              <span class="text-size-normol float-right">+9.5%</span>
+              <span class="text-size-normol float-right" :class="todayWater-yesterdayWaterValue>0?'text-color-danger':'text-color-success'">{{ WaterCompare }}</span>
             </div>
           </el-col>
         </div>
@@ -52,14 +52,14 @@
           </el-col>
           <el-col :span="18">
             <div class="itemMarginBottom text-size-normol text-color-info-shallow">本日耗汽量</div>
-            <div class="itemMarginBottom text-size-big text-color-info">{{ todaySteam }}</div>
+            <div class="itemMarginBottom text-size-big text-color-info">{{ todaySteam }} {{ SteamUnit }}</div>
             <div class="itemMarginBottom">
               <span class="text-size-mini text-color-info-shallow">今日汽费</span>
               <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
             </div>
             <div class="itemMarginBottom">
               <span class="text-size-normol text-color-info">523.5元</span>
-              <span class="text-size-normol float-right">+9.5%</span>
+              <span class="text-size-normol float-right" :class="todaySteam-yesterdaySteamValue>0?'text-color-danger':'text-color-success'">{{ SteamCompare }}</span>
             </div>
           </el-col>
         </div>
@@ -133,6 +133,12 @@
         todayElectricity:"",
         todayWater:"",
         todaySteam:"",
+        yesterdayElectricityValue:"",
+        yesterdayWaterValue:"",
+        yesterdaySteamValue:"",
+        ElectricityUnit:"",
+        WaterUnit:"",
+        SteamUnit:"",
         EnergyOptions: [{
           value: '电',
           label: '电能'
@@ -179,32 +185,114 @@
     created(){
       this.getEnergyPreview()
     },
+    computed:{
+      ElectricityCompare(){
+        if(this.todayElectricity > 0){
+          var compare = (this.todayElectricity - this.yesterdayElectricityValue) / this.todayElectricity * 100
+          if(this.todayElectricity - this.yesterdayElectricityValue > 0){
+            return "+" + compare.toFixed(2) + "%"
+          }else{
+            return compare.toFixed(2) + "%"
+          }
+        }else{
+          if(this.yesterdayElectricityValue > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
+        }
+      },
+      WaterCompare(){
+        if(this.todayWater > 0){
+          var compare = (this.todayWater - this.yesterdayWaterValue) / this.todayWater * 100
+          if(this.todayWater - this.yesterdayWaterValue > 0){
+            return "+" + compare.toFixed(2) + "%"
+          }else{
+            return compare.toFixed(2) + "%"
+          }
+        }else{
+          if(this.yesterdayWaterValue > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
+        }
+      },
+      SteamCompare(){
+        if(this.todaySteam > 0){
+          var compare = (this.todaySteam - this.yesterdaySteamValue) / this.todaySteam * 100
+          if(this.todaySteam - this.yesterdaySteamValue > 0){
+            return "+" + compare.toFixed(2) + "%"
+          }else{
+            return compare.toFixed(2) + "%"
+          }
+        }else{
+          if(this.yesterdaySteamValue > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
+        }
+      }
+    },
     methods:{
       getEnergyPreview(){
         var that = this
         var nowTime = moment().format('HH:mm').substring(0,4) + "0"
         var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
         var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
+        var yesterdayStartTime = moment().subtract(1,'day').format('YYYY-MM-DD') + " 00:00"
+        var yesterdayEndTime = moment().subtract(1,'day').format('YYYY-MM-DD') + " " + nowTime
         var params = {}
+        var yesterdayParams ={}
         if(this.newAreaName.areaName == "整厂区"){
           params.StartTime = todayStartTime
           params.EndTime = todayEndTime
+          yesterdayParams.StartTime = yesterdayStartTime
+          yesterdayParams.EndTime = yesterdayEndTime
         }else{
           params.StartTime = todayStartTime
           params.EndTime = todayEndTime
           params.Area = this.newAreaName.areaName
+          yesterdayParams.StartTime = yesterdayStartTime
+          yesterdayParams.EndTime = yesterdayEndTime
+          yesterdayParams.Area = this.newAreaName.areaName
         }
         this.axios.all([
           this.axios.get("/api/energyelectric",{params: params}),//获取今天电
+          this.axios.get("/api/energyelectric",{params: yesterdayParams}),//获取昨天电
           this.axios.get("/api/energywater",{params: params}),//获取今天水
+          this.axios.get("/api/energywater",{params: yesterdayParams}),//获取昨天水
           this.axios.get("/api/energysteam",{params: params}),//获取今天汽
-        ]).then(this.axios.spread(function(todayElectricity,todayWater,todaySteam){
+          this.axios.get("/api/energysteam",{params: yesterdayParams}),//获取昨天汽
+        ]).then(this.axios.spread(function(todayElectricity,yesterdayElectricity,todayWater,yesterdayWater,todaySteam,yesterdaySteam){
           var todayElectricityData = JSON.parse(todayElectricity.data)
           var todayWaterData = JSON.parse(todayWater.data)
           var todaySteamData = JSON.parse(todaySteam.data)
-          that.todayElectricity = todayElectricityData.value +" "+ todayElectricityData.unit
-          that.todayWater = todayWaterData.value +" "+ todayWaterData.unit
-          that.todaySteam = todaySteamData.value +" "+ todaySteamData.unit
+          var yesterdayElectricityValue = JSON.parse(yesterdayElectricity.data).value
+          var yesterdayWaterValue = JSON.parse(yesterdayWater.data).value
+          var yesterdaySteamValue = JSON.parse(yesterdaySteam.data).value
+          that.yesterdayElectricityValue = yesterdayElectricityValue
+          that.yesterdayWaterValue = yesterdayWaterValue
+          that.yesterdaySteamValue = yesterdaySteamValue
+          if(todayElectricityData.value != undefined){
+            that.todayElectricity = todayElectricityData.value
+            that.ElectricityUnit = todayElectricityData.unit
+          }else{
+            that.todayElectricity = "无数据"
+          }
+          if(todayWaterData.value != undefined){
+            that.todayWater = todayWaterData.value
+            that.WaterUnit = todayWaterData.unit
+          }else{
+            that.todayWater = "无数据"
+          }
+          if(todaySteamData.value != undefined){
+            that.todaySteam = todaySteamData.value
+            that.SteamUnit = todaySteamData.unit
+          }else{
+            that.todaySteam = "无数据"
+          }
         }))
       }
     }
