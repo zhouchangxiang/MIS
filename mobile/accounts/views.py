@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 import uuid
 import pickle
@@ -5,15 +6,15 @@ import redis
 
 from flask import jsonify
 from flask import Blueprint, request
-from datetime import datetime
 from werkzeug.security import check_password_hash
-from dbset.database.db_operate import db_session
 
+from dbset.database.db_operate import db_session
 from dbset.log.BK2TLogger import logger
 from dbset.main.BSFramwork import AlchemyEncoder
 from models.SystemManagement.system import User
 
-mobile = Blueprint('mobile', __name__, template_folder='templates')
+
+accounts = Blueprint('mobile', __name__, template_folder='templates')
 
 
 class Redis:
@@ -31,7 +32,14 @@ class Redis:
         return pickle.loads(red.get(key)) if red.get(key) else '身份验证失败'
 
 
-@mobile.route('/login', methods=['POST'])
+@accounts.route('/', methods=['GET'])
+def index():
+    token = request.headers.get('token')
+    result = Redis.get_data(Redis.connect(), token)
+    return jsonify({'code': 1003, 'msg': '获取数据成功', 'data': result})
+
+
+@accounts.route('/login', methods=['POST'])
 def login():
     try:
         json_data = request.get_json()
@@ -51,9 +59,3 @@ def login():
         logger.error(e)
         return json.dumps([{"status": "Error:" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
 
-
-@mobile.route('/', methods=['GET'])
-def index():
-    token = request.headers.get('token')
-    result = Redis.get_data(Redis.connect(), token)
-    return jsonify({'code': 1003, 'msg': '获取数据成功', 'data': result})

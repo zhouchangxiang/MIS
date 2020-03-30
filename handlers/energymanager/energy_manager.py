@@ -193,6 +193,13 @@ def curcutlas(cur, las, count, energy):
 
 
 def energyStatistics(oc_list, StartTime, EndTime, energy):
+    '''
+    :param oc_list: tag点的List
+    :param StartTime:
+    :param EndTime:
+    :param energy: 水，电 ，气
+    :return:
+    '''
     propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
     pro = float(propor.Proportion)
     sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementTable] t with (INDEX =IX_IncrementTable)  WHERE t.TagClassValue in (" + str(oc_list)[1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
@@ -208,6 +215,12 @@ def energyStatistics(oc_list, StartTime, EndTime, energy):
 
 
 def energyStatisticstotal(oc_list, StartTime, EndTime):
+    '''
+    :param oc_list: tag点的List
+    :param StartTime:
+    :param EndTime:
+    :return:
+    '''
     propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
     pro = float(propor.Proportion)
     sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementTable] t with (INDEX =IX_IncrementTable)  WHERE t.TagClassValue in (" + str(oc_list)[1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
