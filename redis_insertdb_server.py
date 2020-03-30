@@ -37,6 +37,11 @@ def run():
                 k = key.TagClassValue[0:1]
                 if k == "E":
                     ZGL = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_ZGL"))
+                    if float(ZGL) > 12000:
+                        aa = redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_ZGL")
+                        insertSyslog("redis_insertdb_server", "ZGL:"+str(ZGL)+ key.TagClassValue + str(
+                            datetime.datetime.now()) + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "redis:"+str(aa))
+
                     ZGLSamptime = returnb(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_ZGL_Samptime"))
                     AU = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_AU"))
                     AI = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_AI"))
