@@ -1,140 +1,242 @@
 <template>
-  <el-row :gutter="15">
-    <el-col :span="24">
-      <el-form :model="formParameters">
-        <el-form-item style="float: right;">
-          <el-radio-group v-model="formParameters.EnergyValue" fill="#082F4C" size="small">
-            <el-radio-button v-for="item in EnergyOptions" :key="item.id" :label="item.name"></el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-      </el-form>
+  <el-row>
+    <el-col :span="24" v-if="newAreaName.areaName == '整厂区'">
+      <el-row :gutter="15" style="margin-bottom: 15px;">
+        <el-col :span="8">
+          <div class="platformContainer">
+            <el-col :span="24" style="border-bottom: 1px solid #d8d8d8;padding-bottom: 20px;">
+              <el-col :span="6">
+                <div class="iconBlock float-left" style="color: #FB8A06;">
+                  <i class="fa fa-flash fa-2x"></i>
+                </div>
+              </el-col>
+              <el-col :span="18">
+                <div class="itemMarginBottom text-size-normol text-color-info-shallow">本日耗电量</div>
+                <div class="itemMarginBottom text-size-big text-color-info">{{ todayElectricity }} {{ ElectricityUnit }}</div>
+                <div class="itemMarginBottom">
+                  <span class="text-size-mini text-color-info-shallow">今日电费</span>
+                  <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
+                </div>
+                <div class="itemMarginBottom">
+                  <span class="text-size-normol text-color-info">523.5元</span>
+                  <span class="text-size-normol float-right" :class="todayElectricity-yesterdayElectricityValue>0?'text-color-danger':'text-color-success'">{{ ElectricityCompare }}</span>
+                </div>
+              </el-col>
+            </el-col>
+            <el-col :span="24" style="margin-top: 20px;">
+              <p class="text-size-small">- 实时数据：{{ electricChartValue }}</p>
+              <ve-line :data="electricChartData" :extend="chartExtend" :legend-visible="false" height="300px"></ve-line>
+            </el-col>
+            <el-col :span="24" style="margin-top: 20px;">
+              <p class="text-color-info-shallow">日耗量</p>
+              <el-col :span="12">
+                <ve-histogram :data="steamHistogram" height="200px" :extend="chartExtend" :legend-visible="false"></ve-histogram>
+              </el-col>
+              <el-col :span="12">
+                <ve-ring :data="steamRing" :settings="batchChartSettings" :extend="batchChartExtend" width="100%" height="100px"></ve-ring>
+              </el-col>
+            </el-col>
+          </div>
+        </el-col>
+        <el-col :span="8">
+          <div class="platformContainer">
+            <el-col :span="24" style="border-bottom: 1px solid #d8d8d8;padding-bottom: 20px;">
+              <el-col :span="6">
+                <div class="iconBlock float-left" style="color: #228AD5;">
+                  <i class="fa fa-tint fa-2x"></i>
+                </div>
+              </el-col>
+              <el-col :span="18">
+                <div class="itemMarginBottom text-size-normol text-color-info-shallow">本日耗水量</div>
+                <div class="itemMarginBottom text-size-big text-color-info">{{ todayWater }} {{ WaterUnit }}</div>
+                <div class="itemMarginBottom">
+                  <span class="text-size-mini text-color-info-shallow">今日水费</span>
+                  <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
+                </div>
+                <div class="itemMarginBottom">
+                  <span class="text-size-normol text-color-info">523.5元</span>
+                  <span class="text-size-normol float-right" :class="todayWater-yesterdayWaterValue>0?'text-color-danger':'text-color-success'">{{ WaterCompare }}</span>
+                </div>
+              </el-col>
+            </el-col>
+            <el-col :span="24" style="margin-top: 20px;">
+              <p class="text-size-small">- 实时数据：{{ waterChartValue }}</p>
+              <ve-line :data="waterChartData" :extend="chartExtend" :legend-visible="false" height="300px"></ve-line>
+            </el-col>
+            <el-col :span="24" style="margin-top: 20px;">
+              <p class="text-color-info-shallow">日耗量</p>
+              <el-col :span="12">
+                <ve-histogram :data="steamHistogram" height="200px" :extend="chartExtend" :legend-visible="false"></ve-histogram>
+              </el-col>
+              <el-col :span="12">
+                <ve-ring :data="steamRing" :settings="batchChartSettings" :extend="batchChartExtend" width="100%" height="100px"></ve-ring>
+              </el-col>
+            </el-col>
+          </div>
+        </el-col>
+        <el-col :span="8">
+          <div class="platformContainer">
+            <el-col :span="24" style="border-bottom: 1px solid #d8d8d8;padding-bottom: 20px;">
+              <el-col :span="6">
+                <div class="iconBlock float-left" style="color: #15CC48;">
+                  <i class="fa fa-tachometer fa-2x"></i>
+                </div>
+              </el-col>
+              <el-col :span="18">
+                <div class="itemMarginBottom text-size-normol text-color-info-shallow">本日耗汽量</div>
+                <div class="itemMarginBottom text-size-big text-color-info">{{ todaySteam }} {{ SteamUnit }}</div>
+                <div class="itemMarginBottom">
+                  <span class="text-size-mini text-color-info-shallow">今日汽费</span>
+                  <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
+                </div>
+                <div class="itemMarginBottom">
+                  <span class="text-size-normol text-color-info">523.5元</span>
+                  <span class="text-size-normol float-right" :class="todaySteam-yesterdaySteamValue>0?'text-color-danger':'text-color-success'">{{ SteamCompare }}</span>
+                </div>
+              </el-col>
+            </el-col>
+            <el-col :span="24" style="margin-top: 20px;">
+              <p class="text-size-small">- 实时数据：{{ steamChartValue }}</p>
+              <ve-line :data="steamChartData" :extend="chartExtend" :legend-visible="false" height="300px"></ve-line>
+            </el-col>
+            <el-col :span="24" style="margin-top: 20px;">
+              <p class="text-color-info-shallow">日耗量</p>
+              <el-col :span="12">
+                <ve-histogram :data="steamHistogram" height="200px" :extend="chartExtend" :legend-visible="false"></ve-histogram>
+              </el-col>
+              <el-col :span="12">
+                <ve-ring :data="steamRing" :settings="batchChartSettings" :extend="batchChartExtend" width="100%" height="100px"></ve-ring>
+              </el-col>
+            </el-col>
+          </div>
+        </el-col>
+      </el-row>
     </el-col>
-    <el-col :span="24" style="margin-bottom: 15px;">
-      <el-col :span="8">
-        <div class="platformContainer">
-          <el-col :span="6">
-            <div class="iconBlock float-left" style="color: #FB8A06;">
-              <i class="fa fa-flash fa-2x"></i>
-            </div>
-          </el-col>
-          <el-col :span="18">
-            <div class="itemMarginBottom text-size-normol text-color-info-shallow">本日耗电量</div>
-            <div class="itemMarginBottom text-size-big text-color-info">{{ todayElectricity }} {{ ElectricityUnit }}</div>
-            <div class="itemMarginBottom">
-              <span class="text-size-mini text-color-info-shallow">今日电费</span>
-              <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
-            </div>
-            <div class="itemMarginBottom">
-              <span class="text-size-normol text-color-info">523.5元</span>
-              <span class="text-size-normol float-right" :class="todayElectricity-yesterdayElectricityValue>0?'text-color-danger':'text-color-success'">{{ ElectricityCompare }}</span>
-            </div>
-          </el-col>
-        </div>
-      </el-col>
-      <el-col :span="8">
-        <div class="platformContainer">
-          <el-col :span="6">
-            <div class="iconBlock float-left" style="color: #228AD5;">
-              <i class="fa fa-tint fa-2x"></i>
-            </div>
-          </el-col>
-          <el-col :span="18">
-            <div class="itemMarginBottom text-size-normol text-color-info-shallow">本日耗水量</div>
-            <div class="itemMarginBottom text-size-big text-color-info">{{ todayWater }} {{ WaterUnit }}</div>
-            <div class="itemMarginBottom">
-              <span class="text-size-mini text-color-info-shallow">今日水费</span>
-              <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
-            </div>
-            <div class="itemMarginBottom">
-              <span class="text-size-normol text-color-info">523.5元</span>
-              <span class="text-size-normol float-right" :class="todayWater-yesterdayWaterValue>0?'text-color-danger':'text-color-success'">{{ WaterCompare }}</span>
-            </div>
-          </el-col>
-        </div>
-      </el-col>
-      <el-col :span="8">
-        <div class="platformContainer">
-          <el-col :span="6">
-            <div class="iconBlock float-left" style="color: #15CC48;">
-              <i class="fa fa-tachometer fa-2x"></i>
-            </div>
-          </el-col>
-          <el-col :span="18">
-            <div class="itemMarginBottom text-size-normol text-color-info-shallow">本日耗汽量</div>
-            <div class="itemMarginBottom text-size-big text-color-info">{{ todaySteam }} {{ SteamUnit }}</div>
-            <div class="itemMarginBottom">
-              <span class="text-size-mini text-color-info-shallow">今日汽费</span>
-              <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
-            </div>
-            <div class="itemMarginBottom">
-              <span class="text-size-normol text-color-info">523.5元</span>
-              <span class="text-size-normol float-right" :class="todaySteam-yesterdaySteamValue>0?'text-color-danger':'text-color-success'">{{ SteamCompare }}</span>
-            </div>
-          </el-col>
-        </div>
-      </el-col>
-    </el-col>
-    <!--<el-col :span="24">-->
-      <!--<el-col :span="6">-->
-        <!--<div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">-->
-          <!--<div class="chartTile">生产详情</div>-->
-        <!--</div>-->
-        <!--<div class="platformContainer" style="margin-bottom:2px;">-->
-          <!--<el-table :data="batchTableData" style="width: 100%">-->
-            <!--<el-table-column prop="Name" label="品名"></el-table-column>-->
-            <!--<el-table-column prop="Batch" label="批次"></el-table-column>-->
-          <!--</el-table>-->
-        <!--</div>-->
-        <!--<div class="platformContainer">-->
-          <!--<el-col :span="24">-->
-            <!--<div class="itemMarginBottom">-->
-              <!--<span class="text-size-normol text-color-info-shallow">今日品名数</span>-->
-              <!--<span class="text-size-normol text-color-info-shallow float-right">今日总成本</span>-->
-            <!--</div>-->
-            <!--<div class="itemMarginBottom">-->
-              <!--<span class="text-size-normol text-color-info">2</span>-->
-              <!--<span class="text-size-normol text-color-info float-right">24562.23元</span>-->
-            <!--</div>-->
-          <!--</el-col>-->
-          <!--<el-col :span="12">-->
-            <!--<div class="itemMarginBottom">-->
-              <!--<span class="text-size-normol text-color-info-shallow">今日批次数</span>-->
-            <!--</div>-->
-            <!--<div class="itemMarginBottom">-->
-              <!--<span class="text-size-normol text-color-info">5</span>-->
-            <!--</div>-->
-          <!--</el-col>-->
-          <!--<el-col :span="12">-->
-            <!--<ve-ring :data="ringChartData" :settings="batchChartSettings" :extend="batchChartExtend" width="100%" height="100px"></ve-ring>-->
-          <!--</el-col>-->
-        <!--</div>-->
-      <!--</el-col>-->
-      <!--<el-col :span="13">-->
-        <!--<div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">-->
-          <!--<div class="chartTile">数据表</div>-->
-          <!--<el-select v-model="EnergyValue" size="mini">-->
-            <!--<el-option v-for="item in EnergyOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>-->
-          <!--</el-select>-->
-        <!--</div>-->
-        <!--<div class="platformContainer">-->
+    <el-col :span="24" v-if="newAreaName.areaName != '整厂区'">
+      <el-row :gutter="15" style="margin-bottom: 15px;">
+        <el-col :span="8">
+          <div class="platformContainer">
+            <el-col :span="6">
+              <div class="iconBlock float-left" style="color: #FB8A06;">
+                <i class="fa fa-flash fa-2x"></i>
+              </div>
+            </el-col>
+            <el-col :span="18">
+              <div class="itemMarginBottom text-size-normol text-color-info-shallow">本日耗电量</div>
+              <div class="itemMarginBottom text-size-big text-color-info">{{ todayElectricity }} {{ ElectricityUnit }}</div>
+              <div class="itemMarginBottom">
+                <span class="text-size-mini text-color-info-shallow">今日电费</span>
+                <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
+              </div>
+              <div class="itemMarginBottom">
+                <span class="text-size-normol text-color-info">523.5元</span>
+                <span class="text-size-normol float-right" :class="todayElectricity-yesterdayElectricityValue>0?'text-color-danger':'text-color-success'">{{ ElectricityCompare }}</span>
+              </div>
+            </el-col>
+          </div>
+        </el-col>
+        <el-col :span="8">
+          <div class="platformContainer">
+            <el-col :span="6">
+              <div class="iconBlock float-left" style="color: #228AD5;">
+                <i class="fa fa-tint fa-2x"></i>
+              </div>
+            </el-col>
+            <el-col :span="18">
+              <div class="itemMarginBottom text-size-normol text-color-info-shallow">本日耗水量</div>
+              <div class="itemMarginBottom text-size-big text-color-info">{{ todayWater }} {{ WaterUnit }}</div>
+              <div class="itemMarginBottom">
+                <span class="text-size-mini text-color-info-shallow">今日水费</span>
+                <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
+              </div>
+              <div class="itemMarginBottom">
+                <span class="text-size-normol text-color-info">523.5元</span>
+                <span class="text-size-normol float-right" :class="todayWater-yesterdayWaterValue>0?'text-color-danger':'text-color-success'">{{ WaterCompare }}</span>
+              </div>
+            </el-col>
+          </div>
+        </el-col>
+        <el-col :span="8">
+          <div class="platformContainer">
+            <el-col :span="6">
+              <div class="iconBlock float-left" style="color: #15CC48;">
+                <i class="fa fa-tachometer fa-2x"></i>
+              </div>
+            </el-col>
+            <el-col :span="18">
+              <div class="itemMarginBottom text-size-normol text-color-info-shallow">本日耗汽量</div>
+              <div class="itemMarginBottom text-size-big text-color-info">{{ todaySteam }} {{ SteamUnit }}</div>
+              <div class="itemMarginBottom">
+                <span class="text-size-mini text-color-info-shallow">今日汽费</span>
+                <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
+              </div>
+              <div class="itemMarginBottom">
+                <span class="text-size-normol text-color-info">523.5元</span>
+                <span class="text-size-normol float-right" :class="todaySteam-yesterdaySteamValue>0?'text-color-danger':'text-color-success'">{{ SteamCompare }}</span>
+              </div>
+            </el-col>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row :gutter="15">
+        <el-col :span="6">
+          <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
+            <div class="chartTile">生产详情</div>
+          </div>
+          <div class="platformContainer" style="margin-bottom:2px;">
+            <el-table :data="batchTableData" style="width: 100%">
+              <el-table-column prop="Name" label="品名"></el-table-column>
+              <el-table-column prop="Batch" label="批次"></el-table-column>
+            </el-table>
+          </div>
+          <div class="platformContainer">
+            <el-col :span="24">
+              <div class="itemMarginBottom">
+                <span class="text-size-normol text-color-info-shallow">今日品名数</span>
+                <span class="text-size-normol text-color-info-shallow float-right">今日总成本</span>
+              </div>
+              <div class="itemMarginBottom">
+                <span class="text-size-normol text-color-info">2</span>
+                <span class="text-size-normol text-color-info float-right">24562.23元</span>
+              </div>
+            </el-col>
+            <el-col :span="12">
+              <div class="itemMarginBottom">
+                <span class="text-size-normol text-color-info-shallow">今日批次数</span>
+              </div>
+              <div class="itemMarginBottom">
+                <span class="text-size-normol text-color-info">5</span>
+              </div>
+            </el-col>
+            <el-col :span="12">
+              <ve-ring :data="ringChartData" :settings="batchChartSettings" :extend="batchChartExtend" width="100%" height="100px"></ve-ring>
+            </el-col>
+          </div>
+        </el-col>
+        <el-col :span="13">
+          <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
+            <div class="chartTile">数据表</div>
+          </div>
+          <div class="platformContainer">
 
-        <!--</div>-->
-      <!--</el-col>-->
-      <!--<el-col :span="5">-->
-        <!--<div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">-->
-          <!--<div class="chartTile">设备情况</div>-->
-        <!--</div>-->
-        <!--<div class="platformContainer">-->
-          <!--<ul>-->
-            <!--<li v-for="item in onlineEquipmentOption" style="margin-bottom: 5px;">-->
-              <!--<p class="text-size-normol text-color-info">{{ item.name }}</p>-->
-              <!--<p class="text-size-mini text-color-info-shallow" style="margin-top: 5px;"><span>上线数/总数</span><span style="float: right;">{{ item.online }}/{{ item.total }}</span></p>-->
-              <!--<el-progress :text-inside="true" :stroke-width="16" :percentage="item.rate"></el-progress>-->
-            <!--</li>-->
-          <!--</ul>-->
-        <!--</div>-->
-      <!--</el-col>-->
-    <!--</el-col>-->
+          </div>
+        </el-col>
+        <el-col :span="5">
+          <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
+            <div class="chartTile">设备情况</div>
+          </div>
+          <div class="platformContainer">
+            <ul>
+              <li v-for="item in onlineEquipmentOption" style="margin-bottom: 5px;">
+                <p class="text-size-normol text-color-info">{{ item.name }}</p>
+                <p class="text-size-mini text-color-info-shallow" style="margin-top: 5px;"><span>上线数/总数</span><span style="float: right;">{{ item.online }}/{{ item.total }}</span></p>
+                <el-progress :text-inside="true" :stroke-width="16" :percentage="item.rate"></el-progress>
+              </li>
+            </ul>
+          </div>
+        </el-col>
+      </el-row>
+    </el-col>
   </el-row>
 </template>
 
@@ -154,25 +256,89 @@
         ElectricityUnit:"",
         WaterUnit:"",
         SteamUnit:"",
-        EnergyOptions: [{
-          id:0,
-          value: '',
-          name: '全部'
-        }, {
-          id:1,
-          value: '电',
-          name: '电能'
-        }, {
-          id:2,
-          value: '水',
-          name: '水能'
-        }, {
-          id:3,
-          value: '汽',
-          name: '汽能'
-        }],
-        formParameters:{
-          EnergyValue:'全部',
+        chartExtend:{
+          yAxis:{
+            show:false
+          },
+          grid:{
+            left: '-40px',
+            right: '0',
+            bottom: '20px',
+            top:'20px'
+          },
+          series: {
+            smooth: false,
+            itemStyle:{
+              color:"#FB8A06"
+            }
+          }
+        },
+        electricChartValue:"",
+        electricChartData:{
+          columns: ['时间', '功率'],
+          rows: [
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""}
+          ]
+        },
+        waterChartValue:"",
+        waterChartData:{
+          columns: ['时间', '功率'],
+          rows: [
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""}
+          ]
+        },
+        steamChartValue:"",
+        steamChartData:{
+          columns: ['时间', '功率'],
+          rows: [
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""}
+          ]
+        },
+        steamHistogram:{
+          columns: ['时间', '功率'],
+          rows: [
+            { '时间': "昨日", '功率': "4645"},
+            { '时间': "本日", '功率': "3454"},
+            { '时间': "月均", '功率': "2547"},
+          ]
+        },
+        steamRing:{
+          columns: ['日期', '访问用户'],
+          rows: [
+            { '日期': '1/1', '访问用户': 1393 },
+            { '日期': '1/2', '访问用户': 3530 },
+            { '日期': '1/3', '访问用户': 2923 },
+            { '日期': '1/4', '访问用户': 1723 },
+            { '日期': '1/5', '访问用户': 3792 },
+            { '日期': '1/6', '访问用户': 4593 }
+          ]
         },
         batchTableData:[
           {Name:"药品A",Batch:"JUSA2374627"},
@@ -208,7 +374,13 @@
       }
     },
     created(){
+      var that = this
       this.getEnergyPreview()
+      setInterval(function () {
+        that.getRealTimeElectricChart()
+        that.getRealTimeWaterChart()
+        that.getRealTimeSteamChart()
+      },2000)
       this.getOnLineEq()
     },
     computed:{
@@ -320,6 +492,33 @@
             that.todaySteam = "无数据"
           }
         }))
+      },
+      getRealTimeElectricChart(){
+        var res = Math.floor((Math.random() * 100) + 1);
+        this.electricChartData.rows.push({
+          "时间": moment(new Date()).format("HH:mm:ss"),
+          "功率": res
+        })
+        this.electricChartData.rows.shift()
+        this.electricChartValue = res
+      },
+      getRealTimeWaterChart(){
+        var res = Math.floor((Math.random() * 100) + 1);
+        this.waterChartData.rows.push({
+          "时间": moment(new Date()).format("HH:mm:ss"),
+          "功率": res
+        })
+        this.waterChartData.rows.shift()
+        this.waterChartValue = res
+      },
+      getRealTimeSteamChart(){
+        var res = Math.floor((Math.random() * 100) + 1);
+        this.steamChartData.rows.push({
+          "时间": moment(new Date()).format("HH:mm:ss"),
+          "功率": res
+        })
+        this.steamChartData.rows.shift()
+        this.steamChartValue = res
       },
       getOnLineEq(){
         this.axios.get("/api/energyall",{params:{ModelFlag:"在线检测情况"}}).then(res => {

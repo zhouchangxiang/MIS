@@ -71,7 +71,7 @@
             </el-row>
             <el-row>
               <el-col :span="24">
-                  <ve-line :data="realtimeChartData" :extend="realtimeChartExtend" height="260px" :legend-visible="false"></ve-line>
+                  <ve-line :data="realtimeChartData" :extend="realtimeChartExtend" height="260px" :legend-visible="true"></ve-line>
               </el-col>
             </el-row>
           </div>
@@ -302,10 +302,10 @@
         },
         realtimeChartExtend: { //今日对比能耗图表配置
           grid:{
-            left: '-40px',
+            left: '-20px',
             right: '0',
             bottom: '0',
-            top:'20px'
+            top:'30px'
           },
           series: {
             smooth: false
@@ -466,6 +466,9 @@
         var thisStartYear = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD')
         var lastStartYear = moment().year(moment().year() - 1).startOf('year').format('YYYY-MM-DD HH:mm')
         var lastEndYear = moment().year(moment().year() - 1).endOf('year').format('YYYY-MM-DD').substring(0,4) + "-" + thisMonth + " " + nowTime
+        if(!moment(lastEndMonth)._isValid){  //判断上月结束日期是否合法，否则赋值为上月最后一天的23：59
+          lastEndMonth = moment().month(moment().month() - 1).endOf('month').format('YYYY-MM-DD HH:mm');
+        }
         this.nowTime = nowTime
         this.nowDate = nowDate
         this.axios.all([
