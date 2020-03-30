@@ -20,7 +20,6 @@ from handlers.energymanager.energy_manager import energy, energyselect
 from flask_login import current_user
 
 app = Flask(__name__)
-app.run(port=6001)
 bootstrap = Bootstrap(app)
 app.config['SECRET_KEY'] = 'qeqhdasdqiqd131'
 account_auth.login_manager.init_app(app)
