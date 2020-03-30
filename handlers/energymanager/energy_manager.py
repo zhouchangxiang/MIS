@@ -746,9 +746,18 @@ def exportxstatistic(StartTime, EndTime):
                 ocw_list.append(oc.TagClassValue)
             elif Tag == "S":
                 ocs_list.append(oc.TagClassValue)
-        elecount = energyStatistics(oce_list, StartTime, EndTime, "电")
-        watcount = energyStatistics(ocw_list, StartTime, EndTime, "水")
-        stecount = energyStatistics(ocs_list, StartTime, EndTime, "汽")
+        if len(oce_list) > 0:
+            elecount = energyStatistics(oce_list, StartTime, EndTime, "电")
+        else:
+            elecount = 0.0
+        if len(ocw_list) > 0:
+            watcount = energyStatistics(ocw_list, StartTime, EndTime, "水")
+        else:
+            watcount = 0.0
+        if len(ocs_list) > 0:
+            stecount = energyStatistics(ocs_list, StartTime, EndTime, "汽")
+        else:
+            stecount = 0.0
         for cum in columns:
             if cum == '区域':
                 worksheet.write(i + 1, columns.index(cum), AreaNames[i].AreaName)
