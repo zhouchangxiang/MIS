@@ -3,9 +3,9 @@
 </template>
 
 <script>
-    export default {
-        name: "UnitConversion"
-    }
+  export default {
+    name: "UnitConversion"
+  }
 </script>
 
 <style scoped>

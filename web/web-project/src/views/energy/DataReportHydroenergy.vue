@@ -3,11 +3,8 @@
     <el-col :span="24">
       <el-form :model="formParameters">
         <el-form-item label="时间：">
-          <el-radio-group v-model="formParameters.resourceTime" fill="#082F4C" size="mini">
-            <el-radio-button v-for="item in radioTimeList" border :key="item.id" :label="item.name"></el-radio-button>
-          </el-radio-group>
-          <el-date-picker type="date" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false"></el-date-picker> ~
-          <el-date-picker type="date" v-model="formParameters.endDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false"></el-date-picker>
+          <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false"></el-date-picker> ~
+          <el-date-picker type="datetime" v-model="formParameters.endDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false"></el-date-picker>
         </el-form-item>
       </el-form>
     </el-col>
@@ -32,16 +29,9 @@
     data(){
       return {
         formParameters:{
-          resourceTime:"班次",
           startDate:Date.now(),
           endDate:Date.now()
         },
-        radioTimeList:[
-          {name:"班次",id:1},
-          {name:"日",id:2},
-          {name:"周",id:3},
-          {name:"月",id:4},
-        ],
         pickerOptions:{
           disabledDate(time) {
             return time.getTime() > Date.now();

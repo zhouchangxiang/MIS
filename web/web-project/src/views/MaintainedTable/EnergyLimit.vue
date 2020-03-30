@@ -29,32 +29,10 @@
       </el-row>
       <el-table :data="tableData" border tooltip-effect="dark" @selection-change="handleSelectionChange">
         <el-table-column type="selection"></el-table-column>
-        <el-table-column type="expand">
-          <template slot-scope="props">
-            <el-form label-position="left" class="table-expand">
-              <el-form-item label="ID">
-                <span>{{ props.row.id }}</span>
-              </el-form-item>
-              <el-form-item label="密码">
-                <span>{{ props.row.Password }}</span>
-              </el-form-item>
-              <el-form-item label="创建人">
-                <span>{{ props.row.Creater }}</span>
-              </el-form-item>
-              <el-form-item label="创建时间">
-                <span>{{ props.row.CreateTime }}</span>
-              </el-form-item>
-              <el-form-item label="最近在线时间">
-                <span>{{ props.row.LastLoginTime }}</span>
-              </el-form-item>
-            </el-form>
-          </template>
-        </el-table-column>
-        <el-table-column prop="Name" label="用户名"></el-table-column>
-        <el-table-column prop="WorkNumber" label="工号"></el-table-column>
-        <el-table-column prop="StationName" label="所属岗位"></el-table-column>
-        <el-table-column prop="OrganizationName" label="所属部门"></el-table-column>
-        <el-table-column prop="FactoryName" label="所属厂区"></el-table-column>
+        <el-table-column prop="ID" label="ID"></el-table-column>
+        <el-table-column prop="LimitName" label="名称"></el-table-column>
+        <el-table-column prop="LimitCode" label="编码"></el-table-column>
+        <el-table-column prop="LimitValue" label="限值"></el-table-column>
       </el-table>
       <div class="paginationClass">
         <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
@@ -67,27 +45,18 @@
         </el-pagination>
       </div>
       <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false" width="40%">
-        <el-form :model="UserForm" label-width="80px" :rules="rules" ref="ruleForm">
+        <el-form :model="submitForm" label-width="80px" :rules="rules" ref="ruleForm">
           <el-form-item label="ID">
-            <el-input v-model="UserForm.id" :disabled="true"></el-input>
+            <el-input v-model="submitForm.ID" :disabled="true"></el-input>
           </el-form-item>
-          <el-form-item label="用户名" prop="Name">
-            <el-input v-model="UserForm.Name"></el-input>
+          <el-form-item label="名称" prop="LimitName">
+            <el-input v-model="submitForm.LimitName"></el-input>
           </el-form-item>
-          <el-form-item label="密码" prop="Password">
-            <el-input v-model="UserForm.Password"></el-input>
+          <el-form-item label="编码" prop="LimitCode">
+            <el-input v-model="submitForm.LimitCode"></el-input>
           </el-form-item>
-          <el-form-item label="工号" prop="WorkNumber">
-            <el-input v-model="UserForm.WorkNumber"></el-input>
-          </el-form-item>
-          <el-form-item label="所属岗位">
-            <el-input v-model="UserForm.StationName"></el-input>
-          </el-form-item>
-          <el-form-item label="所属部门">
-            <el-input v-model="UserForm.OrganizationName"></el-input>
-          </el-form-item>
-          <el-form-item label="所属厂区">
-            <el-input v-model="UserForm.FactoryName"></el-input>
+          <el-form-item label="限值" prop="LimitValue">
+            <el-input v-model="submitForm.LimitValue"></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
@@ -100,9 +69,8 @@
 </template>
 
 <script>
-  var moment = require('moment');
   export default {
-    name: "Personnel",
+    name: "EnergyLimit",
     data(){
       return {
         tableData:[],
@@ -111,23 +79,13 @@
         currentPage:1,
         multipleSelection: [],
         dialogVisible: false,
-        UserForm:'',
+        submitForm:'',
         dialogTitle:'',
-        rules:{
-          Name:[
-            {required: true, message: '请输入用户名', trigger: 'blur'}
-          ],
-          Password:[
-            {required: true, message: '请输入密码', trigger: 'blur'}
-          ],
-          WorkNumber:[
-            {required: true, message: '请输入工号', trigger: 'blur'}
-          ]
-        },
+        rules:{},
         region:"",
         regionList:[
-          {label:"用户名",value:"Name"},
-          {label:"工号",value:"WorkNumber"}
+          {label:"名称",value:"LimitName"},
+          {label:"编码",value:"LimitCode"}
         ],
         searchVal:""
       }
@@ -139,7 +97,7 @@
       getTableData(){
         this.axios.get("/api/CUID",{
           params: {
-            tableName: "User",
+            tableName: "LimitTable",
             limit:this.pagesize,
             offset:this.currentPage - 1
           }
@@ -165,7 +123,7 @@
       searchTab(){
         this.axios.get("/api/CUID",{
           params: {
-            tableName: "User",
+            tableName: "LimitTable",
             field:this.region,
             fieldvalue:this.searchVal,
             limit:this.pagesize,
@@ -183,29 +141,21 @@
         this.dialogTitle = val
         if(val == "add"){
           this.dialogVisible = true
-          this.UserForm = {
+          this.submitForm = {
             ID:"",
-            Name:"",
-            Password:"",
-            WorkNumber:"",
-            StationName:"",
-            OrganizationName:"",
-            FactoryName:"",
-            Creater: sessionStorage.getItem('UserName'),
-            CreateTime:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+            LimitName:"",
+            LimitCode:"",
+            LimitValue:"",
           }
         }else if(val == "edit"){
           if(this.multipleSelection.length == 1){
             this.dialogVisible = true
             let data = this.multipleSelection[0]
-            this.UserForm = {
-              ID:data.id,
-              Name:data.Name,
-              Password:data.Password,
-              WorkNumber:data.WorkNumber,
-              StationName:data.StationName,
-              OrganizationName:data.OrganizationName,
-              FactoryName:data.FactoryName
+            this.submitForm = {
+              ID:data.ID,
+              LimitName:data.LimitName,
+              LimitCode:data.LimitCode,
+              LimitValue:data.LimitValue
             }
           }else{
             this.$message({
@@ -218,10 +168,9 @@
       save(formName){
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.UserForm.tableName = "User"
+            this.submitForm.tableName = "LimitTable"
             if(this.dialogTitle == "add"){
-              console.log(this.UserForm)
-              this.axios.post("/api/CUID",this.qs.stringify(this.UserForm)).then(res =>{
+              this.axios.post("/api/CUID",this.qs.stringify(this.submitForm)).then(res =>{
                 if(res.data == "OK"){
                   this.getTableData()
                 }else{
@@ -235,7 +184,7 @@
                 console.log("请求错误")
               })
             }else if(this.dialogTitle == "edit"){
-              this.axios.put("/api/CUID",this.qs.stringify(this.UserForm)).then(res =>{
+              this.axios.put("/api/CUID",this.qs.stringify(this.submitForm)).then(res =>{
                 if(res.data == "OK"){
                   this.getTableData()
                 }else{
@@ -257,7 +206,7 @@
       del(){
         let mulId = []
         this.multipleSelection.forEach(item=>{
-            mulId.push({id:item.id});
+            mulId.push({id:item.ID});
         })
         if(this.multipleSelection.length >= 1){
           this.$confirm('确定删除所选记录？', '提示', {
@@ -266,7 +215,7 @@
           }).then(()  => {
             this.axios.delete("/api/CUID",{
               params: {
-                tableName: "User",
+                tableName: "LimitTable",
                 delete_data: JSON.stringify(mulId)
               }
             }).then(res =>{

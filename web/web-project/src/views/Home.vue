@@ -141,7 +141,7 @@
             <span><i class="el-icon-bell el-icon--left" style="color: #FB3A06;"></i>实时预警</span>
           </div>
           <div class="home-card-body" style="height: 300px;">
-            <el-table :data="ralTimeWarningTableData" size="mini" height="232px" max-height="232px" style="width: 100%">
+            <el-table :data="ralTimeWarningTableData" size="mini" height="232px" max-height="232px" empty-text="暂无异常" style="width: 100%">
               <el-table-column prop="AreaName" label="区域"></el-table-column>
               <el-table-column prop="EQPName" label="设备"></el-table-column>
               <el-table-column prop="WarningType" label="状态">
@@ -401,7 +401,11 @@
             return compare.toFixed(2) + "%"
           }
         }else{
-          return 0 + "%"
+          if(this.compareDateCon > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
         }
       },
       lastMonthCompare(){
@@ -413,7 +417,11 @@
             return compare.toFixed(2) + "%"
           }
         }else{
-          return 0 + "%"
+          if(this.lastMonthCon > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
         }
       },
       lastYearCompare(){
@@ -425,7 +433,11 @@
             return compare.toFixed(2) + "%"
           }
         }else{
-          return 0 + "%"
+          if(this.lastYearCon > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
         }
       }
     },

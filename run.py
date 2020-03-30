@@ -6,7 +6,7 @@ from tornado.ioloop import IOLoop
 from MICS_Server import app
 
 http_server = HTTPServer(WSGIContainer(app))
-http_server.listen(6001)  # 对应flask的端口
+http_server.listen(5000)  # 对应flask的端口
 IOLoop.instance().start()
 
 # 如果要开启多进程模式用下面的代码，不过仅在linux下
