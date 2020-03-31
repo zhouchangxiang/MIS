@@ -573,3 +573,12 @@ def energyElectricHistory():
             print(e)
             logger.error(e)
             insertSyslog("error", "能源历史数据查询报错Error：" + str(e), current_user.Name)
+
+
+@energyElectric.route('/get_electric_data', methods=['GET'])
+def get_electric():
+    data = request.values()
+    start_time = data.get('StartTime')
+    end_time = data.get('EndTime')
+    result = db_session.query(ElectricEnergy).filter(ElectricEnergy.CollectionDate.between(start_time, end_time)).all()
+    pass

@@ -10,6 +10,8 @@ app = Flask(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}})
 manage = Manager(app)
 
+from models.SystemManagement.core import ElectricEnergy
+
 # 手机管理
 app.register_blueprint(accounts, url_prefix='/v2/accounts')
 app.register_blueprint(electrics, url_prefix='/v2/electrics')
