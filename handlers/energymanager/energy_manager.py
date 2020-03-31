@@ -965,7 +965,10 @@ def areatimeenergycount():
                     oc_list.append(oc.TagClassValue)
                 dir_rows = {}
                 dir_rows["区域"] = AreaName
-                count = energyStatistics(oc_list, start, end, EnergyClass)
+                if len(oc_list) > 0:
+                    count = energyStatistics(oc_list, start, end, EnergyClass)
+                else:
+                    count = 0.0
                 dir_rows["能耗量"] = count
             dir["rows"] = rows_list
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
