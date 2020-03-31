@@ -932,7 +932,7 @@ def trendlookboard():
             dir = {}
             EnergyClass = data.get("EnergyClass")
             CompareTime = data.get("CompareTime")
-            oclass = db_session.query(TagDetail).filter(TagDetail.TagClassValue == EnergyClass).all()
+            oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
             oc_list = []
             for oc in oclass:
                 oc_list.append(oc.TagClassValue)
@@ -942,7 +942,10 @@ def trendlookboard():
                 start = CompareTime +" "+ addzero(i) + ":00:00"
                 dir_rows["时间"] = start
                 end = CompareTime + " " + addzero(i) + ":59:59"
-                count = energyStatistics(oc_list, start, end, EnergyClass)
+                if oc_list > 0:
+                    count = energyStatistics(oc_list, start, end, EnergyClass)
+                else:
+                    count = 0.0
                 dir_rows["能耗量"] = count
                 rows_list.append(dir_rows)
             dir["rows"] = rows_list
