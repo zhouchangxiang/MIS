@@ -30,10 +30,10 @@
             <el-col :span="24" style="margin-top: 20px;">
               <p class="text-color-info-shallow">日耗量</p>
               <el-col :span="12">
-                <ve-histogram :data="steamHistogram" height="200px" :extend="chartExtend" :legend-visible="false"></ve-histogram>
+                <ve-histogram :data="electricHistogram" height="200px" :extend="chartExtend" :legend-visible="false"></ve-histogram>
               </el-col>
               <el-col :span="12">
-                <ve-ring :data="steamRing" :settings="batchChartSettings" :extend="batchChartExtend" width="100%" height="100px"></ve-ring>
+                <ve-ring :data="electricRing" :settings="ChartSettings" :extend="batchChartExtend" width="100%" height="200px"></ve-ring>
               </el-col>
             </el-col>
           </div>
@@ -66,10 +66,10 @@
             <el-col :span="24" style="margin-top: 20px;">
               <p class="text-color-info-shallow">日耗量</p>
               <el-col :span="12">
-                <ve-histogram :data="steamHistogram" height="200px" :extend="chartExtend" :legend-visible="false"></ve-histogram>
+                <ve-histogram :data="waterHistogram" height="200px" :extend="chartExtend" :legend-visible="false"></ve-histogram>
               </el-col>
               <el-col :span="12">
-                <ve-ring :data="steamRing" :settings="batchChartSettings" :extend="batchChartExtend" width="100%" height="100px"></ve-ring>
+                <ve-ring :data="waterRing" :settings="ChartSettings" :extend="batchChartExtend" width="100%" height="200px"></ve-ring>
               </el-col>
             </el-col>
           </div>
@@ -105,7 +105,7 @@
                 <ve-histogram :data="steamHistogram" height="200px" :extend="chartExtend" :legend-visible="false"></ve-histogram>
               </el-col>
               <el-col :span="12">
-                <ve-ring :data="steamRing" :settings="batchChartSettings" :extend="batchChartExtend" width="100%" height="100px"></ve-ring>
+                <ve-ring :data="steamRing" :settings="ChartSettings" :extend="batchChartExtend" width="100%" height="200px"></ve-ring>
               </el-col>
             </el-col>
           </div>
@@ -209,7 +209,7 @@
               </div>
             </el-col>
             <el-col :span="12">
-              <ve-ring :data="ringChartData" :settings="batchChartSettings" :extend="batchChartExtend" width="100%" height="100px"></ve-ring>
+              <ve-ring :data="batchRingChartData" :settings="batchChartSettings" :extend="batchChartExtend" width="100%" height="100px"></ve-ring>
             </el-col>
           </div>
         </el-col>
@@ -267,6 +267,7 @@
             top:'20px'
           },
           series: {
+            barMaxWidth : 30,
             smooth: false,
             itemStyle:{
               color:"#FB8A06"
@@ -289,6 +290,25 @@
             { '时间': "", '功率': ""}
           ]
         },
+        electricHistogram:{
+          columns: ['时间', '功率'],
+          rows: [
+            { '时间': "昨日", '功率': "4645"},
+            { '时间': "本日", '功率': "3454"},
+            { '时间': "月均", '功率': "2547"},
+          ]
+        },
+        electricRing:{
+          columns: ['日期', '访问用户'],
+          rows: [
+            { '日期': '1/1', '访问用户': 1393 },
+            { '日期': '1/2', '访问用户': 3530 },
+            { '日期': '1/3', '访问用户': 2923 },
+            { '日期': '1/4', '访问用户': 1723 },
+            { '日期': '1/5', '访问用户': 3792 },
+            { '日期': '1/6', '访问用户': 4593 }
+          ]
+        },
         waterChartValue:"",
         waterChartData:{
           columns: ['时间', '功率'],
@@ -303,6 +323,25 @@
             { '时间': "", '功率': ""},
             { '时间': "", '功率': ""},
             { '时间': "", '功率': ""}
+          ]
+        },
+        waterHistogram:{
+          columns: ['时间', '功率'],
+          rows: [
+            { '时间': "昨日", '功率': "4645"},
+            { '时间': "本日", '功率': "3454"},
+            { '时间': "月均", '功率': "2547"},
+          ]
+        },
+        waterRing:{
+          columns: ['日期', '访问用户'],
+          rows: [
+            { '日期': '1/1', '访问用户': 1393 },
+            { '日期': '1/2', '访问用户': 3530 },
+            { '日期': '1/3', '访问用户': 2923 },
+            { '日期': '1/4', '访问用户': 1723 },
+            { '日期': '1/5', '访问用户': 3792 },
+            { '日期': '1/6', '访问用户': 4593 }
           ]
         },
         steamChartValue:"",
@@ -346,6 +385,16 @@
           {Name:"药品C",Batch:"JUSA2374627"},
           {Name:"药品D",Batch:"JUSA2374627"},
         ],
+        ChartSettings: {
+          radius: [30,60],
+          offsetY:"100px",
+          label:{
+            show:false
+          },
+          labelLine:{
+            show:false
+          }
+        },
         batchChartSettings: {
           radius: [20,40],
           offsetY:"50px",
@@ -361,7 +410,7 @@
             show:false
           }
         },
-        ringChartData: {
+        batchRingChartData: {
           columns: ['日期', '访问用户'],
           rows: [
             { '日期': '药品A', '访问用户': 1393 },
