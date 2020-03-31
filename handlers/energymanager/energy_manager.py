@@ -385,7 +385,7 @@ def energyselect(data):
 @energy.route('/areaTimeEnergy', methods=['POST', 'GET'])
 def areaTimeEnergy():
     '''
-    区域时段能耗
+    能耗看板的区域时段
     :return:
     '''
     if request.method == 'GET':
@@ -940,3 +940,36 @@ def trendlookboard():
             print(e)
             logger.error(e)
             insertSyslog("error", "能耗看板的能耗趋势查询报错Error：" + str(e), current_user.Name)
+
+@energy.route('/areatimeenergycount', methods=['POST', 'GET'])
+def areatimeenergycount():
+    '''
+    区域时段能耗
+    :return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            dir = {}
+            EnergyClass = data.get("EnergyClass")
+            CompareTime = data.get("CompareTime")
+            start = CompareTime + " 00:00:00"
+            end = CompareTime + " 23:59:59"
+            areas = db_session.query(AreaTable).filter().all()
+            rows_list = []
+            for area in areas:
+                AreaName = area.AreaName
+                oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass, TagDetail.AreaName == AreaName).all()
+                oc_list = []
+                for oc in oclass:
+                    oc_list.append(oc.TagClassValue)
+                dir_rows = {}
+                dir_rows["区域"] = AreaName
+                count = energyStatistics(oc_list, start, end, EnergyClass)
+                dir_rows["能耗量"] = count
+            dir["rows"] = rows_list
+            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "区域时段能耗查询报错Error：" + str(e), current_user.Name)
