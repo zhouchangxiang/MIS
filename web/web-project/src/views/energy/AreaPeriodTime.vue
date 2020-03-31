@@ -216,7 +216,7 @@
     data(){
       return {
         formParameters:{
-          date:Date.now(),
+          date:moment().format('YYYY-MM-DD'),
           energy:"电"
         },
         energyList:[
