@@ -946,6 +946,7 @@ def trendlookboard():
                 dir_rows["能耗量"] = count
                 rows_list.append(dir_rows)
             dir["rows"] = rows_list
+            print(dir)
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
