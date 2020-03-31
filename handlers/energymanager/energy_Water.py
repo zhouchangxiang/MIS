@@ -517,8 +517,9 @@ def get_electric():
     if area_name:
         results = db_session.query(WaterEnergy).filter(WaterEnergy.AreaName == area_name).filter(
             WaterEnergy.CollectionDate.between(start_time, end_time)).order_by(WaterEnergy.ID.desc()).all()
+        data = results[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
     else:
         results = db_session.query(WaterEnergy).filter(
             WaterEnergy.CollectionDate.between(start_time, end_time)).order_by(WaterEnergy.ID.desc()).all()
-    data = results[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
+        data = results[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
     return json.dumps({'total': len(results), 'rows': data}, cls=AlchemyEncoder, ensure_ascii=False)
