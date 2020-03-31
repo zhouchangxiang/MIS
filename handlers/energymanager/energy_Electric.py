@@ -580,11 +580,15 @@ def energyElectricHistory():
 def get_electric():
     start_time = request.values.get('StartTime')
     end_time = request.values.get('EndTime')
+    area_name = request.values.get('AreaName')
     # 当前页数
     current_page = request.values.get('offset', 1, type=int)
     # 每页显示条数
     pagesize = int(request.values.get('limit', 10))
-    results = db_session.query(ElectricEnergy).filter(
+    results = db_session.query(ElectricEnergy).filter(ElectricEnergy.AreaName == area_name).filter(
         ElectricEnergy.CollectionDate.between(start_time, end_time)).order_by(ElectricEnergy.ID.desc()).all()
+    # results = db_session.query(ElectricEnergy).filter(
+    #     ElectricEnergy.CollectionDate.between(start_time, end_time)).filter(
+    #     ElectricEnergy.AreaName == area_time).order_by(ElectricEnergy.ID.desc()).all()
     data = results[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
     return json.dumps({'total': len(results), 'rows': data}, cls=AlchemyEncoder, ensure_ascii=False)
