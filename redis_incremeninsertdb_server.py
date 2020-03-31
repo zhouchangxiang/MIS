@@ -16,7 +16,7 @@ import arrow
 from models.SystemManagement.core import RedisKey, TagClassType, ElectricEnergy, Unit, SteamEnergy, \
     WaterEnergy, TagDetail, Equipment
 from models.SystemManagement.system import EarlyWarningLimitMaintain, EarlyWarning, EarlyWarningPercentMaintain, \
-    ElectricPrice, IncrementTable, WaterSteamPrice
+    ElectricPrice, WaterSteamPrice, IncrementElectricTable, IncrementWaterTable, IncrementStreamTable
 from tools.common import insert, delete, update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger, insertSyslog
@@ -29,7 +29,7 @@ def run():
         try:
             elekeys = db_session.query(ElectricEnergy).filter(ElectricEnergy.IncrementFlag == "0", ElectricEnergy.ZGL != "0.0").order_by(("ID")).all()
             for key in elekeys:
-                inc = IncrementTable()
+                inc = IncrementElectricTable()
                 inc.TagClassValue = key.TagClassValue
                 inc.CollectionYear = key.CollectionYear
                 inc.CollectionMonth = key.CollectionMonth
@@ -41,6 +41,7 @@ def run():
                 else:
                     prozgl = 0
                 inc.IncremenValue = abs(round(float(key.ZGL) - float(prozgl), 2))
+                inc.CalculationID = key.ID
                 inc.IncremenType = "电"
                 inc.CollectionDate = key.CollectionDate
                 inc.Unit = key.Unit
@@ -52,48 +53,50 @@ def run():
                 db_session.commit()
             watkeys = db_session.query(WaterEnergy).filter(WaterEnergy.IncrementFlag == "0", WaterEnergy.WaterSum != "0.0").order_by(("ID")).all()
             for key in watkeys:
-                inc = IncrementTable()
-                inc.TagClassValue = key.TagClassValue
-                inc.CollectionYear = key.CollectionYear
-                inc.CollectionMonth = key.CollectionMonth
-                inc.CollectionDay = key.CollectionDay
-                inc.CollectionHour = str(key.CollectionDate)[0:13]
+                inw = IncrementWaterTable()
+                inw.TagClassValue = key.TagClassValue
+                inw.CollectionYear = key.CollectionYear
+                inw.CollectionMonth = key.CollectionMonth
+                inw.CollectionDay = key.CollectionDay
+                inw.CollectionHour = str(key.CollectionDate)[0:13]
                 proWaterSum = db_session.query(WaterEnergy.WaterSum).filter(WaterEnergy.ID == key.PrevID).first()
                 if proWaterSum != None:
                     proWaterSum = proWaterSum[0]
                 else:
                     proWaterSum = 0
-                inc.IncremenValue = abs(round(float(key.WaterSum) - float(proWaterSum), 2))
-                inc.IncremenType = "水"
-                inc.CollectionDate = key.CollectionDate
-                inc.Unit = key.SumWUnit
-                inc.EquipmnetID = key.EquipmnetID
-                inc.PriceID = key.PriceID
-                inc.AreaName = key.AreaName
-                db_session.add(inc)
+                inw.IncremenValue = abs(round(float(key.WaterSum) - float(proWaterSum), 2))
+                inc.CalculationID = key.ID
+                inw.IncremenType = "水"
+                inw.CollectionDate = key.CollectionDate
+                inw.Unit = key.SumWUnit
+                inw.EquipmnetID = key.EquipmnetID
+                inw.PriceID = key.PriceID
+                inw.AreaName = key.AreaName
+                db_session.add(inw)
                 key.IncrementFlag = "1"
                 db_session.commit()
             stekeys = db_session.query(SteamEnergy).filter(SteamEnergy.IncrementFlag == "0", SteamEnergy.SumValue != "0.0").order_by(("ID")).all()
             for key in stekeys:
-                inc = IncrementTable()
-                inc.TagClassValue = key.TagClassValue
-                inc.CollectionYear = key.CollectionYear
-                inc.CollectionMonth = key.CollectionMonth
-                inc.CollectionDay = key.CollectionDay
-                inc.CollectionHour = str(key.CollectionDate)[0:13]
+                ine = IncrementStreamTable()
+                ine.TagClassValue = key.TagClassValue
+                ine.CollectionYear = key.CollectionYear
+                ine.CollectionMonth = key.CollectionMonth
+                ine.CollectionDay = key.CollectionDay
+                ine.CollectionHour = str(key.CollectionDate)[0:13]
                 proSumValue = db_session.query(SteamEnergy.SumValue).filter(SteamEnergy.ID == key.PrevID).first()
                 if proSumValue != None:
                     proSumValue = proSumValue[0]
                 else:
                     proSumValue = 0
-                inc.IncremenValue = abs(round(float(key.SumValue) - float(proSumValue), 2))
-                inc.IncremenType = "汽"
-                inc.CollectionDate = key.CollectionDate
-                inc.Unit = key.SumUnit
-                inc.EquipmnetID = key.EquipmnetID
-                inc.PriceID = key.PriceID
-                inc.AreaName = key.AreaName
-                db_session.add(inc)
+                ine.IncremenValue = abs(round(float(key.SumValue) - float(proSumValue), 2))
+                ine.CalculationID = key.ID
+                ine.IncremenType = "汽"
+                ine.CollectionDate = key.CollectionDate
+                ine.Unit = key.SumUnit
+                ine.EquipmnetID = key.EquipmnetID
+                ine.PriceID = key.PriceID
+                ine.AreaName = key.AreaName
+                db_session.add(ine)
                 key.IncrementFlag = "1"
                 db_session.commit()
         except Exception as e:
