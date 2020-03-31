@@ -191,6 +191,9 @@
   margin:20px 0;
   text-align: right;
 }
+.el-pagination.is-background .el-pager li:not(.disabled).active{
+  background-color: #082F4C;
+}
 /* 渐变色区域时段排版 */
 .gradientList{
   clear: both;

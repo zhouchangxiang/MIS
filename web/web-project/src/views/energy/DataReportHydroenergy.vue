@@ -3,34 +3,75 @@
     <el-col :span="24">
       <el-form :model="formParameters">
         <el-form-item label="时间：">
-          <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false"></el-date-picker> ~
-          <el-date-picker type="datetime" v-model="formParameters.endDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false"></el-date-picker>
+          <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd HH:mm:ss" style="width: 180px;" :clearable="false" @change="searchTime"></el-date-picker> ~
+          <el-date-picker type="datetime" v-model="formParameters.endDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd HH:mm:ss" style="width: 180px;" :clearable="false" @change="searchTime"></el-date-picker>
+          <el-button type="primary" size="mini" style="float: right;" @click="exportExcel">导出水电气数据</el-button>
         </el-form-item>
       </el-form>
     </el-col>
     <el-col :span="24">
       <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
-        <div class="chartTile">水能报表</div>
-        <el-select v-model="areaValue" size="mini">
-          <el-option v-for="item in areaOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+        <div class="chartTile">电能报表</div>
+        <el-select v-model="areaValue" size="mini" @change="searchTime">
+          <el-option v-for="(item,index) in areaOptions" :key="item.index" :label="item.AreaName" :value="item.value"></el-option>
         </el-select>
         <el-button type="primary" size="mini" style="float: right;margin: 9px 0;">导出</el-button>
       </div>
       <div class="platformContainer">
-
+        <el-table :data="tableData" border tooltip-effect="dark">
+          <el-table-column type="expand">
+            <template slot-scope="props">
+              <el-form label-position="left" class="table-expand">
+                <el-form-item label="ID">
+                  <span>{{ props.row.ID }}</span>
+                </el-form-item>
+                <el-form-item label="仪表ID">
+                  <span>{{ props.row.EquipmnetID }}</span>
+                </el-form-item>
+                <el-form-item label="价格ID">
+                  <span>{{ props.row.PriceID }}</span>
+                </el-form-item>
+                <el-form-item label="计算增量更新标识">
+                  <span>{{ props.row.IncrementFlag }}</span>
+                </el-form-item>
+                <el-form-item label="两个相邻采集点上一个采集点ID">
+                  <span>{{ props.row.PrevID }}</span>
+                </el-form-item>
+              </el-form>
+            </template>
+          </el-table-column>
+          <el-table-column prop="AreaName" label="区域"></el-table-column>
+          <el-table-column prop="TagClassValue" label="采集点"></el-table-column>
+          <el-table-column prop="CollectionDate" label="采集时间"></el-table-column>
+          <el-table-column prop="WaterFlow" label="瞬时流量"></el-table-column>
+          <el-table-column prop="WaterSum" label="累计流量"></el-table-column>
+          <el-table-column prop="SumWUnit" label="水累计量体积单位"></el-table-column>
+          <el-table-column prop="FlowWUnit" label="水瞬时流量单位"></el-table-column>
+        </el-table>
+        <div class="paginationClass">
+          <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
+                         :total="total"
+                         :current-page="currentPage"
+                         :page-sizes="[5,10,20]"
+                         :page-size="pagesize"
+                         @size-change="handleSizeChange"
+                         @current-change="handleCurrentChange">
+          </el-pagination>
+        </div>
       </div>
     </el-col>
   </el-row>
 </template>
 
 <script>
+  var moment = require('moment');
   export default {
     name: "DataReportSteam",
     data(){
       return {
         formParameters:{
-          startDate:Date.now(),
-          endDate:Date.now()
+          startDate:moment().day(moment().day() - 1).format('YYYY-MM-DD') + " 7:00",
+          endDate:moment().day(moment().day() - 1).format('YYYY-MM-DD') + " 19:00"
         },
         pickerOptions:{
           disabledDate(time) {
@@ -38,21 +79,73 @@
           }
         },
         areaValue:"桓仁厂区",
-        areaOptions:[
-          {value: 0,label: '桓仁厂区'},
-          {value: 1,label: '新建综合试剂楼'},
-          {value: 2,label: '提取二车间'},
-          {value: 3,label: '前处理车间'},
-          {value: 4,label: '研发中心'},
-          {value: 5,label: '生物科技楼'},
-          {value: 6,label: '原提取车间'},
-          {value: 7,label: '锅炉房'},
-          {value: 8,label: '综合办公楼'},
-          {value: 9,label: '综合车间'},
-          {value: 10,label: '污水站'},
-          {value: 11,label: '固体制剂车间'},
-          {value: 12,label: '展览馆'},
-        ]
+        areaOptions:[],
+        tableData:[],
+        total:0,
+        pagesize:5,
+        currentPage:1
+      }
+    },
+    created(){
+      this.getArea()
+      this.searchTime()
+    },
+    methods:{
+      exportExcel(){
+        var startTime = this.formParameters.startDate
+        var endTime = this.formParameters.endDate
+        this.$confirm('确定导出' +startTime+'至'+endTime+'水电气全部记录？', '提示', {
+          type: 'warning'
+        }).then(()  => {
+          window.location.href = "http://127.0.0.1:5000/exceloutstatistic?StartTime="+startTime+"&EndTime="+endTime
+        });
+      },
+      getArea(){
+        var params = {
+          tableName: "AreaTable",
+          limit:1000,
+          offset:0
+        }
+        var that = this
+        this.axios.get("/api/CUID",{params:params}).then(res =>{
+          var resData = JSON.parse(res.data).rows
+          that.areaOptions.push({
+            AreaName:"整厂区",value:""
+          })
+          for(var i=0;i < resData.length;i++){
+            that.areaOptions.push({
+              AreaName:resData[i].AreaName,
+              value:resData[i].AreaName
+            })
+          }
+        },res =>{
+          console.log("获取车间时请求错误")
+        })
+      },
+      handleSizeChange(pagesize){ //每页条数切换
+        this.pagesize = pagesize
+        this.searchTime()
+      },
+      handleCurrentChange(currentPage) { // 页码切换
+        this.currentPage = currentPage
+        this.searchTime()
+      },
+      searchTime(){
+        this.axios.get("/api/get_water_data",{
+          params: {
+            StartTime:this.formParameters.startDate,
+            EndTime:this.formParameters.endDate,
+            AreaName:this.areaValue,
+            limit:this.pagesize,
+            offset:this.currentPage
+          }
+        }).then(res =>{
+          var data = res.data
+          this.tableData = data.rows
+          this.total = data.total
+        },res =>{
+          console.log("请求错误")
+        })
       }
     }
   }

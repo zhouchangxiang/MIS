@@ -33,7 +33,7 @@
                 <ve-histogram :data="electricHistogram" height="200px" :extend="chartExtend" :legend-visible="false"></ve-histogram>
               </el-col>
               <el-col :span="12">
-                <ve-ring :data="electricRing" :settings="ChartSettings" :extend="batchChartExtend" width="100%" height="200px"></ve-ring>
+                <ve-ring :data="electricRing" :settings="ChartSettings" :extend="ChartExtend" width="100%" height="200px"></ve-ring>
               </el-col>
             </el-col>
           </div>
@@ -69,7 +69,7 @@
                 <ve-histogram :data="waterHistogram" height="200px" :extend="chartExtend" :legend-visible="false"></ve-histogram>
               </el-col>
               <el-col :span="12">
-                <ve-ring :data="waterRing" :settings="ChartSettings" :extend="batchChartExtend" width="100%" height="200px"></ve-ring>
+                <ve-ring :data="waterRing" :settings="ChartSettings" :extend="ChartExtend" width="100%" height="200px"></ve-ring>
               </el-col>
             </el-col>
           </div>
@@ -105,7 +105,7 @@
                 <ve-histogram :data="steamHistogram" height="200px" :extend="chartExtend" :legend-visible="false"></ve-histogram>
               </el-col>
               <el-col :span="12">
-                <ve-ring :data="steamRing" :settings="ChartSettings" :extend="batchChartExtend" width="100%" height="200px"></ve-ring>
+                <ve-ring :data="steamRing" :settings="ChartSettings" :extend="ChartExtend" width="100%" height="200px"></ve-ring>
               </el-col>
             </el-col>
           </div>
@@ -269,6 +269,7 @@
           series: {
             barMaxWidth : 30,
             smooth: false,
+            symbol: 'none',
             itemStyle:{
               color:"#FB8A06"
             }
@@ -287,7 +288,17 @@
             { '时间': "", '功率': ""},
             { '时间': "", '功率': ""},
             { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""}
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
           ]
         },
         electricHistogram:{
@@ -322,7 +333,17 @@
             { '时间': "", '功率': ""},
             { '时间': "", '功率': ""},
             { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""}
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
           ]
         },
         waterHistogram:{
@@ -357,7 +378,17 @@
             { '时间': "", '功率': ""},
             { '时间': "", '功率': ""},
             { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""}
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
+            { '时间': "", '功率': ""},
           ]
         },
         steamHistogram:{
@@ -387,7 +418,7 @@
         ],
         ChartSettings: {
           radius: [30,60],
-          offsetY:"100px",
+          offsetY:"120px",
           label:{
             show:false
           },
@@ -403,6 +434,11 @@
           },
           labelLine:{
             show:false
+          }
+        },
+        ChartExtend: {
+          legend:{
+            show:true
           }
         },
         batchChartExtend: {
@@ -429,7 +465,7 @@
         that.getRealTimeElectricChart()
         that.getRealTimeWaterChart()
         that.getRealTimeSteamChart()
-      },2000)
+      },1000)
       this.getOnLineEq()
     },
     computed:{
@@ -543,7 +579,7 @@
         }))
       },
       getRealTimeElectricChart(){
-        var res = Math.floor((Math.random() * 100) + 1);
+        var res = Math.floor((Math.random() * 50) + 1);
         this.electricChartData.rows.push({
           "时间": moment(new Date()).format("HH:mm:ss"),
           "功率": res

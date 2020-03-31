@@ -3,10 +3,10 @@
       <el-col :span="24">
         <el-form :inline="true" :model="formParameters">
           <el-form-item label="时间：">
-            <el-date-picker type="date" v-model="formParameters.date" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false" @change="getAreaTimeEnergy"></el-date-picker>
+            <el-date-picker type="date" v-model="formParameters.date" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false" @change="getChartData(),getAreaTimeEnergy()"></el-date-picker>
           </el-form-item>
           <el-form-item style="float: right;">
-            <el-radio-group v-model="formParameters.energy" fill="#082F4C" size="small" @change="getAreaTimeEnergy">
+            <el-radio-group v-model="formParameters.energy" fill="#082F4C" size="small" @change="getChartData(),getAreaTimeEnergy()">
               <el-radio-button v-for="(item,index) in energyList" :key="item.index" :label="item.label"></el-radio-button>
             </el-radio-group>
           </el-form-item>
@@ -151,7 +151,7 @@
             </div>
             <div class="energyDataItem">
               <div class="energyDataItemTitle">今日能耗</div>
-              <div class="energyDataItemData">{{ todayCon }}</div>
+              <div class="energyDataItemData">{{ todayCon }} {{ todayConUnit }}</div>
             </div>
             <div class="energyDataItem">
               <div class="energyDataItemTitle">对比</div>
@@ -225,6 +225,7 @@
           {label:"汽"},
         ],
         todayCon:"",
+        todayConUnit:"",
         CompareDate:moment().subtract(1,'day').format('YYYY-MM-DD'),
         CompareDateCon:"",
         pickerOptions:{
@@ -241,7 +242,7 @@
             text:"能耗趋势"
           },
           grid:{
-            left:'10px',
+            left:'0px',
             right:'10px',
             bottom:'0',
             top:'50px'
@@ -252,21 +253,7 @@
         },
         chartData:{
           columns:["时间","能耗量"],
-          rows:[
-            {"时间":"00:00","能耗量":273},
-            {"时间":"01:00","能耗量":303},
-            {"时间":"02:00","能耗量":333},
-            {"时间":"03:00","能耗量":293},
-            {"时间":"04:00","能耗量":223},
-            {"时间":"05:00","能耗量":313},
-            {"时间":"06:00","能耗量":365},
-            {"时间":"07:00","能耗量":""},
-            {"时间":"08:00","能耗量":""},
-            {"时间":"09:00","能耗量":""},
-            {"时间":"10:00","能耗量":""},
-            {"时间":"11:00","能耗量":""},
-            {"时间":"12:00","能耗量":""}
-          ]
+          rows:[]
         },
         electricAnalyze:{
           sharpTime:3,
@@ -298,6 +285,7 @@
     created(){
       this.getDayEnergy()
       this.getAreaTimeEnergy()
+      this.getChartData()
     },
     computed:{
       compareRatio(){
@@ -335,13 +323,18 @@
         var compareDateEndTime = moment(this.CompareDate).format('YYYY-MM-DD') + " " + nowTime
         this.axios.all([
           this.axios.get(api,{params: {StartTime: todayStartTime,EndTime:todayEndTime}}),//获取今天能耗
-          this.axios.get(api,{params: {StartTime: compareDateStartTime,EndTime:compareDateEndTime}}),//获取对比天能耗
-          this.axios.get("/api/trendlookboard",{params: {EnergyClass: that.formParameters.energy,CompareTime:that.formParameters.date}}),//获取图表能耗
-        ]).then(this.axios.spread(function(todayCon,CompareDateCon,chartData){
+          this.axios.get(api,{params: {StartTime: compareDateStartTime,EndTime:compareDateEndTime}})//获取对比天能耗
+        ]).then(this.axios.spread(function(todayCon,CompareDateCon){
           that.todayCon = JSON.parse(todayCon.data).value
+          that.todayConUnit = JSON.parse(todayCon.data).unit
           that.CompareDateCon = JSON.parse(CompareDateCon.data).value
-          console.log(chartData.data)
         }))
+      },
+      getChartData(){
+        var selectDate = moment(this.formParameters.date).format("YYYY-MM-DD")
+        this.axios.get("/api/trendlookboard",{params: {EnergyClass: this.formParameters.energy,CompareTime:selectDate}}).then(res =>{
+          this.chartData.rows = res.data.rows
+        })
       },
       getAreaTimeEnergy(){
         var params = {
