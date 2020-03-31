@@ -938,7 +938,7 @@ def trendlookboard():
                 start = CompareTime +" "+ addzero(i) + ":00:00"
                 dir_rows["时间"] = start
                 end = CompareTime + " " + addzero(i) + ":59:59"
-                if oc_list > 0:
+                if len(oc_list) > 0:
                     count = energyStatistics(oc_list, start, end, EnergyClass)
                 else:
                     count = 0.0
