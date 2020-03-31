@@ -401,7 +401,6 @@ def areaTimeEnergy():
     if request.method == 'GET':
         data = request.values
         try:
-            print(datetime.datetime.now())
             dir = {}
             currentyear = datetime.datetime.now().year
             currentmonth = datetime.datetime.now().month
@@ -472,7 +471,6 @@ def areaTimeEnergy():
                             colour = colour + "," + highColourValue
                         dict_valuelist["value"] = round(vlaue, 2)
                         valuelist.append(dict_valuelist)
-                    print(colour)
                     value_dirc["AreaName"] = AreaName[0]
                     value_dirc["valuelist"] = valuelist
                     value_dirc["backgroundColor"] = "-webkit-linear-gradient(left," + colour[1:] + ")"
@@ -482,8 +480,6 @@ def areaTimeEnergy():
                     value_dirc["valuelist"] = []
                     value_dirc["backgroundColor"] = "-webkit-linear-gradient(left," + wu + ")"
                     araeY_list.append(value_dirc)
-            print(araeY_list)
-            print(datetime.datetime.now())
             return json.dumps(araeY_list, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
@@ -949,7 +945,6 @@ def trendlookboard():
                 dir_rows["能耗量"] = count
                 rows_list.append(dir_rows)
             dir["rows"] = rows_list
-            print(dir)
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
