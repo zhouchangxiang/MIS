@@ -58,4 +58,3 @@ def login():
         db_session.rollback()
         logger.error(e)
         return json.dumps([{"status": "Error:" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
-
