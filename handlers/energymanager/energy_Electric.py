@@ -1,5 +1,5 @@
 import redis
-from flask import Blueprint, render_template, request, make_response, send_file
+from flask import Blueprint, render_template, request, make_response, send_file, jsonify
 import json
 import datetime
 from sqlalchemy import desc
@@ -577,8 +577,7 @@ def energyElectricHistory():
 
 @energyElectric.route('/get_electric_data', methods=['GET'])
 def get_electric():
-    data = request.values()
-    start_time = data.get('StartTime')
-    end_time = data.get('EndTime')
-    result = db_session.query(ElectricEnergy).filter(ElectricEnergy.CollectionDate.between(start_time, end_time)).all()
-    pass
+    start_time = request.values.get('StartTime')
+    end_time = request.values.get('EndTime')
+    results = db_session.query(ElectricEnergy).filter(ElectricEnergy.CollectionDate.between(start_time, end_time)).all()
+    return json.dumps(results, cls=AlchemyEncoder, ensure_ascii=False)

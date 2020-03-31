@@ -503,3 +503,11 @@ def energyHistory():
             print(e)
             logger.error(e)
             insertSyslog("error", "能源历史数据查询报错Error：" + str(e), current_user.Name)
+
+
+@energyWater.route('/get_water_data', methods=['GET'])
+def get_electric():
+    start_time = request.values.get('StartTime')
+    end_time = request.values.get('EndTime')
+    results = db_session.query(WaterEnergy).filter(WaterEnergy.CollectionDate.between(start_time, end_time)).all()
+    return json.dumps(results, cls=AlchemyEncoder, ensure_ascii=False)
