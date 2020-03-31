@@ -5,7 +5,7 @@
         <el-form-item label="时间：" style="margin-bottom: 0;">
           <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false"></el-date-picker> ~
           <el-date-picker type="datetime" v-model="formParameters.endDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false"></el-date-picker>
-          <el-button type="primary" size="mini" style="float: right;" @click="exportExcel">导出所有数据</el-button>
+          <el-button type="primary" size="mini" style="float: right;" @click="exportExcel">导出水电气数据</el-button>
         </el-form-item>
         <el-form-item label="参数：">
           <el-radio-group v-model="formParameters.electricityType" fill="#082F4C" size="mini">
@@ -96,8 +96,8 @@
     data(){
       return {
         formParameters:{
-          startDate:Date.now(),
-          endDate:Date.now(),
+          startDate:moment(new Date()).day(moment().day() - 1).format('YYYY-MM-DD') + " 7:00",
+          endDate:moment(new Date()).day(moment().day() - 1).format('YYYY-MM-DD') + " 19:00",
           electricityType:"电量"
         },
         pickerOptions:{
@@ -133,28 +133,7 @@
         this.$confirm('确定导出' +startTime+'至'+endTime+'水电气全部记录？', '提示', {
           type: 'warning'
         }).then(()  => {
-          this.axios.get("/api/exceloutstatistic",{
-            params: {
-              StartTime: startTime,
-              EndTime: endTime
-            }
-          }).then(res =>{
-            console.log(res)
-            if(res.data == "OK"){
-              this.$message({
-                type: 'success',
-                message: '导出成功'
-              });
-            }
-            this.getTableData()
-          },res =>{
-            console.log("请求错误")
-          })
-        }).catch(()   => {
-          this.$message({
-            type: 'info',
-            message: '已取消导出'
-          });
+          window.location.href = "http://127.0.0.1:5000/exceloutstatistic?StartTime="+startTime+"&EndTime="+endTime
         });
       },
       getTableData(){

@@ -401,7 +401,6 @@ def areaTimeEnergy():
     if request.method == 'GET':
         data = request.values
         try:
-            print(datetime.datetime.now())
             dir = {}
             currentyear = datetime.datetime.now().year
             currentmonth = datetime.datetime.now().month
@@ -472,7 +471,6 @@ def areaTimeEnergy():
                             colour = colour + "," + highColourValue
                         dict_valuelist["value"] = round(vlaue, 2)
                         valuelist.append(dict_valuelist)
-                    print(colour)
                     value_dirc["AreaName"] = AreaName[0]
                     value_dirc["valuelist"] = valuelist
                     value_dirc["backgroundColor"] = "-webkit-linear-gradient(left," + colour[1:] + ")"
@@ -482,8 +480,6 @@ def areaTimeEnergy():
                     value_dirc["valuelist"] = []
                     value_dirc["backgroundColor"] = "-webkit-linear-gradient(left," + wu + ")"
                     araeY_list.append(value_dirc)
-            print(araeY_list)
-            print(datetime.datetime.now())
             return json.dumps(araeY_list, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
@@ -919,3 +915,38 @@ def exportx(Area, EnergyClass, CurrentTime):
     writer.close()
     output.seek(0)
     return output
+
+@energy.route('/trendlookboard', methods=['POST', 'GET'])
+def trendlookboard():
+    '''
+    能耗看板的能耗趋势
+    :return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            dir = {}
+            EnergyClass = data.get("EnergyClass")
+            CompareTime = data.get("CompareTime")
+            oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
+            oc_list = []
+            for oc in oclass:
+                oc_list.append(oc.TagClassValue)
+            rows_list = []
+            for i in range(0,24):
+                dir_rows = {}
+                start = CompareTime +" "+ addzero(i) + ":00:00"
+                dir_rows["时间"] = start
+                end = CompareTime + " " + addzero(i) + ":59:59"
+                if len(oc_list) > 0:
+                    count = energyStatistics(oc_list, start, end, EnergyClass)
+                else:
+                    count = 0.0
+                dir_rows["能耗量"] = count
+                rows_list.append(dir_rows)
+            dir["rows"] = rows_list
+            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "能耗看板的能耗趋势查询报错Error：" + str(e), current_user.Name)
