@@ -22,6 +22,7 @@ import pandas as pd
 from io import BytesIO
 from flask import Flask, send_file, make_response
 import math
+import models
 
 energy = Blueprint('energy', __name__, template_folder='templates')
 
@@ -385,7 +386,7 @@ def energyselect(data):
 @energy.route('/areaTimeEnergy', methods=['POST', 'GET'])
 def areaTimeEnergy():
     '''
-    区域时段能耗
+    能耗看板的区域时段
     :return:
     '''
     if request.method == 'GET':
@@ -940,3 +941,142 @@ def trendlookboard():
             print(e)
             logger.error(e)
             insertSyslog("error", "能耗看板的能耗趋势查询报错Error：" + str(e), current_user.Name)
+
+@energy.route('/areatimeenergycount', methods=['POST', 'GET'])
+def areatimeenergycount():
+    '''
+    区域时段能耗
+    :return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            dir = {}
+            EnergyClass = data.get("EnergyClass")
+            CompareTime = data.get("CompareTime")
+            start = CompareTime + " 00:00:00"
+            end = CompareTime + " 23:59:59"
+            areas = db_session.query(AreaTable).filter().all()
+            rows_list = []
+            for area in areas:
+                AreaName = area.AreaName
+                oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass, TagDetail.AreaName == AreaName).all()
+                oc_list = []
+                for oc in oclass:
+                    oc_list.append(oc.TagClassValue)
+                dir_rows = {}
+                dir_rows["区域"] = AreaName
+                if len(oc_list) > 0:
+                    count = energyStatistics(oc_list, start, end, EnergyClass)
+                else:
+                    count = 0.0
+                dir_rows["能耗量"] = count
+            dir["rows"] = rows_list
+            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "区域时段能耗查询报错Error：" + str(e), current_user.Name)
+
+@energy.route('/createzyplanzytaskrelease', methods=['POST', 'GET'])
+def createzyplanzytaskrelease():
+    '''
+    创建计划任务
+    :return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            PlanNum = data.get("PlanNum")
+            BatchID = data.get("BatchID")
+            BrandName = ctrlPlan('BrandName')
+            WaterConsumption = data.get("WaterConsumption")
+            ElectricConsumption = data.get("ElectricConsumption")
+            ProductionDate = ctrlPlan('ProductionDate')
+            iTaskCount = data.get("iTaskCount")
+            StartTime = data.get("StartTime")
+            EndTime = data.get("EndTime")
+            PlanCreate = ctrlPlan('PlanCreate')
+            re = PlanCreate.createBatchMaintain(PlanNum, BatchID, BrandName, WaterConsumption, ElectricConsumption, ProductionDate, StartTime, EndTime, iTaskCount)
+            if re==True:
+                return json.dumps("OK", cls=AlchemyEncoder, ensure_ascii=False)
+            else:
+                return json.dumps("创建计划任务失败!", cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "创建计划任务报错Error：" + str(e), current_user.Name)
+
+class ctrlPlan:
+    def __init__(self, name):
+        try:
+            self.name = name
+            # self.productrule = Model.core.ProductRule("1")
+            # self.productunit = Model.core.ProductUnit("2")
+            # self.productcontrltask = Model.core.ProductContrlTask("3")
+            # self.productparameter = Model.core.ProductParameter("4")
+            # self.materialbom = Model.core.MaterialBOM("5")
+            # self.productunitroute = Model.core.ProductUnitRoute("6")
+            # self.scheduleplan = Model.core.SchedulePlan("7")
+            # self.planmanager = Model.core.PlanManager("8")
+            # self.unit = Model.core.Unit("9")
+        except Exception as e:
+            print(e)
+            logger.error(e)
+
+    def createBatchMaintain(self, PlanNum, BatchID, BrandName, PlanQuantity, WaterConsumption, ElectricConsumption, ProductionDate, StartTime, EndTime, iTaskCount):
+        bReturn = True
+        try:
+            db_session.add(
+                models.core.BatchMaintain(
+                    PlanNum=PlanNum,
+                    BatchID=BatchID,
+                    BrandName=BrandName,
+                    PlanQuantity=PlanQuantity,
+                    WaterConsumption=WaterConsumption,
+                    ElectricConsumption=ElectricConsumption,
+                    ProductionDate=ProductionDate,
+                    StartTime=StartTime,
+                    EndTime=EndTime,
+                    iTaskCount=iTaskCount))
+            db_session.commit()
+            if iTaskCount >= 1:
+                iTaskSeq = 0
+                for num in range(0, iTaskCount):
+                    iTaskSeq = iTaskSeq + 1
+                    bReturn, strTaskNo = self.getTaskNo()
+                    if bReturn == False:
+                        return False
+                    bReturn = self.BatchMaintainTask("", PlanNum, BatchID, BrandName, PlanQuantity, WaterConsumption, ElectricConsumption, ProductionDate, StartTime, EndTime)
+                    if bReturn == False:
+                        return False
+            return bReturn
+        except Exception as e:
+            db_session.rollback()
+            print(e)
+            insertSyslog("error", "创建计划报错Error：" + str(e), current_user.Name)
+            return False
+
+
+    def BatchMaintainTask(self, PuidName, PlanNum, BatchID, BrandName, PlanQuantity, WaterConsumption, ElectricConsumption, ProductionDate, StartTime, EndTime):
+        bReturn = True;
+        try:
+            db_session.add(
+                models.system.BatchMaintainTask(
+                    PuidName=PuidName,
+                    PlanNum=PlanNum,
+                    BatchID=BatchID,
+                    BrandName=BrandName,
+                    PlanQuantity=PlanQuantity,
+                    WaterConsumption=WaterConsumption,
+                    ElectricConsumption=ElectricConsumption,
+                    ProductionDate=ProductionDate,
+                    StartTime=StartTime,
+                    EndTime=EndTime))
+            db_session.commit()
+            return bReturn
+        except Exception as e:
+            db_session.rollback()
+            print(e)
+            insertSyslog("error", "创建任务报错Error：" + str(e), current_user.Name)
+            return  False

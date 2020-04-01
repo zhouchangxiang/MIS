@@ -1080,6 +1080,82 @@ class ElectricProportion(Base):
     # 创建时间:
     CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+# BatchMaintain_START:
+class BatchMaintainTask(Base):
+    '''
+    任务表
+    '''
+    __tablename__ = "BatchMaintainTask"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 工艺段:
+    PuidName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 计划单号:
+    PlanNum = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 批次号:
+    BatchID = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 品名:
+    BrandName = Column(Unicode(52), primary_key=False, autoincrement=False, nullable=True)
+
+    # 计划重量:
+    PlanQuantity = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 水用量:
+    WaterConsumption = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 电用量:
+    ElectricConsumption = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 生产日期:
+    ProductionDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 开始时间:
+    StartTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 结束时间:
+    EndTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+class PlanManager(Base):
+	__tablename__ = "PlanManager"
+
+	# ID:
+	ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+
+	# 调度编号:
+	SchedulePlanCode = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+
+	# 批次号:
+	BatchID = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+
+	# 计划重量:
+	PlanQuantity = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+	# 单位:
+	Unit = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+
+	# 品名ID:
+	BrandID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+	# 品名:
+	BrandName = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+
+	# 计划状态:
+	PlanStatus = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+	# 调度计划开始时间:
+	PlanBeginTime = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
+
+	# 计划完成时间:
+	PlanEndTime = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
+
+	# 调度类型:
+	Type = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+
 
 # ZYPlan:
 class ZYPlan(Base):
@@ -1220,6 +1296,73 @@ class ZYTask(Base):
 
     # 任务锁定状态:
     LockStatus = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+
+# ProductControlTask:
+class ProductControlTask(Base):
+    __tablename__ = "ProductControlTask"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+
+    # 产品段编码:
+    PDCtrlTaskCode = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+
+    # 产品段名称:
+    PDCtrlTaskName = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+
+    # 描述:
+    Desc = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+
+    # 低限:
+    LowLimit = Column(Float(53), primary_key=False, autoincrement=False, nullable=True)
+
+    # 高限:
+    HighLimit = Column(Float(53), primary_key=False, autoincrement=False, nullable=True)
+
+    # 相关任务数:
+    RelateTaskCount = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 产品定义ID:
+    ProductRuleID = Column(Integer, nullable=False, primary_key=False)
+
+    # 工艺段ID:
+    PUID = Column(Integer, nullable=False, primary_key=False)
+
+    # 顺序号:
+    Seq = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+
+# ProductUnitRoute:
+class ProductUnitRoute(Base):
+    __tablename__ = "ProductUnitRoute"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+
+    # 工艺路线编码:
+    PDUnitRouteCode = Column(Unicode(64), nullable=False, primary_key=False)
+
+    # 工艺路线名称:
+    PDUnitRouteName = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+
+    # 描述:
+    Desc = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+
+    # 持续时间:
+    Duration = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 单位:
+    Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 产品定义ID:
+    ProductRuleID = Column(Integer, nullable=False, primary_key=False)
+
+    # 工艺段ID:
+    PUID = Column(Integer, nullable=False, primary_key=False)
+
+    # 顺序号:
+    Seq = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
 
 
 # 生成表单的执行语句

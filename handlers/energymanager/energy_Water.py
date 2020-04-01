@@ -513,7 +513,13 @@ def get_electric():
     current_page = request.values.get('offset', 1, type=int)
     # 每页显示条数
     pagesize = int(request.values.get('limit', 10))
-    results = db_session.query(WaterEnergy).filter(WaterEnergy.CollectionDate.between(start_time, end_time)).order_by(
-        WaterEnergy.ID.desc()).all()
-    data = results[(current_page-1)*pagesize+1:current_page*pagesize+1]
+    area_name = request.values.get('AreaName')
+    if area_name:
+        results = db_session.query(WaterEnergy).filter(WaterEnergy.AreaName == area_name).filter(
+            WaterEnergy.CollectionDate.between(start_time, end_time)).order_by(WaterEnergy.ID.desc()).all()
+        data = results[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
+    else:
+        results = db_session.query(WaterEnergy).filter(
+            WaterEnergy.CollectionDate.between(start_time, end_time)).order_by(WaterEnergy.ID.desc()).all()
+        data = results[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
     return json.dumps({'total': len(results), 'rows': data}, cls=AlchemyEncoder, ensure_ascii=False)

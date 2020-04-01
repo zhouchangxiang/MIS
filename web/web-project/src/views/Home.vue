@@ -85,21 +85,7 @@
               </el-select>
             </div>
             <div class="home-card-body" style="height:280px;">
-              <ul class="colorBar">
-                <li><i class="bg-dead"></i><span>停</span></li>
-                <li><i class="bg-low"></i><span>低</span></li>
-                <li><i class="bg-center"></i><span>中</span></li>
-                <li><i class="bg-tall"></i><span>高</span></li>
-              </ul>
-              <ul class="gradientList">
-                <li v-for="(item,index) in colorBarOption" v-if="index<4">
-                  <p class="text-size-small text-color-info">{{ item.AreaName }}</p>
-                  <el-popover trigger="hover">
-                    <div v-for="valueItem in item.valuelist">{{ valueItem.date }}点：{{ valueItem.value }}</div>
-                    <div slot="reference" class="gradientColorItem" :style='{background:item.backgroundColor}'></div>
-                  </el-popover>
-                </li>
-              </ul>
+              <ve-bar :data="areaChartData" height="260px"></ve-bar>
             </div>
           </el-col>
           <el-col :span="7">
@@ -311,7 +297,10 @@
             smooth: false
           }
         },
-        colorBarOption:[],
+        areaChartData:{
+          columns: ['区域', '能耗量'],
+          rows:[]
+        },
         electricLoadRateChartData:{
           columns: ['type', 'value'],
           rows: [
@@ -495,10 +484,12 @@
       },
       getAreaTimeEnergy(){
         var params = {
-          energyType: this.areaTimeEnergyValue
+          EnergyClass: this.areaTimeEnergyValue,
+          CompareTime:moment().format("YYYY-MM-DD")
         }
-        this.axios.get("/api/areaTimeEnergy",{params:params}).then(res => {
-          this.colorBarOption = res.data
+        this.axios.get("/api/areatimeenergycount",{params:params}).then(res => {
+          console.log(res.data)
+          this.areaChartData = res.data
         })
       },
       getOnLineEq(){
