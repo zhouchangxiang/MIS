@@ -511,6 +511,9 @@ class BrandAreaTable(Base):
 
 # BatchMaintain_START:
 class BatchMaintain(Base):
+    '''
+    计划表
+    '''
     __tablename__ = "BatchMaintain"
 
     # ID:
@@ -523,7 +526,10 @@ class BatchMaintain(Base):
     BatchID = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 品名:
-    BrandName = Column(Unicode(52), primary_key=False, autoincrement=False, nullable=True)
+    BrandName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 计划重量:
+    PlanQuantity = Column(Unicode(52), primary_key=False, autoincrement=False, nullable=True)
 
     # 水用量:
     WaterConsumption = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
