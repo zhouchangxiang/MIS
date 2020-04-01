@@ -534,8 +534,11 @@ class BatchMaintain(Base):
     # 水用量:
     WaterConsumption = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 电用量:
-    ElectricConsumption = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 汽用量:
+    SteamConsumption = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 创建日期:
+    CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 生产日期:
     ProductionDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
