@@ -7,7 +7,6 @@
   <div class="login-body">
     <p>密码登陆</p>
     <div class="login-box">
-      <van-cell-group>
                     <van-field
                         v-model="username"
                         required
@@ -33,8 +32,7 @@
                         @click-right-icon="$toast('请牢记你的输入密码,不要泄露')"
                    
                     />
-                    </van-cell-group>
-                <div class='submit'><van-button color="#00FAE7FF" size="large" @click="login">登录</van-button></div>
+      <div class='submit'><van-button color="#00FAE7FF" size="large" @click="login">登录</van-button></div>
     </div>
   </div>
   </div>
@@ -60,22 +58,19 @@ export default {
           this.$toast("密码不能为空");
           return false;
         }else{
-          let comment={'worknumber':this.username,'password':this.password}
+          let comment={WorkNumber:this.username,password:this.password}
           let str=qs.stringify(comment)
           console.log(str)
           console.log(comment)
-          //this.$http.post('/api/v2/accounts/login',str).then((value) => {
-          //  console.log(value)
-          //})
-          this.$http.post('http://127.0.0.1:6001/v2/accounts/login',str).then((value) => {
-            console.log(value)
+          this.$http.post('http://127.0.0.1:5000/v2/accounts/login',str).then((res) => {
+            console.log(res.data)
           })
         }
   }
 }
 }
 </script>
-<style scoped>
+<style lang="less" scoped>
   p,h5{
     margin:0;
     padding:0;
@@ -89,9 +84,7 @@ export default {
   .login-header{
     width:100%;
     height:141px;
-
-  }
-  .login-header p{
+    p{
     position:absolute;
     top:90px;
     left:156px;
@@ -103,6 +96,7 @@ export default {
     font-weight:400;
     color:rgba(255,255,255,1);
 
+  }
   }
   h5{
     position:absolute;
@@ -123,8 +117,7 @@ export default {
     box-shadow:0px -2px 4px rgba(206,199,199,0.16);
     opacity:1;
     border-radius: 30px 30px 0 0;
-  }
-  .login-body p{
+    p{
     position:absolute;
     left:152px;
     width:72px;
@@ -136,6 +129,7 @@ export default {
     line-height:25px;
     color:rgba(255,255,255,1);
     opacity:1;
+  }
   }
   .login-box{
     position:absolute;

@@ -42,9 +42,10 @@ def index():
 @accounts.route('/login', methods=['POST'])
 def login():
     try:
-        json_data = request.get_json()
-        user = db_session.query(User).filter_by(WorkNumber=json_data['worknumber']).first()
-        if user and check_password_hash(user.Password, json_data['password']):
+        WorkNumber = request.values.get('WorkNumber')
+        password = request.values.get('password')
+        user = db_session.query(User).filter_by(WorkNumber=WorkNumber).first()
+        if user and check_password_hash(user.Password, password):
             token = uuid.uuid4().hex
             user.LastLoginTime = datetime.now()
             Redis.set_data(Redis.connect(), token, user.id)
