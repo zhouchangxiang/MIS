@@ -62,10 +62,10 @@ export default {
           let str=qs.stringify(comment)
           console.log(str)
           console.log(comment)
-        //   this.$http.post('http://127.0.0.1:5000/v2/accounts/login',str).then((res) => {
-        //     console.log(res.data)
-        //   })
-        this.$router.push(('/home'))
+          this.$http.post('http://127.0.0.1:5000/v2/accounts/login',str).then((res) => {
+            console.log(res.data)
+          })
+     
         }
   }
 }

@@ -2,11 +2,11 @@
    <div class="content-box">
        <div class="top">
            <div class='head-name'>好护士能管系统</div>
-           <span><van-icon name="close" size="22px" color="#FF5041FF"/></span>
+           <span @click="logout"><van-icon name="close" size="22px" color="#FF5041FF"/></span>
        </div>
        <router-view/>
        <div class="foot">
-           <van-tabbar v-model="active" :fixed="false">
+           <van-tabbar v-model="active" :fixed="false" inactive-color="#fff">
                 <van-tabbar-item icon="wap-home" to="/home">首页</van-tabbar-item>
                 <van-tabbar-item icon="location" to="/region" >区域</van-tabbar-item>
                 <van-tabbar-item icon="graphic" to="/efficiency">能效</van-tabbar-item>
@@ -22,16 +22,22 @@ export default {
             msg:'123',
             active:0
         }
+    },
+    methods:{
+        logout(){
+            this.$router.push('/login')
+        }
     }
 }
 </script>
 <style lang="less" scoped>
     @bgca:#3D4048FF;
+    @bgcc:#1E222BFF;
     .top{
         position: relative;
         height:89px;
         width:375px;
-        background-color:@bgca;
+        background-color:@bgcc;
         .head-name{
             position: absolute;
             top:46px;
@@ -60,12 +66,13 @@ export default {
         bottom: 0;
         width:375px;
         height:64px;
-        background:@bgca;
+        background:@bgcc;
         box-shadow:0px -2px 4px rgba(255,255,255,0.16);
         opacity:1;
     }
     .van-tabbar{
         height: 64px;
+        background-color: @bgcc;
         &.van-tabbar--fixed{
             height: 64px;
         }
