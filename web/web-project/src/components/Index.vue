@@ -42,11 +42,6 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </li>
-            <li>
-              <el-tooltip class="head-menu-item" effect="dark" content="消息提醒" placement="bottom">
-                <el-badge :value="12"><i class="el-icon-s-comment"></i></el-badge>
-              </el-tooltip>
-            </li>
             <li><el-tooltip class="head-menu-item" effect="dark" content="全屏" placement="bottom"><span :class="isFullScreen?'el-icon-aim':'el-icon-full-screen'" @click="getFullCreeen"></span></el-tooltip></li>
             <li><div>{{ time }}</div></li>
           </ul>
