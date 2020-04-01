@@ -1108,8 +1108,11 @@ class BatchMaintainTask(Base):
     # 水用量:
     WaterConsumption = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 电用量:
-    ElectricConsumption = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 汽用量:
+    SteamConsumption = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 创建日期:
+    CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 生产日期:
     ProductionDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
@@ -1120,249 +1123,43 @@ class BatchMaintainTask(Base):
     # 结束时间:
     EndTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-class PlanManager(Base):
-	__tablename__ = "PlanManager"
-
-	# ID:
-	ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
-
-	# 调度编号:
-	SchedulePlanCode = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
-
-	# 批次号:
-	BatchID = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
-
-	# 计划重量:
-	PlanQuantity = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
-
-	# 单位:
-	Unit = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
-
-	# 品名ID:
-	BrandID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
-
-	# 品名:
-	BrandName = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
-
-	# 计划状态:
-	PlanStatus = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-	# 调度计划开始时间:
-	PlanBeginTime = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
-
-	# 计划完成时间:
-	PlanEndTime = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
-
-	# 调度类型:
-	Type = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
-
-
-# ZYPlan:
-class ZYPlan(Base):
-    __tablename__ = "ZYPlan"
-
-    # ID:
-    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
-
-    # 计划日期:
-    PlanDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 制药计划单号:
-    PlanNo = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 批次号:
-    BatchID = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 顺序号:
-    PlanSeq = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 工艺段:
-    PUID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
-
-    # 计划类型:
-    PlanType = Column(Unicode(16), primary_key=False, autoincrement=False, nullable=True)
-
-    # 品名:
-    BrandID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
-
-    # 品名名称:
-    BrandName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # ERP订单号:
-    ERPOrderNo = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 计划重量:
-    PlanQuantity = Column(Float(53), primary_key=False, autoincrement=False, nullable=True)
-
-    # 实际重量:
-    ActQuantity = Column(Float(53), primary_key=False, autoincrement=False, nullable=True)
-
-    # 单位:
-    Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 录入时间:
-    EnterTime = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
-
-    # 计划开始时间:
-    PlanBeginTime = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
-
-    PlanEndTime = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
-
-    # 实际开始时间:
-    ActBeginTime = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
-
-    # 实际完成时间:
-    ActEndTime = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
-
-    # 计划状态:
-    ZYPlanStatus = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 计划锁定状态:
-    LockStatus = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 接口处理状态:
-    INFStatus = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 仓储送料状态:
-    WMSStatus = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-
-# ZYTask:
-class ZYTask(Base):
-    __tablename__ = "ZYTask"
+class BrandMaintain(Base):
+    '''品名维护表'''
+    __tablename__ = "BrandMaintain"
 
     # ID:
     ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
 
-    # 设备ID:
-    EquipmentID = Column(Unicode(30), primary_key=False, autoincrement=True, nullable=True)
+    # 产品名称:
+    BrandName = Column(Unicode(64), nullable=False, primary_key=False)
 
-    # 计划日期:
-    PlanDate = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+    # 产品编码:
+    BrandCode = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
 
-    # 制药任务单号:
-    TaskID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+    # 创建日期:
+    CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 批次号:
-    BatchID = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
-
-    # 顺序号:
-    PlanSeq = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
-
-    # 工艺段:
-    PUID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
-
-    # 工艺路线名称:
-    PDUnitRouteName = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
-
-    # 计划类型:
-    PlanType = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
-
-    # 牌号编码:
-    BrandID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
-
-    # 牌号名称:
-    BrandName = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
-
-    # 计划重量:
-    PlanQuantity = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
-
-    # 实际重量:
-    ActQuantity = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
-
-    # 单位:
-    Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 录入时间:
-    EnterTime = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
-
-    # 实际开始时间:
-    ActBeginTime = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
-
-    # 实际完成时间:
-    ActEndTime = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
-
-    # 设定重复次数:
-    SetRepeatCount = Column(Integer, primary_key=False, autoincrement=False, nullable=True, default=1)
-
-    # 当前重复次数:
-    CurretnRepeatCount = Column(Integer, primary_key=False, autoincrement=False, nullable=True, default=0)
-
-    # 实际罐号:
-    ActTank = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 任务状态:
-    TaskStatus = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 任务锁定状态:
-    LockStatus = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-
-# ProductControlTask:
-class ProductControlTask(Base):
-    __tablename__ = "ProductControlTask"
+class PUIDMaintain(Base):
+    '''工艺维护表'''
+    __tablename__ = "PUIDMaintain"
 
     # ID:
     ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
 
-    # 产品段编码:
-    PDCtrlTaskCode = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+    # 工艺名称:
+    BrandName = Column(Unicode(64), nullable=False, primary_key=False)
 
-    # 产品段名称:
-    PDCtrlTaskName = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+    # 工艺编码:
+    BrandCode = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
 
-    # 描述:
-    Desc = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+    # 产品名称:
+    BrandName = Column(Unicode(64), nullable=False, primary_key=False)
 
-    # 低限:
-    LowLimit = Column(Float(53), primary_key=False, autoincrement=False, nullable=True)
+    # 产品编码:
+    BrandCode = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
 
-    # 高限:
-    HighLimit = Column(Float(53), primary_key=False, autoincrement=False, nullable=True)
-
-    # 相关任务数:
-    RelateTaskCount = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
-
-    # 产品定义ID:
-    ProductRuleID = Column(Integer, nullable=False, primary_key=False)
-
-    # 工艺段ID:
-    PUID = Column(Integer, nullable=False, primary_key=False)
-
-    # 顺序号:
-    Seq = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
-
-
-# ProductUnitRoute:
-class ProductUnitRoute(Base):
-    __tablename__ = "ProductUnitRoute"
-
-    # ID:
-    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
-
-    # 工艺路线编码:
-    PDUnitRouteCode = Column(Unicode(64), nullable=False, primary_key=False)
-
-    # 工艺路线名称:
-    PDUnitRouteName = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
-
-    # 描述:
-    Desc = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
-
-    # 持续时间:
-    Duration = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
-
-    # 单位:
-    Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 产品定义ID:
-    ProductRuleID = Column(Integer, nullable=False, primary_key=False)
-
-    # 工艺段ID:
-    PUID = Column(Integer, nullable=False, primary_key=False)
-
-    # 顺序号:
-    Seq = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+    # 创建日期:
+    CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 
 # 生成表单的执行语句
