@@ -110,6 +110,54 @@ def run():
             pass
         print("数据开始写入增量库结束")
 
+from dbset.database.db_operate import engine,conn
+
+
+def run():
+    while True:
+        # time.sleep(60)
+        print("数据开始写入增量数据库")
+        try:
+            start = time.time()
+            steamvalue = list()
+            stekeys = db_session.query(SteamEnergy).filter(SteamEnergy.IncrementFlag == "0", SteamEnergy.SumValue != "0.0").order_by(("ID")).all()
+            print(time.time() - start)
+            start = time.time()
+            icount = 0
+            for key in stekeys:
+                proSumValue = db_session.query(SteamEnergy.SumValue).filter(SteamEnergy.ID == key.PrevID).first()
+                if proSumValue != None:
+                    proSumValue = proSumValue[0]
+                else:
+                    proSumValue = 0
+                sumvalue = abs(round(float(key.SumValue) - float(proSumValue), 2))
+                ss = (sumvalue, "汽", key.ID,
+                      key.PriceID, key.SumUnit, key.EquipmnetID,
+                      key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
+                      key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName,"0")
+                steamvalue.append(ss)
+                icount = icount + 1
+                print(icount)
+            print(datetime.datetime.now())
+            print(time.time() - start)
+            try:
+                cursor = conn.cursor()
+                print(datetime.datetime.now())
+                cursor.executemany(
+                    "INSERT INTO IncrementStreamTable VALUES (%s,%s,%d,%d,%s,%d,%s,%s,%s,%s,%s,%s,%s,%s)",
+                    steamvalue)
+                conn.commit()
+                print(datetime.datetime.now())
+            except Exception as e:
+                print(e)
+        except Exception as e:
+            print("写入增量库报错：" + str(e))
+            logger.errro(e)
+            insertSyslog("error", "写入增量库报错Error：" + str(e), "")
+        finally:
+            pass
+        print("数据开始写入增量库结束")
+
 
 if __name__ == '__main__':
     run()

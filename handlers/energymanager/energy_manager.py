@@ -966,7 +966,7 @@ def areatimeenergycount():
                 dir_rows["能耗量"] = count
                 rows_list.append(dir_rows)
             if len(rows_list)>0:
-                array = sorted(rows_list, key=lambda obj: -obj["能耗量"])
+                array = sorted(rows_list, key=lambda obj: obj["能耗量"])
             dir["rows"] = array
             unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == EnergyClass).first()[0]
             dir["unit"] = unit
