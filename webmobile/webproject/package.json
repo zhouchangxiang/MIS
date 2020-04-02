@@ -13,8 +13,11 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "echarts": "^4.7.0",
     "less": "^3.11.1",
     "less-loader": "^5.0.0",
+    "moment": "^2.24.0",
+    "v-charts": "^1.19.0",
     "vant": "^2.5.7",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1"

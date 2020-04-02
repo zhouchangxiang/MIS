@@ -1,5 +1,5 @@
 <template>
-   <div class="content-box">
+   <div>
        <div class="top">
            <div class='head-name'>好护士能管系统</div>
            <span @click="logout"><van-icon name="close" size="22px" color="#FF5041FF"/></span>
