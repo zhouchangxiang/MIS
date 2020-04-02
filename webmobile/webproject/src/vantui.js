@@ -7,7 +7,9 @@ import { Button,
     Cell, 
     CellGroup,
     Toast,
-    Tabbar, TabbarItem} from 'vant'
+    Tabbar, 
+    TabbarItem,
+    Pagination} from 'vant'
 
 Vue.use(Toast);
 Vue.use(Cell);
@@ -18,3 +20,4 @@ Vue.use(Field);
 Vue.use(Icon );
 Vue.use(Tabbar );
 Vue.use(TabbarItem );
+Vue.use( Pagination );

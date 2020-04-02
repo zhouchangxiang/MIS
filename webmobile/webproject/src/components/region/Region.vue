@@ -1,6 +1,6 @@
 <template>
     <div class="show-box">
-          区域界面
+          123
        </div>
 </template>
 <script>
