@@ -24,10 +24,35 @@ from dbset.log.BK2TLogger import logger, insertSyslog
 
 def run():
     while True:
-        time.sleep(60)
+        # time.sleep(60)
         print("数据开始写入增量数据库")
         try:
-            elekeys = db_session.query(ElectricEnergy).filter(ElectricEnergy.IncrementFlag == "0", ElectricEnergy.ZGL != "0.0").order_by(("ID")).all()
+            stekeys = db_session.query(SteamEnergy).filter(SteamEnergy.IncrementFlag == "0",
+                                                           SteamEnergy.SumValue != "0.0").order_by(desc("ID")).all()
+            for key in stekeys:
+                ine = IncrementStreamTable()
+                ine.TagClassValue = key.TagClassValue
+                ine.CollectionYear = key.CollectionYear
+                ine.CollectionMonth = key.CollectionMonth
+                ine.CollectionDay = key.CollectionDay
+                ine.CollectionHour = str(key.CollectionDate)[0:13]
+                proSumValue = db_session.query(SteamEnergy.SumValue).filter(SteamEnergy.ID == key.PrevID).first()
+                if proSumValue != None:
+                    proSumValue = proSumValue[0]
+                else:
+                    proSumValue = 0
+                ine.IncremenValue = abs(round(float(key.SumValue) - float(proSumValue), 2))
+                ine.CalculationID = key.ID
+                ine.IncremenType = "汽"
+                ine.CollectionDate = key.CollectionDate
+                ine.Unit = key.SumUnit
+                ine.EquipmnetID = key.EquipmnetID
+                ine.PriceID = key.PriceID
+                ine.AreaName = key.AreaName
+                db_session.add(ine)
+                key.IncrementFlag = "1"
+                db_session.commit()
+            elekeys = db_session.query(ElectricEnergy).filter(ElectricEnergy.IncrementFlag == "0", ElectricEnergy.ZGL != "0.0").order_by(desc("ID")).all()
             for key in elekeys:
                 inc = IncrementElectricTable()
                 inc.TagClassValue = key.TagClassValue
@@ -51,7 +76,7 @@ def run():
                 db_session.add(inc)
                 key.IncrementFlag = "1"
                 db_session.commit()
-            watkeys = db_session.query(WaterEnergy).filter(WaterEnergy.IncrementFlag == "0", WaterEnergy.WaterSum != "0.0").order_by(("ID")).all()
+            watkeys = db_session.query(WaterEnergy).filter(WaterEnergy.IncrementFlag == "0", WaterEnergy.WaterSum != "0.0").order_by(desc("ID")).all()
             for key in watkeys:
                 inw = IncrementWaterTable()
                 inw.TagClassValue = key.TagClassValue
@@ -73,30 +98,6 @@ def run():
                 inw.PriceID = key.PriceID
                 inw.AreaName = key.AreaName
                 db_session.add(inw)
-                key.IncrementFlag = "1"
-                db_session.commit()
-            stekeys = db_session.query(SteamEnergy).filter(SteamEnergy.IncrementFlag == "0", SteamEnergy.SumValue != "0.0").order_by(("ID")).all()
-            for key in stekeys:
-                ine = IncrementStreamTable()
-                ine.TagClassValue = key.TagClassValue
-                ine.CollectionYear = key.CollectionYear
-                ine.CollectionMonth = key.CollectionMonth
-                ine.CollectionDay = key.CollectionDay
-                ine.CollectionHour = str(key.CollectionDate)[0:13]
-                proSumValue = db_session.query(SteamEnergy.SumValue).filter(SteamEnergy.ID == key.PrevID).first()
-                if proSumValue != None:
-                    proSumValue = proSumValue[0]
-                else:
-                    proSumValue = 0
-                ine.IncremenValue = abs(round(float(key.SumValue) - float(proSumValue), 2))
-                ine.CalculationID = key.ID
-                ine.IncremenType = "汽"
-                ine.CollectionDate = key.CollectionDate
-                ine.Unit = key.SumUnit
-                ine.EquipmnetID = key.EquipmnetID
-                ine.PriceID = key.PriceID
-                ine.AreaName = key.AreaName
-                db_session.add(ine)
                 key.IncrementFlag = "1"
                 db_session.commit()
         except Exception as e:
