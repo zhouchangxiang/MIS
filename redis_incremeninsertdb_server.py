@@ -27,6 +27,7 @@ def run():
         # time.sleep(60)
         print("数据开始写入增量数据库")
         try:
+            print(datetime.datetime.now())
             stekeys = db_session.query(SteamEnergy).filter(SteamEnergy.IncrementFlag == "0",
                                                            SteamEnergy.SumValue != "0.0").order_by(desc("ID")).all()
             for key in stekeys:
@@ -52,6 +53,7 @@ def run():
                 db_session.add(ine)
                 key.IncrementFlag = "1"
                 db_session.commit()
+            print(datetime.datetime.now())
             elekeys = db_session.query(ElectricEnergy).filter(ElectricEnergy.IncrementFlag == "0", ElectricEnergy.ZGL != "0.0").order_by(desc("ID")).all()
             for key in elekeys:
                 inc = IncrementElectricTable()

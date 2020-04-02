@@ -971,6 +971,9 @@ class IncrementWaterTable(Base):
     # 区域:
     AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+    # 增量库插入标识
+    insertFlag = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 # 电增量表
 class IncrementElectricTable(Base):
     __tablename__ = "IncrementElectricTable"
@@ -1017,6 +1020,9 @@ class IncrementElectricTable(Base):
     # 区域:
     AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+    # 增量库插入标识
+    insertFlag = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 # 汽增量表
 class IncrementStreamTable(Base):
     __tablename__ = "IncrementStreamTable"
@@ -1062,6 +1068,9 @@ class IncrementStreamTable(Base):
 
     # 区域:
     AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 增量库插入标识
+    insertFlag = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 
 # 电价比重维护表
