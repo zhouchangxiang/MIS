@@ -969,7 +969,7 @@ class IncrementWaterTable(Base):
     CollectionHour = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 区域:
-    AreaCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 # 电增量表
 class IncrementElectricTable(Base):
@@ -1015,7 +1015,7 @@ class IncrementElectricTable(Base):
     CollectionHour = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 区域:
-    AreaCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 # 汽增量表
 class IncrementStreamTable(Base):
@@ -1061,7 +1061,7 @@ class IncrementStreamTable(Base):
     CollectionHour = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 区域:
-    AreaCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 
 # 电价比重维护表
