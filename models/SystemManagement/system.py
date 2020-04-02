@@ -969,7 +969,7 @@ class IncrementWaterTable(Base):
     CollectionHour = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 区域:
-    AreaCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 # 电增量表
 class IncrementElectricTable(Base):
@@ -1015,7 +1015,7 @@ class IncrementElectricTable(Base):
     CollectionHour = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 区域:
-    AreaCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 # 汽增量表
 class IncrementStreamTable(Base):
@@ -1061,7 +1061,7 @@ class IncrementStreamTable(Base):
     CollectionHour = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 区域:
-    AreaCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 
 # 电价比重维护表
@@ -1080,146 +1080,86 @@ class ElectricProportion(Base):
     # 创建时间:
     CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-
-# ZYPlan:
-class ZYPlan(Base):
-    __tablename__ = "ZYPlan"
+# BatchMaintain_START:
+class BatchMaintainTask(Base):
+    '''
+    任务表
+    '''
+    __tablename__ = "BatchMaintainTask"
 
     # ID:
     ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
 
-    # 计划日期:
-    PlanDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 工艺段:
+    PuidName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 制药计划单号:
-    PlanNo = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 计划单号:
+    PlanNum = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 批次号:
     BatchID = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 顺序号:
-    PlanSeq = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 工艺段:
-    PUID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
-
-    # 计划类型:
-    PlanType = Column(Unicode(16), primary_key=False, autoincrement=False, nullable=True)
-
     # 品名:
-    BrandID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
-
-    # 品名名称:
-    BrandName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # ERP订单号:
-    ERPOrderNo = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    BrandName = Column(Unicode(52), primary_key=False, autoincrement=False, nullable=True)
 
     # 计划重量:
-    PlanQuantity = Column(Float(53), primary_key=False, autoincrement=False, nullable=True)
+    PlanQuantity = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 实际重量:
-    ActQuantity = Column(Float(53), primary_key=False, autoincrement=False, nullable=True)
+    # 水用量:
+    WaterConsumption = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 单位:
-    Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 汽用量:
+    SteamConsumption = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 录入时间:
-    EnterTime = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
+    # 创建日期:
+    CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 计划开始时间:
-    PlanBeginTime = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
+    # 生产日期:
+    ProductionDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    PlanEndTime = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
+    # 开始时间:
+    StartTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 实际开始时间:
-    ActBeginTime = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
+    # 结束时间:
+    EndTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 实际完成时间:
-    ActEndTime = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
-
-    # 计划状态:
-    ZYPlanStatus = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 计划锁定状态:
-    LockStatus = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 接口处理状态:
-    INFStatus = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 仓储送料状态:
-    WMSStatus = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-
-# ZYTask:
-class ZYTask(Base):
-    __tablename__ = "ZYTask"
+class BrandMaintain(Base):
+    '''品名维护表'''
+    __tablename__ = "BrandMaintain"
 
     # ID:
     ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
 
-    # 设备ID:
-    EquipmentID = Column(Unicode(30), primary_key=False, autoincrement=True, nullable=True)
+    # 产品名称:
+    BrandName = Column(Unicode(64), nullable=False, primary_key=False)
 
-    # 计划日期:
-    PlanDate = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
+    # 产品编码:
+    BrandCode = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
 
-    # 制药任务单号:
-    TaskID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+    # 创建日期:
+    CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 批次号:
-    BatchID = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+class PUIDMaintain(Base):
+    '''工艺维护表'''
+    __tablename__ = "PUIDMaintain"
 
-    # 顺序号:
-    PlanSeq = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
 
-    # 工艺段:
-    PUID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+    # 工艺名称:
+    BrandName = Column(Unicode(64), nullable=False, primary_key=False)
 
-    # 工艺路线名称:
-    PDUnitRouteName = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+    # 工艺编码:
+    BrandCode = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
 
-    # 计划类型:
-    PlanType = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+    # 产品名称:
+    BrandName = Column(Unicode(64), nullable=False, primary_key=False)
 
-    # 牌号编码:
-    BrandID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+    # 产品编码:
+    BrandCode = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
 
-    # 牌号名称:
-    BrandName = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
-
-    # 计划重量:
-    PlanQuantity = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
-
-    # 实际重量:
-    ActQuantity = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
-
-    # 单位:
-    Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 录入时间:
-    EnterTime = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
-
-    # 实际开始时间:
-    ActBeginTime = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
-
-    # 实际完成时间:
-    ActEndTime = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
-
-    # 设定重复次数:
-    SetRepeatCount = Column(Integer, primary_key=False, autoincrement=False, nullable=True, default=1)
-
-    # 当前重复次数:
-    CurretnRepeatCount = Column(Integer, primary_key=False, autoincrement=False, nullable=True, default=0)
-
-    # 实际罐号:
-    ActTank = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 任务状态:
-    TaskStatus = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 任务锁定状态:
-    LockStatus = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 创建日期:
+    CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 
 # 生成表单的执行语句

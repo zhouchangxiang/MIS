@@ -42,17 +42,19 @@ def index():
 @accounts.route('/login', methods=['POST'])
 def login():
     try:
-        json_data = request.get_json()
-        user = db_session.query(User).filter_by(WorkNumber=json_data['worknumber']).first()
-        if user and check_password_hash(user.Password, json_data['password']):
+        worknumber = request.values.get('WorkNumber')
+        password = request.values.get('password')
+        user = db_session.query(User).filter_by(WorkNumber=worknumber).first()
+        # if user and check_password_hash(user.Password, password):
+        if user and user.Password == password:
             token = uuid.uuid4().hex
             user.LastLoginTime = datetime.now()
             Redis.set_data(Redis.connect(), token, user.id)
             db_session.add(user)
             db_session.commit()
-            return jsonify({'code': 1001, 'msg': '登录成功', 'data': {'token': token, 'user': user.WorkNumber}})
+            return jsonify({'code': 1001, 'msg': '登录成功了', 'data': {'token': token, 'user': user.WorkNumber}})
         else:
-            return jsonify({'code': 2001, 'msg': '账号或密码错误'})
+            return jsonify({'code': 2001, 'msg': '账号或密码错误了'})
     except Exception as e:
         print(e)
         db_session.rollback()

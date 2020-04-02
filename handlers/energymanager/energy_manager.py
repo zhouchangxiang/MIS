@@ -22,6 +22,7 @@ import pandas as pd
 from io import BytesIO
 from flask import Flask, send_file, make_response
 import math
+import models
 
 energy = Blueprint('energy', __name__, template_folder='templates')
 
@@ -687,14 +688,15 @@ def exceloutstatistic():
     if request.method == 'GET':
         StartTime = data.get("StartTime")
         EndTime = data.get("EndTime")
-        output = exportxstatistic(StartTime, EndTime)
+        EnergyClasss = data.get("EnergyClasss")
+        output = exportxstatistic(StartTime, EndTime, EnergyClasss)
         resp = make_response(output.getvalue())
         resp.headers["Content-Disposition"] = "attachment; filename=consumption.xlsx"
         resp.headers['Content-Type'] = 'application/x-xlsx'
         return resp
 
 
-def exportxstatistic(StartTime, EndTime):
+def exportxstatistic(StartTime, EndTime, EnergyClasss):
     # 创建数据流
     output = BytesIO()
     # 创建excel work book
@@ -714,49 +716,41 @@ def exportxstatistic(StartTime, EndTime):
     col = 0
     row = 1
     # 写入列名
-    columns = ['区域', '水累计值', '电总功率', '汽累计值', '统计开始时间', '统计截止时间']
+    columns = ['区域', '能耗表', '能耗值', '单位', '统计开始时间', '统计截止时间']
     for item in columns:
         worksheet.write(0, col, item, cell_format)
         col += 1
     AreaNames = db_session.query(AreaTable).filter().all()
-    for i in range(0, len(AreaNames)):
-        oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaNames[i].AreaName).all()
-        oce_list = []
-        ocw_list = []
-        ocs_list = []
-        for oc in oclass:
-            Tag = oc.TagClassValue[0:1]
-            if Tag == "E":
-                oce_list.append(oc.TagClassValue)
-            elif Tag == "W":
-                ocw_list.append(oc.TagClassValue)
-            elif Tag == "S":
-                ocs_list.append(oc.TagClassValue)
-        if len(oce_list) > 0:
-            elecount = energyStatistics(oce_list, StartTime, EndTime, "电")
+    oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass ==EnergyClasss).all()
+    unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == EnergyClasss).first()[0]
+    i = 0
+    for oc in oclass:
+        oc_list = []
+        Tag = oc.TagClassValue[0:1]
+        if Tag == "E":
+            oc_list.append(oc.TagClassValue)
+        elif Tag == "W":
+            oc_list.append(oc.TagClassValue)
+        elif Tag == "S":
+            oc_list.append(oc.TagClassValue)
+        if len(oc_list) > 0:
+            count = energyStatistics(oc_list, StartTime, EndTime, EnergyClasss)
         else:
-            elecount = 0.0
-        if len(ocw_list) > 0:
-            watcount = energyStatistics(ocw_list, StartTime, EndTime, "水")
-        else:
-            watcount = 0.0
-        if len(ocs_list) > 0:
-            stecount = energyStatistics(ocs_list, StartTime, EndTime, "汽")
-        else:
-            stecount = 0.0
+            count = 0.0
         for cum in columns:
             if cum == '区域':
-                worksheet.write(i + 1, columns.index(cum), AreaNames[i].AreaName)
-            if cum == '水累计值':
-                worksheet.write(i + 1, columns.index(cum), str(watcount) + "t")
-            if cum == '电总功率':
-                worksheet.write(i + 1, columns.index(cum), str(elecount) + "kW·h")
-            if cum == '汽累计值':
-                worksheet.write(i + 1, columns.index(cum), str(stecount) + "t")
+                worksheet.write(i + 1, columns.index(cum), oc.AreaName)
+            if cum == '能耗表':
+                worksheet.write(i + 1, columns.index(cum), oc.FEFportIP)
+            if cum == '能耗值':
+                worksheet.write(i + 1, columns.index(cum), str(count))
+            if cum == '单位':
+                worksheet.write(i + 1, columns.index(cum), unit)
             if cum == '统计开始时间':
                 worksheet.write(i + 1, columns.index(cum), StartTime + "0:00")
             if cum == '统计截止时间':
                 worksheet.write(i + 1, columns.index(cum), EndTime + "0:00")
+        i = i + 1
     writer.close()
     output.seek(0)
     return output
@@ -976,3 +970,108 @@ def areatimeenergycount():
             print(e)
             logger.error(e)
             insertSyslog("error", "区域时段能耗查询报错Error：" + str(e), current_user.Name)
+
+@energy.route('/createzyplanzytaskrelease', methods=['POST', 'GET'])
+def createzyplanzytaskrelease():
+    '''
+    创建计划任务
+    :return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            PlanNum = data.get("PlanNum")
+            BatchID = data.get("BatchID")
+            BrandName = ctrlPlan('BrandName')
+            WaterConsumption = data.get("WaterConsumption")
+            ElectricConsumption = data.get("ElectricConsumption")
+            ProductionDate = ctrlPlan('ProductionDate')
+            iTaskCount = data.get("iTaskCount")
+            CreateDate = datetime.datetime.now().strftime()
+            StartTime = data.get("StartTime")
+            EndTime = data.get("EndTime")
+            PlanCreate = ctrlPlan('PlanCreate')
+            re = PlanCreate.createBatchMaintain(PlanNum, BatchID, BrandName, WaterConsumption, ElectricConsumption, ProductionDate, StartTime, EndTime, iTaskCount)
+            if re==True:
+                return json.dumps("OK", cls=AlchemyEncoder, ensure_ascii=False)
+            else:
+                return json.dumps("创建计划任务失败!", cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "创建计划任务报错Error：" + str(e), current_user.Name)
+
+class ctrlPlan:
+    def __init__(self, name):
+        try:
+            self.name = name
+            # self.productrule = Model.core.ProductRule("1")
+            # self.productunit = Model.core.ProductUnit("2")
+            # self.productcontrltask = Model.core.ProductContrlTask("3")
+            # self.productparameter = Model.core.ProductParameter("4")
+            # self.materialbom = Model.core.MaterialBOM("5")
+            # self.productunitroute = Model.core.ProductUnitRoute("6")
+            # self.scheduleplan = Model.core.SchedulePlan("7")
+            # self.planmanager = Model.core.PlanManager("8")
+            # self.unit = Model.core.Unit("9")
+        except Exception as e:
+            print(e)
+            logger.error(e)
+
+    def createBatchMaintain(self, PlanNum, BatchID, BrandName, PlanQuantity, WaterConsumption, ElectricConsumption, ProductionDate, StartTime, EndTime, iTaskCount):
+        bReturn = True
+        try:
+            db_session.add(
+                models.core.BatchMaintain(
+                    PlanNum=PlanNum,
+                    BatchID=BatchID,
+                    BrandName=BrandName,
+                    PlanQuantity=PlanQuantity,
+                    WaterConsumption=WaterConsumption,
+                    ElectricConsumption=ElectricConsumption,
+                    ProductionDate=ProductionDate,
+                    StartTime=StartTime,
+                    EndTime=EndTime,
+                    iTaskCount=iTaskCount))
+            db_session.commit()
+            db_session.query(P)
+            if iTaskCount >= 1:
+                iTaskSeq = 0
+                for num in range(0, iTaskCount):
+                    iTaskSeq = iTaskSeq + 1
+                    bReturn, strTaskNo = self.getTaskNo()
+                    if bReturn == False:
+                        return False
+                    bReturn = self.BatchMaintainTask("", PlanNum, BatchID, BrandName, PlanQuantity, WaterConsumption, ElectricConsumption, ProductionDate, StartTime, EndTime)
+                    if bReturn == False:
+                        return False
+            return bReturn
+        except Exception as e:
+            db_session.rollback()
+            print(e)
+            insertSyslog("error", "创建计划报错Error：" + str(e), current_user.Name)
+            return False
+
+
+    def BatchMaintainTask(self, PuidName, PlanNum, BatchID, BrandName, PlanQuantity, WaterConsumption, ElectricConsumption, ProductionDate, StartTime, EndTime):
+        bReturn = True;
+        try:
+            db_session.add(
+                models.system.BatchMaintainTask(
+                    PuidName=PuidName,
+                    PlanNum=PlanNum,
+                    BatchID=BatchID,
+                    BrandName=BrandName,
+                    PlanQuantity=PlanQuantity,
+                    WaterConsumption=WaterConsumption,
+                    ElectricConsumption=ElectricConsumption,
+                    ProductionDate=ProductionDate,
+                    StartTime=StartTime,
+                    EndTime=EndTime))
+            db_session.commit()
+            return bReturn
+        except Exception as e:
+            db_session.rollback()
+            print(e)
+            insertSyslog("error", "创建任务报错Error：" + str(e), current_user.Name)
+            return  False
