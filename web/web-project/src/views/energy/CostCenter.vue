@@ -54,7 +54,7 @@
       <div class="energyDataContainer" style="margin-bottom:10px;">
         <ve-histogram :data="electricityPileChartData" :settings="electricityPileChartSettings" :extend="ChartExtend"></ve-histogram>
       </div>
-      <el-col :span="12" v-for="(item,index) in electricAnalyzeItem" :key="index">
+      <el-col :span="12" v-for="item in electricAnalyzeItem" :key="item.title">
         <div class="electricAnalyze">
           <p style="text-align: center;margin-bottom: 10px;">{{ item.title }}</p>
           <el-row :gutter="20" style="margin-bottom: 10px;">
@@ -155,7 +155,7 @@
         formParameters:{
           resourceTime:"月",
           resourceType:"基本电费",
-          startDate:moment().startOf('month').subtract('month',1).format('YYYY-MM'),
+          startDate:moment().month(moment().month() - 1).startOf('month').format('YYYY-MM'),
           endDate:Date.now(),
           energy:"电能"
         },
