@@ -7,8 +7,8 @@
         </ul>
       </div>
       <AreasHome v-if="navOptionsCurrent == 0"></AreasHome>
-      <AreaBasicData v-else-if="navOptionsCurrent == 1"></AreaBasicData>
-      <AreaPeriodTime v-else-if="navOptionsCurrent == 2"></AreaPeriodTime>
+      <AreaPeriodTime v-else-if="navOptionsCurrent == 1"></AreaPeriodTime>
+      <AreaBasicData v-else-if="navOptionsCurrent == 2"></AreaBasicData>
       <AreaBatch v-else-if="navOptionsCurrent == 3"></AreaBatch>
       <AreaEqDetails v-else-if="navOptionsCurrent == 4"></AreaEqDetails>
       <CostCenter v-else-if="navOptionsCurrent == 5"></CostCenter>
@@ -37,8 +37,8 @@
         navOptionsCurrent:0,
         navOptions:[
           {name:'<i class="fa fa-home fa-1x"></i>'},
-          {name:"实时数据"},
           {name:"能耗看板"},
+          {name:"能耗明细"},
           {name:"单位批次能耗"},
           {name:"设备详情"},
           {name:"成本中心"},

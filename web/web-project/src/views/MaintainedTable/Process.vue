@@ -30,6 +30,8 @@
       <el-table :data="tableData" border tooltip-effect="dark" @selection-change="handleSelectionChange">
         <el-table-column type="selection"></el-table-column>
         <el-table-column prop="ID" label="ID"></el-table-column>
+        <el-table-column prop="PUIDName" label="工艺名称"></el-table-column>
+        <el-table-column prop="PUIDCode" label="工艺编码"></el-table-column>
         <el-table-column prop="BrandName" label="产品名称"></el-table-column>
         <el-table-column prop="BrandCode" label="产品编码"></el-table-column>
         <el-table-column prop="CreateDate" label="创建日期"></el-table-column>
@@ -48,6 +50,12 @@
         <el-form :model="submitForm" label-width="80px" :rules="rules" ref="ruleForm">
           <el-form-item label="ID">
             <el-input v-model="submitForm.ID" :disabled="true"></el-input>
+          </el-form-item>
+          <el-form-item label="工艺名称" prop="PUIDName">
+            <el-input v-model="submitForm.PUIDName"></el-input>
+          </el-form-item>
+          <el-form-item label="工艺编码" prop="PUIDCode">
+            <el-input v-model="submitForm.PUIDCode"></el-input>
           </el-form-item>
           <el-form-item label="产品名称" prop="BrandName">
             <el-input v-model="submitForm.BrandName"></el-input>
@@ -68,7 +76,7 @@
 <script>
   var moment = require('moment');
   export default {
-    name: "TradeNameTable",
+    name: "Process",
     data(){
       return {
         tableData:[],
@@ -80,6 +88,12 @@
         submitForm:'',
         dialogTitle:'',
         rules:{
+          PUIDName:[
+            {required: true, message: '工艺名称', trigger: 'blur'}
+          ],
+          PUIDCode:[
+            {required: true, message: '工艺编码', trigger: 'blur'}
+          ],
           BrandName:[
             {required: true, message: '产品名称', trigger: 'blur'}
           ],
@@ -89,7 +103,8 @@
         },
         region:"",
         regionList:[
-          {label:"产品名称",value:"BrandName"},
+          {label:"工艺名称",value:"PUIDName"},
+          {label:"产品名称",value:"BrandName"}
         ],
         searchVal:""
       }
@@ -101,7 +116,7 @@
       getTableData(){
         this.axios.get("/api/CUID",{
           params: {
-            tableName: "BrandMaintain",
+            tableName: "PUIDMaintain",
             limit:this.pagesize,
             offset:this.currentPage - 1
           }
@@ -127,7 +142,7 @@
       searchTab(){
         this.axios.get("/api/CUID",{
           params: {
-            tableName: "BrandMaintain",
+            tableName: "PUIDMaintain",
             field:this.region,
             fieldvalue:this.searchVal,
             limit:this.pagesize,
@@ -147,6 +162,8 @@
           this.dialogVisible = true
           this.submitForm = {
             ID:"",
+            PUIDName:"",
+            PUIDCode:"",
             BrandName:"",
             BrandCode:"",
             CreateDate:moment().format("YYYY-MM-DD")
@@ -157,6 +174,8 @@
             let data = this.multipleSelection[0]
             this.submitForm = {
               ID:data.ID,
+              PUIDName:data.PUIDName,
+              PUIDCode:data.PUIDCode,
               BrandName:data.BrandName,
               BrandCode:data.BrandCode
             }
@@ -171,7 +190,7 @@
       save(formName){
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.submitForm.tableName = "BrandMaintain"
+            this.submitForm.tableName = "PUIDMaintain"
             if(this.dialogTitle == "add"){
               this.axios.post("/api/CUID",this.qs.stringify(this.submitForm)).then(res =>{
                 if(res.data == "OK"){
@@ -218,7 +237,7 @@
           }).then(()  => {
             this.axios.delete("/api/CUID",{
               params: {
-                tableName: "BrandMaintain",
+                tableName: "PUIDMaintain",
                 delete_data: JSON.stringify(mulId)
               }
             }).then(res =>{

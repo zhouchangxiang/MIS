@@ -71,7 +71,7 @@
             </el-row>
             <el-row>
               <el-col :span="24">
-                  <ve-line :data="realtimeChartData" :extend="realtimeChartExtend" height="260px" :legend-visible="true"></ve-line>
+                <ve-line :data="realtimeChartData" :extend="realtimeChartExtend" height="260px" :legend-visible="true"></ve-line>
               </el-col>
             </el-row>
           </div>
@@ -85,7 +85,7 @@
               </el-select>
             </div>
             <div class="home-card-body" style="height:280px;">
-              <ve-bar :data="areaChartData" height="260px"></ve-bar>
+              <ve-bar :data="areaChartData" :extend="areaTimeChartExtend" height="260px" :legend-visible="false"></ve-bar>
             </div>
           </el-col>
           <el-col :span="7">
@@ -114,7 +114,7 @@
                 <li v-for="item in onlineEquipmentOption" style="margin-bottom: 5px;">
                   <p class="text-size-normol text-color-info">{{ item.name }}</p>
                   <p class="text-size-mini text-color-info-shallow" style="margin-top: 5px;"><span>上线数/总数</span><span style="float: right;">{{ item.online }}/{{ item.total }}</span></p>
-                  <el-progress :text-inside="true" :stroke-width="16" :percentage="item.rate"></el-progress>
+                  <el-progress :text-inside="true" :stroke-width="16" strokeLinecap="square" :percentage="item.rate"></el-progress>
                 </li>
               </ul>
             </div>
@@ -277,9 +277,9 @@
             show:false
           },
           grid:{
-            left: '-40px',
+            left: '-60px',
             right: '0',
-            bottom: '-20px',
+            bottom: '-10px',
             top:'0'
           },
           series: {
@@ -293,8 +293,51 @@
             bottom: '0',
             top:'30px'
           },
+          'series.0.itemStyle': {
+            color:"#228AD5"
+          },
+          'series.0.lineStyle':{
+            color:"#228AD5",
+            width:2
+          },
+          'series.1.itemStyle': {
+            color:"#FB8A06"
+          },
+          'series.1.lineStyle':{
+            color:"#FB8A06",
+            width:2,
+            type:'dotted'
+          },
           series: {
             smooth: false
+          }
+        },
+        areaTimeChartExtend: {
+          yAxis:{
+            show:false,
+            inverse:true
+          },
+          xAxis:{
+            show:false
+          },
+          grid:{
+            containLabel: false,
+            left: '20px',
+            right: '0',
+            bottom: '0',
+            top:'0'
+          },
+          series: {
+            barMaxWidth : 30,
+            smooth: false
+          },
+          label:{
+            show:true,
+            position:"insideLeft",
+            formatter: '{b}: {@score}'
+          },
+          itemStyle: {
+            color:"#228AD5"
           }
         },
         areaChartData:{
@@ -488,8 +531,14 @@
           CompareTime:moment().format("YYYY-MM-DD")
         }
         this.axios.get("/api/areatimeenergycount",{params:params}).then(res => {
-          console.log(res.data)
-          this.areaChartData = res.data
+          var arr = []
+          for(var i=0;i<res.data.rows.length;i++){
+            if(i < 4){
+              arr.push(res.data.rows[i])
+            }
+          }
+          this.areaChartData.rows = arr
+          this.areaTimeChartExtend.label.formatter =  '{b}: {@score}' + res.data.unit
         })
       },
       getOnLineEq(){

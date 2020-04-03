@@ -86,8 +86,7 @@
         <el-col :span="6">
           <div class="energyDataCard">
             <div class="realTimeCardTitle">实时数据 <span>kwh</span></div>
-            <div class="realTimeData">22432</div>
-            <div style="margin-top: 10px;"><span class="text-color-info-shallow">日累计能耗</span><span class="float-right text-color-info">4543.56kwh</span></div>
+            <div class="realTimeData itemMarginBottom">22432</div>
           </div>
           <div class="energyDataCard">
             <div class="energyDataItem">
@@ -97,11 +96,11 @@
             </div>
             <div class="energyDataItem">
               <div class="energyDataItemTitle">今日能耗</div>
-              <div class="energyDataItemData">2342.23 kwh</div>
+              <div class="energyDataItemData">{{ todayCon }} {{ todayConUnit }}</div>
             </div>
             <div class="energyDataItem">
               <div class="energyDataItemTitle">对比</div>
-              <div class="energyDataItemData">+9.5% </div>
+              <div class="energyDataItemData">{{ compareRatio }}</div>
             </div>
           </div>
           <div class="energyDataCard">
@@ -140,8 +139,7 @@
         <el-col :span="6">
           <div class="energyDataCard">
             <div class="realTimeCardTitle">实时数据 <span>kwh</span></div>
-            <div class="realTimeData">22432</div>
-            <div style="margin-top: 10px;"><span class="text-color-info-shallow">日累计能耗</span><span class="float-right text-color-info">4543.56kwh</span></div>
+            <div class="realTimeData itemMarginBottom">22432</div>
           </div>
           <div class="energyDataCard" style="margin-bottom: 0">
             <div class="energyDataItem" style="margin-top: 8px">

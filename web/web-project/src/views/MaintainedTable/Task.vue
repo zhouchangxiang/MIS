@@ -1,107 +1,100 @@
 <template>
-  <el-row>
-    <el-col :span="24" style="background-color:#FFF;padding: 15px;margin-bottom: 15px;">
-      <el-row>
-        <el-col :span="24">
-          <el-form :inline="true">
-            <el-form-item>
-              <el-select v-model="region" placeholder="请选择搜索字段" size="small">
-                <el-option v-for="(item,index) in regionList" :label="item.label" :value="item.value" :key="index"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item>
-              <el-input placeholder="请输入搜索内容" size="small" v-model="searchVal"></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="success" icon="el-icon-search" size="small" @click="searchTab">搜索</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" size="small" @click="openDialog('add')">添加</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="warning" size="small" @click="openDialog('edit')">修改</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="danger" size="small" @click="del">删除</el-button>
-            </el-form-item>
-          </el-form>
-        </el-col>
-      </el-row>
-      <el-table :data="tableData" border tooltip-effect="dark" @selection-change="handleSelectionChange">
-        <el-table-column type="selection"></el-table-column>
-        <el-table-column prop="ID" label="ID"></el-table-column>
-        <el-table-column prop="PlanNum" label="计划单号"></el-table-column>
-        <el-table-column prop="BatchID" label="批次号"></el-table-column>
-        <el-table-column prop="BrandName" label="品名"></el-table-column>
-        <el-table-column prop="PlanQuantity" label="计划重量"></el-table-column>
-        <el-table-column prop="WaterConsumption" label="水用量"></el-table-column>
-        <el-table-column prop="SteamConsumption" label="汽用量"></el-table-column>
-        <el-table-column prop="ProductionDate" label="生产日期"></el-table-column>
-        <el-table-column prop="StartTime" label="开始时间"></el-table-column>
-        <el-table-column prop="EndTime" label="结束时间"></el-table-column>
-        <el-table-column prop="CreateDate" label="创建日期"></el-table-column>
-      </el-table>
-      <div class="paginationClass">
-        <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
-                       :total="total"
-                       :current-page="currentPage"
-                       :page-sizes="[5,10,20]"
-                       :page-size="pagesize"
-                       @size-change="handleSizeChange"
-                       @current-change="handleCurrentChange">
-        </el-pagination>
-      </div>
-      <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false" width="40%">
-        <el-form :model="submitForm" label-width="80px" :rules="rules" ref="ruleForm">
-          <el-form-item label="ID">
-            <el-input v-model="submitForm.ID" :disabled="true"></el-input>
+  <el-col :span="24" style="background-color:#FFF;padding: 15px;">
+    <el-row>
+      <el-col :span="24">
+        <el-form :inline="true">
+          <el-form-item>
+            <el-select v-model="region" placeholder="请选择搜索字段" size="small">
+              <el-option v-for="(item,index) in regionList" :label="item.label" :value="item.value" :key="index"></el-option>
+            </el-select>
           </el-form-item>
-          <el-form-item label="计划单号" prop="PlanNum">
-            <el-input v-model="submitForm.PlanNum"></el-input>
+          <el-form-item>
+            <el-input placeholder="请输入搜索内容" size="small" v-model="searchVal"></el-input>
           </el-form-item>
-          <el-form-item label="批次号" prop="BatchID">
-            <el-input v-model="submitForm.BatchID"></el-input>
+          <el-form-item>
+            <el-button type="success" icon="el-icon-search" size="small" @click="searchTab">搜索</el-button>
           </el-form-item>
-          <el-form-item label="品名" prop="BrandName">
-            <el-input v-model="submitForm.BrandName"></el-input>
+          <el-form-item>
+            <el-button type="warning" size="small" @click="openDialog('edit')">修改</el-button>
           </el-form-item>
-          <el-form-item label="计划重量" prop="PlanQuantity">
-            <el-input v-model="submitForm.PlanQuantity"></el-input>
-          </el-form-item>
-          <el-form-item label="水用量" prop="WaterConsumption">
-            <el-input v-model="submitForm.WaterConsumption"></el-input>
-          </el-form-item>
-          <el-form-item label="汽用量" prop="SteamConsumption">
-            <el-input v-model="submitForm.SteamConsumption"></el-input>
-          </el-form-item>
-          <el-form-item label="生产日期" prop="ProductionDate">
-            <el-input v-model="submitForm.ProductionDate"></el-input>
-          </el-form-item>
-          <el-form-item label="开始时间" prop="StartTime">
-            <el-input v-model="submitForm.StartTime"></el-input>
-          </el-form-item>
-          <el-form-item label="结束时间" prop="EndTime">
-            <el-input v-model="submitForm.EndTime"></el-input>
+          <el-form-item>
+            <el-button type="danger" size="small" @click="del">删除</el-button>
           </el-form-item>
         </el-form>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="save('ruleForm')">保存</el-button>
-        </span>
-      </el-dialog>
-    </el-col>
-    <Task></Task>
-  </el-row>
+      </el-col>
+    </el-row>
+    <el-table :data="tableData" border tooltip-effect="dark" @selection-change="handleSelectionChange">
+      <el-table-column type="selection"></el-table-column>
+      <el-table-column prop="ID" label="ID"></el-table-column>
+      <el-table-column prop="PuidName" label="工艺段"></el-table-column>
+      <el-table-column prop="PlanNum" label="计划单号"></el-table-column>
+      <el-table-column prop="BatchID" label="批次号"></el-table-column>
+      <el-table-column prop="BrandName" label="品名"></el-table-column>
+      <el-table-column prop="PlanQuantity" label="计划重量"></el-table-column>
+      <el-table-column prop="WaterConsumption" label="水用量"></el-table-column>
+      <el-table-column prop="SteamConsumption" label="汽用量"></el-table-column>
+      <el-table-column prop="ProductionDate" label="生产日期"></el-table-column>
+      <el-table-column prop="StartTime" label="开始时间"></el-table-column>
+      <el-table-column prop="EndTime" label="结束时间"></el-table-column>
+      <el-table-column prop="CreateDate" label="创建日期"></el-table-column>
+    </el-table>
+    <div class="paginationClass">
+      <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
+                     :total="total"
+                     :current-page="currentPage"
+                     :page-sizes="[5,10,20]"
+                     :page-size="pagesize"
+                     @size-change="handleSizeChange"
+                     @current-change="handleCurrentChange">
+      </el-pagination>
+    </div>
+    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false" width="40%">
+      <el-form :model="submitForm" label-width="80px" :rules="rules" ref="ruleForm">
+        <el-form-item label="ID">
+          <el-input v-model="submitForm.ID" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="工艺段" prop="PuidName">
+          <el-input v-model="submitForm.PuidName"></el-input>
+        </el-form-item>
+        <el-form-item label="计划单号" prop="PlanNum">
+          <el-input v-model="submitForm.PlanNum"></el-input>
+        </el-form-item>
+        <el-form-item label="批次号" prop="BatchID">
+          <el-input v-model="submitForm.BatchID"></el-input>
+        </el-form-item>
+        <el-form-item label="品名" prop="BrandName">
+          <el-input v-model="submitForm.BrandName"></el-input>
+        </el-form-item>
+        <el-form-item label="计划重量" prop="PlanQuantity">
+          <el-input v-model="submitForm.PlanQuantity"></el-input>
+        </el-form-item>
+        <el-form-item label="水用量" prop="WaterConsumption">
+          <el-input v-model="submitForm.WaterConsumption"></el-input>
+        </el-form-item>
+        <el-form-item label="汽用量" prop="SteamConsumption">
+          <el-input v-model="submitForm.SteamConsumption"></el-input>
+        </el-form-item>
+        <el-form-item label="生产日期" prop="ProductionDate">
+          <el-input v-model="submitForm.ProductionDate"></el-input>
+        </el-form-item>
+        <el-form-item label="开始时间" prop="StartTime">
+          <el-input v-model="submitForm.StartTime"></el-input>
+        </el-form-item>
+        <el-form-item label="结束时间" prop="EndTime">
+          <el-input v-model="submitForm.EndTime"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="save('ruleForm')">保存</el-button>
+      </span>
+    </el-dialog>
+  </el-col>
 </template>
 
 <script>
-  var moment = require('moment');
-  import Task from '@/views/MaintainedTable/Task'
   export default {
-    name: "PlanTask",
-    components:{
-      Task
-    },
+    name: "Task",
     data(){
       return {
         tableData:[],
@@ -113,6 +106,9 @@
         submitForm:'',
         dialogTitle:'',
         rules:{
+          PuidName:[
+            {required: true, message: '工艺段', trigger: 'blur'}
+          ],
           PlanNum:[
             {required: true, message: '计划单号', trigger: 'blur'}
           ],
@@ -139,13 +135,14 @@
           ],
           EndTime:[
             {required: true, message: '结束时间', trigger: 'blur'}
-          ]
+          ],
         },
         region:"",
         regionList:[
+          {label:"工艺段",value:"PuidName"},
           {label:"计划单号",value:"PlanNum"},
           {label:"批次号",value:"BatchID"},
-          {label:"品名",value:"BrandName"}
+          {label:"品名",value:"BrandName"},
         ],
         searchVal:""
       }
@@ -157,7 +154,7 @@
       getTableData(){
         this.axios.get("/api/CUID",{
           params: {
-            tableName: "BatchMaintain",
+            tableName: "BatchMaintainTask",
             limit:this.pagesize,
             offset:this.currentPage - 1
           }
@@ -183,7 +180,7 @@
       searchTab(){
         this.axios.get("/api/CUID",{
           params: {
-            tableName: "BatchMaintain",
+            tableName: "BatchMaintainTask",
             field:this.region,
             fieldvalue:this.searchVal,
             limit:this.pagesize,
@@ -203,6 +200,7 @@
           this.dialogVisible = true
           this.submitForm = {
             ID:"",
+            PuidName:"",
             PlanNum:"",
             BatchID:"",
             BrandName:"",
@@ -212,7 +210,6 @@
             ProductionDate:"",
             StartTime:"",
             EndTime:"",
-            CreateDate:moment().format("YYYY-MM-DD")
           }
         }else if(val == "edit"){
           if(this.multipleSelection.length == 1){
@@ -220,6 +217,7 @@
             let data = this.multipleSelection[0]
             this.submitForm = {
               ID:data.ID,
+              PuidName:data.PuidName,
               PlanNum:data.PlanNum,
               BatchID:data.BatchID,
               BrandName:data.BrandName,
@@ -241,9 +239,9 @@
       save(formName){
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.submitForm.tableName = "BatchMaintain"
+            this.submitForm.tableName = "BatchMaintainTask"
             if(this.dialogTitle == "add"){
-              this.axios.post("/api/createzyplanzytaskrelease",this.qs.stringify(this.submitForm)).then(res =>{
+              this.axios.post("/api/CUID",this.qs.stringify(this.submitForm)).then(res =>{
                 if(res.data == "OK"){
                   this.getTableData()
                 }else{
@@ -288,10 +286,11 @@
           }).then(()  => {
             this.axios.delete("/api/CUID",{
               params: {
-                tableName: "BatchMaintain",
+                tableName: "BatchMaintainTask",
                 delete_data: JSON.stringify(mulId)
               }
             }).then(res =>{
+              console.log(res)
               if(res.data == "OK"){
                 this.$message({
                   type: 'success',

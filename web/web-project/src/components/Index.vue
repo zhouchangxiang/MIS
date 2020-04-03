@@ -42,16 +42,44 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </li>
-            <li><el-tooltip class="head-menu-item" effect="dark" content="全屏" placement="bottom"><span :class="isFullScreen?'el-icon-aim':'el-icon-full-screen'" @click="getFullCreeen"></span></el-tooltip></li>
+            <li><el-tooltip class="head-menu-item" effect="dark" content="采集点分布图" placement="bottom"><i class="el-icon-office-building" @click="scattergram"></i></el-tooltip></li>
+            <li><el-tooltip class="head-menu-item" effect="dark" content="全屏" placement="bottom"><i :class="isFullScreen?'el-icon-aim':'el-icon-full-screen'" @click="getFullCreeen"></i></el-tooltip></li>
+            <li style="margin-right: 10px;" v-if="weatherDesc === 'OK'"><el-tooltip class="head-menu-item" effect="dark" :content="weatherType" placement="bottom"><i :class="weatherIcon"></i></el-tooltip></li>
             <li><div>{{ time }}</div></li>
           </ul>
         </div>
-        <div class="head-right-menu"><ul><li class="active"><i class="el-icon-menu"></i></li></ul></div>
+        <!--<div class="head-right-menu"><ul><li class="active"><i class="el-icon-menu"></i></li></ul></div>-->
         <div class="head-right-menu">
           <ul>
             <li v-for="(item,index) in mainMenuList" :key="index" @click="clickMainMenu(index)" v-bind:class="{active:index==isactive}">{{ item.text }}</li>
           </ul>
         </div>
+        <el-drawer :visible.sync="drawer" :with-header="false" size="91%">
+          <div class="drawerContent">
+            <div class="drawerMaskBg"></div>
+            <i class="close-drawer el-icon-close text-size-large" @click="drawer=false"></i>
+            <div class="mapContent">
+              <div class="mapContentTop">
+                <div style="position: relative;height: 100%;">
+                  <el-popover v-for="(item,index) in drawerTopAreaOption" placement="bottom" :title="item.title" width="200" trigger="click" @show="showAreaInfo(item.title)" :key="index">
+                    <div slot="reference" class="mapContentItem" :style="{width:item.width, height: item.height,top: item.top,left: item.left}"><div class="mapItemPoint" :style="{marginLeft: item.marginLeft}"></div></div>
+                    <el-radio-group v-model="energyType" fill="#082F4C" size="mini">
+                      <el-radio-button v-for="(item,index) in energyTypeList" border :key="item.index" :label="item.label" :value="item.value"></el-radio-button>
+                    </el-radio-group>
+                  </el-popover>
+                </div>
+              </div>
+              <div class="mapContentBottom">
+                <div style="position: relative;height: 100%;">
+                  <el-popover v-for="(item,index) in drawerBottomAreaOption" placement="bottom" :title="item.title" width="200" trigger="click" @show="showAreaInfo(item.title)" :key="index">
+                    <div slot="reference" class="mapContentItem" :style="{width:item.width, height: item.height,top: item.top,left: item.left}"><div class="mapItemPoint" :style="{marginLeft: item.marginLeft}"></div></div>
+                    <div></div>
+                  </el-popover>
+                </div>
+              </div>
+            </div>
+          </div>
+        </el-drawer>
         <!-- 个人信息 -->
         <el-dialog title="个人信息" :visible.sync="dialogUserVisible">
           <el-form></el-form>
@@ -94,9 +122,35 @@ export default {
       ],
       subMenulist:[], //子菜单导航列表
       isFullScreen:false, //是否全屏
+      weatherDesc:"",
+      weatherType:"",
+      weatherIcon:"",
       areaObj:{
         areaName:""
-      }
+      },
+      drawer: false,
+      drawerTopAreaOption:[
+        {title:"污水站",width: "120px",height:"33%",top:"23%",left:"3%",marginLeft:"70px"},
+        {title:"锅炉房",width: "220px",height:"23%",top:"17%",left:"15%",marginLeft:"140px"},
+        {title:"提取二车间",width: "220px",height:"17%",top:"40%",left:"15%",marginLeft:"100px"},
+        {title:"综合车间",width: "250px",height:"28%",top:"60%",left:"10%",marginLeft:"100px"},
+        {title:"新建综合制剂车间",width: "100px",height:"45%",top:"18%",left:"34%",marginLeft:"30px"},
+        {title:"研发中心",width: "60px",height:"43%",top:"18%",left:"44%",marginLeft:"30px"},
+        {title:"原提取车间",width: "90px",height:"15%",top:"33%",left:"50%",marginLeft:"30px"},
+        {title:"前处理车间",width: "90px",height:"17%",top:"45%",left:"58%",marginLeft:"40px"},
+        {title:"好护士健康科技车间",width: "220px",height:"17%",top:"57%",left:"46%",marginLeft:"80px"},
+        {title:"固体制剂车间",width: "280px",height:"28%",top:"74%",left:"48%",marginLeft:"60px"},
+      ],
+      drawerBottomAreaOption:[
+        {title:"展览室",width: "150px",height:"45%",top:"17%",left:"15%",marginLeft:"70px"},
+        {title:"办公楼",width: "360px",height:"48%",top:"10%",left:"25%",marginLeft:"140px"},
+      ],
+      energyType:"电表",
+      energyTypeList:[
+        {label:"电表",value:"电"},
+        {label:"水表",value:"水"},
+        {label:"汽表",value:"汽"}
+      ]
     }
   },
   //依赖注入传值
@@ -129,6 +183,7 @@ export default {
     }else{
       this.$router.push("/login");
     }
+    this.getWeather()
   },
   methods:{
     getMenuHeight(){
@@ -216,6 +271,37 @@ export default {
           this.isFullScreen = true
         }
       }
+    },
+    getWeather(){
+      this.axios.get("http://wthrcdn.etouch.cn/weather_mini",{
+        params: {
+          city: "昆明",
+        }
+      }).then(res =>{
+        var weatherType = res.data.data.forecast[0].type
+        var wendu = res.data.data.wendu
+        this.weatherType = weatherType +"："+ wendu + "°C"
+        this.weatherDesc = res.data.desc
+        if(weatherType === "晴"){
+          this.weatherIcon = "el-icon-sunny"
+        }else if(weatherType === "多云"){
+          this.weatherIcon = "el-icon-cloudy"
+        }else if(weatherType === "阴"){
+          this.weatherIcon = "el-icon-cloudy"
+        }else if(weatherType === "阵雨"){
+          this.weatherIcon = "el-icon-lightning"
+        }else if(weatherType === "小雨"){
+          this.weatherIcon = "el-icon-light-rain"
+        }else if(weatherType === "暴雨"){
+          this.weatherIcon = "el-icon-heavy-rain"
+        }
+      })
+    },
+    scattergram(){
+      this.drawer = true
+    },
+    showAreaInfo(AreaName){
+      console.log(AreaName)
     }
   }
 }
@@ -295,6 +381,9 @@ export default {
     color: #082F4C;
     font-size: 20px;
   }
+  .head-left-menu li i{
+    vertical-align: bottom;
+  }
   .head-right-menu li{
     float: left;
     margin-right: 15px;
@@ -302,7 +391,7 @@ export default {
     font-size: 16px;
     text-decoration: none;
     display: block;
-    padding: 5px 10px;
+    padding: 8px 15px;
     background-color: #EEEEEE;
     border-radius: 8px;
     cursor: pointer;
@@ -319,5 +408,66 @@ export default {
   }
   .el-badge.item{
     margin-right: 15px;
+  }
+  .drawerContent{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: url("../assets/imgs/loginBg.jpg") no-repeat;
+    background-size: cover;
+    -webkit-background-size: cover;
+    -o-background-size: cover;
+    background-position: left ;
+    display: flex;
+    align-items:center;
+  }
+  .drawerMaskBg{
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: #082F4C;
+    opacity: 0.52;
+  }
+  .close-drawer{
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+  }
+  .mapContent{
+    position: relative;
+    height: 60%;
+    width: 100%;
+  }
+  .mapContentTop{
+    position: relative;
+    padding-left: 340px;
+    height:50%;
+  }
+  .mapContentBottom{
+    position: relative;
+    height:50%;
+  }
+  .mapContentItem{
+    position: absolute;
+    border: none;
+    display: flex;
+    align-items:center;
+    cursor: pointer;
+  }
+  .mapItemPoint{
+    margin-top: 15%;
+    margin-left: 50px;
+    width: 5px;
+    height: 5px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 5px 5px rgba(227,95,95,1);
+    transition: box-shadow 0.6s, transform 0.5s;
+  }
+  .mapContentItem:hover .mapItemPoint{
+    box-shadow: 0 0 10px 10px rgba(251,58,6,1);
+	  transition: box-shadow 0.5s;
   }
 </style>
