@@ -1,29 +1,84 @@
 <template>
     <div class="show-box">
            <div class="show-top">
-               <div><span>年</span><span>月</span><span>日</span></div>
-               <div><span>水</span><span>电</span><span>气</span></div>
+               <div class="tips">
+                   <van-radio-group v-model="radio1" direction="horizontal" @change="myc">
+                        <van-radio name="1" shape="square" checked-color="#07c160">年</van-radio>
+                        <van-radio name="2" shape="square" checked-color="#07c160">月</van-radio>
+                        <van-radio name="3" shape="square" checked-color="#07c160">日</van-radio>
+                    </van-radio-group>
+                </div>
+               <div class="tips">
+                    <van-radio-group v-model="radio2" direction="horizontal">
+                        <van-radio name="1" shape="square" checked-color="#1989fa">水</van-radio>
+                        <van-radio name="2" shape="square" checked-color="#1989fa">电</van-radio>
+                        <van-radio name="3" shape="square" checked-color="#1989fa">气</van-radio>
+                    </van-radio-group>
+               </div>
            </div>
-           <div class="show-banner">显示模板</div>
-           <div class="show-body">生产批次</div>
-           <div class="show-foot">耗费成本</div>
+           <div class="show-banner">
+                  <div class="sb-name">厂区能耗</div>
+                  <div class="sb-number">00000000.00</div>
+                  <div class="sb-compare">较上期</div>
+                  <div class="sb-l-n">+1.345%</div>
+                  <div class="sb-dw">单位</div>
+                  <div class="sb-t">T</div>
+                  <div class="tabbar">
+                      <ul>
+                          <li><div>提取制剂</div><span></span></li>
+                          <li>提取二<span></span></li>
+                          <li>前处理<span></span></li>
+                          <li>研发中心<span></span></li>
+                      </ul>
+                  </div>
+           </div>
+           <div class="show-body">
+               <div class="sb-l">
+                   <div class="scpc">生产批次</div>
+                   <div class="scpc-s">0</div>
+                   <div class="znhl">总耗能量</div>
+                   <div class="znhl-s">000000.00</div>
+                   <div class="dwnh">单位批次能耗</div>
+                   <div class="dwnh-s">000000.00</div>
+                   <div class="dw-kwh">kwh</div>
+                   <div class="dw-pc">kwh/批</div>
+               </div>
+               <div class="sb-r">21</div>
+           </div>
+           <div class="show-foot">
+               <div class="sf-l">
+                   <div class="hf">耗费成本</div>
+                   <div class="all-money">00000000.00<span>元</span></div>
+               </div>
+                <div class="sf-r">
+                   <div class="machine">设备在线情况</div>
+                   <div class="tj">18/23</div>
+               </div>
+           </div>
        </div>
 </template>
 <script>
 export default {
     data(){
         return {
-            currentPage:1
+            radio1:3,
+            radio2:3
         }
     },
     methods:{
-
+        myc(){
+            this.$toast(this.radio1)
+    }
     }
 }
 </script>
 <style lang="less" scoped>
     @bgca:#3D4048FF;
     @bgcc:#1E222BFF;
+    @bgct:#7E7F84;
+    span{
+        text-align: center;
+    }
      .show-box{
         position: relative;
         width: 375px;
@@ -37,38 +92,123 @@ export default {
             color:#fff;
             font-size: 10px;
             margin-bottom: 21px;
-            div{
-                display:inline-block;
+            .tips{
+                float: left;
                 margin-right: 20px;
-                span{
-                    display: inline-block;
-                    width:38px;
-                    height:18px;
-                    text-align: center;
-                    background-color:@bgca;
-                    opacity:1;
-                    border-radius:4px;
-                    font-size:10px;
-                    font-family:PingFang SC;
-                    font-weight:400;
-                    opacity:1;
-                    &:hover{
-                        background:rgba(255,255,255,1);
-                        color:#000;
+                width: 120px;
+                background-color:#ccc;
+            .van-radio{
+                margin-right: 0px;
             }
-}
             }
         }
         .show-banner{
+            position: relative;
             width:350px;
             height:173px;
+            font-family:PingFang SC;
+            box-sizing: border-box;
             background:rgba(126,127,132,1);
             box-shadow:0px 0px 6px rgba(255,255,255,0.16);
             opacity:1;
             border-radius:4px;
             margin-bottom: 21px;
+           .sb-name{
+               position: absolute;
+               top:14px;
+               left: 15px;
+               width:56px;
+               height:20px;
+               font-size:14px;
+               font-weight:400;
+               line-height:20px;
+               color:rgba(255,255,255,1);
+               opacity:1;
+           }
+           .sb-number{
+               position: absolute;
+               left:13px;
+               top:58px;
+               font-size: 32px;
+               word-spacing: 20px;
+               height:36px;
+               color:rgba(250,192,0,1);
+               opacity:1;
+
+           }
+           .sb-compare{
+               position: absolute;
+               left: 15px;
+               top: 125px;
+               height:11px;
+               font-size:8px;
+               font-weight:400;
+               line-height:11px;
+               color:rgba(255,255,255,1);
+               opacity:1; 
+           }
+           .sb-l-n{
+               position: absolute;
+               left:15px;
+               top:142px;
+               width:42px;
+               height:17px;
+               font-size:12px;
+               font-weight:500;
+               line-height:17px;
+               color:rgba(255,80,65,1);
+               opacity:1;
+           }
+          .sb-dw{
+            position: absolute;
+            top:125px;
+            left:91px;
+            width:25px;
+            height:11px;
+            font-size:8px;
+            font-weight:400;
+            line-height:11px;
+            color:rgba(255,255,255,1);
+            opacity:1;
+            }
+            .sb-t{
+                position: absolute;
+                left:96px;
+                top:142px;
+                width:7px;
+                height:17px;
+                font-size:12px;
+                font-weight:500;
+                line-height:17px;
+                color:rgba(255,255,255,1);
+                opacity:1;
+            }
+            .tabbar{
+                position: absolute;
+                top:15px;
+                right:15px;
+                ul{
+                    margin: 0;
+                    padding: 0;
+                    li{
+                        height:36px;
+                        text-align: right;
+                        font-size:8px;
+                        font-weight:400;
+                        color: #fff;
+                        span{
+                            display: block;
+                            margin-top: 5px;
+                            height: 4px;
+                            background-color: #fff;
+                        }
+                    }
+                }
+            }
+           
         }
         .show-body{
+            position: relative;
             height:199px;
             background:rgba(126,127,132,1);
             box-shadow:0px 0px 6px rgba(255,255,255,0.16);
@@ -76,14 +216,171 @@ export default {
             border-radius:4px;
             background-color: #666;
             margin-bottom: 13px;
+            .sb-l{
+                position: absolute;
+                top:0;
+                left:0;
+                width:196px;
+                height:199px;
+                background:rgba(126,127,132,1);
+                box-shadow:0px 0px 6px rgba(255,255,255,0.16);
+                opacity:1;
+                border-radius:4px;
+                .scpc{
+                    position: absolute;
+                    top:11px;
+                    left:15px;
+                    width:50px;
+                    height:11px;
+                    font-size:8px;
+                    font-family:PingFang SC;
+                    font-weight:400;
+                    line-height:11px;
+                    color:rgba(255,255,255,1);
+                    opacity:1;
+                }
+                .scpc-s{
+                    position: absolute;
+                    top:30px;
+                    left: 14px;
+                    width:17px;
+                    height:25px;
+                    font-size: 23px;
+                    color:rgba(0,250,231,1);
+                    opacity:1;
+                }
+                .znhl{
+                    position: absolute;
+                    top:74px;
+                    left:15px;
+                    font-size: 8px;
+                    color: rgba(255,255,255,1);
+                }
+                .znhl-s{
+                    position: absolute;
+                    top:95px;
+                    left: 14px;
+                    width:17px;
+                    height:25px;
+                    font-size: 23px;
+                    color:#FAC000;
+                    opacity:1;
+                }
+                .dwnh{
+                    position: absolute;
+                    top:140px;
+                    left: 15px;
+                    font-size: 8px;
+                    color:rgba(255, 255, 255, 1)
+                }
+                .dwnh-s{
+                    position: absolute;
+                    top:161px;
+                    left: 14px;
+                    height:25px;
+                    font-size: 23px;
+                    color:#00FAE7;
+                    opacity:1;
+                }
+                .dw-kwh{
+                    position: absolute;
+                    right: 8px;
+                    top:108px;
+                    font-size: 8px;
+                    font-weight: 500;
+                    color: #fff;
+                }
+                .dw-pc{
+                    position: absolute;
+                    right: 8px;
+                    top:174px;
+                    font-size: 8px;
+                    font-weight: 500;
+                    color: #fff;
+                }
+            }
+            .sb-r{
+                position: absolute;
+                top:0;
+                right:0;
+                width:150px;
+                height:199px;
+                background:#666;
+                box-shadow:0px 0px 6px rgba(255,255,255,0.16);
+                opacity:1;
+                border-radius:4px;
+            }
         }
         .show-foot{
+            position: relative;
             height:64px;
             background:@bgca;
             box-shadow:0px 0px 6px rgba(255,255,255,0.16);
             opacity:1;
             border-radius:4px;
-            background-color: #ccc;
+            background-color:@bgcc;
+            .sf-l{
+                position: absolute;
+                left:0;
+                top:0;
+                width: 196px;
+                height: 64px;
+                border-radius: 4px;
+                background-color: @bgct;
+                .hf{
+                    position: absolute;
+                    top:8px;
+                    left: 13px;
+                    width:48px;
+                    height:11px;
+                    font-size:8px;
+                    font-weight:400;
+                    line-height:11px;
+                    color:rgba(255,255,255,1);
+                    opacity:1;
+                }
+                .all-money{
+                    position: absolute;
+                    left:16px;
+                    top:28px;
+                    height:23px;
+                    font-size: 23px;
+                    color:rgba(255,255,255,1);
+                    span{
+                        font-size: 12px;
+                        margin-left: 5px;
+                        }
+                }
+
+            }
+            .sf-r{
+                position: absolute;
+                right: 0;
+                top:0;
+                width:141px;
+                height: 64px;
+                border-radius: 4px;
+                background-color:@bgct;
+                .machine{
+                    position: absolute;
+                    top:8px;
+                    left: 12px;
+                    height:11px;
+                    font-size:8px;
+                    font-weight:400;
+                    line-height:11px;
+                    color:rgba(255,255,255,1);
+                }
+                .tj{
+                    position: absolute;
+                    left: 13px;
+                    top: 28px;
+                    font-size: 23px;
+                    font-weight: 500;
+                    color: #fff;
+                    letter-spacing: 5px;
+                }
+            }
         }
 
     }

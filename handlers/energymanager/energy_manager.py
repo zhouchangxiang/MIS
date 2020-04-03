@@ -1027,7 +1027,7 @@ class ctrlPlan:
         bReturn = True
         try:
             db_session.add(
-                models.core.BatchMaintain(
+                models.SystemManagement.core.BatchMaintain(
                     PlanNum=PlanNum,
                     BatchID=BatchID,
                     BrandName=BrandName,
@@ -1062,7 +1062,7 @@ class ctrlPlan:
         bReturn = True;
         try:
             db_session.add(
-                models.system.BatchMaintainTask(
+                models.SystemManagement.system.BatchMaintainTask(
                     PuidName=PuidName,
                     PlanNum=PlanNum,
                     BatchID=BatchID,

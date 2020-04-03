@@ -1156,10 +1156,10 @@ class PUIDMaintain(Base):
     ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
 
     # 工艺名称:
-    BrandName = Column(Unicode(64), nullable=False, primary_key=False)
+    PUIDName = Column(Unicode(64), nullable=False, primary_key=False)
 
     # 工艺编码:
-    BrandCode = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+    PUIDCode = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
 
     # 产品名称:
     BrandName = Column(Unicode(64), nullable=False, primary_key=False)

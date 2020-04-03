@@ -14,7 +14,7 @@ from dbset.main.BSFramwork import AlchemyEncoder
 from models.SystemManagement.system import User
 
 
-accounts = Blueprint('mobile', __name__, template_folder='templates')
+accounts = Blueprint('common', __name__, template_folder='templates')
 
 
 class Redis:
