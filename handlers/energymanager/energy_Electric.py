@@ -575,29 +575,3 @@ def energyElectricHistory():
             logger.error(e)
             insertSyslog("error", "能源历史数据查询报错Error：" + str(e), current_user.Name)
 
-
-@energyElectric.route('/get_electric_data', methods=['GET'])
-def get_electric():
-    start_time = request.values.get('StartTime')
-    end_time = request.values.get('EndTime')
-    # 当前页数
-    current_page = int(request.values.get('offset'))
-    # 每页显示条数
-    pagesize = int(request.values.get('limit'))
-    area_name = request.values.get('AreaName')
-    if area_name:
-        # results = db_session.query(ElectricEnergy).filter(ElectricEnergy.AreaName == area_name).filter(
-        #     ElectricEnergy.CollectionDate.between(start_time, end_time)).order_by(ElectricEnergy.ID.desc()).all()
-        # data = results[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
-        tag_list = db_session.query(TagDetail).filter(TagDetail.AreaName == area_name, TagDetail.EnergyClass == '电').all()
-        tag_point = [index.TagClassValue for index in tag_list]
-        sql = "select sum(cast(t1.IncremenValue as decimal(9,2)))*1.2*0.8 as count from [DB_MICS].[" \
-              "dbo].[IncrementElectricTable] t1 where t1.TagClassValue in " + (str(tag_point).replace('[', '(')).replace(']', ')') + " and t1.CollectionDate between '2020-03-25 14:41:54' and '2020-03-25 14:45:54' group by t1.IncremenType"
-        result = db_session.execute(sql).fetchall()
-
-        return json.dumps({'综合': str(round(result[0]['count'], 2))}, cls=AlchemyEncoder, ensure_ascii=False)
-    else:
-        results = db_session.query(ElectricEnergy).filter(
-            ElectricEnergy.CollectionDate.between(start_time, end_time)).order_by(ElectricEnergy.ID.desc()).all()
-        data = results[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
-    return json.dumps({'total': len(results), 'rows': data}, cls=AlchemyEncoder, ensure_ascii=False)

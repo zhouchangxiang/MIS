@@ -18,7 +18,7 @@ from handlers.batchmanager.batch_manager import batch
 from tools.common import insert, delete, update, select, accurateSelect
 from handlers.energymanager.energy_manager import energy, energyselect
 from flask_login import current_user
-from mobile.accounts.views import accounts
+from common.accounts.views import accounts
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
@@ -221,4 +221,4 @@ if __name__ == '__main__':
     server = Server(app.wsgi_app)
     server.watch('**/*.*')
     server.serve()
-    # app.run(debug=True)
+    # app.run()
