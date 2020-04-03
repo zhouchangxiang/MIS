@@ -966,7 +966,7 @@ def areatimeenergycount():
                 dir_rows["能耗量"] = count
                 rows_list.append(dir_rows)
             if len(rows_list)>0:
-                array = sorted(rows_list, key=lambda obj: obj["能耗量"])
+                array = sorted(rows_list, key=lambda obj: -obj["能耗量"])
             dir["rows"] = array
             unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == EnergyClass).first()[0]
             dir["unit"] = unit
@@ -1027,7 +1027,7 @@ class ctrlPlan:
         bReturn = True
         try:
             db_session.add(
-                models.core.BatchMaintain(
+                models.SystemManagement.core.BatchMaintain(
                     PlanNum=PlanNum,
                     BatchID=BatchID,
                     BrandName=BrandName,
@@ -1062,7 +1062,7 @@ class ctrlPlan:
         bReturn = True;
         try:
             db_session.add(
-                models.system.BatchMaintainTask(
+                models.SystemManagement.system.BatchMaintainTask(
                     PuidName=PuidName,
                     PlanNum=PlanNum,
                     BatchID=BatchID,
