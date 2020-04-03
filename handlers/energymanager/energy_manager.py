@@ -10,7 +10,7 @@ import calendar
 from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable, Equipment, \
     AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
-    AreaTimeEnergyColour, ElectricProportion
+    AreaTimeEnergyColour, ElectricProportion, PUIDMaintain
 from tools.common import insert, delete, update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger, insertSyslog
@@ -996,7 +996,7 @@ def createzyplanzytaskrelease():
             StartTime = data.get("StartTime")
             EndTime = data.get("EndTime")
             PlanCreate = ctrlPlan('PlanCreate')
-            re = PlanCreate.createBatchMaintain(PlanNum, BatchID, BrandName, WaterConsumption, ElectricConsumption, ProductionDate, StartTime, EndTime, iTaskCount)
+            re = PlanCreate.createBatchMaintain(PlanNum, BatchID, BrandName, WaterConsumption, ElectricConsumption, ProductionDate, StartTime, EndTime)
             if re==True:
                 return json.dumps("OK", cls=AlchemyEncoder, ensure_ascii=False)
             else:
@@ -1008,22 +1008,9 @@ def createzyplanzytaskrelease():
 
 class ctrlPlan:
     def __init__(self, name):
-        try:
-            self.name = name
-            # self.productrule = Model.core.ProductRule("1")
-            # self.productunit = Model.core.ProductUnit("2")
-            # self.productcontrltask = Model.core.ProductContrlTask("3")
-            # self.productparameter = Model.core.ProductParameter("4")
-            # self.materialbom = Model.core.MaterialBOM("5")
-            # self.productunitroute = Model.core.ProductUnitRoute("6")
-            # self.scheduleplan = Model.core.SchedulePlan("7")
-            # self.planmanager = Model.core.PlanManager("8")
-            # self.unit = Model.core.Unit("9")
-        except Exception as e:
-            print(e)
-            logger.error(e)
+        self.name = name
 
-    def createBatchMaintain(self, PlanNum, BatchID, BrandName, PlanQuantity, WaterConsumption, ElectricConsumption, ProductionDate, StartTime, EndTime, iTaskCount):
+    def createBatchMaintain(self, PlanNum, BatchID, BrandName, PlanQuantity, WaterConsumption, ElectricConsumption, ProductionDate, StartTime, EndTime):
         bReturn = True
         try:
             db_session.add(
@@ -1036,18 +1023,12 @@ class ctrlPlan:
                     ElectricConsumption=ElectricConsumption,
                     ProductionDate=ProductionDate,
                     StartTime=StartTime,
-                    EndTime=EndTime,
-                    iTaskCount=iTaskCount))
+                    EndTime=EndTime))
             db_session.commit()
-            db_session.query(P)
-            if iTaskCount >= 1:
-                iTaskSeq = 0
-                for num in range(0, iTaskCount):
-                    iTaskSeq = iTaskSeq + 1
-                    bReturn, strTaskNo = self.getTaskNo()
-                    if bReturn == False:
-                        return False
-                    bReturn = self.BatchMaintainTask("", PlanNum, BatchID, BrandName, PlanQuantity, WaterConsumption, ElectricConsumption, ProductionDate, StartTime, EndTime)
+            puids = db_session.query(PUIDMaintain).filter(PUIDMaintain.BrandName == BrandName).all()
+            if puids:
+                for puid in puids:
+                    bReturn = self.BatchMaintainTask(puid.PUIDName, PlanNum, BatchID, BrandName, PlanQuantity, WaterConsumption, ElectricConsumption, ProductionDate, StartTime, EndTime)
                     if bReturn == False:
                         return False
             return bReturn
@@ -1080,3 +1061,23 @@ class ctrlPlan:
             print(e)
             insertSyslog("error", "创建任务报错Error：" + str(e), current_user.Name)
             return  False
+
+@energy.route('/batchMaintainEnergy', methods=['POST', 'GET'])
+def batchMaintainEnergy():
+    '''
+    单位批次能耗查询
+    :return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            StartTime = data.get("StartTime")
+            EndTime = data.get("EndTime")
+            batinfos = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime,EndTime)).all()
+            for bat in batinfos:
+                bat = ""
+            return json.dumps("创建计划任务失败!", cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "创建计划任务报错Error：" + str(e), current_user.Name)
