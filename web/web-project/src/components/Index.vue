@@ -73,7 +73,9 @@
                 <div style="position: relative;height: 100%;">
                   <el-popover v-for="(item,index) in drawerBottomAreaOption" placement="bottom" :title="item.title" width="200" trigger="click" @show="showAreaInfo(item.title)" :key="index">
                     <div slot="reference" class="mapContentItem" :style="{width:item.width, height: item.height,top: item.top,left: item.left}"><div class="mapItemPoint" :style="{marginLeft: item.marginLeft}"></div></div>
-                    <div></div>
+                    <el-radio-group v-model="energyType" fill="#082F4C" size="mini">
+                      <el-radio-button v-for="(item,index) in energyTypeList" border :key="item.index" :label="item.label" :value="item.value"></el-radio-button>
+                    </el-radio-group>
                   </el-popover>
                 </div>
               </div>
@@ -275,7 +277,7 @@ export default {
     getWeather(){
       this.axios.get("http://wthrcdn.etouch.cn/weather_mini",{
         params: {
-          city: "昆明",
+          city: "本溪",
         }
       }).then(res =>{
         var weatherType = res.data.data.forecast[0].type
