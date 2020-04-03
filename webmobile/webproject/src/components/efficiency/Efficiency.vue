@@ -13,7 +13,7 @@ export default {
       this.chartSettings = {
         key: 'oBvDtR6nzWtVchkY4cLHtnah1VVZQKRK',
         bmap: {
-          center: [40.13066322374, 30.240018034923],
+          center: [102.53066322374, 25.240018034923],
           zoom: 10,
           roam: true,
           mapStyle: {}
@@ -26,7 +26,7 @@ export default {
             type: 'scatter',
             coordinateSystem: 'bmap',
             data: [
-              [120, 30, 1]
+              [103, 26, 1]
             ]
           }
         ]

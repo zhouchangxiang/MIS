@@ -9,7 +9,8 @@ import { Button,
     Toast,
     Tabbar, 
     TabbarItem,
-    Pagination} from 'vant'
+    Pagination,
+    RadioGroup, Radio} from 'vant'
 
 Vue.use(Toast);
 Vue.use(Cell);
@@ -21,3 +22,5 @@ Vue.use(Icon );
 Vue.use(Tabbar );
 Vue.use(TabbarItem );
 Vue.use( Pagination );
+Vue.use(RadioGroup  );
+Vue.use( Radio );
