@@ -43,7 +43,16 @@
                    <div class="dw-kwh">kwh</div>
                    <div class="dw-pc">kwh/批</div>
                </div>
-               <div class="sb-r">21</div>
+               <div class="sb-r">
+                    <van-sidebar v-model="activeKey" @change="mtt">
+                    <van-sidebar-item title="新建综合制剂楼" />
+                    <van-sidebar-item title="提取二车间" />
+                    <van-sidebar-item title="前处理车间" />
+                    <van-sidebar-item title="研发中心" />
+                    <van-sidebar-item title="生物科技楼" />
+                    <van-sidebar-item title="原提取车间" />
+                    </van-sidebar>
+               </div>
            </div>
            <div class="show-foot">
                <div class="sf-l">
@@ -52,7 +61,7 @@
                </div>
                 <div class="sf-r">
                    <div class="machine">设备在线情况</div>
-                   <div class="tj">18/23</div>
+                   <div class="tj">12&nbsp;/&nbsp;23</div>
                </div>
            </div>
        </div>
@@ -62,13 +71,17 @@ export default {
     data(){
         return {
             radio1:3,
-            radio2:3
+            radio2:3,
+            activeKey: 0
         }
     },
     methods:{
         myc(){
             this.$toast(this.radio1)
+    },mtt(){
+      this.$toast(this.activeKey)
     }
+
     }
 }
 </script>
@@ -96,7 +109,7 @@ export default {
                 float: left;
                 margin-right: 20px;
                 width: 120px;
-                background-color:#ccc;
+                background-color:@bgca;
             .van-radio{
                 margin-right: 0px;
             }
@@ -210,11 +223,8 @@ export default {
         .show-body{
             position: relative;
             height:199px;
-            background:rgba(126,127,132,1);
-            box-shadow:0px 0px 6px rgba(255,255,255,0.16);
             opacity:1;
             border-radius:4px;
-            background-color: #666;
             margin-bottom: 13px;
             .sb-l{
                 position: absolute;
@@ -305,8 +315,7 @@ export default {
                 right:0;
                 width:150px;
                 height:199px;
-                background:#666;
-                box-shadow:0px 0px 6px rgba(255,255,255,0.16);
+                background-color: @bgcc;
                 opacity:1;
                 border-radius:4px;
             }
@@ -315,7 +324,6 @@ export default {
             position: relative;
             height:64px;
             background:@bgca;
-            box-shadow:0px 0px 6px rgba(255,255,255,0.16);
             opacity:1;
             border-radius:4px;
             background-color:@bgcc;
@@ -381,6 +389,23 @@ export default {
                     letter-spacing: 5px;
                 }
             }
+        }
+        .van-sidebar{
+          width: 100%;
+        }
+        .van-sidebar-item{
+          padding:6px 0px 10px 8px;
+          text-align: right;
+          border:none;
+          background-color: transparent;
+          color: #76787E;
+          font-size: 12px;
+          font-family:PingFang SC;
+          font-weight:400;
+          line-height:17px;
+        }
+        .van-sidebar-item--select{
+          color:#fff;
         }
 
     }
