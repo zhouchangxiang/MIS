@@ -277,7 +277,7 @@ export default {
     getWeather(){
       this.axios.get("http://wthrcdn.etouch.cn/weather_mini",{
         params: {
-          city: "本溪",
+          city: "昆明",
         }
       }).then(res =>{
         var weatherType = res.data.data.forecast[0].type

@@ -11,7 +11,7 @@
     </el-col>
     <el-col :span="24">
       <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
-        <div class="chartTile">电能报表</div>
+        <div class="chartTile">蒸汽报表</div>
         <el-select v-model="areaValue" size="mini" @change="searchTime">
           <el-option v-for="(item,index) in areaOptions" :key="item.index" :label="item.AreaName" :value="item.value"></el-option>
         </el-select>
@@ -19,36 +19,10 @@
       </div>
       <div class="platformContainer">
         <el-table :data="tableData" border tooltip-effect="dark">
-          <el-table-column type="expand">
-            <template slot-scope="props">
-              <el-form label-position="left" class="table-expand">
-                <el-form-item label="ID">
-                  <span>{{ props.row.ID }}</span>
-                </el-form-item>
-                <el-form-item label="仪表ID">
-                  <span>{{ props.row.EquipmnetID }}</span>
-                </el-form-item>
-                <el-form-item label="价格ID">
-                  <span>{{ props.row.PriceID }}</span>
-                </el-form-item>
-                <el-form-item label="计算增量更新标识">
-                  <span>{{ props.row.IncrementFlag }}</span>
-                </el-form-item>
-                <el-form-item label="两个相邻采集点上一个采集点ID">
-                  <span>{{ props.row.PrevID }}</span>
-                </el-form-item>
-              </el-form>
-            </template>
-          </el-table-column>
-          <el-table-column prop="AreaName" label="区域"></el-table-column>
-          <el-table-column prop="TagClassValue" label="采集点"></el-table-column>
+          <el-table-column prop="IncremenValue" label="增量值"></el-table-column>
+          <el-table-column prop="Unit" label="单位"></el-table-column>
           <el-table-column prop="CollectionDate" label="采集时间"></el-table-column>
-          <el-table-column prop="WD" label="温度"></el-table-column>
-          <el-table-column prop="FlowValue" label="蒸汽瞬时值"></el-table-column>
-          <el-table-column prop="SumValue" label="蒸汽重量累计值"></el-table-column>
-          <el-table-column prop="Volume" label="体积"></el-table-column>
-          <el-table-column prop="SumUnit" label="累计量体积单位"></el-table-column>
-          <el-table-column prop="FlowUnit" label="瞬时流量单位"></el-table-column>
+          <el-table-column prop="AreaName" label="区域"></el-table-column>
         </el-table>
         <div class="paginationClass">
           <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
@@ -80,7 +54,7 @@
             return time.getTime() > Date.now();
           }
         },
-        areaValue:"桓仁厂区",
+        areaValue:"",
         areaOptions:[],
         tableData:[],
         total:0,
@@ -133,7 +107,7 @@
         this.searchTime()
       },
       searchTime(){
-        this.axios.get("/api/get_steam_data",{
+        this.axios.get("/api/get_steam_energy",{
           params: {
             StartTime:this.formParameters.startDate,
             EndTime:this.formParameters.endDate,
@@ -143,8 +117,9 @@
           }
         }).then(res =>{
           var data = res.data
+          console.log(data)
           this.tableData = data.rows
-          this.total = data.total
+          this.total = data.total_column
         },res =>{
           console.log("请求错误")
         })
