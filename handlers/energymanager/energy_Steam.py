@@ -503,15 +503,18 @@ def energyHistory():
             insertSyslog("error", "能源历史数据查询报错Error：" + str(e), current_user.Name)
 
 
-@energySteam.route('/get_steam_energy', methods=['GET'])
-def get_electric():
-    start_time = request.values.get('StartTime')
-    end_time = request.values.get('EndTime')
+@energySteam.route('/steam_report', methods=['GET'])
+def get_steam():
+    """
+    获取蒸汽报表的数据接口
+    """
+    start_time = request.values.get('start_time')
+    end_time = request.values.get('end_time')
     # 当前页数
     current_page = int(request.values.get('offset'))
     # 每页显示条数
     pagesize = int(request.values.get('limit'))
-    area_name = request.values.get('AreaName')
+    area_name = request.values.get('area_name')
     if area_name:
         # data = results[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
         rows = db_session.query(IncrementStreamTable).filter(IncrementStreamTable.AreaName == area_name).filter(IncrementStreamTable.CollectionDate.between(start_time, end_time)).all()[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
