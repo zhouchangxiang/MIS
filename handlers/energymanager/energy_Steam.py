@@ -143,7 +143,7 @@ def energySteamSelect(data):
 
 
 @energySteam.route('/energyPreview', methods=['POST', 'GET'])
-def energyPreview():
+def nergyPreview():
     '''
     能耗预览
     :return:
@@ -516,24 +516,41 @@ def get_steam():
     pagesize = int(request.values.get('limit'))
     area_name = request.values.get('area_name')
     if area_name:
-        # data = results[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
         rows = db_session.query(IncrementStreamTable).filter(IncrementStreamTable.AreaName == area_name).filter(IncrementStreamTable.CollectionDate.between(start_time, end_time)).all()[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
         total = len(db_session.query(IncrementStreamTable).filter(IncrementStreamTable.AreaName == area_name).filter(IncrementStreamTable.CollectionDate.between(start_time, end_time)).all())
-        # data = rows[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
         tag_list = db_session.query(TagDetail).filter(TagDetail.AreaName == area_name, TagDetail.EnergyClass == '汽').all()
         tag_point = [index.TagClassValue for index in tag_list]
+        data = []
+        for item in rows:
+            query_steam = db_session.query(SteamEnergy).filter(SteamEnergy.ID == item.CalculationID).first()
+            query_tagdetai = db_session.query(TagDetail).filter(TagDetail.TagClassValue == item.TagClassValue).first()
+            tag_area = query_tagdetai.FEFportIP
+            dict1 = {'ID': query_steam.ID, 'SumValue': query_steam.SumValue, 'WD': query_steam.WD, 'Volume': query_steam.Volume,
+                     'AreaName': item.AreaName, 'CollectionDate': str(item.CollectionDate),
+                     'IncremenValue': item.IncremenValue, 'TagClassValue': tag_area}
+            data.append(dict1)
         if tag_point:
             sql = "select sum(cast(t1.IncremenValue as decimal(9,2)))*0.0001*50 as count from [DB_MICS].[dbo].[IncrementStreamTable] t1 where t1.TagClassValue in " + (str(tag_point).replace('[', '(')).replace(']', ')') + " and t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'" + " group by t1.IncremenType"
             result = db_session.execute(sql).fetchall()
-            return json.dumps({'rows': rows, 'total_column': total, 'price': str(round(result[0]['count'], 2))}, cls=AlchemyEncoder, ensure_ascii=False)
+            return json.dumps({'rows': data, 'total_column': total, 'price': str(round(result[0]['count'], 2))}, cls=AlchemyEncoder, ensure_ascii=False)
         else:
-            return json.dumps({'rows': rows, 'total_column': total}, cls=AlchemyEncoder, ensure_ascii=False)
+            sql = "select sum(cast(t1.IncremenValue as decimal(9,2)))*0.0001*50 as count from [DB_MICS].[dbo].[IncrementStreamTable] t1 where " + "t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'" + " group by t1.IncremenType"
+            result = db_session.execute(sql).fetchall()
+            return json.dumps({'rows': rows, 'total_column': total, 'price': str(round(result[0]['count'], 2))}, cls=AlchemyEncoder, ensure_ascii=False)
     else:
         tag_list = db_session.query(TagDetail).filter(TagDetail.EnergyClass == '汽').all()
         tag_point = [index.TagClassValue for index in tag_list]
         sql = "select t1.AreaName, sum(cast(t1.IncremenValue as decimal(9,2)))*0.0001*50 as count from [DB_MICS].[dbo].[IncrementStreamTable] t1 where t1.TagClassValue in " + (str(tag_point).replace('[', '(')).replace(']', ')') + "and t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'" + " group by t1.AreaName"
         rows = db_session.query(IncrementStreamTable).filter(IncrementStreamTable.CollectionDate.between(start_time, end_time)).all()[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
         total = len(db_session.query(IncrementStreamTable).filter(IncrementStreamTable.CollectionDate.between(start_time, end_time)).all())
-        # sql = "select t1.AreaName, sum(cast(t1.IncremenValue as decimal(9,2)))*0.0001*50 as count from [DB_MICS].[dbo].[IncrementStreamTable] t1 where "  + "t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'" + " group by t1.AreaName"
+        data = []
+        for item in rows:
+            query_steam = db_session.query(SteamEnergy).filter(SteamEnergy.ID == item.CalculationID).first()
+            query_tagdetai = db_session.query(TagDetail).filter(TagDetail.TagClassValue == item.TagClassValue).first()
+            tag_area = query_tagdetai.FEFportIP
+            dict1 = {'ID': query_steam.ID, 'SumValue': query_steam.SumValue, 'WD': query_steam.WD, 'Volume': query_steam.Volume,
+                     'AreaName': item.AreaName, 'CollectionDate': str(item.CollectionDate),
+                     'IncremenValue': item.IncremenValue, 'TagClassValue': tag_area}
+            data.append(dict1)
         result = db_session.execute(sql).fetchall()
-        return json.dumps({'rows': rows, 'total_column': total, 'price': str(round(result[0]['count'], 2))}, cls=AlchemyEncoder, ensure_ascii=False)
+        return json.dumps({'rows': data, 'total_column': total, 'price': str(round(result[0]['count'], 2))}, cls=AlchemyEncoder, ensure_ascii=False)
