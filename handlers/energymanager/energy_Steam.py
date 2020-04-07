@@ -519,9 +519,12 @@ def get_electric():
         # data = rows[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
         tag_list = db_session.query(TagDetail).filter(TagDetail.AreaName == area_name, TagDetail.EnergyClass == '汽').all()
         tag_point = [index.TagClassValue for index in tag_list]
-        sql = "select sum(cast(t1.IncremenValue as decimal(9,2)))*0.0001*50 as count from [DB_MICS].[dbo].[IncrementStreamTable] t1 where t1.TagClassValue in " + (str(tag_point).replace('[', '(')).replace(']', ')') + " and t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'" + " group by t1.IncremenType"
-        result = db_session.execute(sql).fetchall()
-        return json.dumps({'rows': rows, 'total_column': total, 'price': str(round(result[0]['count'], 2))}, cls=AlchemyEncoder, ensure_ascii=False)
+        if tag_point:
+            sql = "select sum(cast(t1.IncremenValue as decimal(9,2)))*0.0001*50 as count from [DB_MICS].[dbo].[IncrementStreamTable] t1 where t1.TagClassValue in " + (str(tag_point).replace('[', '(')).replace(']', ')') + " and t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'" + " group by t1.IncremenType"
+            result = db_session.execute(sql).fetchall()
+            return json.dumps({'rows': rows, 'total_column': total, 'price': str(round(result[0]['count'], 2))}, cls=AlchemyEncoder, ensure_ascii=False)
+        else:
+            return json.dumps({'rows': rows, 'total_column': total}, cls=AlchemyEncoder, ensure_ascii=False)
     else:
         tag_list = db_session.query(TagDetail).filter(TagDetail.EnergyClass == '汽').all()
         tag_point = [index.TagClassValue for index in tag_list]
