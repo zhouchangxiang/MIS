@@ -1,21 +1,6 @@
 <template>
     <div class="show-box">
-           <div class="show-top">
-               <div class="tips">
-                   <van-radio-group v-model="radio1" direction="horizontal" @change="myc">
-                        <van-radio name="1" shape="square" checked-color="#07c160">年</van-radio>
-                        <van-radio name="2" shape="square" checked-color="#07c160">月</van-radio>
-                        <van-radio name="3" shape="square" checked-color="#07c160">日</van-radio>
-                    </van-radio-group>
-                </div>
-               <div class="tips">
-                    <van-radio-group v-model="radio2" direction="horizontal">
-                        <van-radio name="1" shape="square" checked-color="#1989fa">水</van-radio>
-                        <van-radio name="2" shape="square" checked-color="#1989fa">电</van-radio>
-                        <van-radio name="3" shape="square" checked-color="#1989fa">气</van-radio>
-                    </van-radio-group>
-               </div>
-           </div>
+        <DateC></DateC>
            <div class="show-banner">
                   <div class="sb-name">厂区能耗</div>
                   <div class="sb-number">00000000.00</div>
@@ -54,19 +39,12 @@
                     </van-sidebar>
                </div>
            </div>
-           <div class="show-foot">
-               <div class="sf-l">
-                   <div class="hf">耗费成本</div>
-                   <div class="all-money">00000000.00<span>元</span></div>
-               </div>
-                <div class="sf-r">
-                   <div class="machine">设备在线情况</div>
-                   <div class="tj">12&nbsp;/&nbsp;23</div>
-               </div>
-           </div>
+        <ShowNumber></ShowNumber>
        </div>
 </template>
 <script>
+import ShowNumber from '../common/Shownumber.vue'
+import DateC from '../common/Choosedate.vue'
 export default {
     data(){
         return {
@@ -75,10 +53,12 @@ export default {
             activeKey: 0
         }
     },
+    components:{
+        DateC,
+        ShowNumber
+    },
     methods:{
-        myc(){
-            this.$toast(this.radio1)
-    },mtt(){
+    mtt(){
       this.$toast(this.activeKey)
     }
 
@@ -98,23 +78,6 @@ export default {
         box-sizing: border-box;
         padding: 0 12px 12px 13px;
         background-color: @bgcc;
-        .show-top{
-            height:18px;
-            opacity:1;
-            border-radius:4px;
-            color:#fff;
-            font-size: 10px;
-            margin-bottom: 21px;
-            .tips{
-                float: left;
-                margin-right: 20px;
-                width: 120px;
-                background-color:@bgca;
-            .van-radio{
-                margin-right: 0px;
-            }
-            }
-        }
         .show-banner{
             position: relative;
             width:350px;
@@ -318,76 +281,6 @@ export default {
                 background-color: @bgcc;
                 opacity:1;
                 border-radius:4px;
-            }
-        }
-        .show-foot{
-            position: relative;
-            height:64px;
-            background:@bgca;
-            opacity:1;
-            border-radius:4px;
-            background-color:@bgcc;
-            .sf-l{
-                position: absolute;
-                left:0;
-                top:0;
-                width: 196px;
-                height: 64px;
-                border-radius: 4px;
-                background-color: @bgct;
-                .hf{
-                    position: absolute;
-                    top:8px;
-                    left: 13px;
-                    width:48px;
-                    height:11px;
-                    font-size:8px;
-                    font-weight:400;
-                    line-height:11px;
-                    color:rgba(255,255,255,1);
-                    opacity:1;
-                }
-                .all-money{
-                    position: absolute;
-                    left:16px;
-                    top:28px;
-                    height:23px;
-                    font-size: 23px;
-                    color:rgba(255,255,255,1);
-                    span{
-                        font-size: 12px;
-                        margin-left: 5px;
-                        }
-                }
-
-            }
-            .sf-r{
-                position: absolute;
-                right: 0;
-                top:0;
-                width:141px;
-                height: 64px;
-                border-radius: 4px;
-                background-color:@bgct;
-                .machine{
-                    position: absolute;
-                    top:8px;
-                    left: 12px;
-                    height:11px;
-                    font-size:8px;
-                    font-weight:400;
-                    line-height:11px;
-                    color:rgba(255,255,255,1);
-                }
-                .tj{
-                    position: absolute;
-                    left: 13px;
-                    top: 28px;
-                    font-size: 23px;
-                    font-weight: 500;
-                    color: #fff;
-                    letter-spacing: 5px;
-                }
             }
         }
         .van-sidebar{
