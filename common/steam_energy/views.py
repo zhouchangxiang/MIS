@@ -1,9 +1,9 @@
 import json
-from flask import Blueprint, request
-from numpy import unicode
+from flask import Blueprint, request, jsonify
 from dbset.database.db_operate import db_session
 from dbset.main.BSFramwork import AlchemyEncoder
 from models.SystemManagement.core import TagDetail
+from models.SystemManagement.system import IncrementStreamTable
 
 steams = Blueprint('steams', __name__)
 
@@ -17,25 +17,38 @@ def get_steam_energy():
 def get_electric():
     start_time = request.values.get('StartTime')
     end_time = request.values.get('EndTime')
-    # µ±«∞“≥ ˝
+    # ÂΩìÂâçÈ°µÊï∞
     current_page = int(request.values.get('offset'))
-    # √ø“≥œ‘ æÃı ˝
+    # ÊØèÈ°µÊòæÁ§∫Êù°Êï∞
     pagesize = int(request.values.get('limit'))
     area_name = request.values.get('AreaName')
     if area_name:
-        # results = db_session.query(ElectricEnergy).filter(ElectricEnergy.AreaName == area_name).filter(
-        #     ElectricEnergy.CollectionDate.between(start_time, end_time)).order_by(ElectricEnergy.ID.desc()).all()
         # data = results[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
-        # tag_list = db_session.query(TagDetail).filter(TagDetail.AreaName == unicode(area_name, 'utf-8'), TagDetail.EnergyClass == unicode('µÁ'), 'utf-8').all()
-        tag_list = db_session.query(TagDetail).filter(TagDetail.AreaName == area_name, TagDetail.EnergyClass == 'µÁ').all()
+        rows = db_session.query(IncrementStreamTable).filter(IncrementStreamTable.AreaName == area_name).filter(IncrementStreamTable.CollectionDate.between(start_time, end_time)).all()[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
+        total = len(db_session.query(IncrementStreamTable).filter(IncrementStreamTable.AreaName == area_name).filter(IncrementStreamTable.CollectionDate.between(start_time, end_time)).all())
+        # data = rows[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
+        tag_list = db_session.query(TagDetail).filter(TagDetail.AreaName == area_name, TagDetail.EnergyClass == 'Ê±Ω').all()
         tag_point = [index.TagClassValue for index in tag_list]
-        sql = "select sum(cast(t1.IncremenValue as decimal(9,2)))*1.2*0.8 as count from [DB_MICS].[dbo].[IncrementElectricTable] t1 where t1.TagClassValue in " + (str(tag_point).replace('[', '(')).replace(']', ')') + " and t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'" + " group by t1.IncremenType"
+        sql = "select sum(cast(t1.IncremenValue as decimal(9,2)))*0.0001*50 as count from [DB_MICS].[dbo].[IncrementStreamTable] t1 where t1.TagClassValue in " + (str(tag_point).replace('[', '(')).replace(']', ')') + " and t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'" + " group by t1.IncremenType"
         result = db_session.execute(sql).fetchall()
-        pass
-        # return json.dumps({'◊€∫œ': str(round(result[0]['count'], 2))}, cls=AlchemyEncoder, ensure_ascii=False)
+        # for item in result:
+        #     data[area_name] = str(round(item['count'], 2))
+        return json.dumps({'rows': rows, 'total_column': total, 'price': str(round(result[0]['count'], 2))}, cls=AlchemyEncoder, ensure_ascii=False)
+        # return jsonify({'total_column': total, 'rows': json.dumps(rows, cls=AlchemyEncoder, ensure_ascii=False), 'price': str(round(result[0]['count'], 2))})
+        # return json.dumps({'ÊÄª‰ª∑Ê†º': str(round(result[0]['count'], 2))}, cls=AlchemyEncoder, ensure_ascii=False)
     else:
-        pass
-    #     # results = db_session.query(ElectricEnergy).filter(
-    #     #     ElectricEnergy.CollectionDate.between(start_time, end_time)).order_by(ElectricEnergy.ID.desc()).all()
-    #     data = results[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
-    # return json.dumps({'total': len(results), 'rows': data}, cls=AlchemyEncoder, ensure_ascii=False)
+        tag_list = db_session.query(TagDetail).filter(TagDetail.EnergyClass == 'Ê±Ω').all()
+        tag_point = [index.TagClassValue for index in tag_list]
+        sql = "select t1.AreaName, sum(cast(t1.IncremenValue as decimal(9,2)))*0.0001*50 as count from [DB_MICS].[dbo].[IncrementStreamTable] t1 where t1.TagClassValue in " + (str(tag_point).replace('[', '(')).replace(']', ')') + "and t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'" + " group by t1.AreaName"
+
+
+        rows = db_session.query(IncrementStreamTable).filter(IncrementStreamTable.CollectionDate.between(start_time, end_time)).all()[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
+        total = len(db_session.query(IncrementStreamTable).filter(IncrementStreamTable.CollectionDate.between(start_time, end_time)).all())
+        # sql = "select t1.AreaName, sum(cast(t1.IncremenValue as decimal(9,2)))*0.0001*50 as count from [DB_MICS].[dbo].[IncrementStreamTable] t1 where "  + "t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'" + " group by t1.AreaName"
+        result = db_session.execute(sql).fetchall()
+        # data = {}
+        # for item in result:
+        #     data[item['AreaName']] = str(round(item['count'], 2))
+        # return jsonify({'total_column': total, 'rows': rows, 'price': str(round(result['count'], 2))})
+        return json.dumps({'rows': rows, 'total_column': total, 'price': str(round(result[0]['count'], 2))}, cls=AlchemyEncoder, ensure_ascii=False)
+
