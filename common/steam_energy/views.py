@@ -31,24 +31,14 @@ def get_electric():
         tag_point = [index.TagClassValue for index in tag_list]
         sql = "select sum(cast(t1.IncremenValue as decimal(9,2)))*0.0001*50 as count from [DB_MICS].[dbo].[IncrementStreamTable] t1 where t1.TagClassValue in " + (str(tag_point).replace('[', '(')).replace(']', ')') + " and t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'" + " group by t1.IncremenType"
         result = db_session.execute(sql).fetchall()
-        # for item in result:
-        #     data[area_name] = str(round(item['count'], 2))
         return json.dumps({'rows': rows, 'total_column': total, 'price': str(round(result[0]['count'], 2))}, cls=AlchemyEncoder, ensure_ascii=False)
-        # return jsonify({'total_column': total, 'rows': json.dumps(rows, cls=AlchemyEncoder, ensure_ascii=False), 'price': str(round(result[0]['count'], 2))})
-        # return json.dumps({'总价格': str(round(result[0]['count'], 2))}, cls=AlchemyEncoder, ensure_ascii=False)
     else:
         tag_list = db_session.query(TagDetail).filter(TagDetail.EnergyClass == '汽').all()
         tag_point = [index.TagClassValue for index in tag_list]
         sql = "select t1.AreaName, sum(cast(t1.IncremenValue as decimal(9,2)))*0.0001*50 as count from [DB_MICS].[dbo].[IncrementStreamTable] t1 where t1.TagClassValue in " + (str(tag_point).replace('[', '(')).replace(']', ')') + "and t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'" + " group by t1.AreaName"
-
-
         rows = db_session.query(IncrementStreamTable).filter(IncrementStreamTable.CollectionDate.between(start_time, end_time)).all()[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
         total = len(db_session.query(IncrementStreamTable).filter(IncrementStreamTable.CollectionDate.between(start_time, end_time)).all())
         # sql = "select t1.AreaName, sum(cast(t1.IncremenValue as decimal(9,2)))*0.0001*50 as count from [DB_MICS].[dbo].[IncrementStreamTable] t1 where "  + "t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'" + " group by t1.AreaName"
         result = db_session.execute(sql).fetchall()
-        # data = {}
-        # for item in result:
-        #     data[item['AreaName']] = str(round(item['count'], 2))
-        # return jsonify({'total_column': total, 'rows': rows, 'price': str(round(result['count'], 2))})
         return json.dumps({'rows': rows, 'total_column': total, 'price': str(round(result[0]['count'], 2))}, cls=AlchemyEncoder, ensure_ascii=False)
 
