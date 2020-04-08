@@ -1076,10 +1076,37 @@ def batchMaintainEnergy():
     if request.method == 'GET':
         data = request.values
         try:
+            dir = {}
             StartTime = data.get("StartTime")
             EndTime = data.get("EndTime")
             AreaName = data.get("AreaName")
             batinfos = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime,EndTime), BatchMaintain.AreaName == AreaName).all()
+            batchcont = 0
+            waterCon = 0
+            steamCon = 0
+            for bat in batinfos:
+                waterCon = waterCon + float(bat.WaterConsumption)
+                steamCon = steamCon + float(bat.SteamConsumption)
+                batchcont = batchcont + 1
+            waterEveryBatch = 0
+            if waterCon != 0:
+                waterEveryBatch = waterCon/batchcont
+            steamEveryBatch = 0
+            if steamCon != 0:
+                steamEveryBatch = steamCon / batchcont
+            if waterEveryBatch != 0:
+                waterEveryBatch = round(waterEveryBatch,2)
+            if waterCon != 0:
+                waterCon = round(waterCon,2)
+            if steamCon != 0:
+                steamCon = round(steamCon,2)
+            if steamEveryBatch != 0:
+                steamEveryBatch = round(steamEveryBatch,2)
+            dir["batchCount"] = batchcont
+            dir["waterCon"] = str(waterCon)+"t"
+            dir["steamCon"] = str(steamCon)+"t"
+            dir["waterEveryBatch"] = str(waterEveryBatch)+"t"
+            dir["steamEveryBatch"] = str(steamEveryBatch)+"t"
             return json.dumps(batinfos, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
