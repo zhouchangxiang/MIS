@@ -1107,7 +1107,7 @@ def batchMaintainEnergy():
             dir["steamCon"] = str(steamCon)+"t"
             dir["waterEveryBatch"] = str(waterEveryBatch)+"t"
             dir["steamEveryBatch"] = str(steamEveryBatch)+"t"
-            return json.dumps(batinfos, cls=AlchemyEncoder, ensure_ascii=False)
+            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
             logger.error(e)
