@@ -1081,6 +1081,8 @@ def batchMaintainEnergy():
             EndTime = data.get("EndTime")
             AreaName = data.get("AreaName")
             batinfos = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime,EndTime), BatchMaintain.AreaName == AreaName).all()
+            brandSum = db_session.query(BatchMaintain.BrandName).distinct().filter(BatchMaintain.ProductionDate.between(StartTime, EndTime),
+                                                              BatchMaintain.AreaName == AreaName).count()
             batchcont = 0
             waterCon = 0
             steamCon = 0
@@ -1102,6 +1104,7 @@ def batchMaintainEnergy():
                 steamCon = round(steamCon,2)
             if steamEveryBatch != 0:
                 steamEveryBatch = round(steamEveryBatch,2)
+            dir["typeNum"] = brandSum
             dir["batchCount"] = batchcont
             dir["waterCon"] = str(waterCon)+"t"
             dir["steamCon"] = str(steamCon)+"t"
@@ -1111,4 +1114,4 @@ def batchMaintainEnergy():
         except Exception as e:
             print(e)
             logger.error(e)
-            insertSyslog("error", "创建计划任务报错Error：" + str(e), current_user.Name)
+            insertSyslog("error", "单位批次能耗查询报错Error：" + str(e), current_user.Name)
