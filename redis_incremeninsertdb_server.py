@@ -24,13 +24,13 @@ from dbset.database.db_operate import engine,conn
 
 def run():
     while True:
-        # time.sleep(60)
+        time.sleep(60)
         print("数据开始写入增量数据库")
         try:
             #汽能插入增量库
             steam_value = list()
             stekeys = db_session.query(SteamEnergy).filter(SteamEnergy.IncrementFlag == "0",
-                                                           SteamEnergy.SumValue != "0.0").order_by(desc("ID")).all()
+                                                           SteamEnergy.SumValue != "0.0", SteamEnergy.PrevID != None).order_by(desc("ID")).all()
             for key in stekeys:
                 proSumValue = db_session.query(SteamEnergy.SumValue).filter(SteamEnergy.ID == key.PrevID).first()
                 if proSumValue != None:
@@ -73,7 +73,7 @@ def run():
             #电能
             electric_value = list()
             elekeys = db_session.query(ElectricEnergy).filter(ElectricEnergy.IncrementFlag == "0",
-                                                              ElectricEnergy.ZGL != "0.0").order_by(desc("ID")).all()
+                                                              ElectricEnergy.ZGL != "0.0", ElectricEnergy.PrevID != None).order_by(desc("ID")).all()
             for key in elekeys:
                 proZGLmValue = db_session.query(ElectricEnergy.ZGL).filter(ElectricEnergy.ID == key.PrevID).first()
                 if proZGLmValue != None:
@@ -117,7 +117,7 @@ def run():
             #水
             water_value = list()
             elekeys = db_session.query(WaterEnergy).filter(WaterEnergy.IncrementFlag == "0",
-                                                           WaterEnergy.ZGL != "0.0").order_by(desc("ID")).all()
+                                                           WaterEnergy.WaterSum != "0.0", WaterEnergy.PrevID != None).order_by(desc("ID")).all()
             for key in elekeys:
                 proWsumValue = db_session.query(WaterEnergy.WaterSum).filter(WaterEnergy.ID == key.PrevID).first()
                 if proWsumValue != None:
@@ -160,7 +160,6 @@ def run():
                     print(e)
         except Exception as e:
             print("写入增量库报错：" + str(e))
-            logger.errro(e)
             insertSyslog("error", "写入增量库报错Error：" + str(e), "")
         finally:
             pass

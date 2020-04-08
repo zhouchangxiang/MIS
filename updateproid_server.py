@@ -1,24 +1,9 @@
-import time,datetime
-from dbset.database.db_operate import conn
-import socket
-import base64
-import hashlib
 import time
-import redis
-from flask import Blueprint, render_template, request, make_response
-import json
 import datetime
 from sqlalchemy import desc
-from dbset.database.db_operate import db_session, pool
-from dbset.main.BSFramwork import AlchemyEncoder
-from flask_login import login_required, logout_user, login_user, current_user, LoginManager
-import arrow
+from dbset.database.db_operate import db_session
 from models.SystemManagement.core import RedisKey, TagClassType, ElectricEnergy, Unit, SteamEnergy, \
-    WaterEnergy, TagDetail, Equipment
-from models.SystemManagement.system import EarlyWarningLimitMaintain, EarlyWarning, EarlyWarningPercentMaintain, \
-    ElectricPrice, WaterSteamPrice, IncrementElectricTable, IncrementWaterTable, IncrementStreamTable
-from tools.common import insert, delete, update
-from dbset.database import constant
+    WaterEnergy, TagDetail
 from dbset.log.BK2TLogger import logger, insertSyslog
 from dbset.database.db_operate import engine,conn
 
@@ -91,3 +76,5 @@ def run():
         finally:
             pass
         print("数据开始写入增量库结束")
+if __name__ == '__main__':
+    run()
