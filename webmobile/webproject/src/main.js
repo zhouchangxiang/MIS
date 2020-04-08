@@ -9,13 +9,7 @@ import './selfconfig/vantui.js'
 import axios from 'axios'
 Vue.prototype.$http=axios
 
-import VLine from 'v-charts/lib/line.common'
-import HisTogram from 'v-charts/lib/histogram.common'
-import BMP from 'v-charts/lib/bmap.common'
-
-Vue.component(VLine.name,VLine)
-Vue.component(HisTogram.name,HisTogram)
-Vue.component(BMP.name,BMP)
+import './assets/css/base.css'
 
 
 /* eslint-disable no-new */

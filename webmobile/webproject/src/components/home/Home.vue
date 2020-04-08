@@ -1,7 +1,7 @@
 <template>
     <div class="show-box">
         <DateC></DateC>
-           <div class="show-banner">
+        <div class="show-banner">
                   <div class="sb-name">厂区能耗</div>
                   <div class="sb-number">00000000.00</div>
                   <div class="sb-compare">较上期</div>
@@ -15,7 +15,7 @@
                           <li>前处理<span></span></li>
                           <li>研发中心<span></span></li>
                       </ul>
-                  </div>
+                   </div>
            </div>
            <div class="show-body">
                <div class="sb-l">
@@ -59,7 +59,8 @@ export default {
     },
     methods:{
     mtt(){
-      this.$toast(this.activeKey)
+      this.$toast( {message: '展示图片',
+        icon: 'https://img.yzcdn.cn/vant/logo.png'})
     }
 
     }
@@ -88,7 +89,7 @@ export default {
             box-shadow:0px 0px 6px rgba(255,255,255,0.16);
             opacity:1;
             border-radius:4px;
-            margin-bottom: 21px;
+            margin:21px 0 20px 0;
            .sb-name{
                position: absolute;
                top:14px;
