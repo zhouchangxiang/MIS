@@ -194,6 +194,15 @@
 .el-pagination.is-background .el-pager li:not(.disabled).active{
   background-color: #082F4C;
 }
+/* 数字排版样式 */
+.numBlock{
+  display: inline-block;
+  background:#228AD5;
+  color: #fff;
+  margin-right: 3px;
+  padding: 0 5px;
+  border-radius:4px;
+}
 /* 渐变色区域时段排版 */
 .gradientList{
   clear: both;

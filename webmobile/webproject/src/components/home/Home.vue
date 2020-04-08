@@ -1,22 +1,7 @@
 <template>
     <div class="show-box">
-           <div class="show-top">
-               <div class="tips">
-                   <van-radio-group v-model="radio1" direction="horizontal" @change="myc">
-                        <van-radio name="1" shape="square" checked-color="#07c160">年</van-radio>
-                        <van-radio name="2" shape="square" checked-color="#07c160">月</van-radio>
-                        <van-radio name="3" shape="square" checked-color="#07c160">日</van-radio>
-                    </van-radio-group>
-                </div>
-               <div class="tips">
-                    <van-radio-group v-model="radio2" direction="horizontal">
-                        <van-radio name="1" shape="square" checked-color="#1989fa">水</van-radio>
-                        <van-radio name="2" shape="square" checked-color="#1989fa">电</van-radio>
-                        <van-radio name="3" shape="square" checked-color="#1989fa">气</van-radio>
-                    </van-radio-group>
-               </div>
-           </div>
-           <div class="show-banner">
+        <DateC></DateC>
+        <div class="show-banner">
                   <div class="sb-name">厂区能耗</div>
                   <div class="sb-number">00000000.00</div>
                   <div class="sb-compare">较上期</div>
@@ -30,7 +15,7 @@
                           <li>前处理<span></span></li>
                           <li>研发中心<span></span></li>
                       </ul>
-                  </div>
+                   </div>
            </div>
            <div class="show-body">
                <div class="sb-l">
@@ -43,32 +28,41 @@
                    <div class="dw-kwh">kwh</div>
                    <div class="dw-pc">kwh/批</div>
                </div>
-               <div class="sb-r">21</div>
-           </div>
-           <div class="show-foot">
-               <div class="sf-l">
-                   <div class="hf">耗费成本</div>
-                   <div class="all-money">00000000.00<span>元</span></div>
+               <div class="sb-r">
+                    <van-sidebar v-model="activeKey" @change="mtt">
+                    <van-sidebar-item title="新建综合制剂楼" />
+                    <van-sidebar-item title="提取二车间" />
+                    <van-sidebar-item title="前处理车间" />
+                    <van-sidebar-item title="研发中心" />
+                    <van-sidebar-item title="生物科技楼" />
+                    <van-sidebar-item title="原提取车间" />
+                    </van-sidebar>
                </div>
-                <div class="sf-r">
-                   <div class="machine">设备在线情况</div>
-                   <div class="tj">18/23</div>
-               </div>
            </div>
+        <ShowNumber></ShowNumber>
        </div>
 </template>
 <script>
+import ShowNumber from '../common/Shownumber.vue'
+import DateC from '../common/Choosedate.vue'
 export default {
     data(){
         return {
             radio1:3,
-            radio2:3
+            radio2:3,
+            activeKey: 0
         }
     },
+    components:{
+        DateC,
+        ShowNumber
+    },
     methods:{
-        myc(){
-            this.$toast(this.radio1)
+    mtt(){
+      this.$toast( {message: '展示图片',
+        icon: 'https://img.yzcdn.cn/vant/logo.png'})
     }
+
     }
 }
 </script>
@@ -85,23 +79,6 @@ export default {
         box-sizing: border-box;
         padding: 0 12px 12px 13px;
         background-color: @bgcc;
-        .show-top{
-            height:18px;
-            opacity:1;
-            border-radius:4px;
-            color:#fff;
-            font-size: 10px;
-            margin-bottom: 21px;
-            .tips{
-                float: left;
-                margin-right: 20px;
-                width: 120px;
-                background-color:#ccc;
-            .van-radio{
-                margin-right: 0px;
-            }
-            }
-        }
         .show-banner{
             position: relative;
             width:350px;
@@ -112,7 +89,7 @@ export default {
             box-shadow:0px 0px 6px rgba(255,255,255,0.16);
             opacity:1;
             border-radius:4px;
-            margin-bottom: 21px;
+            margin:21px 0 20px 0;
            .sb-name{
                position: absolute;
                top:14px;
@@ -210,11 +187,8 @@ export default {
         .show-body{
             position: relative;
             height:199px;
-            background:rgba(126,127,132,1);
-            box-shadow:0px 0px 6px rgba(255,255,255,0.16);
             opacity:1;
             border-radius:4px;
-            background-color: #666;
             margin-bottom: 13px;
             .sb-l{
                 position: absolute;
@@ -305,82 +279,27 @@ export default {
                 right:0;
                 width:150px;
                 height:199px;
-                background:#666;
-                box-shadow:0px 0px 6px rgba(255,255,255,0.16);
+                background-color: @bgcc;
                 opacity:1;
                 border-radius:4px;
             }
         }
-        .show-foot{
-            position: relative;
-            height:64px;
-            background:@bgca;
-            box-shadow:0px 0px 6px rgba(255,255,255,0.16);
-            opacity:1;
-            border-radius:4px;
-            background-color:@bgcc;
-            .sf-l{
-                position: absolute;
-                left:0;
-                top:0;
-                width: 196px;
-                height: 64px;
-                border-radius: 4px;
-                background-color: @bgct;
-                .hf{
-                    position: absolute;
-                    top:8px;
-                    left: 13px;
-                    width:48px;
-                    height:11px;
-                    font-size:8px;
-                    font-weight:400;
-                    line-height:11px;
-                    color:rgba(255,255,255,1);
-                    opacity:1;
-                }
-                .all-money{
-                    position: absolute;
-                    left:16px;
-                    top:28px;
-                    height:23px;
-                    font-size: 23px;
-                    color:rgba(255,255,255,1);
-                    span{
-                        font-size: 12px;
-                        margin-left: 5px;
-                        }
-                }
-
-            }
-            .sf-r{
-                position: absolute;
-                right: 0;
-                top:0;
-                width:141px;
-                height: 64px;
-                border-radius: 4px;
-                background-color:@bgct;
-                .machine{
-                    position: absolute;
-                    top:8px;
-                    left: 12px;
-                    height:11px;
-                    font-size:8px;
-                    font-weight:400;
-                    line-height:11px;
-                    color:rgba(255,255,255,1);
-                }
-                .tj{
-                    position: absolute;
-                    left: 13px;
-                    top: 28px;
-                    font-size: 23px;
-                    font-weight: 500;
-                    color: #fff;
-                    letter-spacing: 5px;
-                }
-            }
+        .van-sidebar{
+          width: 100%;
+        }
+        .van-sidebar-item{
+          padding:6px 0px 10px 8px;
+          text-align: right;
+          border:none;
+          background-color: transparent;
+          color: #76787E;
+          font-size: 12px;
+          font-family:PingFang SC;
+          font-weight:400;
+          line-height:17px;
+        }
+        .van-sidebar-item--select{
+          color:#fff;
         }
 
     }

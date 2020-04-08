@@ -14,7 +14,7 @@ from dbset.main.BSFramwork import AlchemyEncoder
 from models.SystemManagement.system import User
 
 
-accounts = Blueprint('common', __name__, template_folder='templates')
+accounts = Blueprint('mobile', __name__)
 
 
 class Redis:
@@ -41,20 +41,24 @@ def index():
 
 @accounts.route('/login', methods=['POST'])
 def login():
+    """
+    手机端用户登录
+    :return:
+    """
     try:
-        worknumber = request.values.get('WorkNumber')
+        worknumber = request.values.get('worknumber')
         password = request.values.get('password')
         user = db_session.query(User).filter_by(WorkNumber=worknumber).first()
-        # if user and check_password_hash(user.Password, password):
-        if user and user.Password == password:
+        if user and check_password_hash(user.Password, password):
+        # if user and user.Password == password:
             token = uuid.uuid4().hex
             user.LastLoginTime = datetime.now()
-            Redis.set_data(Redis.connect(), token, user.id)
+            # Redis.set_data(Redis.connect(), token, user.id)
             db_session.add(user)
             db_session.commit()
-            return jsonify({'code': 1001, 'msg': '登录成功了', 'data': {'token': token, 'user': user.WorkNumber}})
+            return jsonify({'code': 1001, 'msg': '登录成功', 'data': {'token': token, 'user': user.WorkNumber}})
         else:
-            return jsonify({'code': 2001, 'msg': '账号或密码错误了'})
+            return jsonify({'code': 2001, 'msg': '账号或密码错误'})
     except Exception as e:
         print(e)
         db_session.rollback()

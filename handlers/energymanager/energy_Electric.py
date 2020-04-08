@@ -12,7 +12,7 @@ from handlers.energymanager.energy_manager import energyStatistics
 from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable, Equipment, \
     AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
-    AreaTimeEnergyColour, ElectricProportion
+    AreaTimeEnergyColour, ElectricProportion, IncrementElectricTable
 from tools.common import insert, delete, update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger, insertSyslog
@@ -575,3 +575,62 @@ def energyElectricHistory():
             logger.error(e)
             insertSyslog("error", "能源历史数据查询报错Error：" + str(e), current_user.Name)
 
+
+@energyElectric.route('/electric_report', methods=['GET'])
+def get_electric():
+    """
+    获取电报表的数据接口
+    """
+    start_time = request.values.get('start_time')
+    end_time = request.values.get('end_time')
+    # 当前页数
+    current_page = int(request.values.get('offset'))
+    # 每页显示条数
+    pagesize = int(request.values.get('limit'))
+    area_name = request.values.get('area_name')
+    if area_name:
+        rows = db_session.query(IncrementElectricTable).filter(IncrementElectricTable.AreaName == area_name).filter(IncrementElectricTable.CollectionDate.between(start_time, end_time)).all()[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
+        total = len(db_session.query(IncrementElectricTable).filter(IncrementElectricTable.AreaName == area_name).filter(IncrementElectricTable.CollectionDate.between(start_time, end_time)).all())
+        tag_list = db_session.query(TagDetail).filter(TagDetail.AreaName == area_name, TagDetail.EnergyClass == '电').all()
+        tag_point = [index.TagClassValue for index in tag_list]
+        data = []
+        for item in rows:
+            query_electric = db_session.query(ElectricEnergy).filter(ElectricEnergy.ID == item.CalculationID).first()
+            query_tagdetai = db_session.query(TagDetail).filter(TagDetail.TagClassValue == item.TagClassValue).first()
+            tag_area = query_tagdetai.FEFportIP
+            dict1 = {'ID': query_electric.ID, 'ZGL': query_electric.ZGL, 'Unit': query_electric.Unit,
+                     'AreaName': item.AreaName, 'CollectionDate': str(item.CollectionDate),
+                     'IncremenValue': item.IncremenValue, 'TagClassValue': tag_area, 'AU': query_electric.AU,
+                     'AI': query_electric.AI, 'BU': query_electric.BI, 'BI': query_electric.BI,
+                     'CU': query_electric.CU, 'CI': query_electric.CI}
+            data.append(dict1)
+        if tag_point:
+            sql = "select sum(cast(t1.IncremenValue as decimal(9,2)))*12*1.2 as count from [DB_MICS].[dbo].[IncrementElectricTable] t1 where t1.TagClassValue in " + (str(tag_point).replace('[', '(')).replace(']', ')') + " and t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'" + " group by t1.IncremenType"
+            result = db_session.execute(sql).fetchall()
+            price = 0 if len(result) == 0 else str(round(result[0]['count'], 2))
+            return json.dumps({'rows': data, 'total_column': total, 'price': price}, cls=AlchemyEncoder, ensure_ascii=False)
+        else:
+            sql = "select sum(cast(t1.IncremenValue as decimal(9,2)))*12*1.2 as count from [DB_MICS].[dbo].[IncrementElectricTable] t1 where " + "t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'" + " group by t1.IncremenType"
+            result = db_session.execute(sql).fetchall()
+            price = 0 if len(result) == 0 else str(round(result[0]['count'], 2))
+            return json.dumps({'rows': rows, 'total_column': total, 'price': price}, cls=AlchemyEncoder, ensure_ascii=False)
+    else:
+        tag_list = db_session.query(TagDetail).filter(TagDetail.EnergyClass == '电').all()
+        tag_point = [index.TagClassValue for index in tag_list]
+        sql = "select t1.AreaName, sum(cast(t1.IncremenValue as decimal(9,2)))*12*1.2 as count from [DB_MICS].[dbo].[IncrementElectricTable] t1 where t1.TagClassValue in " + (str(tag_point).replace('[', '(')).replace(']', ')') + "and t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'" + " group by t1.AreaName"
+        rows = db_session.query(IncrementElectricTable).filter(IncrementElectricTable.CollectionDate.between(start_time, end_time)).all()[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
+        total = len(db_session.query(IncrementElectricTable).filter(IncrementElectricTable.CollectionDate.between(start_time, end_time)).all())
+        data = []
+        for item in rows:
+            query_electric = db_session.query(ElectricEnergy).filter(ElectricEnergy.ID == item.CalculationID).first()
+            query_tagdetai = db_session.query(TagDetail).filter(TagDetail.TagClassValue == item.TagClassValue).first()
+            tag_area = query_tagdetai.FEFportIP
+            dict1 = {'ID': query_electric.ID, 'ZGL': query_electric.ZGL, 'Unit': query_electric.Unit,
+                     'AreaName': item.AreaName, 'CollectionDate': str(item.CollectionDate),
+                     'IncremenValue': item.IncremenValue, 'TagClassValue': tag_area, 'AU': query_electric.AU,
+                     'AI': query_electric.AI, 'BU': query_electric.BI, 'BI': query_electric.BI,
+                     'CU': query_electric.CU, 'CI': query_electric.CI}
+            data.append(dict1)
+        result = db_session.execute(sql).fetchall()
+        price = 0 if len(result) == 0 else str(round(result[0]['count'], 2))
+        return json.dumps({'rows': data, 'total_column': total, 'price': price}, cls=AlchemyEncoder, ensure_ascii=False)

@@ -54,7 +54,7 @@
                     <span class="text-size-large text-color-info">年累计耗{{ previewEnergyValue }}量</span>
                     <span class="text-size-normol text-color-warning">{{ unit }}</span>
                   </li>
-                  <li class="text-size-big text-color-warning">{{ thisYearCon }}</li>
+                  <li class="text-size-big text-color-primary" v-html="thisYearHtml">{{ thisYearCon }}</li>
                   <li style="margin-top: 15px;">
                     <span class="text-size-mini text-color-info-shallow">上年同期</span>
                     <span class="text-size-mini text-color-info">{{ lastYearCon }}</span>
@@ -66,7 +66,7 @@
             <el-row>
               <el-col :span="24">
                 <span class="text-size-small text-color-info">今日对比能耗</span>
-                <span class="text-size-small text-color-primary" style="float: right">查看报表<i class="el-icon-d-arrow-right el-icon--right"></i></span>
+                <span class="text-size-small text-color-primary" @click="$router.push({ path:'/DataReport'})" style="float: right;cursor: pointer;">查看报表<i class="el-icon-d-arrow-right el-icon--right"></i></span>
               </el-col>
             </el-row>
             <el-row>
@@ -137,7 +137,7 @@
               </el-table-column>
               <el-table-column prop="WarningDate" label="时间"></el-table-column>
             </el-table>
-            <span class="text-size-mini text-color-primary" style="float: right;margin-top: 15px;">更多记录<i class="el-icon-d-arrow-right el-icon--right"></i></span>
+            <span class="text-size-mini text-color-primary" @click="$router.push({ path:'/Areas?navOptionsCurrent=4'})" style="float: right;margin-top: 15px;cursor: pointer;">更多记录<i class="el-icon-d-arrow-right el-icon--right"></i></span>
           </div>
         </div>
         <div class="home-card">
@@ -164,7 +164,7 @@
                 </template>
               </el-table-column>
             </el-table>
-            <span class="text-size-mini text-color-primary" style="float: right;margin-top: 15px;">查看详情<i class="el-icon-d-arrow-right el-icon--right"></i></span>
+            <span class="text-size-mini text-color-primary" @click="$router.push({ path:'/Areas?navOptionsCurrent=3'})" style="float: right;margin-top: 15px;cursor: pointer;">查看详情<i class="el-icon-d-arrow-right el-icon--right"></i></span>
           </div>
         </div>
         <div class="home-card-body" style="height: 130px;text-align: center;">
@@ -265,6 +265,7 @@
           rows:[]
         },
         thisYearCon: "", //年能耗量
+        thisYearHtml:"",
         lastYearCon: "", //上年同期能耗
         contrastMonthChartSettings: { //本月对比上月能耗图表配置
           area: true,
@@ -283,12 +284,18 @@
             top:'0'
           },
           series: {
-            smooth: false
+            smooth: false,
+            symbolSize: 1
           }
         },
         realtimeChartExtend: { //今日对比能耗图表配置
+          yAxis:{
+            axisLabel:{
+              show:false
+            }
+          },
           grid:{
-            left: '-20px',
+            left: '0px',
             right: '0',
             bottom: '0',
             top:'30px'
@@ -309,7 +316,8 @@
             type:'dotted'
           },
           series: {
-            smooth: false
+            smooth: false,
+            symbolSize: 1
           }
         },
         areaTimeChartExtend: {
@@ -422,6 +430,20 @@
       this.getEnergyPreview()
       this.getAreaTimeEnergy()
       this.getOnLineEq()
+      this.$watch("thisYearCon", function (newValue, oldValue) {
+        if(newValue != ""){
+          var thisYearConStr = newValue.toString().split("")
+          var item = ""
+          for(var i=0;i<thisYearConStr.length;i++){
+            if(thisYearConStr[i] === "."){
+              item += `<span style="margin-right: 3px;">${thisYearConStr[i]}</span>`
+            }else{
+              item += `<span class="numBlock">${thisYearConStr[i]}</span>`
+            }
+          }
+          this.thisYearHtml = item
+        }
+      })
     },
     computed:{ //计算属性
       comparePer(){
