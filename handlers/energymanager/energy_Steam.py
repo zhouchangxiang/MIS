@@ -532,11 +532,13 @@ def get_steam():
         if tag_point:
             sql = "select sum(cast(t1.IncremenValue as decimal(9,2)))*0.0001*50 as count from [DB_MICS].[dbo].[IncrementStreamTable] t1 where t1.TagClassValue in " + (str(tag_point).replace('[', '(')).replace(']', ')') + " and t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'" + " group by t1.IncremenType"
             result = db_session.execute(sql).fetchall()
-            return json.dumps({'rows': data, 'total_column': total, 'price': str(round(result[0]['count'], 2))}, cls=AlchemyEncoder, ensure_ascii=False)
+            price = 0 if len(result) == 0 else str(round(result[0]['count'], 2))
+            return json.dumps({'rows': data, 'total_column': total, 'price': price}, cls=AlchemyEncoder, ensure_ascii=False)
         else:
             sql = "select sum(cast(t1.IncremenValue as decimal(9,2)))*0.0001*50 as count from [DB_MICS].[dbo].[IncrementStreamTable] t1 where " + "t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'" + " group by t1.IncremenType"
             result = db_session.execute(sql).fetchall()
-            return json.dumps({'rows': rows, 'total_column': total, 'price': str(round(result[0]['count'], 2))}, cls=AlchemyEncoder, ensure_ascii=False)
+            price = 0 if len(result) == 0 else str(round(result[0]['count'], 2))
+            return json.dumps({'rows': rows, 'total_column': total, 'price': price}, cls=AlchemyEncoder, ensure_ascii=False)
     else:
         tag_list = db_session.query(TagDetail).filter(TagDetail.EnergyClass == '汽').all()
         tag_point = [index.TagClassValue for index in tag_list]
@@ -553,4 +555,5 @@ def get_steam():
                      'IncremenValue': item.IncremenValue, 'TagClassValue': tag_area}
             data.append(dict1)
         result = db_session.execute(sql).fetchall()
-        return json.dumps({'rows': data, 'total_column': total, 'price': str(round(result[0]['count'], 2))}, cls=AlchemyEncoder, ensure_ascii=False)
+        price = 0 if len(result) == 0 else str(round(result[0]['count'], 2))
+        return json.dumps({'rows': data, 'total_column': total, 'price': price}, cls=AlchemyEncoder, ensure_ascii=False)
