@@ -5,7 +5,7 @@
         <el-form-item label="时间：">
           <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false" @change="searchTime"></el-date-picker> ~
           <el-date-picker type="datetime" v-model="formParameters.endDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false" @change="searchTime"></el-date-picker>
-          <el-button type="primary" size="mini" style="float: right;" @click="exportExcel">导出水电气数据</el-button>
+          <el-button type="primary" size="mini" style="float: right;" @click="exportAllExcel">导出统计数据</el-button>
         </el-form-item>
       </el-form>
     </el-col>
@@ -15,7 +15,7 @@
         <el-select v-model="areaValue" size="mini" @change="searchTime">
           <el-option v-for="(item,index) in areaOptions" :key="item.index" :label="item.AreaName" :value="item.value"></el-option>
         </el-select>
-        <el-button type="primary" size="mini" style="float: right;margin: 9px 0;">导出</el-button>
+        <el-button type="primary" size="mini" style="float: right;margin: 9px 0;" @click="exportExcel">导出详细数据</el-button>
       </div>
       <div class="platformContainer">
         <el-table :data="tableData" border tooltip-effect="dark">
@@ -71,13 +71,23 @@
       this.searchTime()
     },
     methods:{
+      exportAllExcel(){
+        var startTime = moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss")
+        var endTime = moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss")
+        this.$confirm('确定导出' +startTime+'至'+endTime+'汽能统计记录？', '提示', {
+          type: 'warning'
+        }).then(()  => {
+          window.location.href = "http://127.0.0.1:5000/exceloutstatistic?StartTime="+startTime+"&EndTime="+endTime+"&EnergyClass=汽"
+        });
+      },
       exportExcel(){
         var startTime = moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss")
         var endTime = moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss")
-        this.$confirm('确定导出' +startTime+'至'+endTime+'水电气全部记录？', '提示', {
+        var areaValue = this.areaValue
+        this.$confirm('确定导出' +startTime+'至'+endTime+" "+areaValue+'的汽能详细记录？', '提示', {
           type: 'warning'
         }).then(()  => {
-          window.location.href = "http://127.0.0.1:5000/exceloutstatistic?StartTime="+startTime+"&EndTime="+endTime
+          window.location.href = "http://127.0.0.1:5000/excelout?StartTime="+startTime+"&EndTime="+endTime+"&Area="+areaValue+"&EnergyClass=汽"
         });
       },
       getArea(){
