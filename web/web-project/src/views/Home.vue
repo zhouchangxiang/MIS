@@ -147,8 +147,11 @@
           <div class="home-card-body" style="height: 300px;">
             <p>
               <span style="font-size: 48px;" class="text-color-primary">54<span class="text-size-mini">批</span></span>
-              <el-select class="" v-model="lotsEnergyValue" size="small" style="width: 80px;float: right;">
+              <el-select class="" v-model="lotsEnergyValue" size="small" style="width: 80px;float: right;" @change="getBatchEnergy">
                 <el-option v-for="item in lotsEnergyOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+              </el-select>
+              <el-select class="" v-model="areaNameValue" size="small" style="width: 120px;float: right;" @change="getBatchEnergy">
+                <el-option v-for="item in areaOptions" :key="item.ID" :label="item.AreaName" :value="item.AreaName"></el-option>
               </el-select>
             </p>
             <el-table :data="lotsEnergyTableData" size="small" height="160px" max-height="160px" style="width: 100%">
@@ -406,15 +409,17 @@
         electricLoadRateTime:'本日', //默认下拉
         onlineEquipmentOption:[], //在线情况采集
         ralTimeWarningTableData:[],//实时预警表格数据
+        areaNameValue:"提取二车间",
+        areaOptions:[],  //批次能耗内区域下拉框
         lotsEnergyValue:"本日",
-        lotsEnergyOptions:[{ //电能负荷率下拉框
-          value: '选项1',
+        lotsEnergyOptions:[{ //批次能耗时段下拉框
+          value: '本日',
           label: '本日'
         }, {
-          value: '选项2',
+          value: '本月',
           label: '本月'
         }, {
-          value: '选项3',
+          value: '本年',
           label: '本年'
         }],
         lotsEnergyTableData:[
@@ -430,6 +435,8 @@
       this.getEnergyPreview()
       this.getAreaTimeEnergy()
       this.getOnLineEq()
+      this.getArea()
+      this.getBatchEnergy()
       this.$watch("thisYearCon", function (newValue, oldValue) {
         if(newValue != ""){
           var thisYearConStr = newValue.toString().split("")
@@ -576,6 +583,39 @@
             }
           }
           this.ralTimeWarningTableData = arr
+        })
+      },
+      getArea(){
+        let that = this
+        var params = {
+          tableName: "AreaTable",
+          limit:1000,
+          offset:0
+        }
+        this.axios.get("/api/CUID",{params:params}).then(res =>{
+          var resData = JSON.parse(res.data).rows
+          that.areaOptions = resData
+        },res =>{
+          console.log("获取车间时请求错误")
+        })
+      },
+      getBatchEnergy(){
+        var that = this
+        var nowTime = moment().format('HH:mm').substring(0,4) + "0"
+        var nowDate = moment().format('MM-DD') + " " + nowTime
+        var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
+        var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
+        var params = {}
+        if(this.lotsEnergyValue === "本日"){
+          params.AreaName = this.areaNameValue
+          params.StartTime = todayStartTime
+          params.EndTime = todayEndTime
+        }else if(this.lotsEnergyValue === "本月"){
+          params.AreaName = this.areaNameValue
+        }
+        console.log(params)
+        this.axios.get("/api/batchMaintainEnergy",{params:params}).then(res =>{
+          console.log(res.data)
         })
       },
       openSystemCheckupDialog(){ //打开系统体检

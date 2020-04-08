@@ -30,7 +30,11 @@
     },
     inject:['newAreaName'],
     mounted(){
-      this.navOptionsCurrent = this.$route.query.navOptionsCurrent
+      if(this.$route.query.navOptionsCurrent === undefined){
+        this.navOptionsCurrent = 0
+      }else{
+        this.navOptionsCurrent = this.$route.query.navOptionsCurrent
+      }
     },
     data(){
       return {

@@ -85,7 +85,7 @@
         </el-col>
         <el-col :span="6">
           <div class="energyDataCard">
-            <div class="realTimeCardTitle">今日能耗 <span>{{ todayConUnit }}</span></div>
+            <div class="realTimeCardTitle">今日能耗<span>{{ todayConUnit }}</span></div>
             <div class="realTimeData itemMarginBottom text-color-primary" v-html="todayHtml">{{ todayCon }}</div>
           </div>
           <div class="energyDataCard">
@@ -138,7 +138,7 @@
         </el-col>
         <el-col :span="6">
           <div class="energyDataCard">
-            <div class="realTimeCardTitle">实时数据 <span>kwh</span></div>
+            <div class="realTimeCardTitle">今日能耗<span>{{ todayConUnit }}</span></div>
             <div class="realTimeData itemMarginBottom text-color-primary" v-html="todayHtml">{{ todayCon }}</div>
           </div>
           <div class="energyDataCard" style="margin-bottom: 0">
@@ -286,7 +286,7 @@
       this.getAreaTimeEnergy()
       this.getChartData()
       this.$watch("todayCon", function (newValue, oldValue) {
-        if(newValue != ""){
+        if(newValue > 0){
           var thisYearConStr = newValue.toString().split("")
           var item = ""
           for(var i=0;i<thisYearConStr.length;i++){
@@ -297,6 +297,8 @@
             }
           }
           this.todayHtml = item
+        }else{
+          this.todayHtml = `<span class="numBlock">0</span>`
         }
       })
     },

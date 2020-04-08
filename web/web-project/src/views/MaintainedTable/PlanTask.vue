@@ -27,7 +27,7 @@
           </el-form>
         </el-col>
       </el-row>
-      <el-table :data="tableData" border tooltip-effect="dark" @selection-change="handleSelectionChange">
+      <el-table :data="tableData" border tooltip-effect="dark" ref="multipleTable" @selection-change="handleSelectionChange" @row-click="handleRowClick">
         <el-table-column type="selection"></el-table-column>
         <el-table-column prop="ID" label="ID"></el-table-column>
         <el-table-column prop="PlanNum" label="计划单号"></el-table-column>
@@ -314,6 +314,10 @@
             type: 'warning'
           });
         }
+      },
+      handleRowClick(row, column, cell, event){
+        this.$refs.multipleTable.clearSelection();
+        this.$refs.multipleTable.toggleRowSelection(row)
       }
     }
   }
