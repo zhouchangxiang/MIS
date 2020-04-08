@@ -3,8 +3,8 @@
     <el-col :span="24">
       <el-form :model="formParameters">
         <el-form-item label="时间：">
-          <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd HH:mm:ss" style="width: 180px;" :clearable="false" @change="searchTime"></el-date-picker> ~
-          <el-date-picker type="datetime" v-model="formParameters.endDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd HH:mm:ss" style="width: 180px;" :clearable="false" @change="searchTime"></el-date-picker>
+          <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false" @change="searchTime"></el-date-picker> ~
+          <el-date-picker type="datetime" v-model="formParameters.endDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false" @change="searchTime"></el-date-picker>
           <el-button type="primary" size="mini" style="float: right;" @click="exportExcel">导出水电气数据</el-button>
         </el-form-item>
       </el-form>
@@ -19,10 +19,14 @@
       </div>
       <div class="platformContainer">
         <el-table :data="tableData" border tooltip-effect="dark">
+          <el-table-column prop="SumValue" label="累计值"></el-table-column>
+          <el-table-column prop="WD" label="温度"></el-table-column>
           <el-table-column prop="IncremenValue" label="增量值"></el-table-column>
+          <el-table-column prop="Volume" label="体积"></el-table-column>
           <el-table-column prop="Unit" label="单位"></el-table-column>
           <el-table-column prop="CollectionDate" label="采集时间"></el-table-column>
           <el-table-column prop="AreaName" label="区域"></el-table-column>
+          <el-table-column prop="TagClassValue" label="采集点"></el-table-column>
         </el-table>
         <div class="paginationClass">
           <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
@@ -68,8 +72,8 @@
     },
     methods:{
       exportExcel(){
-        var startTime = this.formParameters.startDate
-        var endTime = this.formParameters.endDate
+        var startTime = moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss")
+        var endTime = moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss")
         this.$confirm('确定导出' +startTime+'至'+endTime+'水电气全部记录？', '提示', {
           type: 'warning'
         }).then(()  => {
@@ -107,17 +111,16 @@
         this.searchTime()
       },
       searchTime(){
-        this.axios.get("/api/get_steam_energy",{
+        this.axios.get("/api/steam_report",{
           params: {
-            StartTime:this.formParameters.startDate,
-            EndTime:this.formParameters.endDate,
-            AreaName:this.areaValue,
+            start_time:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss"),
+            end_time:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss"),
+            area_name:this.areaValue,
             limit:this.pagesize,
             offset:this.currentPage
           }
         }).then(res =>{
           var data = res.data
-          console.log(data)
           this.tableData = data.rows
           this.total = data.total_column
         },res =>{

@@ -92,8 +92,8 @@
     },
     methods:{
       exportExcel(){
-        var startTime = this.formParameters.startDate
-        var endTime = this.formParameters.endDate
+        var startTime = moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss")
+        var endTime = moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss")
         this.$confirm('确定导出' +startTime+'至'+endTime+'水电气全部记录？', '提示', {
           type: 'warning'
         }).then(()  => {
@@ -131,11 +131,11 @@
         this.searchTime()
       },
       searchTime(){
-        this.axios.get("/api/get_water_data",{
+        this.axios.get("/api/water_report",{
           params: {
-            StartTime:this.formParameters.startDate,
-            EndTime:this.formParameters.endDate,
-            AreaName:this.areaValue,
+            start_time:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss"),
+            end_time:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss"),
+            area_name:this.areaValue,
             limit:this.pagesize,
             offset:this.currentPage
           }
