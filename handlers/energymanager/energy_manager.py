@@ -1078,10 +1078,9 @@ def batchMaintainEnergy():
         try:
             StartTime = data.get("StartTime")
             EndTime = data.get("EndTime")
-            batinfos = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime,EndTime)).all()
-            for bat in batinfos:
-                bat = ""
-            return json.dumps("创建计划任务失败!", cls=AlchemyEncoder, ensure_ascii=False)
+            AreaName = data.get("AreaName")
+            batinfos = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime,EndTime), BatchMaintain.AreaName == AreaName).all()
+            return json.dumps(batinfos, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
             logger.error(e)

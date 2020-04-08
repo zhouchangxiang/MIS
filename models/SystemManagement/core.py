@@ -549,6 +549,9 @@ class BatchMaintain(Base):
     # 结束时间:
     EndTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+    # 生产车间:
+    AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 
 # BatchMaintain_END:
 
