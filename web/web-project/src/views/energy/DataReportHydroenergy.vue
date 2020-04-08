@@ -5,7 +5,7 @@
         <el-form-item label="时间：">
           <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd HH:mm:ss" style="width: 180px;" :clearable="false" @change="searchTime"></el-date-picker> ~
           <el-date-picker type="datetime" v-model="formParameters.endDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd HH:mm:ss" style="width: 180px;" :clearable="false" @change="searchTime"></el-date-picker>
-          <el-button type="primary" size="mini" style="float: right;" @click="exportExcel">导出水电气数据</el-button>
+          <el-button type="primary" size="mini" style="float: right;" @click="exportAllExcel">导出统计数据</el-button>
         </el-form-item>
       </el-form>
     </el-col>
@@ -15,7 +15,7 @@
         <el-select v-model="areaValue" size="mini" @change="searchTime">
           <el-option v-for="(item,index) in areaOptions" :key="item.index" :label="item.AreaName" :value="item.value"></el-option>
         </el-select>
-        <el-button type="primary" size="mini" style="float: right;margin: 9px 0;">导出</el-button>
+        <el-button type="primary" size="mini" style="float: right;margin: 9px 0;" @click="exportExcel">导出详细数据</el-button>
       </div>
       <div class="platformContainer">
         <el-table :data="tableData" border tooltip-effect="dark">
@@ -91,13 +91,23 @@
       this.searchTime()
     },
     methods:{
-      exportExcel(){
-        var startTime = this.formParameters.startDate
-        var endTime = this.formParameters.endDate
-        this.$confirm('确定导出' +startTime+'至'+endTime+'水电气全部记录？', '提示', {
+      exportAllExcel(){
+        var startTime = moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss")
+        var endTime = moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss")
+        this.$confirm('确定导出' +startTime+'至'+endTime+'水能统计记录？', '提示', {
           type: 'warning'
         }).then(()  => {
-          window.location.href = "http://127.0.0.1:5000/exceloutstatistic?StartTime="+startTime+"&EndTime="+endTime
+          window.location.href = "http://127.0.0.1:5000/exceloutstatistic?StartTime="+startTime+"&EndTime="+endTime+"&EnergyClass=水"
+        });
+      },
+      exportExcel(){
+        var startTime = moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss")
+        var endTime = moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss")
+        var areaValue = this.areaValue
+        this.$confirm('确定导出' +startTime+'至'+endTime+" "+areaValue+'的水能详细记录？', '提示', {
+          type: 'warning'
+        }).then(()  => {
+          window.location.href = "http://127.0.0.1:5000/excelout?StartTime="+startTime+"&EndTime="+endTime+"&Area="+areaValue+"&EnergyClass=水"
         });
       },
       getArea(){
@@ -131,11 +141,11 @@
         this.searchTime()
       },
       searchTime(){
-        this.axios.get("/api/get_water_data",{
+        this.axios.get("/api/water_report",{
           params: {
-            StartTime:this.formParameters.startDate,
-            EndTime:this.formParameters.endDate,
-            AreaName:this.areaValue,
+            start_time:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss"),
+            end_time:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss"),
+            area_name:this.areaValue,
             limit:this.pagesize,
             offset:this.currentPage
           }

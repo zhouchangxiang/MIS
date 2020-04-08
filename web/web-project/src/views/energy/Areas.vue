@@ -30,7 +30,7 @@
     },
     inject:['newAreaName'],
     mounted(){
-
+      this.navOptionsCurrent = this.$route.query.navOptionsCurrent
     },
     data(){
       return {

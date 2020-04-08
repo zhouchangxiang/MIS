@@ -9,10 +9,10 @@ from flask_login import login_required, logout_user, login_user, current_user, L
 import calendar
 
 from handlers.energymanager.energy_manager import energyStatistics
-from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable, Equipment, \
+from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, WaterEnergy, LimitTable, Equipment, \
     AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
-    AreaTimeEnergyColour, ElectricProportion
+    AreaTimeEnergyColour, ElectricProportion, IncrementWaterTable
 from tools.common import insert, delete, update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger, insertSyslog
@@ -505,21 +505,57 @@ def energyHistory():
             insertSyslog("error", "能源历史数据查询报错Error：" + str(e), current_user.Name)
 
 
-@energyWater.route('/get_water_data', methods=['GET'])
-def get_electric():
-    start_time = request.values.get('StartTime')
-    end_time = request.values.get('EndTime')
+@energyWater.route('/water_report', methods=['GET'])
+def get_water():
+    """
+    获取水报表的数据接口
+    """
+    start_time = request.values.get('start_time')
+    end_time = request.values.get('end_time')
     # 当前页数
-    current_page = request.values.get('offset', 1, type=int)
+    current_page = int(request.values.get('offset'))
     # 每页显示条数
-    pagesize = int(request.values.get('limit', 10))
-    area_name = request.values.get('AreaName')
+    pagesize = int(request.values.get('limit'))
+    area_name = request.values.get('area_name')
     if area_name:
-        results = db_session.query(WaterEnergy).filter(WaterEnergy.AreaName == area_name).filter(
-            WaterEnergy.CollectionDate.between(start_time, end_time)).order_by(WaterEnergy.ID.desc()).all()
-        data = results[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
+        rows = db_session.query(IncrementWaterTable).filter(IncrementWaterTable.AreaName == area_name).filter(IncrementWaterTable.CollectionDate.between(start_time, end_time)).all()[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
+        total = len(db_session.query(IncrementWaterTable).filter(IncrementWaterTable.AreaName == area_name).filter(IncrementWaterTable.CollectionDate.between(start_time, end_time)).all())
+        tag_list = db_session.query(TagDetail).filter(TagDetail.AreaName == area_name, TagDetail.EnergyClass == '水').all()
+        tag_point = [index.TagClassValue for index in tag_list]
+        data = []
+        for item in rows:
+            query_steam = db_session.query(WaterEnergy).filter(WaterEnergy.ID == item.CalculationID).first()
+            query_tagdetai = db_session.query(TagDetail).filter(TagDetail.TagClassValue == item.TagClassValue).first()
+            tag_area = query_tagdetai.FEFportIP
+            dict1 = {'ID': query_steam.ID, 'WaterFlow': query_steam.WaterFlow, 'WaterSum': query_steam.WaterSum, 'SumWUnit': query_steam.SumWUnit,
+                     'AreaName': item.AreaName, 'CollectionDate': str(item.CollectionDate),
+                     'IncremenValue': item.IncremenValue, 'TagClassValue': tag_area}
+            data.append(dict1)
+        if tag_point:
+            sql = "select sum(cast(t1.IncremenValue as decimal(9,2)))*0.0001*50 as count from [DB_MICS].[dbo].[IncrementWaterTable] t1 where t1.TagClassValue in " + (str(tag_point).replace('[', '(')).replace(']', ')') + " and t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'" + " group by t1.IncremenType"
+            result = db_session.execute(sql).fetchall()
+            price = 0 if len(result) == 0 else str(round(result[0]['count'], 2))
+            return json.dumps({'rows': data, 'total_column': total, 'price': price}, cls=AlchemyEncoder, ensure_ascii=False)
+        else:
+            sql = "select sum(cast(t1.IncremenValue as decimal(9,2)))*0.0001*50 as count from [DB_MICS].[dbo].[IncrementWaterTable] t1 where " + "t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'" + " group by t1.IncremenType"
+            result = db_session.execute(sql).fetchall()
+            price = 0 if len(result) == 0 else str(round(result[0]['count'], 2))
+            return json.dumps({'rows': rows, 'total_column': total, 'price': price}, cls=AlchemyEncoder, ensure_ascii=False)
     else:
-        results = db_session.query(WaterEnergy).filter(
-            WaterEnergy.CollectionDate.between(start_time, end_time)).order_by(WaterEnergy.ID.desc()).all()
-        data = results[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
-    return json.dumps({'total': len(results), 'rows': data}, cls=AlchemyEncoder, ensure_ascii=False)
+        tag_list = db_session.query(TagDetail).filter(TagDetail.EnergyClass == '水').all()
+        tag_point = [index.TagClassValue for index in tag_list]
+        sql = "select t1.AreaName, sum(cast(t1.IncremenValue as decimal(9,2)))*0.0001*50 as count from [DB_MICS].[dbo].[IncrementWaterTable] t1 where t1.TagClassValue in " + (str(tag_point).replace('[', '(')).replace(']', ')') + "and t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'" + " group by t1.AreaName"
+        rows = db_session.query(IncrementWaterTable).filter(IncrementWaterTable.CollectionDate.between(start_time, end_time)).all()[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
+        total = len(db_session.query(IncrementWaterTable).filter(IncrementWaterTable.CollectionDate.between(start_time, end_time)).all())
+        data = []
+        for item in rows:
+            query_water = db_session.query(WaterEnergy).filter(WaterEnergy.ID == item.CalculationID).first()
+            query_tagdetai = db_session.query(TagDetail).filter(TagDetail.TagClassValue == item.TagClassValue).first()
+            tag_area = query_tagdetai.FEFportIP
+            dict1 = {'ID': query_water.ID, 'WaterFlow': query_water.WaterFlow, 'WaterSum': query_water.WaterSum, 'SumWUnit': query_water.SumWUnit,
+                     'AreaName': item.AreaName, 'CollectionDate': str(item.CollectionDate),
+                     'IncremenValue': item.IncremenValue, 'TagClassValue': tag_area}
+            data.append(dict1)
+        result = db_session.execute(sql).fetchall()
+        price = 0 if len(result) == 0 else str(round(result[0]['count'], 2))
+        return json.dumps({'rows': data, 'total_column': total, 'price': price}, cls=AlchemyEncoder, ensure_ascii=False)

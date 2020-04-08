@@ -6,7 +6,7 @@
             <el-date-picker type="date" v-model="formParameters.date" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false" @change="getChartData(),getAreaTimeEnergy()"></el-date-picker>
           </el-form-item>
           <el-form-item style="float: right;">
-            <el-radio-group v-model="formParameters.energy" fill="#082F4C" size="small" @change="getChartData(),getAreaTimeEnergy()">
+            <el-radio-group v-model="formParameters.energy" fill="#082F4C" size="small" @change="getDayEnergy(),getChartData(),getAreaTimeEnergy()">
               <el-radio-button v-for="(item,index) in energyList" :key="item.index" :label="item.label"></el-radio-button>
             </el-radio-group>
           </el-form-item>
@@ -85,8 +85,8 @@
         </el-col>
         <el-col :span="6">
           <div class="energyDataCard">
-            <div class="realTimeCardTitle">实时数据 <span>kwh</span></div>
-            <div class="realTimeData itemMarginBottom">22432</div>
+            <div class="realTimeCardTitle">今日能耗 <span>{{ todayConUnit }}</span></div>
+            <div class="realTimeData itemMarginBottom text-color-primary" v-html="todayHtml">{{ todayCon }}</div>
           </div>
           <div class="energyDataCard">
             <div class="energyDataItem">
@@ -95,8 +95,8 @@
               </div>
             </div>
             <div class="energyDataItem">
-              <div class="energyDataItemTitle">今日能耗</div>
-              <div class="energyDataItemData">{{ todayCon }} {{ todayConUnit }}</div>
+              <div class="energyDataItemTitle">对比日能耗</div>
+              <div class="energyDataItemData">{{ CompareDateCon }} {{ todayConUnit }}</div>
             </div>
             <div class="energyDataItem">
               <div class="energyDataItemTitle">对比</div>
@@ -139,7 +139,7 @@
         <el-col :span="6">
           <div class="energyDataCard">
             <div class="realTimeCardTitle">实时数据 <span>kwh</span></div>
-            <div class="realTimeData itemMarginBottom">22432</div>
+            <div class="realTimeData itemMarginBottom text-color-primary" v-html="todayHtml">{{ todayCon }}</div>
           </div>
           <div class="energyDataCard" style="margin-bottom: 0">
             <div class="energyDataItem" style="margin-top: 8px">
@@ -148,8 +148,8 @@
               </div>
             </div>
             <div class="energyDataItem">
-              <div class="energyDataItemTitle">今日能耗</div>
-              <div class="energyDataItemData">{{ todayCon }} {{ todayConUnit }}</div>
+              <div class="energyDataItemTitle">对比日能耗</div>
+              <div class="energyDataItemData">{{ CompareDateCon }} {{ todayConUnit }}</div>
             </div>
             <div class="energyDataItem">
               <div class="energyDataItemTitle">对比</div>
@@ -226,6 +226,7 @@
         todayConUnit:"",
         CompareDate:moment().subtract(1,'day').format('YYYY-MM-DD'),
         CompareDateCon:"",
+        todayHtml:"",
         pickerOptions:{
           disabledDate(time) {
             return time.getTime() > Date.now();
@@ -284,6 +285,20 @@
       this.getDayEnergy()
       this.getAreaTimeEnergy()
       this.getChartData()
+      this.$watch("todayCon", function (newValue, oldValue) {
+        if(newValue != ""){
+          var thisYearConStr = newValue.toString().split("")
+          var item = ""
+          for(var i=0;i<thisYearConStr.length;i++){
+            if(thisYearConStr[i] === "."){
+              item += `<span style="margin-right: 3px;">${thisYearConStr[i]}</span>`
+            }else{
+              item += `<span class="numBlock">${thisYearConStr[i]}</span>`
+            }
+          }
+          this.todayHtml = item
+        }
+      })
     },
     computed:{
       compareRatio(){
