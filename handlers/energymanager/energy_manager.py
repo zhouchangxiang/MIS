@@ -766,15 +766,16 @@ def excelout():
     if request.method == 'GET':
         Area = data.get("Area")
         EnergyClass = data.get("EnergyClass")
-        CurrentTime = data.get("CurrentTime")
-        output = exportx(Area, EnergyClass, CurrentTime)
+        StartTime = data.get("StartTime")
+        EndTime = data.get("EndTime")
+        output = exportx(Area, EnergyClass, StartTime, EndTime)
         resp = make_response(output.getvalue())
         resp.headers["Content-Disposition"] = "attachment; filename=testing.xlsx"
         resp.headers['Content-Type'] = 'application/x-xlsx'
         return resp
 
 
-def exportx(Area, EnergyClass, CurrentTime):
+def exportx(Area, EnergyClass,  StartTime, EndTime):
     # 创建数据流
     output = BytesIO()
     # 创建excel work book
@@ -793,24 +794,26 @@ def exportx(Area, EnergyClass, CurrentTime):
     col = 0
     row = 1
     tag = []
-    tas = db_session.query(TagDetail).filter(TagDetail.AreaName == Area).all()
+    if Area != "" and Area !=None:
+        tas = db_session.query(TagDetail).filter(TagDetail.AreaName == Area).all()
+    else:
+        tas = db_session.query(TagDetail).filter().all()
     for ta in tas:
         tag.append(ta.TagClassValue)
     # 写入列名
     if EnergyClass == "水":
         columns = ['单位', '仪表ID', '价格ID', '采集点', '采集时间', '采集年', '采集月', '采集天', '瞬时流量', '累计流量']
         oclass = db_session.query(WaterEnergy).filter(WaterEnergy.TagClassValue.in_(tag),
-                                                      WaterEnergy.CollectionDate.like("%" + CurrentTime + "%")).all()
+                                                      WaterEnergy.CollectionDate.between(StartTime, EndTime)).all()
     elif EnergyClass == "电":
         columns = ['单位', '仪表ID', '价格ID', '采集点', '采集时间', '采集年', '采集月', '采集天', '总功率', 'A相电压', 'A相电流', 'B相电压', 'B相电流',
                    'C相电压', 'C相电压']
         oclass = db_session.query(ElectricEnergy).filter(ElectricEnergy.TagClassValue.in_(tag),
-                                                         ElectricEnergy.CollectionDate.like(
-                                                             "%" + CurrentTime + "%")).all()
+                                                         ElectricEnergy.CollectionDate.between(StartTime, EndTime)).all()
     else:
         columns = ['蒸汽值', '单位', '仪表ID', '价格ID', '采集点', '采集时间', '采集年', '采集月', '采集天', '温度', '蒸汽瞬时值', '蒸汽累计值']
         oclass = db_session.query(SteamEnergy).filter(SteamEnergy.TagClassValue.in_(tag),
-                                                      SteamEnergy.CollectionDate.like("%" + CurrentTime + "%")).all()
+                                                      SteamEnergy.CollectionDate.between(StartTime, EndTime)).all()
     for item in columns:
         worksheet.write(0, col, item, cell_format)
         col += 1
@@ -982,21 +985,21 @@ def createzyplanzytaskrelease():
     创建计划任务
     :return:
     '''
-    if request.method == 'GET':
+    if request.method == 'POST':
         data = request.values
         try:
             PlanNum = data.get("PlanNum")
             BatchID = data.get("BatchID")
-            BrandName = ctrlPlan('BrandName')
+            BrandName = data.get('BrandName')
             WaterConsumption = data.get("WaterConsumption")
-            ElectricConsumption = data.get("ElectricConsumption")
-            ProductionDate = ctrlPlan('ProductionDate')
-            iTaskCount = data.get("iTaskCount")
-            CreateDate = datetime.datetime.now().strftime()
+            SteamConsumption = data.get("SteamConsumption")
+            ProductionDate = data.get('ProductionDate')
+            CreateDate = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             StartTime = data.get("StartTime")
             EndTime = data.get("EndTime")
+            PlanQuantity = data.get("PlanQuantity")
             PlanCreate = ctrlPlan('PlanCreate')
-            re = PlanCreate.createBatchMaintain(PlanNum, BatchID, BrandName, WaterConsumption, ElectricConsumption, ProductionDate, StartTime, EndTime)
+            re = PlanCreate.createBatchMaintain(PlanNum, BatchID, BrandName, PlanQuantity, WaterConsumption, SteamConsumption, CreateDate, ProductionDate, StartTime, EndTime)
             if re==True:
                 return json.dumps("OK", cls=AlchemyEncoder, ensure_ascii=False)
             else:
@@ -1010,7 +1013,7 @@ class ctrlPlan:
     def __init__(self, name):
         self.name = name
 
-    def createBatchMaintain(self, PlanNum, BatchID, BrandName, PlanQuantity, WaterConsumption, ElectricConsumption, ProductionDate, StartTime, EndTime):
+    def createBatchMaintain(self, PlanNum, BatchID, BrandName, PlanQuantity, WaterConsumption, SteamConsumption, CreateDate, ProductionDate, StartTime, EndTime):
         bReturn = True
         try:
             db_session.add(
@@ -1020,7 +1023,8 @@ class ctrlPlan:
                     BrandName=BrandName,
                     PlanQuantity=PlanQuantity,
                     WaterConsumption=WaterConsumption,
-                    ElectricConsumption=ElectricConsumption,
+                    SteamConsumption=SteamConsumption,
+                    CreateDate=CreateDate,
                     ProductionDate=ProductionDate,
                     StartTime=StartTime,
                     EndTime=EndTime))
@@ -1028,7 +1032,7 @@ class ctrlPlan:
             puids = db_session.query(PUIDMaintain).filter(PUIDMaintain.BrandName == BrandName).all()
             if puids:
                 for puid in puids:
-                    bReturn = self.BatchMaintainTask(puid.PUIDName, PlanNum, BatchID, BrandName, PlanQuantity, WaterConsumption, ElectricConsumption, ProductionDate, StartTime, EndTime)
+                    bReturn = self.BatchMaintainTask(puid.PUIDName, PlanNum, BatchID, BrandName, PlanQuantity, WaterConsumption, SteamConsumption, CreateDate, ProductionDate, StartTime, EndTime)
                     if bReturn == False:
                         return False
             return bReturn
@@ -1039,7 +1043,7 @@ class ctrlPlan:
             return False
 
 
-    def BatchMaintainTask(self, PuidName, PlanNum, BatchID, BrandName, PlanQuantity, WaterConsumption, ElectricConsumption, ProductionDate, StartTime, EndTime):
+    def BatchMaintainTask(self, PuidName, PlanNum, BatchID, BrandName, PlanQuantity, WaterConsumption, SteamConsumption, CreateDate, ProductionDate, StartTime, EndTime):
         bReturn = True;
         try:
             db_session.add(
@@ -1050,7 +1054,8 @@ class ctrlPlan:
                     BrandName=BrandName,
                     PlanQuantity=PlanQuantity,
                     WaterConsumption=WaterConsumption,
-                    ElectricConsumption=ElectricConsumption,
+                    SteamConsumption=SteamConsumption,
+                    CreateDate=CreateDate,
                     ProductionDate=ProductionDate,
                     StartTime=StartTime,
                     EndTime=EndTime))
