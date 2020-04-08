@@ -688,15 +688,15 @@ def exceloutstatistic():
     if request.method == 'GET':
         StartTime = data.get("StartTime")
         EndTime = data.get("EndTime")
-        EnergyClasss = data.get("EnergyClasss")
-        output = exportxstatistic(StartTime, EndTime, EnergyClasss)
+        EnergyClass = data.get("EnergyClass")
+        output = exportxstatistic(StartTime, EndTime, EnergyClass)
         resp = make_response(output.getvalue())
         resp.headers["Content-Disposition"] = "attachment; filename=consumption.xlsx"
         resp.headers['Content-Type'] = 'application/x-xlsx'
         return resp
 
 
-def exportxstatistic(StartTime, EndTime, EnergyClasss):
+def exportxstatistic(StartTime, EndTime, EnergyClass):
     # 创建数据流
     output = BytesIO()
     # 创建excel work book
@@ -721,8 +721,8 @@ def exportxstatistic(StartTime, EndTime, EnergyClasss):
         worksheet.write(0, col, item, cell_format)
         col += 1
     AreaNames = db_session.query(AreaTable).filter().all()
-    oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass ==EnergyClasss).all()
-    unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == EnergyClasss).first()[0]
+    oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass ==EnergyClass).all()
+    unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == EnergyClass).first()[0]
     i = 0
     for oc in oclass:
         oc_list = []
@@ -734,7 +734,7 @@ def exportxstatistic(StartTime, EndTime, EnergyClasss):
         elif Tag == "S":
             oc_list.append(oc.TagClassValue)
         if len(oc_list) > 0:
-            count = energyStatistics(oc_list, StartTime, EndTime, EnergyClasss)
+            count = energyStatistics(oc_list, StartTime, EndTime, EnergyClass)
         else:
             count = 0.0
         for cum in columns:
