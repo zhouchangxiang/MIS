@@ -3,20 +3,16 @@
     <el-col :span="24">
       <el-form :inline="true" :model="formParameters">
         <el-form-item label="时间：">
-          <el-radio-group v-model="formParameters.resource" fill="#082F4C" size="mini">
-            <el-radio-button v-for="item in radioList" border :key="item.id" :label="item.name"></el-radio-button>
+          <el-radio-group v-model="formParameters.resource" fill="#082F4C" size="mini" @change="getCommodityPreview">
+            <el-radio-button v-for="(item,index) in radioList" border :key="index" :label="item.name" :value="item.value"></el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item>
-          <el-date-picker type="month" placeholder="选择月份" v-model="formParameters.dateMonth" :picker-options="pickerOptions" size="mini" format="yyyy-MM" style="width: 130px;" :clearable="false"></el-date-picker>
-        </el-form-item>
-        <el-form-item>
-          <el-checkbox v-model="formParameters.checked">对比 </el-checkbox>
-          <el-date-picker type="month" placeholder="选择月份" v-model="formParameters.contrastingMonth" :picker-options="pickerOptions" size="mini" format="yyyy-MM" style="width: 130px;" :clearable="false"></el-date-picker>
-          <span style="vertical-align: sub;" class="text-color-danger text-size-mini">(选择对比月份起始计算日)</span>
+          <el-date-picker type="month" placeholder="选择月份" v-model="formParameters.contrastingMonth" :picker-options="pickerOptions" size="mini" format="yyyy-MM" style="width: 130px;" :clearable="false" @change="getCommodityPreview"></el-date-picker>
+          <span style="vertical-align: sub;" class="text-color-info-shallow text-size-mini">(对比时间)</span>
         </el-form-item>
         <el-form-item style="float: right;">
-          <el-radio-group v-model="formParameters.energy" fill="#082F4C" size="small">
+          <el-radio-group v-model="formParameters.energy" fill="#082F4C" size="small" @change="getCommodityPreview">
             <el-radio-button v-for="item in energyList" :key="item.id" :label="item.name"></el-radio-button>
           </el-radio-group>
         </el-form-item>
@@ -28,25 +24,42 @@
     <el-col :span="4">
       <div class="energyDataContainer" style="border-radius: 0 0 0 4px;">
         <ul class="energyDataItem">
-          <li class="text-size-normol text-color-info">本月耗电量</li>
-          <li class="text-size-large text-color-info">1256.24kwh</li>
-          <li class="text-size-mini"><span class="text-color-info-shallow" style="margin-right: 10px;">选择对比</span><span class="text-size-mini text-color-danger">+9.5% <i class="el-icon-top"></i></span></li>
+          <li class="text-size-normol text-color-info">本{{ formParameters.resource }}耗{{ formParameters.energy }}量</li>
+          <li class="text-size-large text-color-warning">{{ Total }}{{ Unit }}</li>
+          <li class="text-size-mini">
+            <span class="text-color-info-shallow" style="margin-right: 10px;">选择对比</span>
+            <span class="text-size-mini" :class="Total-contrastTotal>0?'text-color-danger':'text-color-success'">{{ contrastRatioTotal }}</span>
+          </li>
         </ul>
         <ul class="energyDataItem">
-          <li class="text-size-normol text-color-info">本月生产批次</li>
-          <li class="text-size-large text-color-info">5批</li>
-          <li class="text-size-mini"><span class="text-color-info-shallow" style="margin-right: 10px;">选择对比</span><span class="text-size-mini text-color-success">+9.5% <i class="el-icon-top"></i></span></li>
+          <li class="text-size-normol text-color-info">本{{ formParameters.resource }}生产批次</li>
+          <li class="text-size-large text-color-primary">{{ Count }}批</li>
+          <li class="text-size-mini">
+            <span class="text-color-info-shallow" style="margin-right: 10px;">选择对比</span>
+            <span class="text-size-mini" :class="Count-contrastCount>0?'text-color-danger':'text-color-success'">{{ contrastRatioCount }}</span>
+          </li>
         </ul>
         <ul class="energyDataItem">
-          <li class="text-size-normol text-color-info">单位批次能耗</li>
-          <li class="text-size-large text-color-info">155.5kwh/批</li>
-          <li class="text-size-mini"><span class="text-color-info-shallow" style="margin-right: 10px;">同期对比</span><span class="text-size-mini text-color-success">+9.5% <i class="el-icon-top"></i></span></li>
+          <li class="text-size-normol text-color-info">本{{ formParameters.resource }}单位批次能耗</li>
+          <li class="text-size-large text-color-primary">{{ EveryBatch }}{{ Unit }}/批</li>
+          <li class="text-size-mini">
+            <span class="text-color-info-shallow" style="margin-right: 10px;">选择对比</span>
+            <span class="text-size-mini" :class="EveryBatch-contrastEveryBatch>0?'text-color-danger':'text-color-success'">{{ contrastRatioEveryBatch }}</span>
+          </li>
+        </ul>
+        <ul class="energyDataItem">
+          <li class="text-size-normol text-color-info">本{{ formParameters.resource }}生产品名数</li>
+          <li class="text-size-large text-color-primary">{{ TypeNum }}种</li>
+          <li class="text-size-mini">
+            <span class="text-color-info-shallow" style="margin-right: 10px;">选择对比</span>
+            <span class="text-size-mini" :class="TypeNum-contrastTypeNum>0?'text-color-danger':'text-color-success'">{{ contrastRatioTypeNum }}</span>
+          </li>
         </ul>
       </div>
     </el-col>
     <el-col :span="20">
       <div class="energyDataContainer" style="border-radius: 0 0 4px 0;">
-        <ve-line :data="chartData" :settings="ChartSettings" :extend="ChartExtend"></ve-line>
+        <ve-line :data="chartData" :extend="ChartExtend"></ve-line>
       </div>
     </el-col>
     <el-col :span="24" style="margin-top:10px;margin-bottom:2px;">
@@ -84,13 +97,41 @@
 </template>
 
 <script>
-    export default {
-      name: "AreaShows",
-      data(){
-        this.ChartSettings = {//趋势图表配置
-
-        }
-        this.ChartExtend = {
+  var moment = require('moment');
+  export default {
+    name: "AreaShows",
+    inject:['newAreaName'],
+    data(){
+      return {
+        radioList:[
+          {name:"月"},
+          {name:"季"},
+          {name:"年"},
+        ],
+        energyList:[
+          {name:"水",value:"水"},
+          {name:"汽",value:"汽"},
+        ],
+        formParameters:{
+          resource:"月",
+          contrastingMonth:moment().month(moment().month() - 1).startOf('month').format('YYYY-MM-DD HH:mm'),
+          energy:"水"
+        },
+        pickerOptions:{
+          disabledDate(time) {
+            return time.getTime() > Date.now();
+          }
+        },
+        Total:"",
+        contrastTotal:"",
+        Count:"",
+        contrastCount:"",
+        EveryBatch:"",
+        contrastEveryBatch:"",
+        TypeNum:"",
+        contrastTypeNum:"",
+        Unit:"",
+        ChartExtend: {
           grid:{
             left:'0',
             right:'0',
@@ -104,75 +145,182 @@
           series:{
             smooth: false
           }
-        }
-        return {
-          radioList:[
-            {name:"月",id:1},
-            {name:"季",id:2},
-            {name:"年",id:3},
-          ],
-          energyList:[
-            {name:"电能",id:1},
-            {name:"水能",id:2},
-            {name:"汽能",id:3},
-          ],
-          formParameters:{
-            resource:"月",
-            dateMonth:Date.now(),
-            contrastingMonth:Date.now(),
-            checked:"",
-            energy:"电能"
-          },
-          pickerOptions:{
-            disabledDate(time) {
-              return time.getTime() > Date.now();
-            }
-          },
-          chartData: {
-            columns: ['日期', '当前月份能耗', '选择同期能耗'],
-            rows: [
-              { '日期': '1-1', '当前月份能耗': 1393, '选择同期能耗': 1093},
-              { '日期': '1-2', '当前月份能耗': 3530, '选择同期能耗': 3230},
-              { '日期': '1-3', '当前月份能耗': 2923, '选择同期能耗': 2623},
-              { '日期': '1-4', '当前月份能耗': 1723, '选择同期能耗': 1423},
-              { '日期': '1-5', '当前月份能耗': 3792, '选择同期能耗': 3492},
-              { '日期': '1-6', '当前月份能耗': 4593, '选择同期能耗': 4293}
-            ]
-          },
-          commodityValue:"选项1",
-          commodityOptions:[{
-            value: '选项1',
-            label: '药品1'
-          }, {
-            value: '选项2',
-            label: '药品2'
-          }, {
-            value: '选项3',
-            label: '药品3'
-          }],
-          thisDateTableData:[ //实时预警表格数据
-            {date:"2020-01-02 12:05",commodity:"药品1",batch:"546465456",area:"新建综合制剂楼",energyVal:"4164",totalEnergy:"16424",unitEnergy:"1645"},
-            {date:"2020-01-02 12:05",commodity:"药品1",batch:"546465456",area:"新建综合制剂楼",energyVal:"4164",totalEnergy:"16424",unitEnergy:"1645"},
-            {date:"2020-01-02 12:05",commodity:"药品1",batch:"546465456",area:"新建综合制剂楼",energyVal:"4164",totalEnergy:"16424",unitEnergy:"1645"},
-            {date:"2020-01-02 12:05",commodity:"药品1",batch:"546465456",area:"新建综合制剂楼",energyVal:"4164",totalEnergy:"16424",unitEnergy:"1645"},
-            {date:"2020-01-02 12:05",commodity:"药品1",batch:"546465456",area:"新建综合制剂楼",energyVal:"4164",totalEnergy:"16424",unitEnergy:"1645"}
+        },
+        chartData: {
+          columns: ['日期', '当前能耗', '选择同期能耗'],
+          rows: [
+            { '日期': '1-1', '当前能耗': 1393, '选择同期能耗': 1093},
+            { '日期': '1-2', '当前能耗': 3530, '选择同期能耗': 3230},
+            { '日期': '1-3', '当前能耗': 2923, '选择同期能耗': 2623},
+            { '日期': '1-4', '当前能耗': 1723, '选择同期能耗': 1423},
+            { '日期': '1-5', '当前能耗': 3792, '选择同期能耗': 3492},
+            { '日期': '1-6', '当前能耗': 4593, '选择同期能耗': 4293}
           ]
+        },
+        commodityValue:"选项1",
+        commodityOptions:[{
+          value: '选项1',
+          label: '药品1'
+        }, {
+          value: '选项2',
+          label: '药品2'
+        }, {
+          value: '选项3',
+          label: '药品3'
+        }],
+        thisDateTableData:[ //实时预警表格数据
+          {date:"2020-01-02 12:05",commodity:"药品1",batch:"546465456",area:"新建综合制剂楼",energyVal:"4164",totalEnergy:"16424",unitEnergy:"1645"},
+          {date:"2020-01-02 12:05",commodity:"药品1",batch:"546465456",area:"新建综合制剂楼",energyVal:"4164",totalEnergy:"16424",unitEnergy:"1645"},
+          {date:"2020-01-02 12:05",commodity:"药品1",batch:"546465456",area:"新建综合制剂楼",energyVal:"4164",totalEnergy:"16424",unitEnergy:"1645"},
+          {date:"2020-01-02 12:05",commodity:"药品1",batch:"546465456",area:"新建综合制剂楼",energyVal:"4164",totalEnergy:"16424",unitEnergy:"1645"},
+          {date:"2020-01-02 12:05",commodity:"药品1",batch:"546465456",area:"新建综合制剂楼",energyVal:"4164",totalEnergy:"16424",unitEnergy:"1645"}
+        ]
+      }
+    },
+    created(){
+      this.getCommodityPreview()
+    },
+    computed:{
+      contrastRatioTotal(){
+        if(this.Total > 0){
+          var compare = (this.Total - this.contrastTotal) / this.Total * 100
+          if(this.Total - this.contrastTotal > 0){
+            return "+" + compare.toFixed(2) + "%"
+          }else{
+            return compare.toFixed(2) + "%"
+          }
+        }else{
+          if(this.contrastTotal > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
         }
       },
-      created(){
-
+      contrastRatioCount(){
+        if(this.Count > 0){
+          var compare = (this.Count - this.contrastCount) / this.Count * 100
+          if(this.Count - this.contrastCount > 0){
+            return "+" + compare.toFixed(2) + "%"
+          }else{
+            return compare.toFixed(2) + "%"
+          }
+        }else{
+          if(this.contrastCount > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
+        }
       },
-      methods: {
-        getCommodityPreview() {
-
+      contrastRatioEveryBatch(){
+        if(this.EveryBatch > 0){
+          var compare = (this.EveryBatch - this.contrastEveryBatch) / this.EveryBatch * 100
+          if(this.EveryBatch - this.contrastEveryBatch > 0){
+            return "+" + compare.toFixed(2) + "%"
+          }else{
+            return compare.toFixed(2) + "%"
+          }
+        }else{
+          if(this.contrastEveryBatch > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
+        }
+      },
+      contrastRatioTypeNum(){
+        if(this.TypeNum > 0){
+          var compare = (this.TypeNum - this.contrastTypeNum) / this.TypeNum * 100
+          if(this.TypeNum - this.contrastTypeNum > 0){
+            return "+" + compare.toFixed(2) + "%"
+          }else{
+            return compare.toFixed(2) + "%"
+          }
+        }else{
+          if(this.contrastTypeNum > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
         }
       }
+    },
+    methods: {
+      getCommodityPreview() {
+        var that = this
+        var nowTime = moment().format('HH:mm').substring(0,4) + "0"
+        var nowDate = moment().format('MM-DD') + " " + nowTime
+        var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
+        var thisStartMonth = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm')
+        var contrastStartMonth = moment().month(moment(this.formParameters.contrastingMonth).month()).startOf('month').format('YYYY-MM-DD HH:mm')
+        var contrastEndMonth = moment().month(moment(this.formParameters.contrastingMonth).month()).endOf('month').format('YYYY-MM-DD HH:mm')
+        var thisStartQuarter = moment().quarter(moment().quarter()).startOf('quarter').format('YYYY-MM-DD HH:mm')
+        var contrastStartQuarter = moment().quarter(moment(this.formParameters.contrastingMonth).quarter()).startOf('quarter').format('YYYY-MM-DD HH:mm')
+        var contrastEndQuarter = moment().quarter(moment(this.formParameters.contrastingMonth).quarter()).endOf('quarter').format('YYYY-MM-DD HH:mm')
+        var thisStartYear = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD')
+        var contrastStartYear = moment().year(moment(this.formParameters.contrastingMonth).year()).startOf('year').format('YYYY-MM-DD')
+        var contrastEndYear = moment().year(moment(this.formParameters.contrastingMonth).year()).endOf('year').format('YYYY-MM-DD')
+        var params = {}
+        var contrastParams = {}
+        var areaName = ""
+        if(this.newAreaName.areaName === "整厂区"){
+          areaName = ""
+        }else{
+          areaName = this.newAreaName.areaName
+        }
+        if(this.formParameters.resource === "月"){
+          params.AreaName = areaName
+          params.StartTime = thisStartMonth
+          params.EndTime = todayEndTime
+        }else if(this.formParameters.resource === "季"){
+          params.AreaName = areaName
+          params.StartTime = thisStartQuarter
+          params.EndTime = todayEndTime
+        }else if(this.formParameters.resource === "年"){
+          params.AreaName = areaName
+          params.StartTime = thisStartYear
+          params.EndTime = todayEndTime
+        }
+        if(this.formParameters.resource === "月"){
+          contrastParams.AreaName = areaName
+          contrastParams.StartTime = contrastStartMonth
+          contrastParams.EndTime = contrastEndMonth
+        }else if(this.formParameters.resource === "季"){
+          contrastParams.AreaName = areaName
+          contrastParams.StartTime = contrastStartQuarter
+          contrastParams.EndTime = contrastEndQuarter
+        }else if(this.formParameters.resource === "年"){
+          contrastParams.AreaName = areaName
+          contrastParams.StartTime = contrastStartYear
+          contrastParams.EndTime = contrastEndYear
+        }
+        this.axios.all([
+          this.axios.get("/api/batchMaintainEnergy",{params: params}),
+          this.axios.get("/api/batchMaintainEnergy",{params: contrastParams}),
+        ]).then(this.axios.spread(function(res,contrastRes){
+          if(that.formParameters.energy === "水"){
+            that.Unit = res.data.waterUnit
+            that.Total = res.data.waterCon
+            that.Count = res.data.batchCount
+            that.EveryBatch = res.data.waterEveryBatch
+            that.TypeNum = res.data.typeNum
+          }else if(that.formParameters.energy === "汽"){
+            that.Unit = res.data.steamUnit
+            that.contrastTotal = res.data.steamCon
+            that.contrastCount = res.data.batchCount
+            that.contrastEveryBatch = res.data.steamEveryBatch
+            that.contrastTypeNum = res.data.typeNum
+          }
+        }))
+      }
     }
+  }
 </script>
 
 <style>
   .energyDataItem{
-    margin-bottom: 45px;
+    margin-bottom: 30px;
   }
   .energyDataItem:last-child{
     margin-bottom:0;
