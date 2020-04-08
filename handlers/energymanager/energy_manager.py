@@ -1106,10 +1106,12 @@ def batchMaintainEnergy():
                 steamEveryBatch = round(steamEveryBatch,2)
             dir["typeNum"] = brandSum
             dir["batchCount"] = batchcont
-            dir["waterCon"] = str(waterCon)+"t"
-            dir["steamCon"] = str(steamCon)+"t"
-            dir["waterEveryBatch"] = str(waterEveryBatch)+"t"
-            dir["steamEveryBatch"] = str(steamEveryBatch)+"t"
+            dir["waterCon"] = str(waterCon)
+            dir["steamCon"] = str(steamCon)
+            dir["waterEveryBatch"] = str(waterEveryBatch)
+            dir["steamEveryBatch"] = str(steamEveryBatch)
+            dir["waterUnit"] = "t"
+            dir["steamUnit"] = "t"
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
