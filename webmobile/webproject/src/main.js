@@ -9,6 +9,9 @@ import './selfconfig/vantui.js'
 import axios from 'axios'
 Vue.prototype.$http=axios
 
+import qs from 'qs'
+Vue.prototype.$qs=qs
+
 import './assets/css/base.css'
 
 

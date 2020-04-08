@@ -30,3 +30,14 @@
 .van-tabs__nav--card .van-tab.van-tab--active {
     background-color: #fff;
 }
+.cir-choose .van-tabs__nav--card {
+    width: 193px;
+    height: 22px;
+    border: 1px solid #3D4048;
+}
+.cir-choose .van-tabs--card>.van-tabs__wrap {
+    height: 22px;
+}
+.cir-choose .van-tabs__nav--card .van-tab{
+    line-height: 22px;
+} 
