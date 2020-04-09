@@ -1200,16 +1200,16 @@ def batchMaintainExcelSelect():
             EndTime = data.get("EndTime")
             AreaName = data.get("AreaName")
             BrandName = data.get("BrandName")
-            if AreaName == None and BrandName == None:
+            if AreaName == "" and BrandName == "":
                 batinfos = db_session.query(BatchMaintain).filter(
                     BatchMaintain.ProductionDate.between(StartTime, EndTime)).all()[inipage:endpage]
                 count = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime, EndTime)).count()
-            elif AreaName != None and BrandName == None:
+            elif AreaName != "" and BrandName == "":
                 batinfos = db_session.query(BatchMaintain).filter(
                     BatchMaintain.ProductionDate.between(StartTime, EndTime), BatchMaintain.AreaName == AreaName).all()[inipage:endpage]
                 count = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime, EndTime),
                                                                BatchMaintain.AreaName == AreaName).count()
-            elif AreaName == None and BrandName != None:
+            elif AreaName == "" and BrandName != "":
                 batinfos = db_session.query(BatchMaintain).filter(
                     BatchMaintain.ProductionDate.between(StartTime, EndTime),
                     BatchMaintain.BrandName == BrandName).all()[inipage:endpage]
