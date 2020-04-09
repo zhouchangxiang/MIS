@@ -2,7 +2,7 @@ import time
 import datetime
 from sqlalchemy import desc
 from dbset.database.db_operate import db_session
-from models.SystemManagement.core import RedisKey, TagClassType, ElectricEnergy, Unit, SteamEnergy, \
+from models.SystemManagement.core import RedisKey, TagClassType, ElectricEnergy, Unit, WaterEnergy, \
     WaterEnergy, TagDetail
 from dbset.log.BK2TLogger import logger, insertSyslog
 from dbset.database.db_operate import engine,conn
@@ -16,7 +16,7 @@ def run():
             start = time.time()
             steamInitial= list()
             # stekeys = db_session.query(TagDetail).filter(TagDetail.insertFlag == "0").order_by(("ID")).all()
-            Tags = db_session.query(TagDetail).filter(TagDetail.EnergyClass == '水').order_by(("ID")).all()
+            Tags = db_session.query(TagDetail).filter(TagDetail.EnergyClass == '汽').order_by(("ID")).all()
             print(time.time() - start)
             start = time.time()
             for tag in Tags:

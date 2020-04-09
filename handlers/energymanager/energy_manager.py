@@ -1117,3 +1117,64 @@ def batchMaintainEnergy():
             print(e)
             logger.error(e)
             insertSyslog("error", "单位批次能耗查询报错Error：" + str(e), current_user.Name)
+
+@energy.route('/batchMaintainEnergyEcharts', methods=['POST', 'GET'])
+def batchMaintainEnergyEcharts():
+    '''
+    单位批次能耗柱状图
+    :return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            dir = {}
+            TimeClass = data.get("TimeClass")
+            StartTime = data.get("StartTime")
+            EndTime = data.get("EndTime")
+            EnergyClass = data.get("EnergyClass")
+            AreaName = data.get("AreaName")
+            if AreaName == None or AreaName == "":
+                batinfos = db_session.query(BatchMaintain).filter(
+                    BatchMaintain.EndTime.between(StartTime, EndTime)).all()
+            else:
+                batinfos = db_session.query(BatchMaintain).filter(
+                    BatchMaintain.EndTime.between(StartTime, EndTime), BatchMaintain.AreaName == AreaName).all()
+            dir_list = []
+            if TimeClass == "年":
+                for i in range(1,13):
+                    re = getMonthFirstDayAndLastDay(StartTime[0:4], i)
+                    if AreaName == None or AreaName == "":
+                        batyears = db_session.query(BatchMaintain).filter(
+                            BatchMaintain.EndTime.between(re[0]+" 00:00:00", re[1]+" 23:59:59")).all()
+                    else:
+                        batyears = db_session.query(BatchMaintain).filter(
+                            BatchMaintain.EndTime.between(re[0]+" 00:00:00", re[1]+" 23:59:59"), BatchMaintain.AreaName == AreaName).all()
+                    waterSum = 0.0
+                    steamSum = 0.0
+                    for baty in batyears:
+                        waterSum = waterSum + float(baty.WaterConsumption)
+                        steamSum = steamSum + float(baty.SteamConsumption)
+                    bat_energy = {}
+                    bat_energy["日期"] = StartTime[0:4] + addzero(i)
+                    if EnergyClass == "水":
+                        bat_energy["批次能耗量"] = round(waterSum, 2)
+                        dir_list.append(bat_energy)
+                    elif EnergyClass == "汽":
+                        bat_energy["批次能耗量"] = round(steamSum, 2)
+                        dir_list.append(bat_energy)
+            else:
+                for bat in batinfos:
+                    bat_dir = {}
+                    bat_dir["批次"] = bat.BatchID
+                    if EnergyClass == "水":
+                        energy = bat.WaterConsumption
+                    elif EnergyClass == "汽":
+                        energy = bat.SteamConsumption
+                    bat_dir["批次能耗量"] = energy
+                    dir_list.append(bat_dir)
+                dir["row"] = dir_list
+            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "单位批次能耗单位批次能耗柱状图查询报错Error：" + str(e), current_user.Name)
