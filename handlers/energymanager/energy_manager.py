@@ -1200,8 +1200,24 @@ def batchMaintainExcelSelect():
             EndTime = data.get("EndTime")
             AreaName = data.get("AreaName")
             BrandName = data.get("BrandName")
-            batinfos = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime,EndTime), BatchMaintain.AreaName == AreaName, BatchMaintain.BrandName == BrandName).all()[inipage:endpage]
-            count = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime,EndTime), BatchMaintain.AreaName == AreaName, BatchMaintain.BrandName == BrandName).count()
+            if AreaName == None and BrandName == None:
+                batinfos = db_session.query(BatchMaintain).filter(
+                    BatchMaintain.ProductionDate.between(StartTime, EndTime)).all()[inipage:endpage]
+                count = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime, EndTime)).count()
+            elif AreaName != None and BrandName == None:
+                batinfos = db_session.query(BatchMaintain).filter(
+                    BatchMaintain.ProductionDate.between(StartTime, EndTime), BatchMaintain.AreaName == AreaName).all()[inipage:endpage]
+                count = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime, EndTime),
+                                                               BatchMaintain.AreaName == AreaName).count()
+            elif AreaName == None and BrandName != None:
+                batinfos = db_session.query(BatchMaintain).filter(
+                    BatchMaintain.ProductionDate.between(StartTime, EndTime),
+                    BatchMaintain.BrandName == BrandName).all()[inipage:endpage]
+                count = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime, EndTime),
+                                                               BatchMaintain.BrandName == BrandName).count()
+            else:
+                batinfos = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime,EndTime), BatchMaintain.AreaName == AreaName, BatchMaintain.BrandName == BrandName).all()[inipage:endpage]
+                count = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime,EndTime), BatchMaintain.AreaName == AreaName, BatchMaintain.BrandName == BrandName).count()
             jsonbatinfos = json.dumps(batinfos, cls=AlchemyEncoder, ensure_ascii=False)
             return '{"total"' + ":" + str(count) + ',"rows"' + ":\n" + jsonbatinfos + "}"
         except Exception as e:
