@@ -1141,14 +1141,15 @@ def batchMaintainEnergyEcharts():
                     BatchMaintain.EndTime.between(StartTime, EndTime), BatchMaintain.AreaName == AreaName).all()
             dir_list = []
             if TimeClass == "年":
-                for i in range(1,13):
+                nowm = int(EndTime[5:7])+1
+                for i in range(1,nowm):
                     re = getMonthFirstDayAndLastDay(StartTime[0:4], i)
                     if AreaName == None or AreaName == "":
                         batyears = db_session.query(BatchMaintain).filter(
-                            BatchMaintain.EndTime.between(re[0]+" 00:00:00", re[1]+" 23:59:59")).all()
+                            BatchMaintain.EndTime.between(datetime.datetime.strftime(re[0], "%Y-%m-%d")+" 00:00:00", datetime.datetime.strftime(re[1], "%Y-%m-%d")+" 00:00:00"+" 23:59:59")).all()
                     else:
                         batyears = db_session.query(BatchMaintain).filter(
-                            BatchMaintain.EndTime.between(re[0]+" 00:00:00", re[1]+" 23:59:59"), BatchMaintain.AreaName == AreaName).all()
+                            BatchMaintain.EndTime.between(datetime.datetime.strftime(re[0], "%Y-%m-%d")+" 00:00:00"+" 00:00:00", datetime.datetime.strftime(re[1], "%Y-%m-%d")+" 23:59:59"), BatchMaintain.AreaName == AreaName).all()
                     waterSum = 0.0
                     steamSum = 0.0
                     for baty in batyears:
