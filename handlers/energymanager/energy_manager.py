@@ -1152,8 +1152,10 @@ def batchMaintainEnergyEcharts():
                     waterSum = 0.0
                     steamSum = 0.0
                     for baty in batyears:
-                        waterSum = waterSum + float(baty.WaterConsumption)
-                        steamSum = steamSum + float(baty.SteamConsumption)
+                        if baty.WaterConsumption != None and baty.WaterConsumption != "":
+                            waterSum = waterSum + float(baty.WaterConsumption)
+                        if baty.SteamConsumption != None and baty.SteamConsumption != "":
+                            steamSum = steamSum + float(baty.SteamConsumption)
                     bat_energy = {}
                     bat_energy["日期"] = StartTime[0:4] + addzero(i)
                     if EnergyClass == "水":
