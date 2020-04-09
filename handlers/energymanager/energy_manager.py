@@ -1175,7 +1175,7 @@ def batchMaintainEnergyEcharts():
                         energy = bat.SteamConsumption
                     bat_dir["批次能耗量"] = round(float(energy), 2)
                     dir_list.append(bat_dir)
-                dir["row"] = dir_list
+            dir["row"] = dir_list
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
