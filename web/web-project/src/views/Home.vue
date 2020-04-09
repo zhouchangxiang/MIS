@@ -137,7 +137,7 @@
               </el-table-column>
               <el-table-column prop="WarningDate" label="时间"></el-table-column>
             </el-table>
-            <span class="text-size-mini text-color-primary" @click="$router.push({ path:'/Areas?navOptionsCurrent=4'})" style="float: right;margin-top: 15px;cursor: pointer;">更多记录<i class="el-icon-d-arrow-right el-icon--right"></i></span>
+            <span class="text-size-mini text-color-primary" @click="$router.push({ path:'/Areas?navOptionsCurrent=5'})" style="float: right;margin-top: 15px;cursor: pointer;">更多记录<i class="el-icon-d-arrow-right el-icon--right"></i></span>
           </div>
         </div>
         <div class="home-card">
@@ -146,7 +146,7 @@
           </div>
           <div class="home-card-body" style="height: 300px;">
             <p>
-              <span style="font-size: 48px;" class="text-color-primary">54<span class="text-size-mini">批</span></span>
+              <span style="font-size: 48px;" class="text-color-primary">{{ lotsBatchCount }}<span class="text-size-mini">批</span></span>
               <el-select class="" v-model="lotsEnergyValue" size="small" style="width: 80px;float: right;" @change="getBatchEnergy">
                 <el-option v-for="item in lotsEnergyOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
@@ -158,16 +158,16 @@
               <el-table-column prop="type" label="类型"></el-table-column>
               <el-table-column prop="total" label="总量">
                 <template slot-scope="scope">
-                  <span class="text-size-mini text-color-info-shallow">{{ scope.row.total }}</span>
+                  <span class="text-size-mini text-color-info-shallow">{{ scope.row.Con }}</span>
                 </template>
               </el-table-column>
               <el-table-column prop="unitNum" label="单位耗量">
                 <template slot-scope="scope">
-                  <span class="text-size-mini text-color-primary">{{ scope.row.unitNum }}</span>
+                  <span class="text-size-mini text-color-primary">{{ scope.row.EveryBatch }}</span>
                 </template>
               </el-table-column>
             </el-table>
-            <span class="text-size-mini text-color-primary" @click="$router.push({ path:'/Areas?navOptionsCurrent=3'})" style="float: right;margin-top: 15px;cursor: pointer;">查看详情<i class="el-icon-d-arrow-right el-icon--right"></i></span>
+            <span class="text-size-mini text-color-primary" @click="$router.push({ path:'/Areas?navOptionsCurrent=4'})" style="float: right;margin-top: 15px;cursor: pointer;">查看详情<i class="el-icon-d-arrow-right el-icon--right"></i></span>
           </div>
         </div>
         <div class="home-card-body" style="height: 130px;text-align: center;">
@@ -422,10 +422,10 @@
           value: '本年',
           label: '本年'
         }],
+        lotsBatchCount:"",
         lotsEnergyTableData:[
-          {type:"电能",total:"16456.24kwh",unitNum:"1246.15kwh/批"},
-          {type:"水能",total:"16456.24kwh",unitNum:"1246.15kwh/批"},
-          {type:"汽能",total:"16456.24kwh",unitNum:"1246.15kwh/批"}
+          {type:"水能",Con:"",EveryBatch:""},
+          {type:"汽能",Con:"",EveryBatch:""}
         ],
         systemCheckupDialogVisible:false, //是否展开系统体检对话框
         timelineData:[],
@@ -605,6 +605,8 @@
         var nowDate = moment().format('MM-DD') + " " + nowTime
         var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
         var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
+        var thisStartMonth = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm')
+        var thisStartYear = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD')
         var params = {}
         if(this.lotsEnergyValue === "本日"){
           params.AreaName = this.areaNameValue
@@ -612,10 +614,19 @@
           params.EndTime = todayEndTime
         }else if(this.lotsEnergyValue === "本月"){
           params.AreaName = this.areaNameValue
+          params.StartTime = thisStartMonth
+          params.EndTime = todayEndTime
+        }else if(this.lotsEnergyValue === "本年"){
+          params.AreaName = this.areaNameValue
+          params.StartTime = thisStartYear
+          params.EndTime = todayEndTime
         }
-        console.log(params)
         this.axios.get("/api/batchMaintainEnergy",{params:params}).then(res =>{
-          console.log(res.data)
+          that.lotsBatchCount = res.data.batchCount
+          that.lotsEnergyTableData[0].Con = res.data.waterCon + res.data.waterUnit
+          that.lotsEnergyTableData[0].EveryBatch = res.data.waterEveryBatch + res.data.waterUnit + "/批"
+          that.lotsEnergyTableData[1].Con = res.data.steamCon + res.data.steamUnit
+          that.lotsEnergyTableData[1].EveryBatch = res.data.steamEveryBatch + res.data.steamUnit + "/批"
         })
       },
       openSystemCheckupDialog(){ //打开系统体检

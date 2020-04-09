@@ -39,7 +39,6 @@
 </template>
 
 <script>
-import qs from 'qs'
 export default {
   data () {
     return {
@@ -49,23 +48,29 @@ export default {
   },
   methods:{
   
-    login: function (e,username,password) {
-        if(this.username == ''){
+    login() {
+        if(this.username.trim() == ''){
           this.$toast("用户名不能为空");
           return false;
         }
-        if(this.password == ''){
+        if(this.password.trim() == ''){
           this.$toast("密码不能为空");
           return false;
         }else{
-          let comment={WorkNumber:this.username,password:this.password}
-          let str=qs.stringify(comment)
-          console.log(str)
-          console.log(comment)
-          // this.$http.post('http://127.0.0.1:5000/v2/accounts/login',str).then((res) => {
-          //   console.log(res.data)
-          // })
-          this.$router.push('/home')
+          let comment={worknumber:this.username,password:this.password}
+          let str=this.$qs.stringify(comment)
+          this.$http.post('/api/v2/accounts/login',str).then((res) => {
+            console.log(res)
+          if(res.data.code===1001){
+            this.$toast(res.data.msg)
+            this.$router.push('/home')
+            localStorage.setItem('token',res.data.data.token)
+          }else if(res.data.code===2001){
+            this.$toast(res.data.msg)
+          }else{
+            this.$toast('请求报错，请重新登录')
+          }
+        })
      
         }
   }

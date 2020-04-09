@@ -11,13 +11,13 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      // '/api': {  //使用"/api"来代替"http://xxx"
-      //   target: 'http://127.0.0.1:5500', //源地址
-      //   changeOrigin: true, //请求头
-      //   pathRewrite: {
-      //     '^/api': '/' //路径重写
-      //     }
-      // }
+      '/api': {  //使用"/api"来代替"http://xxx"
+        target: 'http://127.0.0.1:5000', //源地址
+        changeOrigin: true, //请求头
+        pathRewrite: {
+          '^/api': '/' //路径重写
+          }
+      }
     },
 
     // Various Dev Server settings

@@ -61,6 +61,9 @@ export default {
     mtt(){
       this.$toast( {message: '展示图片',
         icon: 'https://img.yzcdn.cn/vant/logo.png'})
+    },
+    getWater(){
+        this.$http.get('/v2/water_report',this.qs.stringify())
     }
 
     }
