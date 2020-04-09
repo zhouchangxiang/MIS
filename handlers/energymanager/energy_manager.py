@@ -1158,7 +1158,7 @@ def batchMaintainEnergyEcharts():
                         if baty.SteamConsumption != None and baty.SteamConsumption != "":
                             steamSum = steamSum + float(baty.SteamConsumption)
                     bat_energy = {}
-                    bat_energy["日期"] = StartTime[0:4] + addzero(i)
+                    bat_energy["日期"] = StartTime[0:4] +"-"+ addzero(i)
                     if EnergyClass == "水":
                         bat_energy["批次能耗量"] = round(waterSum, 2)
                         dir_list.append(bat_energy)
@@ -1181,3 +1181,30 @@ def batchMaintainEnergyEcharts():
             print(e)
             logger.error(e)
             insertSyslog("error", "单位批次能耗单位批次能耗柱状图查询报错Error：" + str(e), current_user.Name)
+
+@energy.route('/batchMaintainExcelSelect', methods=['POST', 'GET'])
+def batchMaintainExcelSelect():
+    '''
+    单位批次能耗报表查询
+    :return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            dir = {}
+            pages = int(data.get("offset"))  # 页数
+            rowsnumber = int(data.get("limit"))  # 行数
+            inipage = pages * rowsnumber + 0  # 起始页
+            endpage = pages * rowsnumber + rowsnumber  # 截止页
+            StartTime = data.get("StartTime")
+            EndTime = data.get("EndTime")
+            AreaName = data.get("AreaName")
+            BrandName = data.get("BrandName")
+            batinfos = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime,EndTime), BatchMaintain.AreaName == AreaName, BatchMaintain.BrandName == BrandName).all()[inipage:endpage]
+            count = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime,EndTime), BatchMaintain.AreaName == AreaName, BatchMaintain.BrandName == BrandName).count()
+            jsonbatinfos = json.dumps(batinfos, cls=AlchemyEncoder, ensure_ascii=False)
+            return '{"total"' + ":" + str(count) + ',"rows"' + ":\n" + jsonbatinfos + "}"
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "单位批次能耗报表查询报错Error：" + str(e), current_user.Name)
