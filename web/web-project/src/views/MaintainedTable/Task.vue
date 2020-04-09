@@ -4,18 +4,6 @@
       <el-col :span="24">
         <el-form :inline="true">
           <el-form-item>
-            <el-select v-model="region" placeholder="请选择搜索字段" size="small">
-              <el-option v-for="(item,index) in regionList" :label="item.label" :value="item.value" :key="index"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            {{ selectedPlanNum }}
-            <el-input placeholder="请输入搜索内容" size="small" v-model="searchVal"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="success" icon="el-icon-search" size="small" @click="searchTab">搜索</el-button>
-          </el-form-item>
-          <el-form-item>
             <el-button type="warning" size="small" @click="openDialog('edit')">修改</el-button>
           </el-form-item>
           <el-form-item>
@@ -96,7 +84,7 @@
 <script>
   export default {
     name: "Task",
-    props:['selectedPlanNum'],
+    props:['newPlanNum'],
     data(){
       return {
         tableData:[],
@@ -139,32 +127,27 @@
             {required: true, message: '结束时间', trigger: 'blur'}
           ],
         },
-        region:"",
-        regionList:[
-          {label:"工艺段",value:"PuidName"},
-          {label:"计划单号",value:"PlanNum"},
-          {label:"批次号",value:"BatchID"},
-          {label:"品名",value:"BrandName"},
-        ],
-        searchVal:"",
+        PlanNum:""
       }
     },
     created(){
-
-    },
-    watch:{
-      // selectedPlanNum(newVal,oldVal){
-      //   console.log(newVal)
-      // }
-　　},
-    mounted() {
       this.getTableData()
     },
+    watch:{
+      newPlanNum:{
+        handler(n,o){
+          this.PlanNum = this.newPlanNum
+          this.getTableData()
+        }
+      }
+　　 },
     methods:{
       getTableData(){
         this.axios.get("/api/CUID",{
           params: {
             tableName: "BatchMaintainTask",
+            field:"PlanNum",
+            fieldvalue:this.PlanNum,
             limit:this.pagesize,
             offset:this.currentPage - 1
           }
@@ -186,24 +169,6 @@
       },
       handleSelectionChange(val){  //选择行数
         this.multipleSelection = val;
-      },
-      searchTab(){
-        console.log(this.selectedPlanNum)
-        this.axios.get("/api/CUID",{
-          params: {
-            tableName: "BatchMaintainTask",
-            field:this.region,
-            fieldvalue:this.searchVal,
-            limit:this.pagesize,
-            offset:this.currentPage - 1
-          }
-        }).then(res =>{
-          var data = JSON.parse(res.data)
-          this.tableData = data.rows
-          this.total = data.total
-        },res =>{
-          console.log("请求错误")
-        })
       },
       openDialog(val){
         this.dialogTitle = val
