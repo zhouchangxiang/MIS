@@ -90,7 +90,7 @@
         </span>
       </el-dialog>
     </el-col>
-    <Task></Task>
+    <Task :newPlanNum="selectedPlanNum"></Task>
   </el-row>
 </template>
 
@@ -147,8 +147,14 @@
           {label:"批次号",value:"BatchID"},
           {label:"品名",value:"BrandName"}
         ],
-        searchVal:""
+        searchVal:"",
+        selectedPlanNum:""
       }
+    },
+    created(){
+      // this.$watch("selectedPlanNum", function (newValue, oldValue) {
+      //   console.log(newValue)
+      // })
     },
     mounted() {
       this.getTableData()
@@ -179,6 +185,9 @@
       },
       handleSelectionChange(val){  //选择行数
         this.multipleSelection = val;
+        if(val[0] != undefined){
+          this.selectedPlanNum = val[0].PlanNum
+        }
       },
       searchTab(){
         this.axios.get("/api/CUID",{

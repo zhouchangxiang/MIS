@@ -59,7 +59,7 @@
     </el-col>
     <el-col :span="20">
       <div class="energyDataContainer" style="border-radius: 0 0 4px 0;">
-        <ve-line :data="chartData" :extend="ChartExtend"></ve-line>
+        <ve-chart :data="chartData" :extend="ChartExtend" :settings="ChartExtendSettings" :legend-visible="false"></ve-chart>
       </div>
     </el-col>
     <el-col :span="24" style="margin-top:10px;margin-bottom:2px;">
@@ -131,6 +131,9 @@
         TypeNum:"",
         contrastTypeNum:"",
         Unit:"",
+        ChartExtendSettings:{
+          type:"",
+        },
         ChartExtend: {
           grid:{
             left:'0',
@@ -138,24 +141,14 @@
             bottom:'0',
             top:'40px'
           },
-          'series.1.itemStyle.normal.lineStyle': {
-            width:2,
-            type:'dotted'
-          },
           series:{
+            barMaxWidth : 50,
             smooth: false
           }
         },
         chartData: {
-          columns: ['日期', '当前能耗', '选择同期能耗'],
-          rows: [
-            { '日期': '1-1', '当前能耗': 1393, '选择同期能耗': 1093},
-            { '日期': '1-2', '当前能耗': 3530, '选择同期能耗': 3230},
-            { '日期': '1-3', '当前能耗': 2923, '选择同期能耗': 2623},
-            { '日期': '1-4', '当前能耗': 1723, '选择同期能耗': 1423},
-            { '日期': '1-5', '当前能耗': 3792, '选择同期能耗': 3492},
-            { '日期': '1-6', '当前能耗': 4593, '选择同期能耗': 4293}
-          ]
+          columns: [],
+          rows: []
         },
         commodityValue:"选项1",
         commodityOptions:[{
@@ -263,6 +256,7 @@
         var contrastEndYear = moment().year(moment(this.formParameters.contrastingMonth).year()).endOf('year').format('YYYY-MM-DD')
         var params = {}
         var contrastParams = {}
+        var chartParams = {}
         var areaName = ""
         if(this.newAreaName.areaName === "整厂区"){
           areaName = ""
@@ -295,10 +289,30 @@
           contrastParams.StartTime = contrastStartYear
           contrastParams.EndTime = contrastEndYear
         }
+        if(this.formParameters.resource === "月"){
+          chartParams.AreaName = areaName
+          chartParams.StartTime = thisStartMonth
+          chartParams.EndTime = todayEndTime
+          chartParams.EnergyClass = this.formParameters.energy
+          chartParams.TimeClass = this.formParameters.resource
+        }else if(this.formParameters.resource === "季"){
+          chartParams.AreaName = areaName
+          chartParams.StartTime = thisStartQuarter
+          chartParams.EndTime = todayEndTime
+          chartParams.EnergyClass = this.formParameters.energy
+          chartParams.TimeClass = this.formParameters.resource
+        }else if(this.formParameters.resource === "年"){
+          chartParams.AreaName = areaName
+          chartParams.StartTime = thisStartYear
+          chartParams.EndTime = todayEndTime
+          chartParams.EnergyClass = this.formParameters.energy
+          chartParams.TimeClass = this.formParameters.resource
+        }
         this.axios.all([
           this.axios.get("/api/batchMaintainEnergy",{params: params}),
           this.axios.get("/api/batchMaintainEnergy",{params: contrastParams}),
-        ]).then(this.axios.spread(function(res,contrastRes){
+          this.axios.get("/api/batchMaintainEnergyEcharts",{params: chartParams}),
+        ]).then(this.axios.spread(function(res,contrastRes,chartRes){
           if(that.formParameters.energy === "水"){
             that.Unit = res.data.waterUnit
             that.Total = res.data.waterCon
@@ -311,6 +325,19 @@
             that.contrastCount = res.data.batchCount
             that.contrastEveryBatch = res.data.steamEveryBatch
             that.contrastTypeNum = res.data.typeNum
+          }
+          if(that.formParameters.resource === "月") {
+            that.chartData.rows = chartRes.data.row
+            that.chartData.columns = ['批次', '批次能耗量']
+            that.ChartExtendSettings.type = "line"
+          }else if(that.formParameters.resource === "季"){
+            that.chartData.rows = chartRes.data.row
+            that.chartData.columns = ['批次', '批次能耗量']
+            that.ChartExtendSettings.type = "line"
+          }else if(that.formParameters.resource === "年"){
+            that.chartData.rows = chartRes.data.row
+            that.chartData.columns = ['日期', '批次能耗量']
+            that.ChartExtendSettings.type = "histogram"
           }
         }))
       }

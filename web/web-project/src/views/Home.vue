@@ -150,7 +150,7 @@
               <el-select class="" v-model="lotsEnergyValue" size="small" style="width: 80px;float: right;" @change="getBatchEnergy">
                 <el-option v-for="item in lotsEnergyOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
-              <el-select class="" v-model="areaNameValue" size="small" style="width: 120px;float: right;" @change="getBatchEnergy">
+              <el-select class="" v-model="areaNameValue" size="small" style="width: 120px;float: right;margin-right: 10px;" @change="getBatchEnergy">
                 <el-option v-for="item in areaOptions" :key="item.ID" :label="item.AreaName" :value="item.AreaName"></el-option>
               </el-select>
             </p>

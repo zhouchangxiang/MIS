@@ -9,6 +9,7 @@
             </el-select>
           </el-form-item>
           <el-form-item>
+            {{ selectedPlanNum }}
             <el-input placeholder="请输入搜索内容" size="small" v-model="searchVal"></el-input>
           </el-form-item>
           <el-form-item>
@@ -95,6 +96,7 @@
 <script>
   export default {
     name: "Task",
+    props:['selectedPlanNum'],
     data(){
       return {
         tableData:[],
@@ -144,9 +146,17 @@
           {label:"批次号",value:"BatchID"},
           {label:"品名",value:"BrandName"},
         ],
-        searchVal:""
+        searchVal:"",
       }
     },
+    created(){
+
+    },
+    watch:{
+      selectedPlanNum(newVal,oldVal){
+        console.log(newVal)
+      }
+　　},
     mounted() {
       this.getTableData()
     },
