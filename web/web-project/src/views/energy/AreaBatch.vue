@@ -263,6 +263,7 @@
         }else{
           areaName = this.newAreaName.areaName
         }
+        //获取当前时间能耗数据 参数
         if(this.formParameters.resource === "月"){
           params.AreaName = areaName
           params.StartTime = thisStartMonth
@@ -276,6 +277,7 @@
           params.StartTime = thisStartYear
           params.EndTime = todayEndTime
         }
+        //获取对比时间能耗数据 参数
         if(this.formParameters.resource === "月"){
           contrastParams.AreaName = areaName
           contrastParams.StartTime = contrastStartMonth
@@ -289,6 +291,7 @@
           contrastParams.StartTime = contrastStartYear
           contrastParams.EndTime = contrastEndYear
         }
+        //获取图表数据 参数
         if(this.formParameters.resource === "月"){
           chartParams.AreaName = areaName
           chartParams.StartTime = thisStartMonth
@@ -308,6 +311,7 @@
           chartParams.EnergyClass = this.formParameters.energy
           chartParams.TimeClass = this.formParameters.resource
         }
+        //获取表格数据 参数
         if(this.formParameters.resource === "月"){
           tableParams.AreaName = areaName
           tableParams.StartTime = thisStartMonth
@@ -333,12 +337,11 @@
           tableParams.limit = this.pagesize
           tableParams.offset = this.currentPage - 1
         }
-        console.log(tableParams)
         this.axios.all([
           this.axios.get("/api/batchMaintainEnergy",{params: params}),
           this.axios.get("/api/batchMaintainEnergy",{params: contrastParams}),
           this.axios.get("/api/batchMaintainEnergyEcharts",{params: chartParams}),
-          this.axios.get("/api/CUID",{params: tableParams}),
+          this.axios.get("/api/batchMaintainExcelSelect",{params: tableParams}),
         ]).then(this.axios.spread(function(res,contrastRes,chartRes,tableRes){
           if(that.formParameters.energy === "水"){
             that.Unit = res.data.waterUnit
@@ -366,8 +369,7 @@
             that.chartData.columns = ['日期', '批次能耗量']
             that.ChartExtendSettings.type = "histogram"
           }
-          var data = JSON.parse(tableRes.data)
-          console.log(data)
+          var data = tableRes.data
           that.tableData = data.rows
           that.total = data.total
         }))
