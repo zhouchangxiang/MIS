@@ -24,8 +24,10 @@ export default {
         return {
           radio1:1,
           radio2:1,
-          active:1,
-          active1:1
+          active:0,
+          active1:1,
+          pagesize:5,
+          currentPage:1
         }
     },
     methods:{
@@ -36,7 +38,6 @@ export default {
             this.$toast(this.active)
         },
         mytips(){
-            this.$toast(this.active1+1)
         }
     }
 }
