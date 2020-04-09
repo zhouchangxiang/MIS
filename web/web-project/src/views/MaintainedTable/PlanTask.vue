@@ -148,7 +148,6 @@
           {label:"品名",value:"BrandName"}
         ],
         searchVal:"",
-        selectedPlanNum:""
       }
     },
     created(){

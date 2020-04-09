@@ -59,39 +59,44 @@
     </el-col>
     <el-col :span="20">
       <div class="energyDataContainer" style="border-radius: 0 0 4px 0;">
-        <ve-chart :data="chartData" :extend="ChartExtend" :settings="ChartExtendSettings" :legend-visible="false"></ve-chart>
+        <el-radio-group v-model="formParameters.chartTimeValue" fill="#082F4C" size="small" @change="getCommodityPreview">
+          <el-radio-button v-for="(item,index) in chartTimeType" :key="index" :label="item.name"></el-radio-button>
+        </el-radio-group>
+        <ve-chart :data="chartData" :extend="ChartExtend" :settings="ChartExtendSettings" :legend-visible="false" height="360px"></ve-chart>
       </div>
     </el-col>
     <el-col :span="24" style="margin-top:10px;margin-bottom:2px;">
       <div class="chartHead">
-        <div class="chartTile text-size-large text-color-info">数据表<span class="text-size-mini text-color-danger">（倒序对比）</span></div>
+        <div class="chartTile text-size-large text-color-info">本{{ formParameters.resource }}数据表</div>
         <el-select class="collapse-head-select" v-model="commodityValue" placeholder="请选择" @change="getCommodityPreview" size="small">
-          <el-option v-for="item in commodityOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          <el-option v-for="item in commodityOptions" :key="item.ID" :label="item.BrandName" :value="item.BrandName"></el-option>
         </el-select>
-        <el-button type="primary" style="background-color: #082F4C;border:none;" size="small">导出</el-button>
       </div>
     </el-col>
-    <el-col :span="12" style="border-radius:0 0 4px 4px;padding: 10px;background: #fff;">
-      <el-table :data="thisDateTableData" size="small" style="width: 100%">
-        <el-table-column prop="date" label="时间"></el-table-column>
-        <el-table-column prop="commodity" label="品名"></el-table-column>
-        <el-table-column prop="batch" label="生产批次号"></el-table-column>
-        <el-table-column prop="area" label="区域"></el-table-column>
-        <el-table-column prop="energyVal" label="耗电量"></el-table-column>
-        <el-table-column prop="totalEnergy" label="总耗电量"></el-table-column>
-        <el-table-column prop="unitEnergy" label="单位耗电"></el-table-column>
+    <el-col :span="24" style="border-radius:4px;padding: 10px;background: #fff;">
+      <el-table :data="tableData" border tooltip-effect="dark">
+        <el-table-column prop="ID" label="ID"></el-table-column>
+        <el-table-column prop="PlanNum" label="计划单号"></el-table-column>
+        <el-table-column prop="BatchID" label="批次号"></el-table-column>
+        <el-table-column prop="BrandName" label="品名"></el-table-column>
+        <el-table-column prop="PlanQuantity" label="计划重量"></el-table-column>
+        <el-table-column prop="WaterConsumption" label="水用量"></el-table-column>
+        <el-table-column prop="SteamConsumption" label="汽用量"></el-table-column>
+        <el-table-column prop="ProductionDate" label="生产日期"></el-table-column>
+        <el-table-column prop="StartTime" label="开始时间"></el-table-column>
+        <el-table-column prop="EndTime" label="结束时间"></el-table-column>
+        <el-table-column prop="CreateDate" label="创建日期"></el-table-column>
       </el-table>
-    </el-col>
-    <el-col :span="12" style="border-radius:0 0 4px 4px;padding: 10px;background: #fff;">
-      <el-table :data="thisDateTableData" size="small" style="width: 100%">
-        <el-table-column prop="date" label="时间"></el-table-column>
-        <el-table-column prop="commodity" label="品名"></el-table-column>
-        <el-table-column prop="batch" label="生产批次号"></el-table-column>
-        <el-table-column prop="area" label="区域"></el-table-column>
-        <el-table-column prop="energyVal" label="耗电量"></el-table-column>
-        <el-table-column prop="totalEnergy" label="总耗电量"></el-table-column>
-        <el-table-column prop="unitEnergy" label="单位耗电"></el-table-column>
-      </el-table>
+      <div class="paginationClass">
+        <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
+                       :total="total"
+                       :current-page="currentPage"
+                       :page-sizes="[5,10,20]"
+                       :page-size="pagesize"
+                       @size-change="handleSizeChange"
+                       @current-change="handleCurrentChange">
+        </el-pagination>
+      </div>
     </el-col>
   </el-row>
 </template>
@@ -112,10 +117,15 @@
           {name:"水",value:"水"},
           {name:"汽",value:"汽"},
         ],
+        chartTimeType:[
+          {name:"当前时间"},
+          {name:"对比时间"}
+        ],
         formParameters:{
           resource:"月",
           contrastingMonth:moment().month(moment().month() - 1).startOf('month').format('YYYY-MM-DD HH:mm'),
-          energy:"水"
+          energy:"水",
+          chartTimeValue:"当前时间"
         },
         pickerOptions:{
           disabledDate(time) {
@@ -150,27 +160,16 @@
           columns: [],
           rows: []
         },
-        commodityValue:"选项1",
-        commodityOptions:[{
-          value: '选项1',
-          label: '药品1'
-        }, {
-          value: '选项2',
-          label: '药品2'
-        }, {
-          value: '选项3',
-          label: '药品3'
-        }],
-        thisDateTableData:[ //实时预警表格数据
-          {date:"2020-01-02 12:05",commodity:"药品1",batch:"546465456",area:"新建综合制剂楼",energyVal:"4164",totalEnergy:"16424",unitEnergy:"1645"},
-          {date:"2020-01-02 12:05",commodity:"药品1",batch:"546465456",area:"新建综合制剂楼",energyVal:"4164",totalEnergy:"16424",unitEnergy:"1645"},
-          {date:"2020-01-02 12:05",commodity:"药品1",batch:"546465456",area:"新建综合制剂楼",energyVal:"4164",totalEnergy:"16424",unitEnergy:"1645"},
-          {date:"2020-01-02 12:05",commodity:"药品1",batch:"546465456",area:"新建综合制剂楼",energyVal:"4164",totalEnergy:"16424",unitEnergy:"1645"},
-          {date:"2020-01-02 12:05",commodity:"药品1",batch:"546465456",area:"新建综合制剂楼",energyVal:"4164",totalEnergy:"16424",unitEnergy:"1645"}
-        ]
+        commodityValue:"",
+        commodityOptions:[],
+        tableData:[],
+        total:0,
+        pagesize:5,
+        currentPage:1
       }
     },
     created(){
+      this.getBrandName()
       this.getCommodityPreview()
     },
     computed:{
@@ -251,12 +250,13 @@
         var thisStartQuarter = moment().quarter(moment().quarter()).startOf('quarter').format('YYYY-MM-DD HH:mm')
         var contrastStartQuarter = moment().quarter(moment(this.formParameters.contrastingMonth).quarter()).startOf('quarter').format('YYYY-MM-DD HH:mm')
         var contrastEndQuarter = moment().quarter(moment(this.formParameters.contrastingMonth).quarter()).endOf('quarter').format('YYYY-MM-DD HH:mm')
-        var thisStartYear = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD')
-        var contrastStartYear = moment().year(moment(this.formParameters.contrastingMonth).year()).startOf('year').format('YYYY-MM-DD')
-        var contrastEndYear = moment().year(moment(this.formParameters.contrastingMonth).year()).endOf('year').format('YYYY-MM-DD')
+        var thisStartYear = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD HH:mm')
+        var contrastStartYear = moment().year(moment(this.formParameters.contrastingMonth).year()).startOf('year').format('YYYY-MM-DD HH:mm')
+        var contrastEndYear = moment().year(moment(this.formParameters.contrastingMonth).year()).endOf('year').format('YYYY-MM-DD HH:mm')
         var params = {}
         var contrastParams = {}
         var chartParams = {}
+        var tableParams = {}
         var areaName = ""
         if(this.newAreaName.areaName === "整厂区"){
           areaName = ""
@@ -308,11 +308,38 @@
           chartParams.EnergyClass = this.formParameters.energy
           chartParams.TimeClass = this.formParameters.resource
         }
+        if(this.formParameters.resource === "月"){
+          tableParams.AreaName = areaName
+          tableParams.StartTime = thisStartMonth
+          tableParams.EndTime = todayEndTime
+          tableParams.BrandName = this.commodityValue
+          tableParams.tableName = "BatchMaintain"
+          tableParams.limit = this.pagesize
+          tableParams.offset = this.currentPage - 1
+        }else if(this.formParameters.resource === "季"){
+          tableParams.AreaName = areaName
+          tableParams.StartTime = thisStartQuarter
+          tableParams.EndTime = todayEndTime
+          tableParams.BrandName = this.commodityValue
+          tableParams.tableName = "BatchMaintain"
+          tableParams.limit = this.pagesize
+          tableParams.offset = this.currentPage - 1
+        }else if(this.formParameters.resource === "年"){
+          tableParams.AreaName = areaName
+          tableParams.StartTime = thisStartYear
+          tableParams.EndTime = todayEndTime
+          tableParams.BrandName = this.commodityValue
+          tableParams.tableName = "BatchMaintain"
+          tableParams.limit = this.pagesize
+          tableParams.offset = this.currentPage - 1
+        }
+        console.log(tableParams)
         this.axios.all([
           this.axios.get("/api/batchMaintainEnergy",{params: params}),
           this.axios.get("/api/batchMaintainEnergy",{params: contrastParams}),
           this.axios.get("/api/batchMaintainEnergyEcharts",{params: chartParams}),
-        ]).then(this.axios.spread(function(res,contrastRes,chartRes){
+          this.axios.get("/api/CUID",{params: tableParams}),
+        ]).then(this.axios.spread(function(res,contrastRes,chartRes,tableRes){
           if(that.formParameters.energy === "水"){
             that.Unit = res.data.waterUnit
             that.Total = res.data.waterCon
@@ -339,7 +366,34 @@
             that.chartData.columns = ['日期', '批次能耗量']
             that.ChartExtendSettings.type = "histogram"
           }
+          var data = JSON.parse(tableRes.data)
+          console.log(data)
+          that.tableData = data.rows
+          that.total = data.total
         }))
+      },
+      handleSizeChange(pagesize){ //每页条数切换
+        this.pagesize = pagesize
+        this.getCommodityPreview()
+      },
+      handleCurrentChange(currentPage) { // 页码切换
+        this.currentPage = currentPage
+        this.getCommodityPreview()
+      },
+      getBrandName(){
+        var that = this
+        this.axios.get("/api/CUID",{
+          params: {
+            tableName: "BrandMaintain",
+            limit:100000000,
+            offset:0
+          }
+        }).then(res =>{
+          var data = JSON.parse(res.data)
+          that.commodityOptions = data.rows
+        },res =>{
+          console.log("获取品名时请求错误")
+        })
       }
     }
   }

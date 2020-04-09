@@ -153,9 +153,9 @@
 
     },
     watch:{
-      selectedPlanNum(newVal,oldVal){
-        console.log(newVal)
-      }
+      // selectedPlanNum(newVal,oldVal){
+      //   console.log(newVal)
+      // }
 　　},
     mounted() {
       this.getTableData()
@@ -188,6 +188,7 @@
         this.multipleSelection = val;
       },
       searchTab(){
+        console.log(this.selectedPlanNum)
         this.axios.get("/api/CUID",{
           params: {
             tableName: "BatchMaintainTask",
