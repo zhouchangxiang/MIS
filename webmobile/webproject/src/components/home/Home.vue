@@ -1,6 +1,6 @@
 <template>
     <div class="show-box">
-        <DateC></DateC>
+        <DateC :fz="radio1"></DateC>
         <div class="show-banner">
                   <div class="sb-name" @click="getWater">厂区能耗</div>
                   <div class="sb-number">{{shui}}</div>
@@ -29,14 +29,9 @@
                    <div class="dw-pc">kwh/批</div>
                </div>
                <div class="sb-r">
-                    <van-sidebar v-model="activeKey" @change="mtt">
-                    <van-sidebar-item title="新建综合制剂楼" />
-                    <van-sidebar-item title="提取二车间" />
-                    <van-sidebar-item title="前处理车间" />
-                    <van-sidebar-item title="研发中心" />
-                    <van-sidebar-item title="生物科技楼" />
-                    <van-sidebar-item title="原提取车间" />
-                    </van-sidebar>
+                    <ul>
+                       <li v-for="(item,index) in area" :key="index" @click="mtt($event)">{{item}}</li>
+                    </ul>
                </div>
            </div>
         <ShowNumber></ShowNumber>
@@ -46,6 +41,7 @@
 var moment=require('moment')
 import ShowNumber from '../common/Shownumber.vue'
 import DateC from '../common/Choosedate.vue'
+import store from '../../store/index'
 var moment=require('moment')
 export default {
     data(){
@@ -53,17 +49,21 @@ export default {
             radio1:3,
             radio2:3,
             activeKey: 0,
-            shui:''
+            shui:'',
+            area:['新建综合制剂楼','提取二车间','前处理车间','研发中心','生物科技楼','原提取车间']
         }
     },
     components:{
         DateC,
         ShowNumber
     },
+    created(){
+        this.getWater()
+    },
     methods:{
-    mtt(){
-      this.$toast( {message: '展示图片',
-        icon: 'https://img.yzcdn.cn/vant/logo.png'})
+    mtt(e){
+      this.$store.state.workplace=e.srcElement.innerText
+
     },
     getWater(){
         console.log(moment(new Date()).format('YYYY-MM-DD HH:mm:ss'))
@@ -77,13 +77,11 @@ export default {
           let a=JSON.parse(value.data)
           console.log(a)
           this.shui=a.value
+          console.log(value)
         })
     }
 
-    },
-    mounted(){
-        getWater()
-    },
+    }
 
 }
 </script>
@@ -303,25 +301,19 @@ export default {
                 background-color: @bgcc;
                 opacity:1;
                 border-radius:4px;
+                ul{
+                    margin: 0;
+                    padding: 0;
+                    li{
+                        height: 35px;
+                        line-height: 20px;
+                        color: #fff;
+                        text-align: right;
+                    }
+                }
             }
         }
-        .van-sidebar{
-          width: 100%;
-        }
-        .van-sidebar-item{
-          padding:6px 0px 10px 8px;
-          text-align: right;
-          border:none;
-          background-color: transparent;
-          color: #76787E;
-          font-size: 12px;
-          font-family:PingFang SC;
-          font-weight:400;
-          line-height:17px;
-        }
-        .van-sidebar-item--select{
-          color:#fff;
-        }
+        
 
     }
 </style>
