@@ -18,7 +18,7 @@
         <el-button type="primary" size="mini" style="float: right;margin: 9px 0;" @click="exportExcel">导出详细数据</el-button>
       </div>
       <div class="platformContainer">
-        <el-table :data="tableData" border tooltip-effect="dark">
+        <el-table :data="tableData" border tooltip-effect="dark" v-loading="loading">
           <el-table-column prop="SumValue" label="累计值"></el-table-column>
           <el-table-column prop="WD" label="温度"></el-table-column>
           <el-table-column prop="IncremenValue" label="增量值"></el-table-column>
@@ -63,7 +63,8 @@
         tableData:[],
         total:0,
         pagesize:5,
-        currentPage:1
+        currentPage:1,
+        loading:false
       }
     },
     created(){
@@ -121,6 +122,7 @@
         this.searchTime()
       },
       searchTime(){
+        this.loading = true
         this.axios.get("/api/steam_report",{
           params: {
             start_time:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss"),
@@ -133,6 +135,7 @@
           var data = res.data
           this.tableData = data.rows
           this.total = data.total_column
+          this.loading = false
         },res =>{
           console.log("请求错误")
         })

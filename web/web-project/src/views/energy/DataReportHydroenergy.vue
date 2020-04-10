@@ -18,7 +18,7 @@
         <el-button type="primary" size="mini" style="float: right;margin: 9px 0;" @click="exportExcel">导出详细数据</el-button>
       </div>
       <div class="platformContainer">
-        <el-table :data="tableData" border tooltip-effect="dark">
+        <el-table :data="tableData" border tooltip-effect="dark" v-loading="loading">
           <el-table-column type="expand">
             <template slot-scope="props">
               <el-form label-position="left" class="table-expand">
@@ -83,7 +83,8 @@
         tableData:[],
         total:0,
         pagesize:5,
-        currentPage:1
+        currentPage:1,
+        loading:false
       }
     },
     created(){
@@ -141,6 +142,7 @@
         this.searchTime()
       },
       searchTime(){
+        this.loading = true
         this.axios.get("/api/water_report",{
           params: {
             start_time:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss"),
@@ -152,7 +154,8 @@
         }).then(res =>{
           var data = res.data
           this.tableData = data.rows
-          this.total = data.total
+          this.total = data.total_column
+          this.loading = false
         },res =>{
           console.log("请求错误")
         })

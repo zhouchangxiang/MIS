@@ -77,7 +77,7 @@
             <div class="chartTile">实时预警 <span class="text-color-info-shallow text-size-mini">所有设备</span></div>
           </div>
           <div class="platformContainer">
-            <el-table :data="ralTimeWarningTableData" size="mini" height="216px" max-height="216px" style="width: 100%">
+            <el-table :data="ralTimeWarningTableData" size="mini" height="246px" max-height="246px" style="width: 100%">
               <el-table-column prop="area" label="区域"></el-table-column>
               <el-table-column prop="name" label="设备"></el-table-column>
               <el-table-column prop="type" label="状态">
@@ -87,7 +87,6 @@
               </el-table-column>
               <el-table-column prop="date" label="时间"></el-table-column>
             </el-table>
-            <span class="text-size-mini text-color-primary" style="float: right;margin-top: 15px;">更多记录<i class="el-icon-d-arrow-right el-icon--right"></i></span>
           </div>
         </el-col>
         <el-col :span="24" style="margin-bottom: 2px;">

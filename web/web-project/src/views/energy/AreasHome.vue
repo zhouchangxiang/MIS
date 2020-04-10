@@ -1,10 +1,10 @@
 <template>
   <el-row>
-    <el-col :span="24" v-if="newAreaName.areaName == '整厂区'">
-      <el-row :gutter="15" style="margin-bottom: 15px;">
+    <el-col :span="24" v-if="newAreaName.areaName == '整厂区' || newAreaName.areaName == ''">
+      <el-row :gutter="30" style="margin-bottom: 15px;">
         <el-col :span="8">
           <div class="platformContainer">
-            <el-col :span="24" style="border-bottom: 1px solid #d8d8d8;padding-bottom: 20px;">
+            <el-col :span="24" style="border-bottom: 1px solid #d8d8d8;padding: 20px 0;">
               <el-col :span="6">
                 <div class="iconBlock float-left" style="color: #FB8A06;">
                   <i class="fa fa-flash fa-2x"></i>
@@ -40,7 +40,7 @@
         </el-col>
         <el-col :span="8">
           <div class="platformContainer">
-            <el-col :span="24" style="border-bottom: 1px solid #d8d8d8;padding-bottom: 20px;">
+            <el-col :span="24" style="border-bottom: 1px solid #d8d8d8;padding: 20px 0;">
               <el-col :span="6">
                 <div class="iconBlock float-left" style="color: #228AD5;">
                   <i class="fa fa-tint fa-2x"></i>
@@ -76,7 +76,7 @@
         </el-col>
         <el-col :span="8">
           <div class="platformContainer">
-            <el-col :span="24" style="border-bottom: 1px solid #d8d8d8;padding-bottom: 20px;">
+            <el-col :span="24" style="border-bottom: 1px solid #d8d8d8;padding: 20px 0;">
               <el-col :span="6">
                 <div class="iconBlock float-left" style="color: #15CC48;">
                   <i class="fa fa-tachometer fa-2x"></i>
@@ -256,6 +256,7 @@
         ElectricityUnit:"",
         WaterUnit:"",
         SteamUnit:"",
+        websock:null,
         chartExtend:{
           yAxis:{
             show:false
@@ -461,12 +462,11 @@
     created(){
       var that = this
       this.getEnergyPreview()
-      setInterval(function () {
-        that.getRealTimeElectricChart()
-        that.getRealTimeWaterChart()
-        that.getRealTimeSteamChart()
-      },1000)
+      this.initWebSocket();
       this.getOnLineEq()
+    },
+    destroyed() {
+      this.websock.close() //离开路由之后断开websocket连接
     },
     computed:{
       ElectricityCompare(){
@@ -578,37 +578,56 @@
           }
         }))
       },
-      getRealTimeElectricChart(){
-        var res = Math.floor((Math.random() * 50) + 1);
-        this.electricChartData.rows.push({
-          "时间": moment(new Date()).format("HH:mm:ss"),
-          "功率": res
-        })
-        this.electricChartData.rows.shift()
-        this.electricChartValue = res
-      },
-      getRealTimeWaterChart(){
-        var res = Math.floor((Math.random() * 100) + 1);
-        this.waterChartData.rows.push({
-          "时间": moment(new Date()).format("HH:mm:ss"),
-          "功率": res
-        })
-        this.waterChartData.rows.shift()
-        this.waterChartValue = res
-      },
-      getRealTimeSteamChart(){
-        var res = Math.floor((Math.random() * 100) + 1);
-        this.steamChartData.rows.push({
-          "时间": moment(new Date()).format("HH:mm:ss"),
-          "功率": res
-        })
-        this.steamChartData.rows.shift()
-        this.steamChartValue = res
-      },
       getOnLineEq(){
         this.axios.get("/api/energyall",{params:{ModelFlag:"在线检测情况"}}).then(res => {
           this.onlineEquipmentOption = JSON.parse(res.data)
         })
+      },
+      initWebSocket(){ //初始化weosocket
+        const wsuri = "ws://127.0.0.1:5002";
+        this.websock = new WebSocket(wsuri);
+        this.websock.onmessage = this.websocketonmessage;
+        this.websock.onopen = this.websocketonopen;
+        this.websock.onerror = this.websocketonerror;
+        this.websock.onclose = this.websocketclose;
+      },
+      websocketonopen(){ //连接建立之后执行send方法发送数据
+        this.websocketsend();
+      },
+      websocketonerror(){//连接建立失败重连
+        //this.initWebSocket();
+        console.log("连接失败")
+      },
+      websocketonmessage(e){ //数据接收
+        const redata = JSON.parse(e.data);
+        console.log(redata)
+        //电
+        this.electricChartData.rows.push({
+          "时间": moment(new Date()).format("HH:mm:ss"),
+          "功率": redata.E
+        })
+        this.electricChartData.rows.shift()
+        this.electricChartValue = redata.E
+        //水
+        this.waterChartData.rows.push({
+          "时间": moment(new Date()).format("HH:mm:ss"),
+          "功率": redata.W
+        })
+        this.waterChartData.rows.shift()
+        this.waterChartValue = redata.W
+        //汽
+        this.steamChartData.rows.push({
+          "时间": moment(new Date()).format("HH:mm:ss"),
+          "功率": redata.S
+        })
+        this.steamChartData.rows.shift()
+        this.steamChartValue = redata.S
+      },
+      websocketsend(Data){//数据发送
+        this.websock.send(Data);
+      },
+      websocketclose(e){  //关闭
+        console.log('断开连接');
       },
     }
   }

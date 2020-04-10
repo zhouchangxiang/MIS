@@ -248,9 +248,11 @@
         var contrastStartMonth = moment().month(moment(this.formParameters.contrastingMonth).month()).startOf('month').format('YYYY-MM-DD HH:mm')
         var contrastEndMonth = moment().month(moment(this.formParameters.contrastingMonth).month()).endOf('month').format('YYYY-MM-DD HH:mm')
         var thisStartQuarter = moment().quarter(moment().quarter()).startOf('quarter').format('YYYY-MM-DD HH:mm')
+        var thisEndQuarter = moment().quarter(moment().quarter()).endOf('quarter').format('YYYY-MM-DD HH:mm')
         var contrastStartQuarter = moment().quarter(moment(this.formParameters.contrastingMonth).quarter()).startOf('quarter').format('YYYY-MM-DD HH:mm')
         var contrastEndQuarter = moment().quarter(moment(this.formParameters.contrastingMonth).quarter()).endOf('quarter').format('YYYY-MM-DD HH:mm')
         var thisStartYear = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD HH:mm')
+        var thisEndYear = moment().year(moment().year()).endOf('year').format('YYYY-MM-DD HH:mm')
         var contrastStartYear = moment().year(moment(this.formParameters.contrastingMonth).year()).startOf('year').format('YYYY-MM-DD HH:mm')
         var contrastEndYear = moment().year(moment(this.formParameters.contrastingMonth).year()).endOf('year').format('YYYY-MM-DD HH:mm')
         var params = {}
@@ -307,7 +309,7 @@
           chartParams.AreaName = areaName
           if(this.formParameters.chartTimeValue === "当前时间"){
             chartParams.StartTime = thisStartQuarter
-            chartParams.EndTime = todayEndTime
+            chartParams.EndTime = thisEndQuarter
           }else if(this.formParameters.chartTimeValue === "对比时间"){
             chartParams.StartTime = contrastStartQuarter
             chartParams.EndTime = contrastEndQuarter
@@ -318,7 +320,7 @@
           chartParams.AreaName = areaName
           if(this.formParameters.chartTimeValue === "当前时间"){
             chartParams.StartTime = thisStartYear
-          chartParams.EndTime = todayEndTime
+            chartParams.EndTime = thisEndYear
           }else if(this.formParameters.chartTimeValue === "对比时间"){
             chartParams.StartTime = contrastStartYear
             chartParams.EndTime = contrastEndYear
