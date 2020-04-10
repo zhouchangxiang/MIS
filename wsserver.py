@@ -127,6 +127,7 @@ def handler_msg(conn):
                 Tags = db_session.query(TagDetail).filter().all()
                 i = 0
                 for area in areas:
+                    i = i + 1
                     Tags = db_session.query(TagDetail).filter(TagDetail.AreaName == area.AreaName).all()
                     areaSFlow = 0.0
                     areaSSum = 0.0
@@ -184,8 +185,7 @@ def handler_msg(conn):
                     area_dir["areaEBU"] = areaEBU
                     area_dir["areaECI"] = areaEBI
                     area_dir["areaECU"] = areaEBU
-                    area_list.append(area_dir)
-                    if i == 0:
+                    if i == 1:
                         Tags = db_session.query(TagDetail).filter().all()
                         for tag in Tags:
                             try:
@@ -233,8 +233,7 @@ def handler_msg(conn):
                         area_dir["areaEBU"] = areaEBU
                         area_dir["areaECI"] = areaEBI
                         area_dir["areaECU"] = areaEBU
-                        area_list.append(area_dir)
-                    i = i + 1
+                    area_list.append(area_dir)
                 # i = 0
                 # for tag in Tags:
                 #     try:
@@ -280,6 +279,7 @@ def handler_msg(conn):
                 #     finally:
                 #         i = i + 1
                 #         pass
+                print(area_list)
                 json_data = json.dumps(area_list)
                 # bytemsg = bytes(json_data, encoding="utf8")
                 # send_msg(c, bytes("recv: {}".format(data_parse), encoding="utf-8"))
