@@ -31,7 +31,7 @@
         <el-table-column type="selection"></el-table-column>
         <el-table-column prop="ID" label="ID"></el-table-column>
         <el-table-column prop="AreaName" label="区域"></el-table-column>
-        <el-table-column prop="ColourSum" label="颜色值"></el-table-column>
+        <el-table-column prop="ColourSum" label="范围值"></el-table-column>
         <el-table-column prop="ColourValue" label="颜色"></el-table-column>
         <el-table-column prop="ColourName" label="状态"></el-table-column>
       </el-table>
@@ -53,7 +53,7 @@
           <el-form-item label="区域" prop="AreaName">
             <el-input v-model="submitForm.AreaName"></el-input>
           </el-form-item>
-          <el-form-item label="颜色值" prop="ColourSum">
+          <el-form-item label="范围值" prop="ColourSum">
             <el-input v-model="submitForm.ColourSum"></el-input>
           </el-form-item>
           <el-form-item label="颜色" prop="ColourValue">
@@ -90,7 +90,7 @@
             {required: true, message: '区域', trigger: 'blur'}
           ],
           ColourSum:[
-            {required: true, message: '颜色值', trigger: 'blur'}
+            {required: true, message: '范围值', trigger: 'blur'}
           ],
           ColourValue:[
             {required: true, message: '颜色', trigger: 'blur'}

@@ -246,7 +246,8 @@ export default {
           {name: "桓仁厂区", icon: "el-icon-location-outline", children:arr},
           {name: "能效分析", icon: "el-icon-time", url: "/EfficiencyAnalysis"},
           {name: "综合报表", icon: "el-icon-document", url: "/DataReport"},
-          {name: "综合维护表", icon: "el-icon-s-operation", url: "/MaintainedBoard"},
+          {name: "批次维护表", icon: "el-icon-set-up", url: "/MaintainedBatch"},
+          {name: "基础维护表", icon: "el-icon-s-operation", url: "/MaintainedBoard"},
         ]
       }else if(index == 1){
         this.subMenulist = [

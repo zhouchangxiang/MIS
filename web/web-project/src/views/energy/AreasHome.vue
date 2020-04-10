@@ -1,6 +1,6 @@
 <template>
   <el-row>
-    <el-col :span="24" v-if="newAreaName.areaName == '整厂区' || newAreaName.areaName == ''">
+    <el-col :span="24" v-if="newAreaName.areaName === '整厂区' || newAreaName.areaName === ''">
       <el-row :gutter="30" style="margin-bottom: 15px;">
         <el-col :span="8">
           <div class="platformContainer">
@@ -24,8 +24,8 @@
               </el-col>
             </el-col>
             <el-col :span="24" style="margin-top: 20px;">
-              <p class="text-size-small">- 实时数据：{{ electricChartValue }}</p>
-              <ve-line :data="electricChartData" :extend="chartExtend" :legend-visible="false" height="300px"></ve-line>
+              <p class="text-size-small">- 总功率：{{ electricChartValue }}</p>
+              <ve-line :data="electricChartData" :extend="chartExtend" :legend-visible="false" height="300px" v-loading="socketLoading"></ve-line>
             </el-col>
             <el-col :span="24" style="margin-top: 20px;">
               <p class="text-color-info-shallow">日耗量</p>
@@ -60,8 +60,8 @@
               </el-col>
             </el-col>
             <el-col :span="24" style="margin-top: 20px;">
-              <p class="text-size-small">- 实时数据：{{ waterChartValue }}</p>
-              <ve-line :data="waterChartData" :extend="chartExtend" :legend-visible="false" height="300px"></ve-line>
+              <p class="text-size-small">- 累计流量：{{ waterChartValue }}</p>
+              <ve-line :data="waterChartData" :extend="chartExtend" :legend-visible="false" height="300px" v-loading="socketLoading"></ve-line>
             </el-col>
             <el-col :span="24" style="margin-top: 20px;">
               <p class="text-color-info-shallow">日耗量</p>
@@ -96,8 +96,8 @@
               </el-col>
             </el-col>
             <el-col :span="24" style="margin-top: 20px;">
-              <p class="text-size-small">- 实时数据：{{ steamChartValue }}</p>
-              <ve-line :data="steamChartData" :extend="chartExtend" :legend-visible="false" height="300px"></ve-line>
+              <p class="text-size-small">- 累计流量：{{ steamChartValue }}</p>
+              <ve-line :data="steamChartData" :extend="chartExtend" :legend-visible="false" height="300px" v-loading="socketLoading"></ve-line>
             </el-col>
             <el-col :span="24" style="margin-top: 20px;">
               <p class="text-color-info-shallow">日耗量</p>
@@ -112,16 +112,17 @@
         </el-col>
       </el-row>
     </el-col>
-    <el-col :span="24" v-if="newAreaName.areaName != '整厂区'">
-      <el-row :gutter="15" style="margin-bottom: 15px;">
+    <el-col :span="24" v-else>
+      <el-row :gutter="30" style="margin-bottom: 15px;">
         <el-col :span="8">
           <div class="platformContainer">
-            <el-col :span="6">
-              <div class="iconBlock float-left" style="color: #FB8A06;">
-                <i class="fa fa-flash fa-2x"></i>
-              </div>
-            </el-col>
-            <el-col :span="18">
+            <el-col :span="24" style="padding: 20px 0;">
+              <el-col :span="6">
+                <div class="iconBlock float-left" style="color: #FB8A06;">
+                  <i class="fa fa-flash fa-2x"></i>
+                </div>
+              </el-col>
+              <el-col :span="18">
               <div class="itemMarginBottom text-size-normol text-color-info-shallow">本日耗电量</div>
               <div class="itemMarginBottom text-size-big text-color-info">{{ todayElectricity }} {{ ElectricityUnit }}</div>
               <div class="itemMarginBottom">
@@ -133,16 +134,18 @@
                 <span class="text-size-normol float-right" :class="todayElectricity-yesterdayElectricityValue>0?'text-color-danger':'text-color-success'">{{ ElectricityCompare }}</span>
               </div>
             </el-col>
+            </el-col>
           </div>
         </el-col>
         <el-col :span="8">
           <div class="platformContainer">
-            <el-col :span="6">
-              <div class="iconBlock float-left" style="color: #228AD5;">
-                <i class="fa fa-tint fa-2x"></i>
-              </div>
-            </el-col>
-            <el-col :span="18">
+            <el-col :span="24" style="padding: 20px 0;">
+              <el-col :span="6">
+                <div class="iconBlock float-left" style="color: #228AD5;">
+                  <i class="fa fa-tint fa-2x"></i>
+                </div>
+              </el-col>
+              <el-col :span="18">
               <div class="itemMarginBottom text-size-normol text-color-info-shallow">本日耗水量</div>
               <div class="itemMarginBottom text-size-big text-color-info">{{ todayWater }} {{ WaterUnit }}</div>
               <div class="itemMarginBottom">
@@ -154,16 +157,18 @@
                 <span class="text-size-normol float-right" :class="todayWater-yesterdayWaterValue>0?'text-color-danger':'text-color-success'">{{ WaterCompare }}</span>
               </div>
             </el-col>
+            </el-col>
           </div>
         </el-col>
         <el-col :span="8">
           <div class="platformContainer">
-            <el-col :span="6">
-              <div class="iconBlock float-left" style="color: #15CC48;">
-                <i class="fa fa-tachometer fa-2x"></i>
-              </div>
-            </el-col>
-            <el-col :span="18">
+            <el-col :span="24" style="padding: 20px 0;">
+              <el-col :span="6">
+                <div class="iconBlock float-left" style="color: #15CC48;">
+                  <i class="fa fa-tachometer fa-2x"></i>
+                </div>
+              </el-col>
+              <el-col :span="18">
               <div class="itemMarginBottom text-size-normol text-color-info-shallow">本日耗汽量</div>
               <div class="itemMarginBottom text-size-big text-color-info">{{ todaySteam }} {{ SteamUnit }}</div>
               <div class="itemMarginBottom">
@@ -174,6 +179,7 @@
                 <span class="text-size-normol text-color-info">523.5元</span>
                 <span class="text-size-normol float-right" :class="todaySteam-yesterdaySteamValue>0?'text-color-danger':'text-color-success'">{{ SteamCompare }}</span>
               </div>
+            </el-col>
             </el-col>
           </div>
         </el-col>
@@ -257,6 +263,7 @@
         WaterUnit:"",
         SteamUnit:"",
         websock:null,
+        socketLoading:false,
         chartExtend:{
           yAxis:{
             show:false
@@ -278,137 +285,137 @@
         },
         electricChartValue:"",
         electricChartData:{
-          columns: ['时间', '功率'],
+          columns: ['时间', '总功率'],
           rows: [
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
+            { '时间': "", '总功率': ""},
+            { '时间': "", '总功率': ""},
+            { '时间': "", '总功率': ""},
+            { '时间': "", '总功率': ""},
+            { '时间': "", '总功率': ""},
+            { '时间': "", '总功率': ""},
+            { '时间': "", '总功率': ""},
+            { '时间': "", '总功率': ""},
+            { '时间': "", '总功率': ""},
+            { '时间': "", '总功率': ""},
+            { '时间': "", '总功率': ""},
+            { '时间': "", '总功率': ""},
+            { '时间': "", '总功率': ""},
+            { '时间': "", '总功率': ""},
+            { '时间': "", '总功率': ""},
+            { '时间': "", '总功率': ""},
+            { '时间': "", '总功率': ""},
+            { '时间': "", '总功率': ""},
+            { '时间': "", '总功率': ""},
+            { '时间': "", '总功率': ""},
           ]
         },
         electricHistogram:{
-          columns: ['时间', '功率'],
+          columns: ['时间', '总功率'],
           rows: [
-            { '时间': "昨日", '功率': "4645"},
-            { '时间': "本日", '功率': "3454"},
-            { '时间': "月均", '功率': "2547"},
+            { '时间': "昨日", '总功率': "4645"},
+            { '时间': "本日", '总功率': "3454"},
+            { '时间': "月均", '总功率': "2547"},
           ]
         },
         electricRing:{
-          columns: ['日期', '访问用户'],
+          columns: ['日期', '总功率'],
           rows: [
-            { '日期': '1/1', '访问用户': 1393 },
-            { '日期': '1/2', '访问用户': 3530 },
-            { '日期': '1/3', '访问用户': 2923 },
-            { '日期': '1/4', '访问用户': 1723 },
-            { '日期': '1/5', '访问用户': 3792 },
-            { '日期': '1/6', '访问用户': 4593 }
+            { '日期': '1/1', '总功率': 1393 },
+            { '日期': '1/2', '总功率': 3530 },
+            { '日期': '1/3', '总功率': 2923 },
+            { '日期': '1/4', '总功率': 1723 },
+            { '日期': '1/5', '总功率': 3792 },
+            { '日期': '1/6', '总功率': 4593 }
           ]
         },
         waterChartValue:"",
         waterChartData:{
-          columns: ['时间', '功率'],
+          columns: ['时间', '累计流量'],
           rows: [
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
           ]
         },
         waterHistogram:{
-          columns: ['时间', '功率'],
+          columns: ['时间', '累计流量'],
           rows: [
-            { '时间': "昨日", '功率': "4645"},
-            { '时间': "本日", '功率': "3454"},
-            { '时间': "月均", '功率': "2547"},
+            { '时间': "昨日", '累计流量': "4645"},
+            { '时间': "本日", '累计流量': "3454"},
+            { '时间': "月均", '累计流量': "2547"},
           ]
         },
         waterRing:{
-          columns: ['日期', '访问用户'],
+          columns: ['日期', '累计流量'],
           rows: [
-            { '日期': '1/1', '访问用户': 1393 },
-            { '日期': '1/2', '访问用户': 3530 },
-            { '日期': '1/3', '访问用户': 2923 },
-            { '日期': '1/4', '访问用户': 1723 },
-            { '日期': '1/5', '访问用户': 3792 },
-            { '日期': '1/6', '访问用户': 4593 }
+            { '日期': '1/1', '累计流量': 1393 },
+            { '日期': '1/2', '累计流量': 3530 },
+            { '日期': '1/3', '累计流量': 2923 },
+            { '日期': '1/4', '累计流量': 1723 },
+            { '日期': '1/5', '累计流量': 3792 },
+            { '日期': '1/6', '累计流量': 4593 }
           ]
         },
         steamChartValue:"",
         steamChartData:{
-          columns: ['时间', '功率'],
+          columns: ['时间', '累计流量'],
           rows: [
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
-            { '时间': "", '功率': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': ""},
           ]
         },
         steamHistogram:{
-          columns: ['时间', '功率'],
+          columns: ['时间', '累计流量'],
           rows: [
-            { '时间': "昨日", '功率': "4645"},
-            { '时间': "本日", '功率': "3454"},
-            { '时间': "月均", '功率': "2547"},
+            { '时间': "昨日", '累计流量': "4645"},
+            { '时间': "本日", '累计流量': "3454"},
+            { '时间': "月均", '累计流量': "2547"},
           ]
         },
         steamRing:{
-          columns: ['日期', '访问用户'],
+          columns: ['日期', '累计流量'],
           rows: [
-            { '日期': '1/1', '访问用户': 1393 },
-            { '日期': '1/2', '访问用户': 3530 },
-            { '日期': '1/3', '访问用户': 2923 },
-            { '日期': '1/4', '访问用户': 1723 },
-            { '日期': '1/5', '访问用户': 3792 },
-            { '日期': '1/6', '访问用户': 4593 }
+            { '日期': '1/1', '累计流量': 1393 },
+            { '日期': '1/2', '累计流量': 3530 },
+            { '日期': '1/3', '累计流量': 2923 },
+            { '日期': '1/4', '累计流量': 1723 },
+            { '日期': '1/5', '累计流量': 3792 },
+            { '日期': '1/6', '累计流量': 4593 }
           ]
         },
         batchTableData:[
@@ -419,7 +426,7 @@
         ],
         ChartSettings: {
           radius: [30,60],
-          offsetY:"120px",
+          offsetY:"100px",
           label:{
             show:false
           },
@@ -439,7 +446,7 @@
         },
         ChartExtend: {
           legend:{
-            show:true
+            show:false
           }
         },
         batchChartExtend: {
@@ -528,7 +535,7 @@
         var yesterdayEndTime = moment().subtract(1,'day').format('YYYY-MM-DD') + " " + nowTime
         var params = {}
         var yesterdayParams ={}
-        if(this.newAreaName.areaName == "整厂区"){
+        if(this.newAreaName.areaName === "整厂区"){
           params.StartTime = todayStartTime
           params.EndTime = todayEndTime
           yesterdayParams.StartTime = yesterdayStartTime
@@ -586,6 +593,7 @@
       initWebSocket(){ //初始化weosocket
         const wsuri = "ws://127.0.0.1:5002";
         this.websock = new WebSocket(wsuri);
+        this.socketLoading = true
         this.websock.onmessage = this.websocketonmessage;
         this.websock.onopen = this.websocketonopen;
         this.websock.onerror = this.websocketonerror;
@@ -599,29 +607,35 @@
         console.log("连接失败")
       },
       websocketonmessage(e){ //数据接收
-        const redata = JSON.parse(e.data);
-        console.log(redata)
-        //电
-        this.electricChartData.rows.push({
-          "时间": moment(new Date()).format("HH:mm:ss"),
-          "功率": redata.E
-        })
-        this.electricChartData.rows.shift()
-        this.electricChartValue = redata.E
-        //水
-        this.waterChartData.rows.push({
-          "时间": moment(new Date()).format("HH:mm:ss"),
-          "功率": redata.W
-        })
-        this.waterChartData.rows.shift()
-        this.waterChartValue = redata.W
-        //汽
-        this.steamChartData.rows.push({
-          "时间": moment(new Date()).format("HH:mm:ss"),
-          "功率": redata.S
-        })
-        this.steamChartData.rows.shift()
-        this.steamChartValue = redata.S
+        this.socketLoading = false
+        const resdata = JSON.parse(e.data);
+        console.log(resdata)
+        console.log(this.newAreaName.areaName)
+        for(var i=0;i<resdata.length;i++){
+          if(resdata[i].AreaName === "" || resdata[i].AreaName === "整厂区"){
+            this.electricChartValue = resdata[i].areaEZGL
+            this.waterChartValue = resdata[i].areaWSum
+            this.steamChartValue = resdata[i].areaSSum
+            //电
+            this.electricChartData.rows.push({
+              "时间": moment(new Date()).format("HH:mm:ss"),
+              "总功率": this.electricChartValue
+            })
+            this.electricChartData.rows.shift()
+            //水
+            this.waterChartData.rows.push({
+              "时间": moment(new Date()).format("HH:mm:ss"),
+              "累计流量": this.waterChartValue
+            })
+            this.waterChartData.rows.shift()
+            //汽
+            this.steamChartData.rows.push({
+              '时间': moment(new Date()).format("HH:mm:ss"),
+              '累计流量': this.steamChartValue
+            })
+            this.steamChartData.rows.shift()
+          }
+        }
       },
       websocketsend(Data){//数据发送
         this.websock.send(Data);
