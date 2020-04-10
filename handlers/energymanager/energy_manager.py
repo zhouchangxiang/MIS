@@ -1248,26 +1248,6 @@ def websocketecharstSelect():
                 {'日期': '1/5', '访问用户': 3792},
                 {'日期': '1/6', '访问用户': 4593}
             ]
-            Zwain:
-            electricHistogram
-            电柱状图
-
-            Zwain:
-            electricRing
-            电环形图
-
-            Zwain:
-            waterHistogram
-
-            Zwain:
-            waterRing
-
-            Zwain:
-            steamHistogram
-
-            Zwain:
-            steamRing
-
             pages = int(data.get("offset"))  # 页数
             rowsnumber = int(data.get("limit"))  # 行数
             inipage = pages * rowsnumber + 0  # 起始页
