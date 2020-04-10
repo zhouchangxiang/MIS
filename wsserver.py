@@ -119,10 +119,7 @@ def handler_msg(conn):
                     data_parse = parse_payload(data_recv)
                     AreaName = str(data_parse)
                 data_dict = {}
-                dir = []
-                dis = []
-                diw = []
-                die = []
+                dir = {}
                 pool = redis.ConnectionPool(host=constant.REDIS_HOST)
                 redis_conn = redis.Redis(connection_pool=pool)
                 areas = db_session.query(AreaTable).filter().all()
@@ -283,8 +280,7 @@ def handler_msg(conn):
                 #     finally:
                 #         i = i + 1
                 #         pass
-                dir.append(data_dict)
-                json_data = json.dumps(data_dict)
+                json_data = json.dumps(area_list)
                 # bytemsg = bytes(json_data, encoding="utf8")
                 # send_msg(c, bytes("recv: {}".format(data_parse), encoding="utf-8"))
                 bytemsg = bytes(json_data,encoding="utf-8")
