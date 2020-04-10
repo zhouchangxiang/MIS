@@ -2,8 +2,8 @@
     <div class="show-box">
         <DateC></DateC>
         <div class="show-banner">
-                  <div class="sb-name">厂区能耗</div>
-                  <div class="sb-number">00000000.00</div>
+                  <div class="sb-name" @click="getWater">厂区能耗</div>
+                  <div class="sb-number">{{shui}}</div>
                   <div class="sb-compare">较上期</div>
                   <div class="sb-l-n">+1.345%</div>
                   <div class="sb-dw">单位</div>
@@ -43,14 +43,17 @@
        </div>
 </template>
 <script>
+var moment=require('moment')
 import ShowNumber from '../common/Shownumber.vue'
 import DateC from '../common/Choosedate.vue'
+var moment=require('moment')
 export default {
     data(){
         return {
             radio1:3,
             radio2:3,
-            activeKey: 0
+            activeKey: 0,
+            shui:''
         }
     },
     components:{
@@ -63,10 +66,25 @@ export default {
         icon: 'https://img.yzcdn.cn/vant/logo.png'})
     },
     getWater(){
-        this.$http.get('/v2/water_report',this.qs.stringify())
+        console.log(moment(new Date()).format('YYYY-MM-DD HH:mm:ss'))
+        let str=moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+
+        this.$http.get('/api/energywater',{params:{
+            StartTime:'2020-04-07 12:22:59',
+            EndTime:str,
+            Area:'研发中心'
+            }}).then((value) => {
+          let a=JSON.parse(value.data)
+          console.log(a)
+          this.shui=a.value
+        })
     }
 
-    }
+    },
+    mounted(){
+        getWater()
+    },
+
 }
 </script>
 <style lang="less" scoped>

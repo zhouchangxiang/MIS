@@ -61,15 +61,19 @@ export default {
           let str=this.$qs.stringify(comment)
           this.$http.post('/api/v2/accounts/login',str).then((res) => {
             console.log(res)
-          if(res.data.code===1001){
+          if(res.status===200){
+            if(res.data.code===1001){
+              localStorage.setItem('token',res.data.data.token)
+              this.$toast(res.data.msg)
+              this.$router.push('/home')}
+          else{
             this.$toast(res.data.msg)
-            this.$router.push('/home')
-            localStorage.setItem('token',res.data.data.token)
-          }else if(res.data.code===2001){
-            this.$toast(res.data.msg)
-          }else{
+          }}
+          else{
             this.$toast('请求报错，请重新登录')
           }
+        }).catch(err=>{
+          console.log(err)
         })
      
         }

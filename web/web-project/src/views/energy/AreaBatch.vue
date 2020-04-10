@@ -294,20 +294,35 @@
         //获取图表数据 参数
         if(this.formParameters.resource === "月"){
           chartParams.AreaName = areaName
-          chartParams.StartTime = thisStartMonth
-          chartParams.EndTime = todayEndTime
+          if(this.formParameters.chartTimeValue === "当前时间"){
+            chartParams.StartTime = thisStartMonth
+            chartParams.EndTime = todayEndTime
+          }else if(this.formParameters.chartTimeValue === "对比时间"){
+            chartParams.StartTime = contrastStartMonth
+            chartParams.EndTime = contrastEndMonth
+          }
           chartParams.EnergyClass = this.formParameters.energy
           chartParams.TimeClass = this.formParameters.resource
         }else if(this.formParameters.resource === "季"){
           chartParams.AreaName = areaName
-          chartParams.StartTime = thisStartQuarter
-          chartParams.EndTime = todayEndTime
+          if(this.formParameters.chartTimeValue === "当前时间"){
+            chartParams.StartTime = thisStartQuarter
+            chartParams.EndTime = todayEndTime
+          }else if(this.formParameters.chartTimeValue === "对比时间"){
+            chartParams.StartTime = contrastStartQuarter
+            chartParams.EndTime = contrastEndQuarter
+          }
           chartParams.EnergyClass = this.formParameters.energy
           chartParams.TimeClass = this.formParameters.resource
         }else if(this.formParameters.resource === "年"){
           chartParams.AreaName = areaName
-          chartParams.StartTime = thisStartYear
+          if(this.formParameters.chartTimeValue === "当前时间"){
+            chartParams.StartTime = thisStartYear
           chartParams.EndTime = todayEndTime
+          }else if(this.formParameters.chartTimeValue === "对比时间"){
+            chartParams.StartTime = contrastStartYear
+            chartParams.EndTime = contrastEndYear
+          }
           chartParams.EnergyClass = this.formParameters.energy
           chartParams.TimeClass = this.formParameters.resource
         }

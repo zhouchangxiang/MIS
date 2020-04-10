@@ -21,10 +21,10 @@ export default new Router({
       component: Common,
       redirect:'/login',
       children:[
-        {path:'/home',component:Home},
-        {path:'/region',component:Region},
-        {path:'/efficiency',component:Efficiency},
-        {path:'/report',component:Report}
+        {path:'/home',component:Home,meta:{requireAuth:true}},
+        {path:'/region',component:Region,meta:{requireAuth:true}},
+        {path:'/efficiency',component:Efficiency,meta:{requireAuth:true}},
+        {path:'/report',component:Report,meta:{requireAuth:true}}
       ]
     }
   ]

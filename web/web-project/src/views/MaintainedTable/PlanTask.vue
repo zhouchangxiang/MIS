@@ -148,15 +148,14 @@
           {label:"品名",value:"BrandName"}
         ],
         searchVal:"",
+        selectedPlanNum:""
       }
     },
     created(){
-      // this.$watch("selectedPlanNum", function (newValue, oldValue) {
-      //   console.log(newValue)
-      // })
+      this.getTableData()
     },
     mounted() {
-      this.getTableData()
+
     },
     methods:{
       getTableData(){
