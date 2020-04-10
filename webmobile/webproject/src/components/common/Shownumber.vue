@@ -7,9 +7,9 @@
                </div>
                 <div class="sf-r">
                    <div class="machine">设备在线情况</div>
-                   <div class="tj">12&nbsp;/&nbsp;23</div>
+                   <div class="tj"><span>12</span>&nbsp;/&nbsp;<span>23</span></div>
                </div>
-           </div>
+        </div>
 
     </div>
 </template>

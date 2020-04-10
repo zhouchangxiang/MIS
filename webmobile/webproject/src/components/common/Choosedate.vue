@@ -2,14 +2,14 @@
     <div>
          <div class="show-top">
                <div class="tips">
-                   <van-tabs type="card" title-active-color="#1E222B" title-inactive-color="#fff" @click="mytip" v-model="active"> 
+                   <van-tabs type="card" title-active-color="#1E222B" title-inactive-color="#fff" v-model="choosedate" @click="ChooseDate"> 
                         <van-tab title="年"></van-tab>
                         <van-tab title="月"></van-tab>
                         <van-tab title="日"></van-tab>
                     </van-tabs>
                 </div>
                <div class="tips">
-                   <van-tabs type="card" title-active-color="#1E222B"  title-inactive-color="#fff" v-model="active1" @click="mytips">
+                   <van-tabs type="card" title-active-color="#1E222B"  title-inactive-color="#fff" v-model="choosekind" @click="ChooseKind">
                         <van-tab title="水"></van-tab>
                         <van-tab title="电"></van-tab>
                         <van-tab title="气"></van-tab>
@@ -19,27 +19,24 @@
     </div>
 </template>
 <script>
+import store from '../../store/index'
 export default {
     data(){
         return {
-          radio1:1,
-          radio2:1,
-          active:0,
-          active1:1,
-          pagesize:5,
-          currentPage:1
+          choosedate:1,
+          choosekind:2
         }
     },
     methods:{
-        myc(){
-            this.$toast(this.radio1)
+        ChooseDate(){
+            this.$store.state.choosedate=this.choosedate
+
         },
-        mytip(){
-            this.$toast(this.active)
-        },
-        mytips(){
+        ChooseKind(){
+            this.$store.state.choosekind=this.choosekind
+       
         }
-    }
+}
 }
 </script>
 <style lang="less" scoped>
