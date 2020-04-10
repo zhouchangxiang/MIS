@@ -13,7 +13,7 @@ import random
 import datetime
 from dbset.database.db_operate import db_session
 from models.SystemManagement.system import ElectricSiteURL
-from models.SystemManagement.core import TagDetail
+from models.SystemManagement.core import TagDetail, AreaTable
 from dbset.log.BK2TLogger import logger,insertSyslog
 
 
@@ -125,58 +125,165 @@ def handler_msg(conn):
                 die = []
                 pool = redis.ConnectionPool(host=constant.REDIS_HOST)
                 redis_conn = redis.Redis(connection_pool=pool)
-                Tags = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaName).all()
+                areas = db_session.query(AreaTable).filter().all()
+                area_list = []
+                Tags = db_session.query(TagDetail).filter().all()
                 i = 0
-                dis.append("123123")
-                for tag in Tags:
-                    try:
-                        S = str(tag.TagClassValue)[0:1]
-                        if S == "S":
-                            tis_i={}
-                            tis_i["title"] = tag.FEFportIP
-                            tis_i["WD"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                     tag.TagClassValue + "WD"))
-                            tis_i["Flow"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                       tag.TagClassValue + "F"))
-                            tis_i["Sum"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                      tag.TagClassValue + "S"))
-                            dis.append(tis_i)
-                        elif S == "W":
-                            tiw_i = {}
-                            tiw_i["title"] = tag.FEFportIP
-                            tiw_i["Flow"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                       tag.TagClassValue + "F"))
-                            tiw_i["Sum"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                      tag.TagClassValue + "S"))
-                            diw.append(tiw_i)
-                        elif S == "E":
-                            tie_i = {}
-                            tie_i["title"] = tag.FEFportIP
-                            tie_i["ZGL"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                      tag.TagClassValue + "_ZGL"))
-                            tie_i["AU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                     tag.TagClassValue + "_AU"))
-                            tie_i["AI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                     tag.TagClassValue + "_AI"))
-                            tie_i["BU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                     tag.TagClassValue + "_BU"))
-                            tie_i["BI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                     tag.TagClassValue + "_BI"))
-                            tie_i["CU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                     tag.TagClassValue + "_CU"))
-                            tie_i["CI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                     tag.TagClassValue + "_CI"))
-                            die.append(tie_i)
-                    except Exception as ee:
-                        print("报错tag：" + tag.TagClassValue + " |报错IP：" + tag.IP + "  |报错端口：" + tag.COMNum + "  |错误：" + str(ee))
-                    finally:
-                        i = i + 1
-                        pass
-                # data_dict["E"] = die
-                # data_dict["W"] = diw
-                data_dict["S"] = dis
+                for area in areas:
+                    Tags = db_session.query(TagDetail).filter(TagDetail.AreaName == area.AreaName).all()
+                    areaSFlow = 0.0
+                    areaSSum = 0.0
+                    areaWFlow = 0.0
+                    areaWSum = 0.0
+                    areaEZGL = 0.0
+                    areaEAI = 0.0
+                    areaEAU = 0.0
+                    areaEBI = 0.0
+                    areaEBU = 0.0
+                    areaECI = 0.0
+                    areaECU = 0.0
+                    area_dir = {}
+                    for tag in Tags:
+                        try:
+                            S = str(tag.TagClassValue)[0:1]
+                            if S == "S":
+                                areaFlow = areaFlow + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                           tag.TagClassValue + "F"))
+                                areaSum = areaSum + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                          tag.TagClassValue + "S"))
+                            elif S == "W":
+                                areaWFlow = areaWFlow + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                           tag.TagClassValue + "F"))
+                                areaWSum = areaWSum + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                          tag.TagClassValue + "S"))
+                            elif S == "E":
+                                areaEZGL = areaEZGL + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                          tag.TagClassValue + "_ZGL"))
+                                areaEAU = areaEAU + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                         tag.TagClassValue + "_AU"))
+                                areaEAI = areaEAI + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                         tag.TagClassValue + "_AI"))
+                                areaEBI = areaEBI + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                         tag.TagClassValue + "_BU"))
+                                areaEBU = areaEBU + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                         tag.TagClassValue + "_BI"))
+                                areaECI = areaECI + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                         tag.TagClassValue + "_CU"))
+                                areaECU = areaECU + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                         tag.TagClassValue + "_CI"))
+                        except Exception as ee:
+                            print("报错tag：" + tag.TagClassValue + " |报错IP：" + tag.IP + "  |报错端口：" + tag.COMNum + "  |错误：" + str(ee))
+                        finally:
+                            pass
+                    area_dir["AreaName"] = area.AreaName
+                    area_dir["areaSFlow"] = areaSFlow
+                    area_dir["areaSSum"] = areaSSum
+                    area_dir["areaWFlow"] = areaWFlow
+                    area_dir["areaWSum"] = areaWSum
+                    area_dir["areaEZGL"] = areaEZGL
+                    area_dir["areaEAI"] = areaEAI
+                    area_dir["areaEAU"] = areaEAU
+                    area_dir["areaEBI"] = areaEBI
+                    area_dir["areaEBU"] = areaEBU
+                    area_dir["areaECI"] = areaEBI
+                    area_dir["areaECU"] = areaEBU
+                    area_list.append(area_dir)
+                    if i == 0:
+                        Tags = db_session.query(TagDetail).filter().all()
+                        for tag in Tags:
+                            try:
+                                S = str(tag.TagClassValue)[0:1]
+                                if S == "S":
+                                    areaFlow = areaFlow + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                                     tag.TagClassValue + "F"))
+                                    areaSum = areaSum + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                                   tag.TagClassValue + "S"))
+                                elif S == "W":
+                                    areaWFlow = areaWFlow + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                                       tag.TagClassValue + "F"))
+                                    areaWSum = areaWSum + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                                     tag.TagClassValue + "S"))
+                                elif S == "E":
+                                    areaEZGL = areaEZGL + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                                     tag.TagClassValue + "_ZGL"))
+                                    areaEAU = areaEAU + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                                   tag.TagClassValue + "_AU"))
+                                    areaEAI = areaEAI + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                                   tag.TagClassValue + "_AI"))
+                                    areaEBI = areaEBI + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                                   tag.TagClassValue + "_BU"))
+                                    areaEBU = areaEBU + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                                   tag.TagClassValue + "_BI"))
+                                    areaECI = areaECI + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                                   tag.TagClassValue + "_CU"))
+                                    areaECU = areaECU + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                                                                   tag.TagClassValue + "_CI"))
+                            except Exception as ee:
+                                print(
+                                    "报错tag：" + tag.TagClassValue + " |报错IP：" + tag.IP + "  |报错端口：" + tag.COMNum + "  |错误：" + str(
+                                        ee))
+                            finally:
+                                pass
+                        area_dir["AreaName"] = ""
+                        area_dir["areaSFlow"] = areaSFlow
+                        area_dir["areaSSum"] = areaSSum
+                        area_dir["areaWFlow"] = areaWFlow
+                        area_dir["areaWSum"] = areaWSum
+                        area_dir["areaEZGL"] = areaEZGL
+                        area_dir["areaEAI"] = areaEAI
+                        area_dir["areaEAU"] = areaEAU
+                        area_dir["areaEBI"] = areaEBI
+                        area_dir["areaEBU"] = areaEBU
+                        area_dir["areaECI"] = areaEBI
+                        area_dir["areaECU"] = areaEBU
+                        area_list.append(area_dir)
+                    i = i + 1
+                # i = 0
+                # for tag in Tags:
+                #     try:
+                #         S = str(tag.TagClassValue)[0:1]
+                #         if S == "S":
+                #             tis_i={}
+                #             tis_i["title"] = tag.FEFportIP
+                #             tis_i["WD"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                #                                                      tag.TagClassValue + "WD"))
+                #             tis_i["Flow"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                #                                                        tag.TagClassValue + "F"))
+                #             tis_i["Sum"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                #                                                       tag.TagClassValue + "S"))
+                #             dis.append(tis_i)
+                #         elif S == "W":
+                #             tiw_i = {}
+                #             tiw_i["title"] = tag.FEFportIP
+                #             tiw_i["Flow"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                #                                                        tag.TagClassValue + "F"))
+                #             tiw_i["Sum"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                #                                                       tag.TagClassValue + "S"))
+                #             diw.append(tiw_i)
+                #         elif S == "E":
+                #             tie_i = {}
+                #             tie_i["title"] = tag.FEFportIP
+                #             tie_i["ZGL"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                #                                                       tag.TagClassValue + "_ZGL"))
+                #             tie_i["AU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                #                                                      tag.TagClassValue + "_AU"))
+                #             tie_i["AI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                #                                                      tag.TagClassValue + "_AI"))
+                #             tie_i["BU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                #                                                      tag.TagClassValue + "_BU"))
+                #             tie_i["BI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                #                                                      tag.TagClassValue + "_BI"))
+                #             tie_i["CU"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                #                                                      tag.TagClassValue + "_CU"))
+                #             tie_i["CI"] = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                #                                                      tag.TagClassValue + "_CI"))
+                #             die.append(tie_i)
+                #     except Exception as ee:
+                #         print("报错tag：" + tag.TagClassValue + " |报错IP：" + tag.IP + "  |报错端口：" + tag.COMNum + "  |错误：" + str(ee))
+                #     finally:
+                #         i = i + 1
+                #         pass
                 dir.append(data_dict)
-                print(dir)
                 json_data = json.dumps(data_dict)
                 # bytemsg = bytes(json_data, encoding="utf8")
                 # send_msg(c, bytes("recv: {}".format(data_parse), encoding="utf-8"))

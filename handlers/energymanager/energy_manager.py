@@ -1224,3 +1224,79 @@ def batchMaintainExcelSelect():
             print(e)
             logger.error(e)
             insertSyslog("error", "单位批次能耗报表查询报错Error：" + str(e), current_user.Name)
+
+@energy.route('/websocketecharstSelect', methods=['POST', 'GET'])
+def websocketecharstSelect():
+    '''
+    实时数据柱状图环形图
+    return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            dir = {}
+            rows: [
+                {'时间': "昨日", '功率': "4645"},
+                {'时间': "本日", '功率': "3454"},
+                {'时间': "月均", '功率': "2547"},
+            ]
+            rows: [
+                {'日期': '1/1', '访问用户': 1393},
+                {'日期': '1/2', '访问用户': 3530},
+                {'日期': '1/3', '访问用户': 2923},
+                {'日期': '1/4', '访问用户': 1723},
+                {'日期': '1/5', '访问用户': 3792},
+                {'日期': '1/6', '访问用户': 4593}
+            ]
+            Zwain:
+            electricHistogram
+            电柱状图
+
+            Zwain:
+            electricRing
+            电环形图
+
+            Zwain:
+            waterHistogram
+
+            Zwain:
+            waterRing
+
+            Zwain:
+            steamHistogram
+
+            Zwain:
+            steamRing
+
+            pages = int(data.get("offset"))  # 页数
+            rowsnumber = int(data.get("limit"))  # 行数
+            inipage = pages * rowsnumber + 0  # 起始页
+            endpage = pages * rowsnumber + rowsnumber  # 截止页
+            StartTime = data.get("StartTime")
+            EndTime = data.get("EndTime")
+            AreaName = data.get("AreaName")
+            BrandName = data.get("BrandName")
+            if AreaName == "" and BrandName == "":
+                batinfos = db_session.query(BatchMaintain).filter(
+                    BatchMaintain.ProductionDate.between(StartTime, EndTime)).all()[inipage:endpage]
+                count = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime, EndTime)).count()
+            elif AreaName != "" and BrandName == "":
+                batinfos = db_session.query(BatchMaintain).filter(
+                    BatchMaintain.ProductionDate.between(StartTime, EndTime), BatchMaintain.AreaName == AreaName).all()[inipage:endpage]
+                count = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime, EndTime),
+                                                               BatchMaintain.AreaName == AreaName).count()
+            elif AreaName == "" and BrandName != "":
+                batinfos = db_session.query(BatchMaintain).filter(
+                    BatchMaintain.ProductionDate.between(StartTime, EndTime),
+                    BatchMaintain.BrandName == BrandName).all()[inipage:endpage]
+                count = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime, EndTime),
+                                                               BatchMaintain.BrandName == BrandName).count()
+            else:
+                batinfos = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime,EndTime), BatchMaintain.AreaName == AreaName, BatchMaintain.BrandName == BrandName).all()[inipage:endpage]
+                count = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime,EndTime), BatchMaintain.AreaName == AreaName, BatchMaintain.BrandName == BrandName).count()
+            jsonbatinfos = json.dumps(batinfos, cls=AlchemyEncoder, ensure_ascii=False)
+            return '{"total"' + ":" + str(count) + ',"rows"' + ":\n" + jsonbatinfos + "}"
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "单位批次能耗报表查询报错Error：" + str(e), current_user.Name)
