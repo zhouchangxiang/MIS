@@ -60,7 +60,6 @@ export default {
           let comment={worknumber:this.username,password:this.password}
           let str=this.$qs.stringify(comment)
           this.$http.post('/api/v2/accounts/login',str).then((res) => {
-            console.log(res)
           if(res.status===200){
             if(res.data.code===1001){
               localStorage.setItem('token',res.data.data.token)
