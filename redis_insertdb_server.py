@@ -198,6 +198,10 @@ def run():
                         sl.IncrementFlag = "1"
                     else:
                         sl.IncrementFlag = "0"
+                    if Volume == 0.0:
+                        sl.insertVolumeFlag = "1"
+                    else:
+                        sl.insertVolumeFlag = "0"
                     sl.AreaName = key.AreaName
                     db_session.add(sl)
                     db_session.commit()

@@ -1073,6 +1073,56 @@ class IncrementStreamTable(Base):
     insertFlag = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 
+# 汽体积增量表
+class IncrementStreamVolume(Base):
+    __tablename__ = "IncrementStreamVolume"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 增量值:
+    IncremenValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 增量类型:
+    IncremenType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 计算原始数据表ID:
+    CalculationID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 价格表ID:
+    PriceID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 单位:
+    Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 仪表ID:
+    EquipmnetID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集点:
+    TagClassValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集时间:
+    CollectionDate = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集年:
+    CollectionYear = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集月:
+    CollectionMonth = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集天:
+    CollectionDay = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集时:
+    CollectionHour = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 区域:
+    AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 增量库插入标识
+    insertFlag = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+
 # 电价比重维护表
 class ElectricProportion(Base):
     __tablename__ = "ElectricProportion"

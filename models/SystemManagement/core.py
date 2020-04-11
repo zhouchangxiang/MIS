@@ -879,6 +879,9 @@ class SteamEnergy(Base):
     # 区域:
     AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+    # 增量库体积插入标识
+    insertVolumeFlag = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 
 # SteamEnergy_END:
 
