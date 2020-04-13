@@ -2,9 +2,9 @@
   <div style="width: 100%;height: 100%;background-color: #fff">
     <div class="chartContainer">
       <el-checkbox-group v-model="chartSettingsCheckbox" size="small" fill="#082F4C">
-        <el-checkbox-button v-for="(item,index) in settingsOptions" :label="item.label" :key="index" :value="item.value" @change="changeCheckbox">{{ item.label }}</el-checkbox-button>
+        <el-checkbox-button v-for="(item,index) in settingsOptions" :label="item.label" :key="index" @change="changeCheckbox">{{ item.label }}</el-checkbox-button>
       </el-checkbox-group>
-      <ve-tree :data="chartData" :settings="chartSettings"></ve-tree>
+      <ve-tree :data="chartData" :settings="chartSettings" :extend="chartExtend"></ve-tree>
     </div>
   </div>
 </template>
@@ -76,17 +76,26 @@
     name: "Organization",
     data(){
       return {
-        chartSettingsCheckbox:"",
+        chartSettingsCheckbox:[""],
         settingsOptions: [
-          {label:'垂直方向',value:"0"},
-          {label:'折线形状',value:"1"}
+          {label:'垂直方向'},
+          {label:'折线形状'}
         ],
         chartSettings: {
           seriesMap:{
             tree:{
               orient: 'LR',
-
+              edgeShape:"polyline",
+              symbolSize: 8,
+              label:{
+                position: 'left',
+              },
             }
+          }
+        },
+        chartExtend: {
+          tooltip: {
+            alwaysShowContent: true,
           }
         },
         chartData: {
@@ -107,13 +116,15 @@
             this.chartSettings.seriesMap.tree.orient="LR"
           }
         }else if(b.target.defaultValue === "折线形状"){
-          console.log(a)
           if(a){
             this.chartSettings.seriesMap.tree.edgeShape="curve"
           }else{
             this.chartSettings.seriesMap.tree.edgeShape= 'polyline'
           }
         }
+      },
+      addNode(){
+        console.log(1)
       }
       // clickNode: function(node){
       //   // eslint-disable-next-line

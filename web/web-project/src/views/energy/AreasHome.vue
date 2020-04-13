@@ -311,22 +311,11 @@
         },
         electricHistogram:{
           columns: ['时间', '总功率'],
-          rows: [
-            { '时间': "昨日", '总功率': "4645"},
-            { '时间': "本日", '总功率': "3454"},
-            { '时间': "月均", '总功率': "2547"},
-          ]
+          rows: []
         },
         electricRing:{
-          columns: ['日期', '总功率'],
-          rows: [
-            { '日期': '1/1', '总功率': 1393 },
-            { '日期': '1/2', '总功率': 3530 },
-            { '日期': '1/3', '总功率': 2923 },
-            { '日期': '1/4', '总功率': 1723 },
-            { '日期': '1/5', '总功率': 3792 },
-            { '日期': '1/6', '总功率': 4593 }
-          ]
+          columns: ['日期', '能耗量'],
+          rows: []
         },
         waterChartValue:"",
         waterChartData:{
@@ -356,22 +345,11 @@
         },
         waterHistogram:{
           columns: ['时间', '累计流量'],
-          rows: [
-            { '时间': "昨日", '累计流量': "4645"},
-            { '时间': "本日", '累计流量': "3454"},
-            { '时间': "月均", '累计流量': "2547"},
-          ]
+          rows: []
         },
         waterRing:{
-          columns: ['日期', '累计流量'],
-          rows: [
-            { '日期': '1/1', '累计流量': 1393 },
-            { '日期': '1/2', '累计流量': 3530 },
-            { '日期': '1/3', '累计流量': 2923 },
-            { '日期': '1/4', '累计流量': 1723 },
-            { '日期': '1/5', '累计流量': 3792 },
-            { '日期': '1/6', '累计流量': 4593 }
-          ]
+          columns: ['日期', '能耗量'],
+          rows: []
         },
         steamChartValue:"",
         steamChartData:{
@@ -401,22 +379,11 @@
         },
         steamHistogram:{
           columns: ['时间', '累计流量'],
-          rows: [
-            { '时间': "昨日", '累计流量': "4645"},
-            { '时间': "本日", '累计流量': "3454"},
-            { '时间': "月均", '累计流量': "2547"},
-          ]
+          rows: []
         },
         steamRing:{
-          columns: ['日期', '累计流量'],
-          rows: [
-            { '日期': '1/1', '累计流量': 1393 },
-            { '日期': '1/2', '累计流量': 3530 },
-            { '日期': '1/3', '累计流量': 2923 },
-            { '日期': '1/4', '累计流量': 1723 },
-            { '日期': '1/5', '累计流量': 3792 },
-            { '日期': '1/6', '累计流量': 4593 }
-          ]
+          columns: ['日期', '能耗量'],
+          rows: []
         },
         batchTableData:[
           {Name:"药品A",Batch:"JUSA2374627"},
@@ -533,13 +500,18 @@
         var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
         var yesterdayStartTime = moment().subtract(1,'day').format('YYYY-MM-DD') + " 00:00"
         var yesterdayEndTime = moment().subtract(1,'day').format('YYYY-MM-DD') + " " + nowTime
+        var thisStartMonth = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm')
+        var thisMonthDay = moment().format('DD')
         var params = {}
         var yesterdayParams ={}
+        var thisMonthParams ={}
         if(this.newAreaName.areaName === "整厂区"){
           params.StartTime = todayStartTime
           params.EndTime = todayEndTime
           yesterdayParams.StartTime = yesterdayStartTime
           yesterdayParams.EndTime = yesterdayEndTime
+          thisMonthParams.StartTime = thisStartMonth
+          thisMonthParams.EndTime = todayEndTime
         }else{
           params.StartTime = todayStartTime
           params.EndTime = todayEndTime
@@ -547,6 +519,9 @@
           yesterdayParams.StartTime = yesterdayStartTime
           yesterdayParams.EndTime = yesterdayEndTime
           yesterdayParams.Area = this.newAreaName.areaName
+          thisMonthParams.StartTime = thisStartMonth
+          thisMonthParams.EndTime = todayEndTime
+          thisMonthParams.Area = this.newAreaName.areaName
         }
         this.axios.all([
           this.axios.get("/api/energyelectric",{params: params}),//获取今天电
@@ -555,34 +530,51 @@
           this.axios.get("/api/energywater",{params: yesterdayParams}),//获取昨天水
           this.axios.get("/api/energysteam",{params: params}),//获取今天汽
           this.axios.get("/api/energysteam",{params: yesterdayParams}),//获取昨天汽
-        ]).then(this.axios.spread(function(todayElectricity,yesterdayElectricity,todayWater,yesterdayWater,todaySteam,yesterdaySteam){
+          this.axios.get("/api/energyelectric",{params: thisMonthParams}),//获取本月电
+          this.axios.get("/api/energywater",{params: thisMonthParams}),//获取本月水
+          this.axios.get("/api/energysteam",{params: thisMonthParams}),//获取本月汽
+          this.axios.get("/api/todayAreaRingCharts"),//获取环形图
+        ]).then(this.axios.spread(function(todayElectricity,yesterdayElectricity,todayWater,yesterdayWater,todaySteam,yesterdaySteam,monthElectricity,monthWater,monthSteam,todayAreaData){
           var todayElectricityData = JSON.parse(todayElectricity.data)
           var todayWaterData = JSON.parse(todayWater.data)
           var todaySteamData = JSON.parse(todaySteam.data)
           var yesterdayElectricityValue = JSON.parse(yesterdayElectricity.data).value
           var yesterdayWaterValue = JSON.parse(yesterdayWater.data).value
           var yesterdaySteamValue = JSON.parse(yesterdaySteam.data).value
+          var thisMonthElectricityValue = JSON.parse(monthElectricity.data).value
+          var thisMonthWaterValue = JSON.parse(monthWater.data).value
+          var thisMonthSteamValue = JSON.parse(monthSteam.data).value
           that.yesterdayElectricityValue = yesterdayElectricityValue
           that.yesterdayWaterValue = yesterdayWaterValue
           that.yesterdaySteamValue = yesterdaySteamValue
-          if(todayElectricityData.value != undefined){
-            that.todayElectricity = todayElectricityData.value
-            that.ElectricityUnit = todayElectricityData.unit
-          }else{
-            that.todayElectricity = "无数据"
-          }
-          if(todayWaterData.value != undefined){
-            that.todayWater = todayWaterData.value
-            that.WaterUnit = todayWaterData.unit
-          }else{
-            that.todayWater = "无数据"
-          }
-          if(todaySteamData.value != undefined){
-            that.todaySteam = todaySteamData.value
-            that.SteamUnit = todaySteamData.unit
-          }else{
-            that.todaySteam = "无数据"
-          }
+          console.log(todaySteamData)
+          //电
+          that.todayElectricity = todayElectricityData.value
+          that.ElectricityUnit = todayElectricityData.unit
+          that.electricHistogram.rows = [
+            { '时间': "昨日", '总功率': that.yesterdayElectricityValue},
+            { '时间': "本日", '总功率': that.todayElectricity},
+            { '时间': "月均", '总功率': (thisMonthElectricityValue / thisMonthDay).toFixed(2)}
+          ]
+          //水
+          that.todayWater = todayWaterData.value
+          that.WaterUnit = todayWaterData.unit
+          that.waterHistogram.rows = [
+            { '时间': "昨日", '累计流量': that.yesterdayElectricityValue},
+            { '时间': "本日", '累计流量': that.todayElectricity},
+            { '时间': "月均", '累计流量': (thisMonthWaterValue / thisMonthDay).toFixed(2)}
+          ]
+          //汽
+          that.todaySteam = todaySteamData.value
+          that.SteamUnit = todaySteamData.unit
+          that.steamHistogram.rows = [
+            { '时间': "昨日", '累计流量': that.yesterdayElectricityValue},
+            { '时间': "本日", '累计流量': that.todayElectricity},
+            { '时间': "月均", '累计流量': (thisMonthSteamValue / thisMonthDay).toFixed(2)}
+          ]
+          that.electricRing.rows = todayAreaData.data.erow
+          that.waterRing.rows = todayAreaData.data.wrow
+          that.steamRing.rows = todayAreaData.data.srow
         }))
       },
       getOnLineEq(){
