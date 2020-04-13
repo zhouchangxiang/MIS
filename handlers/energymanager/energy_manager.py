@@ -1125,7 +1125,7 @@ def todayAreaRingCharts():
                 sdir_coll["区域"] = area.AreaName
                 oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == area.AreaName).all()
                 oc_list = []
-                for oc in oc_list:
+                for oc in oclass:
                     oc_list.append(oc.TagClassValue)
                 if len(oc_list) > 0:
                     wdir_coll["能耗量"] = energyStatistics(oc_list, currentdayestart, currentdayend, "水")
