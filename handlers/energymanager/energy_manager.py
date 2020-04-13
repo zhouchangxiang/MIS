@@ -269,8 +269,12 @@ def energyselect(data):
                         int(currentday)) + " " + addzero(j) + ":59:59"
                     lasthour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
                         int(currentday)) + " " + addzero(j) + ":00:00"
-                    count = energyStatistics(oc_list, lasthour, currhour, EnergyClass)
-                    comperacount = energyStatistics(oc_list, lastcomparehour, comparehour, EnergyClass)
+                    if len(oc_list) > 0:
+                        count = energyStatistics(oc_list, lasthour, currhour, EnergyClass)
+                        comperacount = energyStatistics(oc_list, lastcomparehour, comparehour, EnergyClass)
+                    else:
+                        count = 0.0
+                        comperacount = 0.0
                     dir_list_dict["今日能耗"] = count
                     dir_list_dict["对比日能耗"] = comperacount
                     dir_list.append(dir_list_dict)
@@ -292,11 +296,17 @@ def energyselect(data):
                     dirmonth_list_dict["日期"] = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
                         int(i))
                     if i <= int(curmonthdays):
-                        monthcount = energyStatistics(oc_list, currmonthlasday, currmonthcurrday, EnergyClass)
+                        if len(oc_list) > 0:
+                            monthcount = energyStatistics(oc_list, currmonthlasday, currmonthcurrday, EnergyClass)
+                        else:
+                            monthcount = 0.0
                     else:
                         monthcount = 0.0
                     if i <= int(lasmonthdays):
-                        lastmonthcount = energyStatistics(oc_list, lastmonthlasday, lastmonthcurrday, EnergyClass)
+                        if len(oc_list) > 0:
+                            lastmonthcount = energyStatistics(oc_list, lastmonthlasday, lastmonthcurrday, EnergyClass)
+                        else:
+                            lastmonthcount = 0.0
                     else:
                         lastmonthcount = 0.0
                     dirmonth_list_dict["上月能耗"] = lastmonthcount
@@ -441,13 +451,19 @@ def areaTimeEnergy():
                         if compareday != None and compareday != "":
                             comparehour = str(compareday) + " " + addzero(j) + ":59:59"
                             lastcomparehour = str(compareday) + " " + addzero(j) + ":00:00"
-                            vlaue = energyStatistics(oc_list, lastcomparehour, comparehour, EnergyClass)
+                            if len(oc_list) > 0:
+                                vlaue = energyStatistics(oc_list, lastcomparehour, comparehour, EnergyClass)
+                            else:
+                                vlaue = 0.0
                         else:
                             currhour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
                                 int(currentday)) + " " + addzero(j) + ":59:59"
                             lasthour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
                                 int(currentday)) + " " + addzero(j) + ":00:00"
-                            vlaue = energyStatistics(oc_list, lasthour, currhour, EnergyClass)
+                            if len(oc_list) > 0:
+                                vlaue = energyStatistics(oc_list, lasthour, currhour, EnergyClass)
+                            else:
+                                vlaue = 0.0
                         dict_valuelist = {}
                         dict_valuelist["date"] = str(j)
                         if vlaue == None or vlaue < 0:
@@ -527,147 +543,6 @@ def trendChart():
             print(e)
             logger.error(e)
             insertSyslog("error", "区域时段能耗查询报错Error：" + str(e), current_user.Name)
-
-
-@energy.route('/energyHistory', methods=['POST', 'GET'])
-def energyHistory():
-    '''
-    能源历史数据
-    :return:
-    '''
-    if request.method == 'GET':
-        data = request.values
-        try:
-            StartTime = data.get("StartTime")
-            EndTime = data.get("EndTime")
-            Energy = data.get("Energy")
-            dir = {}
-            dire = {}
-            dire["name"] = Energy
-            diy = []
-            dix = []
-            eng = {}
-            uni = db_session.query(Unit.UnitValue).filter(Unit.UnitName == Energy).first()[0]
-            dir["Unit"] = uni
-            if Energy == "水":
-                # 能耗历史数据
-                CollectionDates = db_session.query(WaterEnergy.CollectionDate).distinct().filter(
-                    WaterEnergy.CollectionDate.between(StartTime, EndTime)).order_by(("CollectionDate")).all()
-                for CollectionDate in CollectionDates:
-                    dicss = []
-                    timeArray = time.strptime(CollectionDate[0], "%Y-%m-%d %H:%M:%S")
-                    timeStamp = int(time.mktime(timeArray))
-                    dicss.append(1000 * timeStamp)
-                    watEnergyValues = db_session.query(WaterEnergy.WaterFlow).filter(
-                        WaterEnergy.CollectionDate == CollectionDate[0]).all()
-                    towatEnergyValue = 0.0
-                    for watEnergyValue in watEnergyValues:
-                        towatEnergyValue = towatEnergyValue + float(watEnergyValue[0])
-                    dicss.append(round(float(towatEnergyValue), 2))
-                    diy.append(dicss)
-                # 区域能耗排名
-                AreaNames = db_session.query(AreaTable.AreaName).filter().all()
-                totalflow = 0.0
-                for AreaName in AreaNames:
-                    TagClassValues = db_session.query(TagDetail.TagClassValue).filter(
-                        TagDetail.AreaName == AreaName[0]).all()
-                    engsum = 0.0
-                    for TagClassValue in TagClassValues:
-                        watEnergyValues = db_session.query(WaterEnergy.WaterFlow).filter(
-                            WaterEnergy.TagClassValue == TagClassValue,
-                            WaterEnergy.CollectionDate.between(StartTime, EndTime)).all()
-                        engsum = engsum + accumulation(watEnergyValues)
-                    eng[AreaName[0]] = str(round(engsum, 2))
-                    totalflow = totalflow + engsum
-                # 累积量
-                dir["total"] = str(round(totalflow, 2))
-            elif Energy == "电":
-                CollectionDates = db_session.query(ElectricEnergy.CollectionDate).distinct().filter(
-                    ElectricEnergy.CollectionDate.between(StartTime, EndTime)).order_by(("CollectionDate")).all()
-                for CollectionDate in CollectionDates:
-                    dicss = []
-                    timeArray = time.strptime(CollectionDate[0], "%Y-%m-%d %H:%M:%S")
-                    timeStamp = int(time.mktime(timeArray))
-                    dicss.append(1000 * timeStamp)
-                    currhour = CollectionDate[0]
-                    vv = datetime.datetime.strptime(currhour, "%Y-%m-%d %H:%M:%S")
-                    lasthour = str((vv + datetime.timedelta(hours=-1)).strftime("%Y-%m-%d %H:%M:%S"))[0:13]
-                    oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == Energy).all()
-                    eletotal = 0.0
-                    for oc in oclass:
-                        eletotal = eletongji(oc, currhour, lasthour, eletotal)
-                    dicss.append(eletotal)
-                    diy.append(dicss)
-                # 区域能耗排名
-                AreaNames = db_session.query(AreaTable.AreaName).filter().all()
-                totalflow = 0.0
-                for AreaName in AreaNames:
-                    TagClassValues = db_session.query(TagDetail.TagClassValue).filter(
-                        TagDetail.AreaName == AreaName[0]).all()
-                    engsum = 0.0
-                    for TagClassValue in TagClassValues:
-                        cur = db_session.query(ElectricEnergy.ZGL).filter(
-                            ElectricEnergy.TagClassValue == TagClassValue,
-                            ElectricEnergy.CollectionDate == StartTime).order_by(desc("CollectionDate")).first()
-                        las = db_session.query(ElectricEnergy.ZGL).filter(
-                            ElectricEnergy.TagClassValue == TagClassValue,
-                            ElectricEnergy.CollectionDate == EndTime).order_by(("CollectionDate")).first()
-                        engsum = engsum + appendcur(cur, las)
-                    eng[AreaName[0]] = round(engsum, 2)
-                    totalflow = totalflow + engsum
-                # 累积量
-                dir["total"] = round(totalflow, 2)
-            elif Energy == "汽":
-                CollectionDates = db_session.query(SteamEnergy.CollectionDate).distinct().filter(
-                    SteamEnergy.CollectionDate.between(StartTime, EndTime)).order_by(("CollectionDate")).all()
-                for CollectionDate in CollectionDates:
-                    dicss = []
-                    timeArray = time.strptime(CollectionDate[0], "%Y-%m-%d %H:%M:%S")
-                    timeStamp = int(time.mktime(timeArray))
-                    dicss.append(1000 * timeStamp)
-                    steEnergyValues = db_session.query(SteamEnergy.FlowValue).filter(
-                        SteamEnergy.CollectionDate == CollectionDate[0]).all()
-                    tosteEnergyValue = 0.0
-                    for steEnergyValue in steEnergyValues:
-                        tosteEnergyValue = tosteEnergyValue + float(steEnergyValue[0])
-                    dicss.append(round(float(tosteEnergyValue), 2))
-                    diy.append(dicss)
-                # 区域能耗排名
-                AreaNames = db_session.query(AreaTable.AreaName).filter().all()
-                totalflow = 0.0
-                for AreaName in AreaNames:
-                    TagClassValues = db_session.query(TagDetail.TagClassValue).filter(
-                        TagDetail.AreaName == AreaName[0]).all()
-                    engsum = 0.0
-                    for TagClassValue in TagClassValues:
-                        steEnergyValues = db_session.query(SteamEnergy.FlowValue).filter(
-                            SteamEnergy.TagClassValue == TagClassValue,
-                            SteamEnergy.CollectionDate.between(StartTime, EndTime)).all()
-                        engsum = engsum + accumulation(steEnergyValues)
-                    eng[AreaName[0]] = str(round(totalflow, 2))
-                    totalflow = totalflow + engsum
-                # 累积量
-                dir["total"] = str(round(totalflow, 2))
-            en = sorted(eng.items(), key=lambda x: float(x[1]), reverse=True)
-            eny = []
-            enx = []
-            dien = {}
-            dien["name"] = Energy
-            for i in en:
-                enx.append(i[0])
-                eny.append(float(i[1]))
-            dien["data"] = eny
-            dir["energyRankY"] = [dien]
-            dir["energyRankX"] = enx
-            dire["data"] = diy
-            dix.append(dire)
-            dir["HistorySeries"] = dix
-            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
-        except Exception as e:
-            print(e)
-            logger.error(e)
-            insertSyslog("error", "能源历史数据查询报错Error：" + str(e), current_user.Name)
-
 
 class Statistic():
     def __init__(self, Area, Water, Electric, Steam, CollectDate):
@@ -1235,45 +1110,12 @@ def websocketecharstSelect():
         data = request.values
         try:
             dir = {}
-            rows: [
-                {'时间': "昨日", '功率': "4645"},
-                {'时间': "本日", '功率': "3454"},
-                {'时间': "月均", '功率': "2547"},
-            ]
-            rows: [
-                {'日期': '1/1', '访问用户': 1393},
-                {'日期': '1/2', '访问用户': 3530},
-                {'日期': '1/3', '访问用户': 2923},
-                {'日期': '1/4', '访问用户': 1723},
-                {'日期': '1/5', '访问用户': 3792},
-                {'日期': '1/6', '访问用户': 4593}
-            ]
-            pages = int(data.get("offset"))  # 页数
-            rowsnumber = int(data.get("limit"))  # 行数
-            inipage = pages * rowsnumber + 0  # 起始页
-            endpage = pages * rowsnumber + rowsnumber  # 截止页
-            StartTime = data.get("StartTime")
-            EndTime = data.get("EndTime")
-            AreaName = data.get("AreaName")
-            BrandName = data.get("BrandName")
-            if AreaName == "" and BrandName == "":
-                batinfos = db_session.query(BatchMaintain).filter(
-                    BatchMaintain.ProductionDate.between(StartTime, EndTime)).all()[inipage:endpage]
-                count = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime, EndTime)).count()
-            elif AreaName != "" and BrandName == "":
-                batinfos = db_session.query(BatchMaintain).filter(
-                    BatchMaintain.ProductionDate.between(StartTime, EndTime), BatchMaintain.AreaName == AreaName).all()[inipage:endpage]
-                count = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime, EndTime),
-                                                               BatchMaintain.AreaName == AreaName).count()
-            elif AreaName == "" and BrandName != "":
-                batinfos = db_session.query(BatchMaintain).filter(
-                    BatchMaintain.ProductionDate.between(StartTime, EndTime),
-                    BatchMaintain.BrandName == BrandName).all()[inipage:endpage]
-                count = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime, EndTime),
-                                                               BatchMaintain.BrandName == BrandName).count()
-            else:
-                batinfos = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime,EndTime), BatchMaintain.AreaName == AreaName, BatchMaintain.BrandName == BrandName).all()[inipage:endpage]
-                count = db_session.query(BatchMaintain).filter(BatchMaintain.ProductionDate.between(StartTime,EndTime), BatchMaintain.AreaName == AreaName, BatchMaintain.BrandName == BrandName).count()
+            currentdayend = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            currentdayestart = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")[0:10]+" 00:00:00"
+            araes = db_session.query(AreaTable).filter().all()
+            for area in araes:
+                
+            energyStatistics(oc_list, StartTime, EndTime, energy)
             jsonbatinfos = json.dumps(batinfos, cls=AlchemyEncoder, ensure_ascii=False)
             return '{"total"' + ":" + str(count) + ',"rows"' + ":\n" + jsonbatinfos + "}"
         except Exception as e:
