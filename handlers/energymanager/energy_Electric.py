@@ -141,8 +141,6 @@ def energyElectricSelect(data):
             dir["type"] = "电"
             unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == energy).first()[0]
             dir["unit"] = unit
-            print(dir)
-            print(datetime.datetime.now())
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)

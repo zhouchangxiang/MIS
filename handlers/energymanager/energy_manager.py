@@ -1146,3 +1146,4 @@ def todayAreaRingCharts():
             print(e)
             logger.error(e)
             insertSyslog("error", "实时数据柱状图环形图查询报错Error：" + str(e), current_user.Name)
+
