@@ -1113,12 +1113,36 @@ def websocketecharstSelect():
             currentdayend = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             currentdayestart = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")[0:10]+" 00:00:00"
             araes = db_session.query(AreaTable).filter().all()
+            wdir_list = []
+            edir_list = []
+            sdir_list = []
             for area in araes:
-                
-            energyStatistics(oc_list, StartTime, EndTime, energy)
-            jsonbatinfos = json.dumps(batinfos, cls=AlchemyEncoder, ensure_ascii=False)
-            return '{"total"' + ":" + str(count) + ',"rows"' + ":\n" + jsonbatinfos + "}"
+                wdir_coll = {}
+                edir_coll = {}
+                sdir_coll = {}
+                wdir_coll["区域"] = area.AreaName
+                edir_coll["区域"] = area.AreaName
+                sdir_coll["区域"] = area.AreaName
+                oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == area.AreaName).all()
+                oc_list = []
+                for oc in oc_list:
+                    oc_list.append(oc.TagClassValue)
+                if len(oc_list) > 0:
+                    wdir_coll["能耗量"] = energyStatistics(oc_list, currentdayestart, currentdayend, "水")
+                    edir_coll["能耗量"] = energyStatistics(oc_list, currentdayestart, currentdayend, "电")
+                    sdir_coll["能耗量"] = energyStatistics(oc_list, currentdayestart, currentdayend, "汽")
+                else:
+                    wdir_coll["能耗量"] = 0.0
+                    edir_coll["能耗量"] = 0.0
+                    sdir_coll["能耗量"] = 0.0
+                wdir_list.append(wdir_coll)
+                edir_list.append(edir_coll)
+                sdir_list.append(sdir_coll)
+            dir["wrow"] = wdir_list
+            dir["erow"] = edir_list
+            dir["srow"] = sdir_list
+            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
             logger.error(e)
-            insertSyslog("error", "单位批次能耗报表查询报错Error：" + str(e), current_user.Name)
+            insertSyslog("error", "实时数据柱状图环形图查询报错Error：" + str(e), current_user.Name)
