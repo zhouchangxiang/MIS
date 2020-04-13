@@ -1,49 +1,124 @@
 <template>
-  <div class="chartContainer">
-    <input type="checkbox" v-model="landscape" value="1">
-    <TreeChart :json="treeData" :class="{landscape: landscape.length}" @click-node="clickNode" />
+  <div style="width: 100%;height: 100%;background-color: #fff">
+    <div class="chartContainer">
+      <el-checkbox-group v-model="chartSettingsCheckbox" size="small" fill="#082F4C">
+        <el-checkbox-button v-for="(item,index) in settingsOptions" :label="item.label" :key="index" :value="item.value" @change="changeCheckbox">{{ item.label }}</el-checkbox-button>
+      </el-checkbox-group>
+      <ve-tree :data="chartData" :settings="chartSettings"></ve-tree>
+    </div>
   </div>
 </template>
 
 <script>
-  import TreeChart from '@/views/SystemManage/TreeChart'
+  const treeData = {
+    name: '好护士药业有限责任公司',
+    value: 1,
+    children: [
+      {
+        name: 'a',
+        value: 1,
+        children: [
+          {
+            name: 'a-a',
+            value: 2
+          },
+          {
+            name: 'a-b',
+            value: 2
+          }
+        ]
+      },
+      {
+        name: 'b',
+        value: 1,
+        children: [
+          {
+            name: 'b-a',
+            value: 2
+          },
+          {
+            name: 'b-b',
+            value: 2
+          }
+        ]
+      },
+      {
+        name: 'c',
+        value: 3,
+        children: [
+          {
+            name: 'c-a',
+            value: 4
+          },
+          {
+            name: 'c-b',
+            value: 2
+          }
+        ]
+      },
+      {
+        name: 'd',
+        value: 3,
+        children: [
+          {
+            name: 'd-a',
+            value: 4
+          },
+          {
+            name: 'd-b',
+            value: 2
+          }
+        ]
+      }
+    ]
+  }
   export default {
     name: "Organization",
-    components: {
-      TreeChart
-    },
     data(){
       return {
-        landscape: [],
-        treeData: {
-          id: 0,
-          name: "云南启辰思维智能科技有限公司",
-          children: [
-            {id: 2,name: "产品研发部",
-              children: [
-                {id: 5,name: "研发-前端"},
-                {id: 6,name: "研发-后端"},
-                {id: 9,name: "UI设计"},
-                {id: 10,name: "产品经理"}
-              ]
-            },
-            {id: 3,name: "销售部",
-              children: [
-                {id: 7,name: "销售一部"},
-                {id: 8,name: "销售二部"}
-              ]
-            },
-            {id: 4,name: "财务部"},
-            {id: 9,name: "HR人事"}
-          ]
+        chartSettingsCheckbox:"",
+        settingsOptions: [
+          {label:'垂直方向',value:"0"},
+          {label:'折线形状',value:"1"}
+        ],
+        chartSettings: {
+          seriesMap:{
+            tree:{
+              orient: 'LR',
+
+            }
+          }
         },
+        chartData: {
+          columns: ['name', 'value'],
+          rows: [{
+            name: 'tree',
+            value: [treeData]
+          }]
+        }
       }
     },
     methods: {
-      clickNode: function(node){
-        // eslint-disable-next-line
-        console.log(node)
+      changeCheckbox(a,b){
+        if(b.target.defaultValue === "垂直方向"){
+          if(a){
+            this.chartSettings.seriesMap.tree.orient="TB"
+          }else{
+            this.chartSettings.seriesMap.tree.orient="LR"
+          }
+        }else if(b.target.defaultValue === "折线形状"){
+          console.log(a)
+          if(a){
+            this.chartSettings.seriesMap.tree.edgeShape="curve"
+          }else{
+            this.chartSettings.seriesMap.tree.edgeShape= 'polyline'
+          }
+        }
       }
+      // clickNode: function(node){
+      //   // eslint-disable-next-line
+      //   console.log(node)
+      // }
       // renderContent (h, data) {
       //   return data.label
       // },
