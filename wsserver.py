@@ -290,7 +290,6 @@ def handler_msg(conn):
                 #     finally:
                 #         i = i + 1
                 #         pass
-                print(area_list)
                 json_data = json.dumps(area_list)
                 # bytemsg = bytes(json_data, encoding="utf8")
                 # send_msg(c, bytes("recv: {}".format(data_parse), encoding="utf-8"))
