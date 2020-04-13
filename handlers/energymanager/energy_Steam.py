@@ -133,7 +133,7 @@ def energySteamSelect(data):
             if len(oc_list) > 0:
                 stecount = energyStatistics(oc_list, StartTime, EndTime, energy)
             else:
-                elecount = 0.0
+                stecount = 0.0
             dir["type"] = energy
             dir["value"] = stecount
             unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == energy).first()[0]
