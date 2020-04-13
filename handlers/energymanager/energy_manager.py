@@ -1100,8 +1100,8 @@ def batchMaintainExcelSelect():
             logger.error(e)
             insertSyslog("error", "单位批次能耗报表查询报错Error：" + str(e), current_user.Name)
 
-@energy.route('/websocketecharstSelect', methods=['POST', 'GET'])
-def websocketecharstSelect():
+@energy.route('/todayAreaRingCharts', methods=['POST', 'GET'])
+def todayAreaRingCharts():
     '''
     实时数据柱状图环形图
     return:
