@@ -2,7 +2,6 @@
     <div class="content">
         <DateC :newac="newac"></DateC>
         <div class="show">
-            数据展示区域
         </div>
 
     </div>
@@ -18,6 +17,8 @@ export default {
     },
     components:{
         DateC
+    },
+    methods:{
     }
 }
 </script>

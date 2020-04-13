@@ -9,8 +9,7 @@ import Report from '@/components/report/Report'
 
 Vue.use(Router)
 
-
-export default new Router({
+const router= new Router({
   routes: [
     {
       path: '/login',
@@ -29,3 +28,23 @@ export default new Router({
     }
   ]
 })
+
+// router.beforeEach((to,from,next)=>{
+//   if (to.meta.requireAuth) {  // 判断该路由是否需要登录权限
+//     if (localStorage.getItem('token')) {  // 获取当前的token是否存在
+//       next();
+//     } else {
+//       alert('请先登录')
+//       next('/login')
+//     }
+//   }
+//   else { // 如果不需要权限校验，直接进入路由界面
+//     if(localStorage.getItem('token')){
+//       localStorage.removeItem('token')
+//       next()
+//     }
+//     next();
+//   }
+// })
+
+export default router

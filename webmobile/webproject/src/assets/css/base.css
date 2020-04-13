@@ -40,4 +40,32 @@
 }
 .cir-choose .van-tabs__nav--card .van-tab{
     line-height: 22px;
-} 
+}
+.van-picker .van-picker__columns{
+    height: 199px!important;
+}
+.van-picker-column__wrapper{
+    line-height: 18px!important;
+}
+.van-picker-column{
+    background-color:#1E222B;
+}
+.van-picker__mask{
+    z-index: -10;
+}
+.van-picker-column{
+    font-size: 12px;
+    text-align:right;
+}
+.van-picker-column__item{
+    color:#76787E;
+    height: 18px;
+}
+.van-picker-column__item.van-picker-column__item--selected{
+    color: #fff;
+    height: 18px;
+    line-height: 18px;
+}
+.van-picker__frame{
+    z-index: -9;
+}
