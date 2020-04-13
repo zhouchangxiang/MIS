@@ -1,5 +1,5 @@
 <template>
-   <div>
+   <div class="mainbox">
        <div class="top">
            <div class='head-name'>好护士能管系统</div>
            <span @click="logout"><van-icon name="close" size="22px" color="#FF5041FF"/></span>
@@ -34,6 +34,13 @@ export default {
 <style lang="less" scoped>
     @bgca:#3D4048FF;
     @bgcc:#1E222BFF;
+    .mainbox{
+        position: relative;
+        width:375px;
+        height:667px;
+        background:rgba(30,34,43,1);
+        opacity:1;
+    }
     .top{
         position: relative;
         height:89px;

@@ -49,33 +49,46 @@ export default {
   methods:{
   
     login() {
-        if(this.username.trim() == ''){
-          this.$toast("用户名不能为空");
-          return false;
-        }
-        if(this.password.trim() == ''){
-          this.$toast("密码不能为空");
-          return false;
-        }else{
-          let comment={worknumber:this.username,password:this.password}
-          let str=this.$qs.stringify(comment)
-          this.$http.post('/api/v2/accounts/login',str).then((res) => {
-          if(res.status===200){
-            if(res.data.code===1001){
-              localStorage.setItem('token',res.data.data.token)
-              this.$toast(res.data.msg)
-              this.$router.push('/home')}
-          else{
-            this.$toast(res.data.msg)
-          }}
-          else{
-            this.$toast('请求报错，请重新登录')
-          }
-        }).catch(err=>{
-          console.log(err)
-        })
+       this.$http.get('/api/energysteam',{params:{
+                StartTime:'2020-04-01 00:00:00',
+                EndTime:'2020-04-03 00:00:00',
+                Area:'研发中心'
+            }}).then((value) => {
+                // this.$store.state.sbnumber=JSON.parse(value.data)
+                // console.log(this.$store.state.sbnumber.value)
+                console.log(value)
+            
+            }).catch((value) => {
+              console.log(value)
+            })
+        // if(this.username.trim() == ''){
+        //   this.$toast("用户名不能为空");
+        //   return false;
+        // }
+        // if(this.password.trim() == ''){
+        //   this.$toast("密码不能为空");
+        //   return false;
+        // }else{
+        //   let comment={WorkNumber:this.username,password:this.password}
+        //   let str=this.$qs.stringify(comment)
+        //   this.$http.post('/api/account/userloginauthentication',str).then((res) => {
+        //   if(res.status===200){
+        //     console.log(res)
+        //     if(res.data.code===1001){
+        //       localStorage.setItem('token',res.data.data.token)
+        //       this.$toast(res.data.msg)
+        //       this.$router.push('/home')}
+        //   else{
+        //     this.$toast(res.data.msg)
+        //   }}
+        //   else{
+        //     this.$toast('请求报错，请重新登录')
+        //   }
+        // }).catch(err=>{
+        //   console.log(err)
+        // })
      
-        }
+        // }
   }
 }
 }

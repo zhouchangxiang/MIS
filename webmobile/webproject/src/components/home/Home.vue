@@ -29,9 +29,7 @@
                    <div class="dw-pc">kwh/批</div>
                </div>
                <div class="sb-r">
-                    <ul>
-                       <li v-for="(item,index) in area" :key="index" @click="mtt($event)">{{item}}</li>
-                    </ul>
+                    <van-picker :columns="area" @change="onChange" :default-index="2"/>
                </div>
            </div>
         <ShowNumber></ShowNumber>
@@ -42,6 +40,7 @@ var moment=require('moment')
 import ShowNumber from '../common/Shownumber.vue'
 import DateC from '../common/Choosedate.vue'
 import store from '../../store/index'
+import ChoosedateVue from '../common/Choosedate.vue'
 var moment=require('moment')
 export default {
     data(){
@@ -50,7 +49,7 @@ export default {
             radio2:3,
             activeKey: 0,
             shui:'',
-            area:['新建综合制剂楼','提取二车间','前处理车间','研发中心','生物科技楼','原提取车间']
+            area:['新建综合制剂楼','提取二车间','前处理车间','研发中心','生物科技楼','原提取车间','锅炉房']
         }
     },
     components:{
@@ -61,9 +60,9 @@ export default {
         this.getWater()
     },
     methods:{
-    mtt(e){
-      this.$store.state.workplace=e.srcElement.innerText
-
+      onChange(picker, value) {
+        this.$store.commit("Chooseworkplace",value)
+        this.$toast(value);
     },
     getWater(){
         console.log(moment(new Date()).format('YYYY-MM-DD HH:mm:ss'))

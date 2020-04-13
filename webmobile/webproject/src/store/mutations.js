@@ -1,5 +1,11 @@
 const mutations={
-    add:(state)=>{
-        return state.count*2
-}}
+    Choosedate:(state,choosedate)=>{
+        state.choosedate=choosedate
+    },
+    Choosekind:(state,choosekind)=>{
+        state.choosekind=choosekind
+    },  
+    Chooseworkplace:(state,workplace)=>{
+    state.workplace=workplace
+    }}
 export default mutations
