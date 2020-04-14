@@ -1,13 +1,13 @@
 <template>
     <div class="show-box">
-        <DateC :fz="radio1"></DateC>
+        <DateC></DateC>
         <div class="show-banner">
-                  <div class="sb-name" @click="getWater">厂区能耗</div>
-                  <div class="sb-number">{{shui}}</div>
+                  <div class="sb-name">厂区能耗</div>
+                  <div class="sb-number">{{this.$store.state.sbnumber.value}}</div>
                   <div class="sb-compare">较上期</div>
                   <div class="sb-l-n">+1.345%</div>
                   <div class="sb-dw">单位</div>
-                  <div class="sb-t">T</div>
+                  <div class="sb-t">{{this.$store.state.sbnumber.unit}}</div>
                   <div class="tabbar">
                       <ul>
                           <li><div>提取制剂</div><span></span></li>
@@ -45,11 +45,9 @@ var moment=require('moment')
 export default {
     data(){
         return {
-            radio1:3,
-            radio2:3,
-            activeKey: 0,
-            shui:'',
-            area:['新建综合制剂楼','提取二车间','前处理车间','研发中心','生物科技楼','原提取车间','锅炉房']
+            myapi:'',
+            area:['新建综合制剂楼','提取二车间','前处理车间','研发中心','生物科技楼','原提取车间','锅炉房'],
+            StartTime:'2020-04-07 12:22:59'
         }
     },
     components:{
@@ -63,20 +61,45 @@ export default {
       onChange(picker, value) {
         this.$store.commit("Chooseworkplace",value)
         this.$toast(value);
+        let n=this.$store.state.choosedate
+        this.EndTime=moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+        let x=this.$store.state.choosekind
+            switch(x){
+                case 0:
+                    this.myapi='/energywater';
+                    break;
+                case 1:
+                    this.myapi='/energyelectric';
+                    break;
+                case 2:
+                    this.myapi='/energysteam';
+                    break;
+            }
+            if(n===0){
+                this.StartTime='2020-04-01 00:00:00'
+            }else if(n===1){
+                this.StartTime='2020-04-07 00:00:00'
+            }else{
+                this.StartTime='2020-04-09 00:00:00'
+            }
+        this.$http.get('/api'+this.myapi,{params:{
+            StartTime:this.StartTime,
+            EndTime:this.EndTime,
+            Area:this.$store.state.workplace
+        }}).then((res) => {
+            this.$store.commit('Sbnumbers',JSON.parse(res.data))
+        })
     },
     getWater(){
-        console.log(moment(new Date()).format('YYYY-MM-DD HH:mm:ss'))
         let str=moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
-
         this.$http.get('/api/energywater',{params:{
             StartTime:'2020-04-07 12:22:59',
             EndTime:str,
-            Area:'研发中心'
-            }}).then((value) => {
-          let a=JSON.parse(value.data)
-          console.log(a)
-          this.shui=a.value
-          console.log(value)
+            Area:'新建综合制剂楼'
+            }}).then((res)=> {
+            this.$store.commit('Sbnumbers',JSON.parse(res.data))
+        }).catch((err) => {
+            console.log(err)
         })
     }
 

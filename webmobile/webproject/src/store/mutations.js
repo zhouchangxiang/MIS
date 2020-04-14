@@ -7,5 +7,9 @@ const mutations={
     },  
     Chooseworkplace:(state,workplace)=>{
     state.workplace=workplace
-    }}
+    },
+    Sbnumbers:(state,value)=>{
+        state.sbnumber=value
+    }
+}
 export default mutations
