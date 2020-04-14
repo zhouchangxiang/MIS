@@ -18,7 +18,7 @@
                   <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
                 </div>
                 <div class="itemMarginBottom">
-                  <span class="text-size-normol text-color-info">{{ electricityCost }}元</span>
+                  <span class="text-size-normol text-color-info">{{ electricityCost }}</span>
                   <span class="text-size-normol float-right" :class="todayElectricity-yesterdayElectricityValue>0?'text-color-danger':'text-color-success'">{{ ElectricityCompare }}</span>
                 </div>
               </el-col>
@@ -54,7 +54,7 @@
                   <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
                 </div>
                 <div class="itemMarginBottom">
-                  <span class="text-size-normol text-color-info">{{ waterCost }}元</span>
+                  <span class="text-size-normol text-color-info">{{ waterCost }}</span>
                   <span class="text-size-normol float-right" :class="todayWater-yesterdayWaterValue>0?'text-color-danger':'text-color-success'">{{ WaterCompare }}</span>
                 </div>
               </el-col>
@@ -90,7 +90,7 @@
                   <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
                 </div>
                 <div class="itemMarginBottom">
-                  <span class="text-size-normol text-color-info">{{ steamCost }}元</span>
+                  <span class="text-size-normol text-color-info">{{ steamCost }}</span>
                   <span class="text-size-normol float-right" :class="todaySteam-yesterdaySteamValue>0?'text-color-danger':'text-color-success'">{{ SteamCompare }}</span>
                 </div>
               </el-col>
@@ -130,7 +130,7 @@
                 <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
               </div>
               <div class="itemMarginBottom">
-                <span class="text-size-normol text-color-info">523.5元</span>
+                <span class="text-size-normol text-color-info">{{ electricityCost }}</span>
                 <span class="text-size-normol float-right" :class="todayElectricity-yesterdayElectricityValue>0?'text-color-danger':'text-color-success'">{{ ElectricityCompare }}</span>
               </div>
             </el-col>
@@ -153,7 +153,7 @@
                 <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
               </div>
               <div class="itemMarginBottom">
-                <span class="text-size-normol text-color-info">523.5元</span>
+                <span class="text-size-normol text-color-info">{{ waterCost }}</span>
                 <span class="text-size-normol float-right" :class="todayWater-yesterdayWaterValue>0?'text-color-danger':'text-color-success'">{{ WaterCompare }}</span>
               </div>
             </el-col>
@@ -176,7 +176,7 @@
                 <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
               </div>
               <div class="itemMarginBottom">
-                <span class="text-size-normol text-color-info">523.5元</span>
+                <span class="text-size-normol text-color-info">{{ steamCost }}</span>
                 <span class="text-size-normol float-right" :class="todaySteam-yesterdaySteamValue>0?'text-color-danger':'text-color-success'">{{ SteamCompare }}</span>
               </div>
             </el-col>
@@ -576,7 +576,7 @@
           //电
           that.todayElectricity = todayElectricityData.value
           that.ElectricityUnit = todayElectricityData.unit
-          that.electricityCost = todayElectricityData.cost
+          that.electricityCost = todayElectricityData.cost + "元"
           that.electricHistogram.rows = [
             { '时间': "昨日", '总功率': that.yesterdayElectricityValue},
             { '时间': "本日", '总功率': that.todayElectricity},
@@ -585,7 +585,7 @@
           //水
           that.todayWater = todayWaterData.value
           that.WaterUnit = todayWaterData.unit
-          that.waterCost = todayWaterData.cost
+          that.waterCost = todayWaterData.cost + "元"
           that.waterHistogram.rows = [
             { '时间': "昨日", '累计流量': that.yesterdayElectricityValue},
             { '时间': "本日", '累计流量': that.todayElectricity},
@@ -594,7 +594,7 @@
           //汽
           that.todaySteam = todaySteamData.value
           that.SteamUnit = todaySteamData.unit
-          that.steaCost = todaySteamData.cost
+          that.steaCost = todaySteamData.cost + "元"
           that.steamHistogram.rows = [
             { '时间': "昨日", '累计流量': that.yesterdayElectricityValue},
             { '时间': "本日", '累计流量': that.todayElectricity},
