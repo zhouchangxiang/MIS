@@ -1,12 +1,54 @@
 <template>
-  <div style="width: 100%;height: 100%;background-color: #fff">
-    <div class="chartContainer">
-      <el-checkbox-group v-model="chartSettingsCheckbox" size="small" fill="#082F4C">
-        <el-checkbox-button v-for="(item,index) in settingsOptions" :label="item.label" :key="index" @change="changeCheckbox">{{ item.label }}</el-checkbox-button>
-      </el-checkbox-group>
-      <ve-tree :data="chartData" :settings="chartSettings" :extend="chartExtend"></ve-tree>
-    </div>
-  </div>
+  <el-row>
+    <el-col :span="24">
+      <el-form :inline="true">
+        <el-form-item>
+          <el-radio-group v-model="layoutValue" fill="#082F4C" size="small" @change="changeSettings">
+            <el-radio-button v-for="item in layoutSettings" :key="item.label" :label="item.label"></el-radio-button>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item>
+          <el-radio-group v-model="orientValue" fill="#082F4C" size="small" @change="changeSettings">
+            <el-radio-button v-for="item in orientSettings" :key="item.label" :label="item.label"></el-radio-button>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item>
+          <el-radio-group v-model="roamValue" fill="#082F4C" size="small" @change="changeSettings">
+            <el-radio-button v-for="item in roamSettings" :key="item.label" :label="item.label"></el-radio-button>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item>
+          <el-radio-group v-model="DepthValue" fill="#082F4C" size="small" @change="changeSettings">
+            <el-radio-button v-for="item in DepthSettings" :key="item.label" :label="item.label"></el-radio-button>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item>
+          <el-radio-group v-model="modeValue" fill="#082F4C" size="small">
+            <el-radio-button v-for="item in modeSettings" :key="item.label" :label="item.label"></el-radio-button>
+          </el-radio-group>
+        </el-form-item>
+      </el-form>
+      <div class="chartContainer">
+        <ve-tree :data="chartData" :settings="chartSettings" :extend="chartExtend" :events="events" height="600px"></ve-tree>
+      </div>
+      <el-drawer title="我是标题" :visible.sync="drawer" :with-header="false">
+        <div style="padding: 20px;">
+          <h3>{{ drawerTitle }}</h3>
+          <el-form :model="organizationForm" label-width="80px" :rules="rules" ref="ruleForm">
+            <el-form-item label="id">
+              <el-input v-model="organizationForm.id" :disabled="true"></el-input>
+            </el-form-item>
+            <el-form-item label="节点名称" prop="name">
+              <el-input v-model="organizationForm.name"></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="save('ruleForm')">保存</el-button>
+            </el-form-item>
+          </el-form>
+        </div>
+      </el-drawer>
+    </el-col>
+  </el-row>
 </template>
 
 <script>
@@ -75,28 +117,73 @@
   export default {
     name: "Organization",
     data(){
+      var self = this
+      this.events = {
+        click:function(e){
+          self.clickTree(e)
+        }
+      }
       return {
-        chartSettingsCheckbox:[""],
-        settingsOptions: [
-          {label:'垂直方向'},
-          {label:'折线形状'}
+        orientValue:'水平',
+        orientSettings: [
+          {label:'水平'},
+          {label:'垂直'}
+        ],
+        roamValue:'关闭',
+        roamSettings: [
+          {label:'关闭'},
+          {label:'缩放'},
+          {label:'平移'},
+          {label:'缩放和平移'},
+        ],
+        layoutValue:'正交布局',
+        layoutSettings: [
+          {label:'正交布局'},
+          {label:'径向布局'}
+        ],
+        DepthValue:'展示全部',
+        DepthSettings: [
+          {label:'展示全部'},
+          {label:'3层'},
+          {label:'2层'},
+          {label:'1层'}
+        ],
+        modeValue:'查看模式',
+        modeSettings: [
+          {label:'查看模式'},
+          {label:'添加子节点'},
+          {label:'修改'},
+          {label:'删除'},
         ],
         chartSettings: {
           seriesMap:{
             tree:{
               orient: 'LR',
-              edgeShape:"polyline",
+              lineStyle:{
+                curveness:0.5,
+                width: 1.5,
+                color: "#B9B9B9"
+              },
+              roam:false,
+              layout:"orthogonal",
+              initialTreeDepth:-1,
+              edgeShape: 'curve',
               symbolSize: 8,
               label:{
-                position: 'left',
+                position: 'bottom',
               },
+              itemStyle:{
+                color:"#228AD5",
+                borderColor:"#082F4C"
+              }
             }
-          }
+          },
         },
         chartExtend: {
           tooltip: {
-            alwaysShowContent: true,
-          }
+
+          },
+
         },
         chartData: {
           columns: ['name', 'value'],
@@ -104,100 +191,94 @@
             name: 'tree',
             value: [treeData]
           }]
-        }
+        },
+        drawer:false,
+        drawerTitle:"",
+        organizationForm:{
+          id:"",
+          name:""
+        },
+        rules:{
+          name:[
+            {required: true, message: '请输入节点名称', trigger: 'blur'}
+          ],
+        },
       }
     },
     methods: {
-      changeCheckbox(a,b){
-        if(b.target.defaultValue === "垂直方向"){
-          if(a){
-            this.chartSettings.seriesMap.tree.orient="TB"
-          }else{
-            this.chartSettings.seriesMap.tree.orient="LR"
-          }
-        }else if(b.target.defaultValue === "折线形状"){
-          if(a){
-            this.chartSettings.seriesMap.tree.edgeShape="curve"
-          }else{
-            this.chartSettings.seriesMap.tree.edgeShape= 'polyline'
-          }
+      changeSettings(a){
+        if(a === "垂直"){
+          this.chartSettings.seriesMap.tree.orient="TB"
+        }else if(a === "水平"){
+          this.chartSettings.seriesMap.tree.orient="LR"
+        }else if(a === "关闭"){
+          this.chartSettings.seriesMap.tree.roam=false
+        }else if(a === "缩放"){
+          this.chartSettings.seriesMap.tree.roam="scale"
+        }else if(a === "平移"){
+          this.chartSettings.seriesMap.tree.roam="move"
+        }else if(a === "缩放和平移"){
+          this.chartSettings.seriesMap.tree.roam=true
+        }else if(a === "正交布局"){
+          this.chartSettings.seriesMap.tree.layout="orthogonal"
+        }else if(a === "径向布局"){
+          this.chartSettings.seriesMap.tree.layout="radial"
+        }else if(a === "展示全部"){
+          this.chartSettings.seriesMap.tree.initialTreeDepth=-1
+        }else if(a === "1层"){
+          this.chartSettings.seriesMap.tree.initialTreeDepth=0
+        }else if(a === "2层"){
+          this.chartSettings.seriesMap.tree.initialTreeDepth=1
+        }else if(a === "3层"){
+          this.chartSettings.seriesMap.tree.initialTreeDepth=2
         }
       },
-      addNode(){
-        console.log(1)
+      clickTree(e){
+        console.log(e)
+        this.drawerTitle = this.modeValue
+        if(this.modeValue === "添加子节点"){
+          this.drawer = true
+          this.organizationForm = {
+            id:"",
+            name:""
+          }
+        }else if(this.modeValue === "修改"){
+          this.drawer = true
+          this.organizationForm = {
+            id:e.data.id,
+            name:e.data.name
+          }
+        }else if(this.modeValue === "删除"){
+          this.$confirm('此操作将永久删除该节点, 是否继续?', '删除节点'+e.data.name, {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            });
+          });
+        }
+      },
+      save(formName){
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.$message({
+              type: 'success',
+              message: "保存成功"
+            });
+            this.drawer = false
+          } else {
+            return false;
+          }
+        });
       }
-      // clickNode: function(node){
-      //   // eslint-disable-next-line
-      //   console.log(node)
-      // }
-      // renderContent (h, data) {
-      //   return data.label
-      // },
-      // onNodeClick(e, data) {
-      //   this.tranLeft = (e.pageX - 240) + 'px'
-			// 	this.tranTop = (e.pageY - 60) + 'px'
-      //   if(this.selectedId == data.id && this.showBox){
-      //     this.showBox = false
-      //   }else{
-      //     this.showBox = true
-      //   }
-      //   this.selectedId = data.id
-      //   this.selectedLabel = data.label
-      // },
-      // addNode(){
-      //   var treeData = this.treeData
-      //   this.showBox = false
-      //   this.$prompt('请输入子节点名称', '给'+this.selectedLabel+'添加子节点', {
-      //     confirmButtonText: '确定',
-      //     cancelButtonText: '取消',
-      //   }).then(({ value }) => {
-      //     this.$message({
-      //       type: 'success',
-      //       message: '已成功为' + this.selectedLabel + '添加子节点：' + value
-      //     });
-      //   }).catch(action => {
-      //     console.log(action)
-      //     this.$message({
-      //       type: 'info',
-      //       message: '取消添加'
-      //     });
-      //   });
-      // },
-      // editNode(){
-      //   this.showBox = false
-      //   this.$prompt('请输入子节点名称', '修改'+this.selectedLabel+'的名称', {
-      //     confirmButtonText: '确定',
-      //     cancelButtonText: '取消',
-      //   }).then(({ value }) => {
-      //     this.$message({
-      //       type: 'success',
-      //       message: '已将' + this.selectedLabel + '修改为：' + value
-      //     });
-      //   }).catch(() => {
-      //     this.$message({
-      //       type: 'info',
-      //       message: '取消修改'
-      //     });
-      //   });
-      // },
-      // delNode(){
-      //   this.showBox = false
-      //   this.$confirm('此操作将永久删除该节点, 是否继续?', '删除'+this.selectedLabel+'节点', {
-      //     confirmButtonText: '确定',
-      //     cancelButtonText: '取消',
-      //     type: 'warning'
-      //   }).then(() => {
-      //     this.$message({
-      //       type: 'success',
-      //       message: '删除成功!'
-      //     });
-      //   }).catch(() => {
-      //     this.$message({
-      //       type: 'info',
-      //       message: '已取消删除'
-      //     });
-      //   });
-      // }
     }
   }
 </script>
@@ -205,7 +286,8 @@
 <style scoped>
   .chartContainer{
     padding: 15px;
-    height: 100%;
+    background: #fff;
+    border-radius: 4px;
     clear: both;
     overflow: inherit;
   }

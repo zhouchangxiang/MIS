@@ -18,7 +18,7 @@
                   <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
                 </div>
                 <div class="itemMarginBottom">
-                  <span class="text-size-normol text-color-info">523.5元</span>
+                  <span class="text-size-normol text-color-info">{{ electricityCost }}元</span>
                   <span class="text-size-normol float-right" :class="todayElectricity-yesterdayElectricityValue>0?'text-color-danger':'text-color-success'">{{ ElectricityCompare }}</span>
                 </div>
               </el-col>
@@ -54,7 +54,7 @@
                   <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
                 </div>
                 <div class="itemMarginBottom">
-                  <span class="text-size-normol text-color-info">523.5元</span>
+                  <span class="text-size-normol text-color-info">{{ waterCost }}元</span>
                   <span class="text-size-normol float-right" :class="todayWater-yesterdayWaterValue>0?'text-color-danger':'text-color-success'">{{ WaterCompare }}</span>
                 </div>
               </el-col>
@@ -90,7 +90,7 @@
                   <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
                 </div>
                 <div class="itemMarginBottom">
-                  <span class="text-size-normol text-color-info">523.5元</span>
+                  <span class="text-size-normol text-color-info">{{ steamCost }}元</span>
                   <span class="text-size-normol float-right" :class="todaySteam-yesterdaySteamValue>0?'text-color-danger':'text-color-success'">{{ SteamCompare }}</span>
                 </div>
               </el-col>
@@ -221,17 +221,36 @@
         </el-col>
         <el-col :span="13">
           <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
-            <div class="chartTile">数据表</div>
+            <div class="chartTile">本日批次能耗</div>
           </div>
           <div class="platformContainer">
-
+            <el-table :data="tableData" border tooltip-effect="dark" height="400px">
+              <el-table-column prop="AreaName" label="区域"></el-table-column>
+              <el-table-column prop="PlanNum" label="计划单号"></el-table-column>
+              <el-table-column prop="BatchID" label="批次号"></el-table-column>
+              <el-table-column prop="BrandName" label="品名"></el-table-column>
+              <el-table-column prop="PlanQuantity" label="计划重量"></el-table-column>
+              <el-table-column prop="WaterConsumption" label="水用量"></el-table-column>
+              <el-table-column prop="SteamConsumption" label="汽用量"></el-table-column>
+              <el-table-column prop="ProductionDate" label="生产日期"></el-table-column>
+            </el-table>
+            <div class="paginationClass">
+              <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
+                             :total="total"
+                             :current-page="currentPage"
+                             :page-sizes="[5,10,20]"
+                             :page-size="pagesize"
+                             @size-change="handleSizeChange"
+                             @current-change="handleCurrentChange">
+              </el-pagination>
+            </div>
           </div>
         </el-col>
         <el-col :span="5">
           <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
             <div class="chartTile">设备情况</div>
           </div>
-          <div class="platformContainer">
+          <div class="platformContainer" style="height: 490px;">
             <ul>
               <li v-for="item in onlineEquipmentOption" style="margin-bottom: 5px;">
                 <p class="text-size-normol text-color-info">{{ item.name }}</p>
@@ -262,6 +281,9 @@
         ElectricityUnit:"",
         WaterUnit:"",
         SteamUnit:"",
+        electricityCost:"",
+        waterCost:"",
+        steamCost:"",
         websock:null,
         socketLoading:false,
         chartExtend:{
@@ -314,7 +336,7 @@
           rows: []
         },
         electricRing:{
-          columns: ['日期', '能耗量'],
+          columns: ['区域', '能耗量'],
           rows: []
         },
         waterChartValue:"",
@@ -348,7 +370,7 @@
           rows: []
         },
         waterRing:{
-          columns: ['日期', '能耗量'],
+          columns: ['区域', '能耗量'],
           rows: []
         },
         steamChartValue:"",
@@ -382,7 +404,7 @@
           rows: []
         },
         steamRing:{
-          columns: ['日期', '能耗量'],
+          columns: ['区域', '能耗量'],
           rows: []
         },
         batchTableData:[
@@ -430,13 +452,17 @@
             { '日期': '药品D', '访问用户': 1723 }
           ]
         },
+        tableData:[],
+        total:0,
+        pagesize:5,
+        currentPage:1,
         onlineEquipmentOption:[], //在线情况采集
       }
     },
     created(){
-      var that = this
       this.getEnergyPreview()
-      this.initWebSocket();
+      this.initWebSocket()
+      this.getBatchTable()
       this.getOnLineEq()
     },
     destroyed() {
@@ -547,10 +573,10 @@
           that.yesterdayElectricityValue = yesterdayElectricityValue
           that.yesterdayWaterValue = yesterdayWaterValue
           that.yesterdaySteamValue = yesterdaySteamValue
-          console.log(todaySteamData)
           //电
           that.todayElectricity = todayElectricityData.value
           that.ElectricityUnit = todayElectricityData.unit
+          that.electricityCost = todayElectricityData.cost
           that.electricHistogram.rows = [
             { '时间': "昨日", '总功率': that.yesterdayElectricityValue},
             { '时间': "本日", '总功率': that.todayElectricity},
@@ -559,6 +585,7 @@
           //水
           that.todayWater = todayWaterData.value
           that.WaterUnit = todayWaterData.unit
+          that.waterCost = todayWaterData.cost
           that.waterHistogram.rows = [
             { '时间': "昨日", '累计流量': that.yesterdayElectricityValue},
             { '时间': "本日", '累计流量': that.todayElectricity},
@@ -567,6 +594,7 @@
           //汽
           that.todaySteam = todaySteamData.value
           that.SteamUnit = todaySteamData.unit
+          that.steaCost = todaySteamData.cost
           that.steamHistogram.rows = [
             { '时间': "昨日", '累计流量': that.yesterdayElectricityValue},
             { '时间': "本日", '累计流量': that.todayElectricity},
@@ -576,6 +604,35 @@
           that.waterRing.rows = todayAreaData.data.wrow
           that.steamRing.rows = todayAreaData.data.srow
         }))
+      },
+      getBatchTable(){
+        var that = this
+        var nowTime = moment().format('HH:mm').substring(0,4) + "0"
+        var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
+        var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
+        var params = {
+          AreaName:this.newAreaName.areaName,
+          StartTime:todayStartTime,
+          EndTime:todayEndTime,
+          BrandName:"",
+          tableName:"BatchMaintain",
+          limit:this.pagesize,
+          offset:this.currentPage - 1
+        }
+        console.log(params)
+        this.axios.get("/api/batchMaintainExcelSelect",{params:params}).then(res => {
+          var data = res.data
+          that.tableData = data.rows
+          that.total = data.total
+        })
+      },
+      handleSizeChange(pagesize){ //每页条数切换
+        this.pagesize = pagesize
+        this.getBatchTable()
+      },
+      handleCurrentChange(currentPage) { // 页码切换
+        this.currentPage = currentPage
+        this.getBatchTable()
       },
       getOnLineEq(){
         this.axios.get("/api/energyall",{params:{ModelFlag:"在线检测情况"}}).then(res => {
@@ -634,7 +691,7 @@
       },
       websocketclose(e){  //关闭
         console.log('断开连接');
-      },
+      }
     }
   }
 </script>

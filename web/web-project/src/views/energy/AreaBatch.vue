@@ -76,6 +76,7 @@
     <el-col :span="24" style="border-radius:4px;padding: 10px;background: #fff;">
       <el-table :data="tableData" border tooltip-effect="dark">
         <el-table-column prop="ID" label="ID"></el-table-column>
+        <el-table-column prop="AreaName" label="区域"></el-table-column>
         <el-table-column prop="PlanNum" label="计划单号"></el-table-column>
         <el-table-column prop="BatchID" label="批次号"></el-table-column>
         <el-table-column prop="BrandName" label="品名"></el-table-column>
