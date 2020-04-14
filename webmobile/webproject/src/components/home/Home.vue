@@ -18,15 +18,15 @@
                    </div>
            </div>
            <div class="show-body">
-               <div class="sb-l">
+               <div class="sb-l" v-for="(item,index) in numberbox" :key='index'>
                    <div class="scpc">生产批次</div>
-                   <div class="scpc-s">0</div>
+                   <div class="scpc-s">{{item.batchCount}}</div>
                    <div class="znhl">总耗能量</div>
-                   <div class="znhl-s">000000.00</div>
+                   <div class="znhl-s">{{item.steamCon}}</div>
                    <div class="dwnh">单位批次能耗</div>
-                   <div class="dwnh-s">000000.00</div>
-                   <div class="dw-kwh">kwh</div>
-                   <div class="dw-pc">kwh/批</div>
+                   <div class="dwnh-s">{{item.steamEveryBatch}}</div>
+                   <div class="dw-kwh">{{item.steamUnit}}</div>
+                   <div class="dw-pc">{{item.steamUnit}}&nbsp;/&nbsp;批</div>
                </div>
                <div class="sb-r">
                     <van-picker :columns="area" @change="onChange" :default-index="2"/>
@@ -47,15 +47,16 @@ export default {
         return {
             myapi:'',
             area:['新建综合制剂楼','提取二车间','前处理车间','研发中心','生物科技楼','原提取车间','锅炉房'],
-            StartTime:'2020-04-07 12:22:59'
+            StartTime:'2020-04-07 12:22:59',
+            numberbox:[]
         }
     },
     components:{
         DateC,
         ShowNumber
     },
-    created(){
-        this.getWater()
+    mounted(){
+        this.initNum()
     },
     methods:{
       onChange(picker, value) {
@@ -82,29 +83,43 @@ export default {
             }else{
                 this.StartTime='2020-04-09 00:00:00'
             }
-        this.$http.get('/api'+this.myapi,{params:{
-            StartTime:this.StartTime,
-            EndTime:this.EndTime,
-            Area:this.$store.state.workplace
-        }}).then((res) => {
-            this.$store.commit('Sbnumbers',JSON.parse(res.data))
-        })
+            this.$http.all([
+                this.$http.get('/api'+this.myapi,{params:{
+                StartTime:this.StartTime,
+                EndTime:this.EndTime,
+                AreaName:this.$store.state.workplace
+                }}),
+                this.$http.get('/api/batchMaintainEnergy',{params:{
+                StartTime:this.StartTime,
+                EndTime:this.EndTime,
+                AreaName:this.$store.state.workplace
+            }})
+            ]).then(this.$http.spread((res1,res2)=>{
+                this.$store.commit('Sbnumbers',JSON.parse(res1.data))
+                this.$store.commit('NumBox',res2.data)
+                this.numberbox=this.$store.state.numberbox
+            }))
     },
-    getWater(){
+    initNum(){
         let str=moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
-        this.$http.get('/api/energywater',{params:{
+        this.$http.all([
+            this.$http.get('/api/energywater',{params:{
+            StartTime:'2020-04-01 12:22:59',
+            EndTime:str,
+            AreaName:'提取二车间'
+            }}),
+            this.$http.get('/api/batchMaintainEnergy',{params:{
             StartTime:'2020-04-07 12:22:59',
             EndTime:str,
-            Area:'新建综合制剂楼'
-            }}).then((res)=> {
-            this.$store.commit('Sbnumbers',JSON.parse(res.data))
-        }).catch((err) => {
-            console.log(err)
-        })
-    }
+            AreaName:'提取二车间'
+        }})
+        ]).then(this.$http.spread((res1,res2)=>{
+            this.$store.commit('Sbnumbers',JSON.parse(res1.data))
+            this.$store.commit('NumBox',res2.data)
+            this.numberbox=this.$store.state.numberbox
 
+    }))}
     }
-
 }
 </script>
 <style lang="less" scoped>
@@ -299,7 +314,7 @@ export default {
                 }
                 .dw-kwh{
                     position: absolute;
-                    right: 8px;
+                    right: 10px;
                     top:108px;
                     font-size: 8px;
                     font-weight: 500;

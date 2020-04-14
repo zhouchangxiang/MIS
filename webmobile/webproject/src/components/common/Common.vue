@@ -2,7 +2,7 @@
    <div class="mainbox">
        <div class="top">
            <div class='head-name'>好护士能管系统</div>
-           <span @click="logout"><van-icon name="close" size="22px" color="#FF5041FF"/></span>
+           <span @click="logout"></span>
        </div>
        <router-view/>
        <div class="foot">
@@ -67,6 +67,7 @@ export default {
            top:48px;
            left:318px;
            border: 1px dashed #fff;
+           background-image: url('../../assets/png/delete_fill.png');
         }
     }
     .foot{

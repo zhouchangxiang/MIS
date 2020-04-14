@@ -12,22 +12,22 @@
       </div>
       <div class="compare">
         <div class="c1">
-          <div class="icon">#</div>
-          <div class="dw">kwh</div>
+          <div class="icon electric"></div>
+          <div class="dw electric">kwh</div>
           <div class="number">13567.3</div>
           <div class="comp">较昨日</div>
           <div class="sn">+1.456%</div>
         </div>
          <div class="c2">
-          <div class="icon">#</div>
-          <div class="dw">kwh</div>
+          <div class="icon water"></div>
+          <div class="dw water">T</div>
           <div class="number">13567.3</div>
           <div class="comp">较昨日</div>
           <div class="sn">+1.456%</div>
         </div>
         <div class="c3">
-          <div class="icon">#</div>
-          <div class="dw">kwh</div>
+          <div class="icon steam"></div>
+          <div class="dw">T</div>
           <div class="number">13567.3</div>
           <div class="comp">较昨日</div>
           <div class="sn">+1.456%</div>
@@ -71,6 +71,7 @@ export default {
      .show-box{
         position: relative;
         width: 375px;
+        height:526px;
         box-sizing: border-box;
         padding: 0 12px 12px 13px;
         background: @bgcc;
@@ -97,10 +98,20 @@ export default {
             left:44px;
             width: 17.44px;
             height: 21.15px;
+          &.electric{
+            background-image: url('../../assets/png/flashlight_1.png');
+          }
+          &.water{
+            background-image: url('../../assets/png/water.png')
+          }
+          &.steam{
+            background-image: url('../../assets/png/steam.png');
+            width:22px;
+          }
           }
           .dw{
             position: absolute;
-            left: 45px;
+            left: 51px;
             top: 53px;
             width: 15px;
             height: 11px;
@@ -110,6 +121,12 @@ export default {
             line-height:11px;
             color:rgba(255,255,255,1);
             opacity:1;
+            &.electric{
+              left:42px;
+            }
+            &.water{
+              left:49px;
+            }
           }
           .number{
             position: absolute;
@@ -189,5 +206,4 @@ export default {
           margin-top: 2px;
         }
     }
-   
 </style>
