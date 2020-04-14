@@ -53,8 +53,8 @@ def run():
                                                                             ElectricPrice.IsEnabled == "是").all()
                         PriceID = 0
                         for timeprice in timeprices:
-                            # if PriceID != 0:
-                            #     continue
+                            if PriceID != 0:
+                                continue
                             nowtime = time.strptime(ZGLSamptime, '%Y-%m-%d %H:%M:%S')
                             nowint = int(time.mktime(nowtime))  # 当前时间
                             ststr = ZGLSamptime[0:11] + timeprice.StartTime
