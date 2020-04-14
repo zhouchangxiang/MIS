@@ -24,7 +24,7 @@ from dbset.log.BK2TLogger import logger,insertSyslog
 pool = redis.ConnectionPool(host=constant.REDIS_HOST)
 def run():
     while True:
-        time.sleep(180)
+        # time.sleep(180)
         print("Redis数据开始写入数据库")
         # a = arrow.now()
         # currentyear = str(a.shift(years=0))[0:4]
@@ -49,11 +49,14 @@ def run():
                         ele = db_session.query(ElectricEnergy).filter(ElectricEnergy.TagClassValue == key.TagClassValue).order_by(desc("CollectionDate")).first()
                         unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "电").first()
                         # equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key.TagClassValue).first()
-                        timeprices = db_session.query(ElectricPrice).filter(ElectricPrice.PriceName == "电",
-                                                                            ElectricPrice.IsEnabled == "是").first()
+                        timeprices = db_session.query(ElectricPrice).filter(ElectricPrice.PriceType == "电",
+                                                                            ElectricPrice.IsEnabled == "是").all()
                         PriceID = 0
                         for timeprice in timeprices:
-                            nowint = int(time.time())  # 当前时间
+                            # if PriceID != 0:
+                            #     continue
+                            nowtime = time.strptime(ZGLSamptime, '%Y-%m-%d %H:%M:%S')
+                            nowint = int(time.mktime(nowtime))  # 当前时间
                             ststr = ZGLSamptime[0:11] + timeprice.StartTime
                             endstr = ZGLSamptime[0:11] + timeprice.EndTime
                             sttimeArray = time.strptime(ststr, '%Y-%m-%d %H:%M')
@@ -62,8 +65,9 @@ def run():
                             endtime = int(time.mktime(endtimeArray))
                             if endtime < sttime:
                                 # 如果结束时间小于开始时间，说明已经跨天，往后加一天再比大小
-                                cuday = str(nowint.shift(days=1))[0:10]
-                                endstr = cuday + timeprice.EndTime
+                                sampday = datetime.datetime.strptime(ZGLSamptime, '%Y-%m-%d %H:%M:%S')
+                                cuday = str(sampday + datetime.timedelta(days=1))[0:10]
+                                endstr = cuday + " " + timeprice.EndTime
                                 endArray = time.strptime(endstr, '%Y-%m-%d %H:%M')
                                 endtime = int(time.mktime(endArray))
                             if sttime < nowint < endtime:
@@ -161,22 +165,14 @@ def run():
                         prices = db_session.query(WaterSteamPrice).filter(WaterSteamPrice.PriceType == "汽",
                                                                           WaterSteamPrice.IsEnabled == "是").all()
                         PriceID = 0
-                        for timeprice in prices:
-                            nowint = int(time.time())  # 当前时间
-                            ststr = valueSSamptime[0:11] + timeprice.StartTime
-                            endstr = valueSSamptime[0:11] + timeprice.EndTime
-                            sttimeArray = time.strptime(ststr, '%Y-%m-%d %H:%M')
-                            endtimeArray = time.strptime(endstr, '%Y-%m-%d %H:%M')
+                        for price in prices:
+                            nowint = int(time.time())
+                            sttimeArray = time.strptime(price.StartTime, '%Y-%m-%d %H:%M')
+                            endtimeArray = time.strptime(price.EndTime, '%Y-%m-%d %H:%M')
                             sttime = int(time.mktime(sttimeArray))
                             endtime = int(time.mktime(endtimeArray))
-                            if endtime < sttime:
-                                # 如果结束时间小于开始时间，说明已经跨天，往后加一天再比大小
-                                cuday = str(nowint.shift(days=1))[0:10]
-                                endstr = cuday + timeprice.EndTime
-                                endArray = time.strptime(endstr, '%Y-%m-%d %H:%M')
-                                endtime = int(time.mktime(endArray))
                             if sttime < nowint < endtime:
-                                PriceID = timeprice.ID
+                                PriceID = price.ID
                         sl = SteamEnergy()
                         sl.TagClassValue = key.TagClassValue
                         sl.CollectionYear = valueSSamptime[0:4]
@@ -210,22 +206,14 @@ def run():
                         prices = db_session.query(WaterSteamPrice).filter(WaterSteamPrice.PriceType == "水",
                                                                           WaterSteamPrice.IsEnabled == "是").all()
                         PriceID = 0
-                        for timeprice in prices:
-                            nowint = int(time.time())  # 当前时间
-                            ststr = valueSSamptime[0:11] + timeprice.StartTime
-                            endstr = valueSSamptime[0:11] + timeprice.EndTime
-                            sttimeArray = time.strptime(ststr, '%Y-%m-%d %H:%M')
-                            endtimeArray = time.strptime(endstr, '%Y-%m-%d %H:%M')
+                        for price in prices:
+                            nowint = int(time.time())
+                            sttimeArray = time.strptime(price.StartTime, '%Y-%m-%d %H:%M')
+                            endtimeArray = time.strptime(price.EndTime, '%Y-%m-%d %H:%M')
                             sttime = int(time.mktime(sttimeArray))
                             endtime = int(time.mktime(endtimeArray))
-                            if endtime < sttime:
-                                # 如果结束时间小于开始时间，说明已经跨天，往后加一天再比大小
-                                cuday = str(nowint.shift(days=1))[0:10]
-                                endstr = cuday + timeprice.EndTime
-                                endArray = time.strptime(endstr, '%Y-%m-%d %H:%M')
-                                endtime = int(time.mktime(endArray))
                             if sttime < nowint < endtime:
-                                PriceID = timeprice.ID
+                                PriceID = price.ID
                         wa = WaterEnergy()
                         wa.TagClassValue = key.TagClassValue
                         wa.CollectionYear = valueSSamptime[0:4]
