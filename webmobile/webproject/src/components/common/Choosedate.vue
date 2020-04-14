@@ -34,7 +34,7 @@ export default {
     },
     methods:{
         ChooseDate(){
-            this.$store.state.choosedate=this.choosedate
+            this.$store.commit('Choosedate',this.choosedate)
             let n=this.$store.state.choosedate
             let m=this.$store.state.choosekind
             this.EndTime=moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
@@ -69,7 +69,7 @@ export default {
             
         },
         ChooseKind(){
-            this.$store.state.choosekind=this.choosekind
+            this.$store.commit('Choosekind',this.choosekind)
             let x=this.$store.state.choosedate
             let n=this.$store.state.choosekind
             switch(x){
