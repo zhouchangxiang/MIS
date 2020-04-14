@@ -895,6 +895,9 @@ class WaterSteamPrice(Base):
     # 描述:
     Description = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
 
+    # 单位:
+    Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 
 # 电价格维护表:
 class ElectricPrice(Base):
@@ -923,6 +926,9 @@ class ElectricPrice(Base):
 
     # 描述:
     Description = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+
+    # 单位:
+    Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 
 # 水增量表
