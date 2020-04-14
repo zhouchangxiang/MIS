@@ -248,7 +248,6 @@ def energyStatisticsCost(oc_list, StartTime, EndTime, energy):
         sql = "select SUM(Cast(t1.IncremenValue as float)) * Cast(t2.PriceValue as float) FROM [DB_MICS].[dbo].[IncrementStreamTable] t1 with (INDEX =IX_IncrementStreamTable) INNER JOIN [DB_MICS].[dbo].[WaterSteamPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
             oc_list)[
                                                                                                                                                                                         1:-1] + ") and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue"
-    print(db_session.execute(sql).fetchall())
     re = db_session.execute(sql).fetchall()
     db_session.close()
     if len(re) > 0:
