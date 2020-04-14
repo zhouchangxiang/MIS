@@ -119,10 +119,6 @@ def energyElectricSelect(data):
             Area = data.get("Area")
             StartTime = data.get("StartTime")
             EndTime = data.get("EndTime")
-            if EndTime is None:
-                EndTime = StartTime
-            StartTime = data.get("StartTime")
-            EndTime = data.get("EndTime")
             energy = "电"
             elecount = 0.0
             if Area is not None and Area != "":
@@ -141,6 +137,8 @@ def energyElectricSelect(data):
             dir["type"] = "电"
             unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == energy).first()[0]
             dir["unit"] = unit
+            #成本
+
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)

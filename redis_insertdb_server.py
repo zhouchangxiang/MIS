@@ -37,14 +37,9 @@ def run():
                 k = key.TagClassValue[0:1]
                 if k == "E":
                     ZGL = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_ZGL"))
-                    if float(ZGL) > 12000:
-                        aa = redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_ZGL")
-                        insertSyslog("redis_insertdb_server", "ZGL:"+str(ZGL)+ key.TagClassValue + str(
-                            datetime.datetime.now()) + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "redis:"+str(aa))
-
                     ZGLSamptime = returnb(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_ZGL_Samptime"))
-                    samptime = db_session.query(ElectricEnergy).filter().order_by(desc("CollectionDate")).first()
-                    if samptime != ZGLSamptime:
+                    esamptime = db_session.query(ElectricEnergy.CollectionDate).filter().order_by(desc("CollectionDate")).first()[0]
+                    if esamptime != ZGLSamptime and ZGL != 0.0:
                         AU = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_AU"))
                         AI = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_AI"))
                         BU = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_BU"))
@@ -57,23 +52,22 @@ def run():
                         timeprices = db_session.query(ElectricPrice).filter(ElectricPrice.PriceName == "电",
                                                                             ElectricPrice.IsEnabled == "是").first()
                         PriceID = 0
-                        if timeprices is not None:
-                            for timeprice in timeprices:
-                                nowint = int(time.time())  # 当前时间
-                                ststr = ZGLSamptime[0:11] + timeprice.StartTime
-                                endstr = ZGLSamptime[0:11] + timeprice.EndTime
-                                sttimeArray = time.strptime(ststr, '%Y-%m-%d %H:%M')
-                                endtimeArray = time.strptime(endstr, '%Y-%m-%d %H:%M')
-                                sttime = int(time.mktime(sttimeArray))
-                                endtime = int(time.mktime(endtimeArray))
-                                if endtime < sttime:
-                                    # 如果结束时间小于开始时间，说明已经跨天，往后加一天再比大小
-                                    cuday = str(nowint.shift(days=1))[0:10]
-                                    endstr = cuday + timeprice.EndTime
-                                    endArray = time.strptime(endstr, '%Y-%m-%d %H:%M')
-                                    endtime = int(time.mktime(endArray))
-                                if sttime < nowint < endtime:
-                                    PriceID = timeprice.ID
+                        for timeprice in timeprices:
+                            nowint = int(time.time())  # 当前时间
+                            ststr = ZGLSamptime[0:11] + timeprice.StartTime
+                            endstr = ZGLSamptime[0:11] + timeprice.EndTime
+                            sttimeArray = time.strptime(ststr, '%Y-%m-%d %H:%M')
+                            endtimeArray = time.strptime(endstr, '%Y-%m-%d %H:%M')
+                            sttime = int(time.mktime(sttimeArray))
+                            endtime = int(time.mktime(endtimeArray))
+                            if endtime < sttime:
+                                # 如果结束时间小于开始时间，说明已经跨天，往后加一天再比大小
+                                cuday = str(nowint.shift(days=1))[0:10]
+                                endstr = cuday + timeprice.EndTime
+                                endArray = time.strptime(endstr, '%Y-%m-%d %H:%M')
+                                endtime = int(time.mktime(endArray))
+                            if sttime < nowint < endtime:
+                                PriceID = timeprice.ID
                         el = ElectricEnergy()
                         el.TagClassValue = key.TagClassValue
                         el.CollectionYear = ZGLSamptime[0:4]
@@ -92,11 +86,8 @@ def run():
                         el.PriceID = PriceID
                         db_session.query(ElectricEnergy)
                         el.PrevID = ele.ID
-                        if ZGL == 0.0:
-                            el.IncrementFlag = "1"
-                        else:
-                            el.IncrementFlag = "0"
                         el.AreaName = key.AreaName
+                        el.IncrementFlag = "0"
                         db_session.add(el)
                         db_session.commit()
                         # 实时预电压电流故障
@@ -139,10 +130,9 @@ def run():
                         continue
                 elif k == "S":
                     valueWD = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "WD"))  # 蒸汽温度
-
                     #实时预警判断温度是否达到设定值
                     warn = db_session.query(EarlyWarningLimitMaintain).filter(EarlyWarningLimitMaintain.AreaName == key.AreaName,
-                                                                       EarlyWarningLimitMaintain.EnergyClass == key.EnergyClass).first()
+                                                                              EarlyWarningLimitMaintain.EnergyClass == key.EnergyClass).first()
                     if warn is not None:
                         if valueWD < warn.LowerLimit or valueWD > warn.UpperLimit:
                             earw = EarlyWarning()
@@ -158,92 +148,101 @@ def run():
                             if valueWD > warn.UpperLimit:
                                 earw.WarningType = "温度高于最高限值"
                             db_session.commit()
-
                     valueF = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "F"))  # 蒸汽瞬时流量
                     valueS = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "S"))  # 蒸汽累计流量
                     Volume = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "V"))  # 蒸汽体积
+                    ssamptime = db_session.query(SteamEnergy.CollectionDate).filter().order_by(desc("CollectionDate")).first()[0]
                     valueSSamptime = returnb(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_Samptime"))  # 蒸汽累计流量采集时间
-
-                    ste = db_session.query(SteamEnergy).filter(SteamEnergy.TagClassValue == key.TagClassValue).order_by(desc("CollectionDate")).first()
-                    unitf = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽瞬时流量单位").first()
-                    units = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽累计量体积单位").first()
-                    # equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key.TagClassValue).first()
-                    prices = db_session.query(WaterSteamPrice).filter(WaterSteamPrice.PriceType == "汽",
-                                                                      WaterSteamPrice.IsEnabled == "是").all()
-                    PriceID = 0
-                    for price in prices:
-                        nowint = int(time.time())
-                        sttimeArray = time.strptime(price.StartTime, '%Y-%m-%d %H:%M')
-                        endtimeArray = time.strptime(price.EndTime, '%Y-%m-%d %H:%M')
-                        sttime = int(time.mktime(sttimeArray))
-                        endtime = int(time.mktime(endtimeArray))
-                        if sttime < nowint < endtime:
-                            PriceID = price.ID
-                    sl = SteamEnergy()
-                    sl.TagClassValue = key.TagClassValue
-                    sl.CollectionYear = valueSSamptime[0:4]
-                    sl.CollectionMonth = valueSSamptime[0:7]
-                    sl.CollectionDay = valueSSamptime[0:10]
-                    sl.WD = valueWD
-                    sl.FlowValue = valueF
-                    sl.SumValue = valueS
-                    sl.CollectionDate = valueSSamptime
-                    sl.FlowUnit = unitf[0]
-                    sl.SumUnit = units[0]
-                    # sl.EquipmnetID = equip[0]
-                    sl.PriceID = PriceID
-                    sl.Volume = Volume
-                    sl.PrevID = ste.ID
-                    if valueS == 0.0:
-                        sl.IncrementFlag = "1"
-                    else:
+                    if ssamptime != valueSSamptime and valueS != 0.0 and Volume != 0.0:
+                        ste = db_session.query(SteamEnergy).filter(SteamEnergy.TagClassValue == key.TagClassValue).order_by(desc("CollectionDate")).first()
+                        unitf = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽瞬时流量单位").first()
+                        units = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽累计量体积单位").first()
+                        # equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key.TagClassValue).first()
+                        prices = db_session.query(WaterSteamPrice).filter(WaterSteamPrice.PriceType == "汽",
+                                                                          WaterSteamPrice.IsEnabled == "是").all()
+                        PriceID = 0
+                        for timeprice in prices:
+                            nowint = int(time.time())  # 当前时间
+                            ststr = valueSSamptime[0:11] + timeprice.StartTime
+                            endstr = valueSSamptime[0:11] + timeprice.EndTime
+                            sttimeArray = time.strptime(ststr, '%Y-%m-%d %H:%M')
+                            endtimeArray = time.strptime(endstr, '%Y-%m-%d %H:%M')
+                            sttime = int(time.mktime(sttimeArray))
+                            endtime = int(time.mktime(endtimeArray))
+                            if endtime < sttime:
+                                # 如果结束时间小于开始时间，说明已经跨天，往后加一天再比大小
+                                cuday = str(nowint.shift(days=1))[0:10]
+                                endstr = cuday + timeprice.EndTime
+                                endArray = time.strptime(endstr, '%Y-%m-%d %H:%M')
+                                endtime = int(time.mktime(endArray))
+                            if sttime < nowint < endtime:
+                                PriceID = timeprice.ID
+                        sl = SteamEnergy()
+                        sl.TagClassValue = key.TagClassValue
+                        sl.CollectionYear = valueSSamptime[0:4]
+                        sl.CollectionMonth = valueSSamptime[0:7]
+                        sl.CollectionDay = valueSSamptime[0:10]
+                        sl.WD = valueWD
+                        sl.FlowValue = valueF
+                        sl.SumValue = valueS
+                        sl.CollectionDate = valueSSamptime
+                        sl.FlowUnit = unitf[0]
+                        sl.SumUnit = units[0]
+                        # sl.EquipmnetID = equip[0]
+                        sl.PriceID = PriceID
+                        sl.Volume = Volume
+                        sl.PrevID = ste.ID
                         sl.IncrementFlag = "0"
-                    if Volume == 0.0:
-                        sl.insertVolumeFlag = "1"
-                    else:
                         sl.insertVolumeFlag = "0"
-                    sl.AreaName = key.AreaName
-                    db_session.add(sl)
-                    db_session.commit()
+                        sl.AreaName = key.AreaName
+                        db_session.add(sl)
+                        db_session.commit()
                 elif k == "W":
                     valueS = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "S"))  # 水的累计流量
                     valueF = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "F"))  # 水的瞬时流量
+                    wsamptime = db_session.query(SteamEnergy.CollectionDate).filter().order_by(desc("CollectionDate")).first()[0]
                     valueSSamptime = returnb(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_Samptime"))  # 水的累计流量
-                    wat = db_session.query(WaterEnergy).filter(WaterEnergy.TagClassValue == key.TagClassValue).order_by(desc("CollectionDate")).first()
-                    unitf = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "水瞬时流量单位").first()
-                    units = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "水累计量体积单位").first()
-                    # equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key.TagClassValue).first()
-                    prices = db_session.query(WaterSteamPrice).filter(WaterSteamPrice.PriceType == "水",
-                                                                      WaterSteamPrice.IsEnabled == "是").all()
-                    PriceID = 0
-                    for price in prices:
-                        nowint = int(time.time())
-                        sttimeArray = time.strptime(price.StartTime, '%Y-%m-%d %H:%M')
-                        endtimeArray = time.strptime(price.EndTime, '%Y-%m-%d %H:%M')
-                        sttime = int(time.mktime(sttimeArray))
-                        endtime = int(time.mktime(endtimeArray))
-                        if sttime < nowint < endtime:
-                            PriceID = price.ID
-                    wa = WaterEnergy()
-                    wa.TagClassValue = key.TagClassValue
-                    wa.CollectionYear = valueSSamptime[0:4]
-                    wa.CollectionMonth = valueSSamptime[0:7]
-                    wa.CollectionDay = valueSSamptime[0:10]
-                    wa.WaterFlow = valueF
-                    wa.WaterSum = valueS
-                    wa.CollectionDate = valueSSamptime
-                    wa.FlowWUnit = unitf[0]
-                    wa.SumWUnit = units[0]
-                    # wa.EquipmnetID = equip[0]
-                    wa.PriceID = PriceID
-                    wa.PrevID = wat.ID
-                    if valueS == 0.0:
-                        wa.IncrementFlag = "1"
-                    else:
+                    if valueS != 0.0 and wsamptime != valueSSamptime:
+                        wat = db_session.query(WaterEnergy).filter(WaterEnergy.TagClassValue == key.TagClassValue).order_by(desc("CollectionDate")).first()
+                        unitf = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "水瞬时流量单位").first()
+                        units = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "水累计量体积单位").first()
+                        # equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key.TagClassValue).first()
+                        prices = db_session.query(WaterSteamPrice).filter(WaterSteamPrice.PriceType == "水",
+                                                                          WaterSteamPrice.IsEnabled == "是").all()
+                        PriceID = 0
+                        for timeprice in prices:
+                            nowint = int(time.time())  # 当前时间
+                            ststr = valueSSamptime[0:11] + timeprice.StartTime
+                            endstr = valueSSamptime[0:11] + timeprice.EndTime
+                            sttimeArray = time.strptime(ststr, '%Y-%m-%d %H:%M')
+                            endtimeArray = time.strptime(endstr, '%Y-%m-%d %H:%M')
+                            sttime = int(time.mktime(sttimeArray))
+                            endtime = int(time.mktime(endtimeArray))
+                            if endtime < sttime:
+                                # 如果结束时间小于开始时间，说明已经跨天，往后加一天再比大小
+                                cuday = str(nowint.shift(days=1))[0:10]
+                                endstr = cuday + timeprice.EndTime
+                                endArray = time.strptime(endstr, '%Y-%m-%d %H:%M')
+                                endtime = int(time.mktime(endArray))
+                            if sttime < nowint < endtime:
+                                PriceID = timeprice.ID
+                        wa = WaterEnergy()
+                        wa.TagClassValue = key.TagClassValue
+                        wa.CollectionYear = valueSSamptime[0:4]
+                        wa.CollectionMonth = valueSSamptime[0:7]
+                        wa.CollectionDay = valueSSamptime[0:10]
+                        wa.WaterFlow = valueF
+                        wa.WaterSum = valueS
+                        wa.CollectionDate = valueSSamptime
+                        wa.FlowWUnit = unitf[0]
+                        wa.SumWUnit = units[0]
+                        # wa.EquipmnetID = equip[0]
+                        wa.PriceID = PriceID
+                        wa.PrevID = wat.ID
                         wa.IncrementFlag = "0"
-                    wa.AreaName = key.AreaName
-                    db_session.add(wa)
-                    db_session.commit()
+                        wa.AreaName = key.AreaName
+                        db_session.add(wa)
+                        db_session.commit()
             except Exception as e:
                 print("报错tag："+key.TagClassValue+" |报错IP："+key.IP+"  |报错端口："+key.COMNum+"  |错误："+str(e))
                 logger.error(e)

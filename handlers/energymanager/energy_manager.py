@@ -10,7 +10,7 @@ import calendar
 from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable, Equipment, \
     AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
-    AreaTimeEnergyColour, ElectricProportion, PUIDMaintain
+    AreaTimeEnergyColour, ElectricProportion, PUIDMaintain, ElectricPrice
 from tools.common import insert, delete, update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger, insertSyslog
@@ -224,6 +224,37 @@ def energyStatistics(oc_list, StartTime, EndTime, energy):
             return 0.0
     else:
         return None
+
+def energyStatisticsCost(oc_list, StartTime, EndTime, energy):
+    '''
+    :param oc_list: tag点的List
+    :param StartTime:
+    :param EndTime:
+    :param energy: 水，电 ，气
+    :return:
+    '''
+    propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
+    pro = float(propor.Proportion)
+    if energy == "水":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementWaterTable] t with (INDEX =IX_IncrementWaterTable)  WHERE t.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                                     1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+    elif energy == "电":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+    elif energy == "汽":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable)  WHERE t.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                                       1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+    re = db_session.execute(sql).fetchall()
+    db_session.close()
+    count = 0.0
+    if len(re) > 0:
+        if re[0][0] != 0.0 and re[0][0] != None:
+            count = round(float(re[0][0]) * pro, 2)
+    if energy == "电":
+        db_session.query(ElectricPrice).filter
 
 
 def energyselect(data):
@@ -1147,3 +1178,51 @@ def todayAreaRingCharts():
             logger.error(e)
             insertSyslog("error", "实时数据柱状图环形图查询报错Error：" + str(e), current_user.Name)
 
+
+@energy.route('/energydetail', methods=['POST', 'GET'])
+def energydetail():
+    '''
+    能耗明细
+    return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            dir = {}
+            StartTime = data.get("StartTime")
+            EndTime = data.get("EndTime")
+            EnergyClass = data.get("EnergyClass")
+            araes = db_session.query(AreaTable).filter().all()
+            wdir_list = []
+            edir_list = []
+            sdir_list = []
+            for area in araes:
+                wdir_coll = {}
+                edir_coll = {}
+                sdir_coll = {}
+                wdir_coll["区域"] = area.AreaName
+                edir_coll["区域"] = area.AreaName
+                sdir_coll["区域"] = area.AreaName
+                oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == area.AreaName).all()
+                oc_list = []
+                for oc in oclass:
+                    oc_list.append(oc.TagClassValue)
+                if len(oc_list) > 0:
+                    wdir_coll["能耗量"] = energyStatistics(oc_list, currentdayestart, currentdayend, "水")
+                    edir_coll["能耗量"] = energyStatistics(oc_list, currentdayestart, currentdayend, "电")
+                    sdir_coll["能耗量"] = energyStatistics(oc_list, currentdayestart, currentdayend, "汽")
+                else:
+                    wdir_coll["能耗量"] = 0.0
+                    edir_coll["能耗量"] = 0.0
+                    sdir_coll["能耗量"] = 0.0
+                wdir_list.append(wdir_coll)
+                edir_list.append(edir_coll)
+                sdir_list.append(sdir_coll)
+            dir["wrow"] = wdir_list
+            dir["erow"] = edir_list
+            dir["srow"] = sdir_list
+            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "实时数据柱状图环形图查询报错Error：" + str(e), current_user.Name)
