@@ -8,7 +8,7 @@ from dbset.main.BSFramwork import AlchemyEncoder
 from flask_login import login_required, logout_user, login_user, current_user, LoginManager
 import calendar
 
-from handlers.energymanager.energy_manager import energyStatistics
+from handlers.energymanager.energy_manager import energyStatistics, energyStatisticsCost
 from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable, Equipment, \
     AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
@@ -120,8 +120,6 @@ def energySteamSelect(data):
             StartTime = data.get("StartTime")
             EndTime = data.get("EndTime")
             energy = "汽"
-            if EndTime is None:
-                EndTime = StartTime
             if Area is not None and Area != "":
                 oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == energy,
                                                             TagDetail.AreaName == Area).all()
@@ -138,6 +136,12 @@ def energySteamSelect(data):
             dir["value"] = stecount
             unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == energy).first()[0]
             dir["unit"] = unit
+            # 成本
+            if len(oc_list) > 0:
+                cost = energyStatisticsCost(oc_list, StartTime, EndTime, energy)
+            else:
+                cost = 0.0
+            dir["cost"] = cost
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
