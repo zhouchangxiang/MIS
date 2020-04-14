@@ -36,7 +36,6 @@ export default {
         ChooseDate(){
             this.$store.commit('Choosedate',this.choosedate)
             let n=this.$store.state.choosedate
-            let m=this.$store.state.choosekind
             this.EndTime=moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
             let x=this.$store.state.choosekind
             switch(x){
@@ -61,10 +60,10 @@ export default {
                 StartTime:this.StartTime,
                 EndTime:this.EndTime,
                 Area:this.$store.state.workplace
-            }}).then((value) => {
-                // this.$store.state.sbnumber=JSON.parse(value.data)
-                // console.log(this.$store.state.sbnumber.value)
-                console.log(value)
+            }}).then((res) => {
+                this.$store.commit('Sbnumbers',JSON.parse(res.data))
+            }).catch((err) => {
+                console.log(err)
             })
             
         },
@@ -94,12 +93,11 @@ export default {
                 StartTime:this.StartTime,
                 EndTime:this.EndTime,
                 Area:this.$store.state.workplace
-            }}).then((value) => {
-                console.log(value)
-
+            }}).then((res) => {
+                this.$store.commit('Sbnumbers',JSON.parse(res.data))
+            }).catch((err) => {
+                console.log(err)
             })
-
-       
         }
 }
 }
