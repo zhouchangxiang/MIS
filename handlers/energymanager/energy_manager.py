@@ -10,7 +10,7 @@ import calendar
 from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable, Equipment, \
     AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
-    AreaTimeEnergyColour, ElectricProportion, PUIDMaintain, ElectricPrice
+    AreaTimeEnergyColour, ElectricProportion, PUIDMaintain, ElectricPrice, ElectricVolumeMaintain
 from tools.common import insert, delete, update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger, insertSyslog
@@ -1174,6 +1174,82 @@ def todayAreaRingCharts():
             dir["wrow"] = wdir_list
             dir["erow"] = edir_list
             dir["srow"] = sdir_list
+            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "实时数据柱状图环形图查询报错Error：" + str(e), current_user.Name)
+
+@energy.route('/energycost', methods=['POST', 'GET'])
+def energycost():
+    '''
+    能耗明细
+    return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            dir = {}
+            StartTime = data.get("StartTime")
+            EndTime = data.get("EndTime")
+            EnergyClass = data.get("EnergyClass")
+            TimeClass = data.get("TimeClass")
+            AreaName = data.get("AreaName")
+            dir_list = []
+            oc_list = []
+            if AreaName == "" or AreaName == None:
+                tags = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
+            else:
+                tags = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass,
+                                                          TagDetail.AreaName == AreaName).all()
+            for tag in tags:
+                oc_list.append(tag)
+            if EnergyClass == "电":
+                "2020-04-14 14:41:54"
+                volum = db_session.query(ElectricVolumeMaintain).filter(ElectricVolumeMaintain.IsEnabled == "是").first()
+                if TimeClass == "日":
+                    for i in range(int(StartTime[8:10]), int(EndTime[8:10])):
+                        stae = StartTime[0:9] + addzero(i) + " 00:00:00"
+                        ende = StartTime[0:9] + addzero(i) + " 23:59:59"
+                        dir_list_i = {}
+                        dir_list_i["时间"] = StartTime[0:9] + addzero(i)
+                        dir_list_i["容量"] = volum.Volume
+                        dir_list_i["需量"] = energyStatistics(oc_list, stae, ende, EnergyClass)
+                        dir_list_i["成本"] = energyStatisticsCost(oc_list, stae, ende, EnergyClass)
+                        dir_list.append(dir_list_i)
+                elif TimeClass == "月":
+                    for i in range(int(StartTime[5:7]), int(EndTime[5:7])):
+                        emonth = getMonthFirstDayAndLastDay(StartTime[0:4], i)
+                        staeM = emonth[0] + " 00:00:00"
+                        endeM = emonth[1] + " 23:59:59"
+                        dir_list_i = {}
+                        dir_list_i["时间"] = StartTime[0:9] + addzero(i)
+                        dir_list_i["容量"] = str(float(volum.Volume)*30)
+                        dir_list_i["需量"] = energyStatistics(oc_list, staeM, endeM, EnergyClass)
+                        dir_list_i["成本"] = energyStatisticsCost(oc_list, staeM, endeM, EnergyClass)
+                        dir_list.append(dir_list_i)
+                elif TimeClass == "年":
+                    for i in range(int(StartTime[0:4]), int(EndTime[0:4])):
+                        staeY = i + "-01-01 00:00:00"
+                        eyear = getMonthFirstDayAndLastDay(1, 12)
+                        endeY = eyear[1] + " 23:59:59"
+                        dir_list_i = {}
+                        dir_list_i["时间"] = i
+                        dir_list_i["容量"] = str(float(volum.Volume)*365)
+                        dir_list_i["需量"] = energyStatistics(oc_list, staeY, endeY, EnergyClass)
+                        dir_list_i["成本"] = energyStatisticsCost(oc_list, staeY, endeY, EnergyClass)
+                        dir_list.append(dir_list_i)
+                elif TimeClass == "时":
+                    for i in range(int(StartTime[11:13]), int(EndTime[11:13])):
+                        staeH = StartTime[0:11] + addzero(i) + ":00:00"
+                        endeH = StartTime[0:11] + addzero(i) + ":59:59"
+                        dir_list_i = {}
+                        dir_list_i["时间"] = StartTime[0:11] + addzero(i)
+                        dir_list_i["容量"] = str(float(volum.Volume)/24)
+                        dir_list_i["需量"] = energyStatistics(oc_list, staeH, endeH, EnergyClass)
+                        dir_list_i["成本"] = energyStatisticsCost(oc_list, staeH, endeH, EnergyClass)
+                        dir_list.append(dir_list_i)
+            dir["rows"] = dir_list
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)

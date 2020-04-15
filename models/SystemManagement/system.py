@@ -1226,6 +1226,25 @@ class PUIDMaintain(Base):
     # 创建日期:
     CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+class ElectricVolumeMaintain(Base):
+    '''电容量需量维护'''
+    __tablename__ = "ElectricVolumeMaintain"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+
+    # 变压器容量:
+    Volume = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 最大需量:
+    MaxVolume = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 是否启用:
+    IsEnabled = Column(Unicode(23), primary_key=False, autoincrement=False, nullable=True)
+
+    # 创建日期:
+    CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 
 # 生成表单的执行语句
 Base.metadata.create_all(engine)
