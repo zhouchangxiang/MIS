@@ -62,7 +62,7 @@ export default {
           if(res.status===200){
             if(res.data==='OK'){
               localStorage.setItem('token',res.data)
-              this.$toast(res.data)
+              this.$toast('登录成功')
               this.$router.push('/home')}
             else{
               this.$toast(res.data)

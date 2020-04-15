@@ -10,10 +10,7 @@
                   <div class="sb-t">{{this.$store.state.sbnumber.unit}}</div>
                   <div class="tabbar">
                       <ul>
-                          <li><div>提取制剂</div><span></span></li>
-                          <li>提取二<span></span></li>
-                          <li>前处理<span></span></li>
-                          <li>研发中心<span></span></li>
+                          <li v-for="(item,index) in $store.state.comparebox" :key="index"><div>{{item['区域']}}</div><span v-bind:style="{width:(item['能耗量']>20000?(item['能耗量']/2000000+'px'):(item['能耗量']/50+'px'))}"></span></li>
                       </ul>
                    </div>
            </div>
@@ -22,11 +19,11 @@
                    <div class="scpc">生产批次</div>
                    <div class="scpc-s">{{item.batchCount}}</div>
                    <div class="znhl">总耗能量</div>
-                   <div class="znhl-s">{{item.steamCon}}</div>
+                   <div class="znhl-s">{{$store.state.choosekind==0?item.waterCon:item.steamCon}}</div>
                    <div class="dwnh">单位批次能耗</div>
-                   <div class="dwnh-s">{{item.steamEveryBatch}}</div>
-                   <div class="dw-kwh">{{item.steamUnit}}</div>
-                   <div class="dw-pc">{{item.steamUnit}}&nbsp;/&nbsp;批</div>
+                   <div class="dwnh-s">{{$store.state.choosekind==0?item.waterEveryBatch:item.steamEveryBatch}}</div>
+                   <div class="dw-kwh">{{$store.state.choosekind==0?item.waterUnit:item.steamUnit}}</div>
+                   <div class="dw-pc">{{$store.state.choosekind==0?item.waterUnit:item.steamUnit}}&nbsp;/&nbsp;批</div>
                </div>
                <div class="sb-r">
                     <van-picker :columns="area" @change="onChange" :default-index="2"/>
@@ -46,7 +43,7 @@ export default {
     data(){
         return {
             myapi:'',
-            area:['新建综合制剂楼','提取二车间','前处理车间','研发中心','生物科技楼','原提取车间','锅炉房'],
+            area:[],
             StartTime:'2020-04-07 12:22:59',
             numberbox:[]
         }
@@ -89,7 +86,7 @@ export default {
                 EndTime:this.EndTime,
                 AreaName:this.$store.state.workplace
                 }}),
-                this.$http.get('/api/batchMaintainEnergy',{params:{
+            this.$http.get('/api/batchMaintainEnergy',{params:{
                 StartTime:this.StartTime,
                 EndTime:this.EndTime,
                 AreaName:this.$store.state.workplace
@@ -101,19 +98,29 @@ export default {
             }))
     },
     initNum(){
-        let str=moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+        let str1=moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+        let str2=moment(new Date()).format('YYYY-MM-DD')
         this.$http.all([
             this.$http.get('/api/energywater',{params:{
             StartTime:'2020-04-01 12:22:59',
-            EndTime:str,
-            AreaName:'提取二车间'
+            EndTime:str1,
+            AreaName:'前处理车间'
             }}),
             this.$http.get('/api/batchMaintainEnergy',{params:{
             StartTime:'2020-04-07 12:22:59',
-            EndTime:str,
-            AreaName:'提取二车间'
-        }})
-        ]).then(this.$http.spread((res1,res2)=>{
+            EndTime:str1,
+            AreaName:'前处理车间'
+        }}),
+         this.$http.get('/api/areatimeenergycount',{params:{
+              EnergyClass:'电',CompareTime:'2020-04-14'
+            }})
+        ]).then(this.$http.spread((res1,res2,res3)=>{
+            console.log(res3)
+            this.$store.commit('CompareBox',res3.data.rows)
+            let arr=res3.data.rows
+            for(var i=0;i<arr.length;i++){
+               this.area.push(arr[i]['区域'])
+            }
             this.$store.commit('Sbnumbers',JSON.parse(res1.data))
             this.$store.commit('NumBox',res2.data)
             this.numberbox=this.$store.state.numberbox
@@ -223,6 +230,8 @@ export default {
                 ul{
                     margin: 0;
                     padding: 0;
+                    height: 144px;
+                    overflow: hidden;
                     li{
                         height:36px;
                         text-align: right;
@@ -232,7 +241,9 @@ export default {
                         span{
                             display: block;
                             margin-top: 5px;
+                            float: right;
                             height: 4px;
+                            width: 30px;
                             background-color: #fff;
                         }
                     }

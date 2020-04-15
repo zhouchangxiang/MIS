@@ -181,6 +181,9 @@ export default {
             float: left;
             margin-right: 20px;
             border-radius:4px;
+            &:active{
+              background-color: #fff;
+            }
           }
           .c2{
             position: relative;

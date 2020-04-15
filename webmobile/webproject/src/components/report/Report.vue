@@ -13,6 +13,10 @@ export default {
     data(){
         return {
           newac:2
+        //     //接口还在写
+        //     // 只传递一个参数
+        //     //区分水电气
+        //     //返回name、online、total、rate
         }
     },
     components:{
@@ -20,18 +24,22 @@ export default {
     },
     methods:{
         getM(){
-            // this.$http.get('/energyall',{params:{
-            //    ModelFlag:"在线检测情况" 
-            // }}).then(res=>{
-            //     console.log(res)
-            //     //接口还在写
-            //     // 只传递一个参数
-            //     //区分水电气
-            //     //返回name、online、total、rate
-            // })
+            this.$http.get('/api/areatimeenergycount',{params:{
+              EnergyClass:"水",CompareTime:"2020-04-03"
+            }}).then(res=>{
+                console.log(res)
+            },
+                this.$http.get('/api/energywater',{params:{
+                StartTime:'2020-04-03 00:00:00',
+                EndTime:'2020-04-03 23:59:00',
+                AreaName:'提取二车间'
+            }}).then(res=>{
+                console.log('------------------------------------')
+                console.log(res.data)
+            })
 
             
-        }
+            )}
     }
 }
 </script>

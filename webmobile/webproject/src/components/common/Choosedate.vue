@@ -29,7 +29,8 @@ export default {
           StartTime:'2020-04-07 12:22:59',
           EndTime:'',
           myapi:'',
-          myobj:{}
+          myobj:{},
+          kind:''
         }
     },
     methods:{
@@ -88,21 +89,29 @@ export default {
                     break;
             }
             if(n===0){
-                this.myapi='/energywater'
+                this.myapi='/energywater',
+                this.kind='水'
             }else if(n===1){
-                this.myapi='/energyelectric'
+                this.myapi='/energyelectric',
+                this.kind='电'
             }else{
-                this.myapi='/energysteam'
+                this.myapi='/energysteam',
+                this.kind='汽'
             }
-             this.$http.get('/api'+this.myapi,{params:{
+            this.$http.all([
+                this.$http.get('/api'+this.myapi,{params:{
                 StartTime:this.StartTime,
                 EndTime:this.EndTime,
-                Area:this.$store.state.workplace
-            }}).then((res) => {
-                this.$store.commit('Sbnumbers',JSON.parse(res.data))
-            }).catch((err) => {
-                console.log(err)
-            })
+                AreaName:this.$store.state.workplace
+                }}),
+            this.$http.get('/api/areatimeenergycount',{params:{
+              EnergyClass:this.kind,CompareTime:'2020-04-01'
+            }})
+            ]).then(this.$http.spread((res1,res2)=>{
+                console.log(res2)
+                this.$store.commit('Sbnumbers',JSON.parse(res1.data))
+                this.$store.commit('CompareBox',res2.data.rows)
+            }))
         }
 }
 }
