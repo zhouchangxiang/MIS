@@ -10,7 +10,7 @@ import calendar
 from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable, Equipment, \
     AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
-    AreaTimeEnergyColour, ElectricProportion, PUIDMaintain, ElectricPrice, ElectricVolumeMaintain
+    AreaTimeEnergyColour, ElectricProportion, PUIDMaintain, ElectricPrice, ElectricVolumeMaintain, WaterSteamPrice
 from tools.common import insert, delete, update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger, insertSyslog
@@ -1272,6 +1272,124 @@ def energycost():
                 dir["transformerStorage"] = round(float(volum.Volume), 2)
                 dir["transformerUnit"] = volum.Unit
                 dir["storageCost"] = round(float(volum.UnitPrice) * float(volum.Volume), 2)
+            elif EnergyClass == "水":
+                wsumtotal = 0.0
+                wsumcosttotal = 0.0
+                if TimeClass == "日":
+                    for i in range(int(StartTime[8:10]), int(EndTime[8:10]) + 1):
+                        staw = StartTime[0:8] + addzero(i) + " 00:00:00"
+                        endw = StartTime[0:8] + addzero(i) + " 23:59:59"
+                        dir_list_i = {}
+                        dir_list_i["时间"] = StartTime[0:8] + addzero(i)
+                        wsum = energyStatistics(oc_list, staw, endw, EnergyClass)
+                        wsumtotal = wsumtotal + wsum
+                        wsumcost = energyStatisticsCost(oc_list, staw, endw, EnergyClass)
+                        costtotal = wsumcosttotal + wsumcost
+                        dir_list_i["耗量"] = wsum
+                        dir_list_i["成本"] = wsumcost
+                        dir_list.append(dir_list_i)
+                elif TimeClass == "月":
+                    for i in range(int(StartTime[5:7]), int(EndTime[5:7]) + 1):
+                        wmonth = getMonthFirstDayAndLastDay(StartTime[0:4], i)
+                        stawM = datetime.datetime.strftime(wmonth[0], "%Y-%m-%d %H:%M:%S")
+                        endwM = datetime.datetime.strftime(wmonth[0], "%Y-%m-%d") + " 23:59:59"
+                        dir_list_i = {}
+                        dir_list_i["时间"] = StartTime[0:8] + addzero(i)
+                        wsum = energyStatistics(oc_list, stawM, endwM, EnergyClass)
+                        wsumtotal = wsumtotal + wsum
+                        wsumcost = energyStatisticsCost(oc_list, stawM, endwM, EnergyClass)
+                        wsumcosttotal = wsumcosttotal + wsumcost
+                        dir_list_i["耗量"] = wsum
+                        dir_list_i["成本"] = wsumcost
+                        dir_list.append(dir_list_i)
+                elif TimeClass == "年":
+                    for i in range(int(StartTime[0:4]), int(EndTime[0:4]) + 1):
+                        stawY = str(i) + "-01-01 00:00:00"
+                        wyear = getMonthFirstDayAndLastDay(i, 12)
+                        wndeY = datetime.datetime.strftime(wyear[1], "%Y-%m-%d") + " 23:59:59"
+                        dir_list_i = {}
+                        dir_list_i["时间"] = str(i)
+                        wsum = energyStatistics(oc_list, stawY, wndeY, EnergyClass)
+                        wsumtotal = wsumtotal + wsum
+                        wsumcost = energyStatisticsCost(oc_list, stawY, wndeY, EnergyClass)
+                        wsumcosttotal = wsumcosttotal + wsumcost
+                        dir_list_i["耗量"] = wsum
+                        dir_list_i["成本"] = wsumcost
+                        dir_list.append(dir_list_i)
+                elif TimeClass == "时":
+                    for i in range(int(StartTime[11:13]), int(EndTime[11:13]) + 1):
+                        stawH = StartTime[0:11] + addzero(i) + ":00:00"
+                        endwH = StartTime[0:11] + addzero(i) + ":59:59"
+                        dir_list_i = {}
+                        dir_list_i["时间"] = StartTime[0:11] + addzero(i)
+                        wsum = energyStatistics(oc_list, stawH, endwH, EnergyClass)
+                        wsumtotal = wsumtotal + wsum
+                        wsumcost = energyStatisticsCost(oc_list, stawH, endwH, EnergyClass)
+                        wsumcosttotal = wsumcosttotal + wsumcost
+                        dir_list_i["耗量"] = wsum
+                        dir_list_i["成本"] = wsumcost
+                        dir_list.append(dir_list_i)
+                wunit = db_session.query(WaterSteamPrice).filter(WaterSteamPrice.PriceType == "水", WaterSteamPrice.IsEnabled == "是").first()[0]
+                dir["wunit"] = wunit
+            elif EnergyClass == "汽":
+                ssumtotal = 0.0
+                ssumcosttotal = 0.0
+                if TimeClass == "日":
+                    for i in range(int(StartTime[8:10]), int(EndTime[8:10]) + 1):
+                        stas = StartTime[0:8] + addzero(i) + " 00:00:00"
+                        ends = StartTime[0:8] + addzero(i) + " 23:59:59"
+                        dir_list_i = {}
+                        dir_list_i["时间"] = StartTime[0:8] + addzero(i)
+                        ssum = energyStatistics(oc_list, stas, ends, EnergyClass)
+                        ssumtotal = ssumtotal + ssum
+                        ssumcost = energyStatisticsCost(oc_list, stas, ends, EnergyClass)
+                        ssumcosttotal = ssumcosttotal + ssumcost
+                        dir_list_i["耗量"] = ssum
+                        dir_list_i["成本"] = ssumcost
+                        dir_list.append(dir_list_i)
+                elif TimeClass == "月":
+                    for i in range(int(StartTime[5:7]), int(EndTime[5:7]) + 1):
+                        smonth = getMonthFirstDayAndLastDay(StartTime[0:4], i)
+                        stasM = datetime.datetime.strftime(smonth[0], "%Y-%m-%d %H:%M:%S")
+                        endsM = datetime.datetime.strftime(smonth[0], "%Y-%m-%d") + " 23:59:59"
+                        dir_list_i = {}
+                        dir_list_i["时间"] = StartTime[0:8] + addzero(i)
+                        ssum = energyStatistics(oc_list, stasM, endsM, EnergyClass)
+                        ssumtotal = ssumtotal + ssum
+                        ssumcost = energyStatisticsCost(oc_list, stasM, endsM, EnergyClass)
+                        ssumcosttotal = ssumcosttotal + ssumcost
+                        dir_list_i["耗量"] = ssum
+                        dir_list_i["成本"] = ssumcost
+                        dir_list.append(dir_list_i)
+                elif TimeClass == "年":
+                    for i in range(int(StartTime[0:4]), int(EndTime[0:4]) + 1):
+                        stawY = str(i) + "-01-01 00:00:00"
+                        syear = getMonthFirstDayAndLastDay(i, 12)
+                        sndeY = datetime.datetime.strftime(syear[1], "%Y-%m-%d") + " 23:59:59"
+                        dir_list_i = {}
+                        dir_list_i["时间"] = str(i)
+                        ssum = energyStatistics(oc_list, stawY, sndeY, EnergyClass)
+                        ssumtotal = ssumtotal + ssum
+                        ssumcost = energyStatisticsCost(oc_list, stawY, sndeY, EnergyClass)
+                        ssumcosttotal = ssumcosttotal + ssumcost
+                        dir_list_i["耗量"] = ssum
+                        dir_list_i["成本"] = ssumcost
+                        dir_list.append(dir_list_i)
+                elif TimeClass == "时":
+                    for i in range(int(StartTime[11:13]), int(EndTime[11:13]) + 1):
+                        stasH = StartTime[0:11] + addzero(i) + ":00:00"
+                        endsH = StartTime[0:11] + addzero(i) + ":59:59"
+                        dir_list_i = {}
+                        dir_list_i["时间"] = StartTime[0:11] + addzero(i)
+                        ssum = energyStatistics(oc_list, stasH, endsH, EnergyClass)
+                        ssumtotal = ssumtotal + ssum
+                        ssumcost = energyStatisticsCost(oc_list, stasH, endsH, EnergyClass)
+                        ssumcosttotal = ssumcosttotal + ssumcost
+                        dir_list_i["耗量"] = ssum
+                        dir_list_i["成本"] = ssumcost
+                        dir_list.append(dir_list_i)
+                wunit = db_session.query(WaterSteamPrice).filter(WaterSteamPrice.PriceType == "汽", WaterSteamPrice.IsEnabled == "是").first()[0]
+                dir["sunit"] = wunit
             dir["rows"] = dir_list
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
