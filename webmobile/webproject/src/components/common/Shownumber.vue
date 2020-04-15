@@ -3,7 +3,7 @@
         <div class="show-foot">
                <div class="sf-l">
                    <div class="hf">耗费成本</div>
-                   <div class="all-money">00000000.00<span>元</span></div>
+                   <div class="all-money">{{this.$store.state.sbnumber.cost}}<span>元</span></div>
                </div>
                 <div class="sf-r">
                    <div class="machine">设备在线情况</div>
@@ -14,6 +14,7 @@
     </div>
 </template>
 <script>
+import store from '../../store/index'
 export default {
     data(){
         return {

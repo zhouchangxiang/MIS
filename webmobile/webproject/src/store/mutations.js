@@ -14,6 +14,9 @@ const mutations={
     NumBox:(state,value)=>{
         state.numberbox=[]
         state.numberbox.push(value)
+    },
+    CompareBox:(state,value)=>{
+        state.comparebox=value
     }
 }
 export default mutations
