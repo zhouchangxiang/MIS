@@ -1266,12 +1266,12 @@ def energycost():
                         dir_list_i["耗量"] = zgl
                         dir_list_i["成本"] = cost
                         dir_list.append(dir_list_i)
-                dir["实际耗量"] = zgltotal
-                dir["实际电费"] = costtotal
-                dir["容量"] = round(float(volum.Volume), 2)
-                dir["容量单位"] = volum.Unit
-                dir["容量单价"] = volum.UnitPrice
-                dir["容量电费"] = round(float(volum.UnitPrice) * float(volum.Volume), 2)
+                dir["expend"] = zgltotal
+                dir["expendCost"] = costtotal
+                dir["expendUnit"] = volum.Unit
+                dir["transformerStorage"] = round(float(volum.Volume), 2)
+                dir["transformerUnit"] = volum.Unit
+                dir["storageCost"] = round(float(volum.UnitPrice) * float(volum.Volume), 2)
             dir["rows"] = dir_list
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
