@@ -11,12 +11,12 @@
           <el-radio-group v-model="formParameters.resourceTime" fill="#082F4C" size="mini" @change="getEnergyChartsData">
             <el-radio-button v-for="item in radioTimeList" border :key="item.id" :label="item.name"></el-radio-button>
           </el-radio-group>
-          <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false" @change="getEnergyChartsData"></el-date-picker> ~
-          <el-date-picker type="datetime" v-model="formParameters.endDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false" @change="getEnergyChartsData"></el-date-picker>
+          <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd HH:mm" style="width: 160px;" :clearable="false" @change="getEnergyChartsData"></el-date-picker> ~
+          <el-date-picker type="datetime" v-model="formParameters.endDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd HH:mm" style="width: 160px;" :clearable="false" @change="getEnergyChartsData"></el-date-picker>
         </el-form-item>
         <el-form-item label="参数：" v-if="formParameters.energy === '电'" style="margin-bottom: 0;">
           <el-radio-group v-model="formParameters.resourceType" fill="#082F4C" size="mini">
-            <el-radio-button v-for="item in radioTypeList" border :key="item.id" :label="item.name" :disabled="item.disabled"></el-radio-button>
+            <el-radio-button v-for="item in radioTypeList" border :key="item.name" :label="item.name" :disabled="item.disabled"></el-radio-button>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -25,9 +25,8 @@
       <el-col :span="12" v-for="(item,index) in ElecCalculationTypeItem" :key="index">
         <div class="ElecCalculationType">
           <p>{{ item.title }}</p>
-          <el-col :span="8"><p class="text-color-caption">{{ item.typeTitle }}</p>{{ item.typeData }}</el-col>
-          <el-col :span="8"><p class="text-color-caption">{{ item.unit }}</p>{{ item.unitData }}</el-col>
-          <el-col :span="8"><p class="text-color-caption">{{ item.electricity }}</p>{{ item.electricityData }}</el-col>
+          <el-col :span="12"><p class="text-color-caption">{{ item.typeTitle }}</p>{{ item.typeData }}</el-col>
+          <el-col :span="12"><p class="text-color-caption">{{ item.electricity }}</p>{{ item.electricityData }}</el-col>
         </div>
       </el-col>
       <el-col :span="24">
@@ -121,6 +120,11 @@
         </div>
       </el-col>
     </el-col>
+    <el-col :span="24" v-if="formParameters.energy === '水' || formParameters.energy === '汽'" style="margin-top: 10px;">
+      <div class="energyDataContainer">
+        <ve-line :data="waterAndSteamCostChartData" :settings="waterAndSteamCostChartSettings" :extend="ChartExtend"></ve-line>
+      </div>
+    </el-col>
   </el-row>
 </template>
 
@@ -130,17 +134,10 @@
     name: "CostCenter",
     inject:['newAreaName'],
     data(){
-      this.basicElectricityChartSettings = {
-        yAxisName: ['元']
-      }
-      this.ElecCalculationChartSettings = {
-        axisSite: { right: ['功率因素'] },
-        yAxisName: ['无功罚款', '功率因素']
-      }
       this.ChartExtend = {
         grid:{
           left:'0',
-          right:'0',
+          right:'20px',
           bottom:'0',
           top:'40px'
         },
@@ -154,21 +151,22 @@
       }
       return {
         formParameters:{
-          resourceTime:"日",
+          resourceTime:"时",
           resourceType:"基本电费",
-          startDate:moment().day(moment().day()).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
-          endDate:moment().format('YYYY-MM-DD HH:mm:ss'),
+          startDate:moment().day(moment().day()).startOf('day').format('YYYY-MM-DD HH:mm'),
+          endDate:moment().format('YYYY-MM-DD HH:mm'),
           energy:"电"
         },
         radioTimeList:[
+          {name:"时"},
           {name:"日"},
           {name:"月"},
           {name:"年"}
         ],
         radioTypeList:[
-          {name:"基本电费",id:1},
-          {name:"电度电费",id:2},
-          {name:"力调电费",id:3}
+          {name:"基本电费"},
+          {name:"电度电费"},
+          {name:"力调电费"}
         ],
         pickerOptions:{
           disabledDate(time) {
@@ -182,19 +180,16 @@
         ],
         ElecCalculationTypeIndex:0,
         ElecCalculationTypeItem:[
-          {title:"按容量计算",typeTitle:"变压器容量",typeData:"1000kVA",unit:"单价",unitData:"20元/千伏安.月",electricity:"电费",electricityData:"20000元"},
-          {title:"按耗量计算",typeTitle:"实际耗量",typeData:"536.44kw",unit:"单价",unitData:"20元/千瓦.月",electricity:"电费",electricityData:"20000元"}
+          {title:"按容量计算",typeTitle:"变压器容量",typeData:"",electricity:"成本",electricityData:""},
+          {title:"按耗量计算",typeTitle:"实际耗量",typeData:"",electricity:"成本",electricityData:""}
         ],
+        basicElectricityChartSettings: {
+          axisSite: { right: ['元'] },
+          yAxisName: []
+        },
         basicElectricityChartData: {
           columns: ['时间', '容量', '耗量','成本'],
-          rows: [
-            { '时间': '2019-01-01', '容量': 1393, '耗量': 1093 ,'成本':1545},
-            { '时间': '2019-01-01', '容量': 3530, '耗量': 3230 ,'成本':1545},
-            { '时间': '2019-01-01', '容量': 2923, '耗量': 2623 ,'成本':1545},
-            { '时间': '2019-01-01', '容量': 1723, '耗量': 1423 ,'成本':1545},
-            { '时间': '2019-01-01', '容量': 3792, '耗量': 3492 ,'成本':1545},
-            { '时间': '2019-01-01', '容量': 4593, '耗量': 4293 ,'成本':1545}
-          ]
+          rows: []
         },
         periodTimeTypeItem:[
           {title:"尖时段",electrovalence:131521,electricity:131541,Ratio:"33.1%",usageAmount:135454},
@@ -232,6 +227,10 @@
           averagePowerFactor:0.66,
           belowNumber:30
         },
+        ElecCalculationChartSettings: {
+          axisSite: { right: ['功率因素'] },
+          yAxisName: ['无功罚款', '功率因素']
+        },
         ElecCalculationChartData:{
           columns: ['日期', '无功罚款','功率因素'],
           rows: [
@@ -240,10 +239,23 @@
             { '日期': '03', '无功罚款': 1593, '功率因素': 87},
             { '日期': '04', '无功罚款': 1693, '功率因素': 21}
           ]
+        },
+        waterAndSteamCostChartSettings:{
+          axisSite: { right: ['成本'] },
+          yAxisName: []
+        },
+        waterAndSteamCostChartData:{
+          columns: ['时间', '耗量', '成本'],
+          rows: [
+            { '时间': '01', '耗量': 4393, '成本': 43},
+            { '时间': '02', '耗量': 2393, '成本': 93},
+            { '时间': '03', '耗量': 1593, '成本': 87},
+            { '时间': '04', '耗量': 1693, '成本': 21}
+          ]
         }
       }
     },
-    created(){
+    mounted(){
       this.getEnergyChartsData()
     },
     methods:{
@@ -251,6 +263,7 @@
         this.ElecCalculationTypeIndex = index;
       },
       getEnergyChartsData(){
+        var that = this
         var areaName = ""
         if(this.newAreaName.areaName === "整厂区"){
           areaName = ""
@@ -259,13 +272,19 @@
         }
         var params = {
           EnergyClass: this.formParameters.energy,
-          StartTime:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss"),
-          EndTime:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss"),
+          StartTime:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm"),
+          EndTime:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm"),
           TimeClass:this.formParameters.resourceTime,
           AreaName:areaName
         }
         this.axios.get("/api/energycost",{params:params}).then(res => {
           console.log(res.data)
+          that.ElecCalculationTypeItem[0].typeData = res.data.transformerStorage + res.data.transformerUnit
+          that.ElecCalculationTypeItem[0].electricityData = res.data.storageCost + "元"
+          that.ElecCalculationTypeItem[1].typeData = res.data.expend + res.data.expendUnit
+          that.ElecCalculationTypeItem[1].electricityData = res.data.expendCost + "元"
+          that.basicElectricityChartSettings.yAxisName = [res.data.expendUnit,'成本']
+          that.basicElectricityChartData.rows = res.data.rows
         })
       }
     }

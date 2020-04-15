@@ -164,7 +164,7 @@ export default {
   mounted(){
     let _this = this
     this.timer = setInterval(() =>{
-      _this.time = moment(new Date()).format('MM-DD HH:mm:ss');
+      _this.time = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
     },1000);
     this.clickMainMenu(this.isactive)
   },
