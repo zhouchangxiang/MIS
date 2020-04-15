@@ -1239,6 +1239,12 @@ class ElectricVolumeMaintain(Base):
     # 最大需量:
     MaxVolume = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+    # 单价:
+    UnitPrice = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 单位:
+    Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
     # 是否启用:
     IsEnabled = Column(Unicode(23), primary_key=False, autoincrement=False, nullable=True)
 

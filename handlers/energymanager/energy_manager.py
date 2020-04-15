@@ -1183,7 +1183,7 @@ def todayAreaRingCharts():
 @energy.route('/energycost', methods=['POST', 'GET'])
 def energycost():
     '''
-    能耗明细
+    成本中心
     return:
     '''
     if request.method == 'GET':
@@ -1206,15 +1206,21 @@ def energycost():
                 oc_list.append(tag.TagClassValue)
             if EnergyClass == "电":
                 volum = db_session.query(ElectricVolumeMaintain).filter(ElectricVolumeMaintain.IsEnabled == "是").first()
+                zgltotal = 0.0
+                costtotal = 0.0
                 if TimeClass == "日":
                     for i in range(int(StartTime[8:10]), int(EndTime[8:10])+1):
                         stae = StartTime[0:8] + addzero(i) + " 00:00:00"
                         ende = StartTime[0:8] + addzero(i) + " 23:59:59"
                         dir_list_i = {}
                         dir_list_i["时间"] = StartTime[0:9] + addzero(i)
-                        dir_list_i["容量"] = volum.Volume
-                        dir_list_i["需量"] = energyStatistics(oc_list, stae, ende, EnergyClass)
-                        dir_list_i["成本"] = energyStatisticsCost(oc_list, stae, ende, EnergyClass)
+                        dir_list_i["容量"] = round(float(volum.Volume), 2)
+                        zgl = energyStatistics(oc_list, stae, ende, EnergyClass)
+                        zgltotal = zgltotal + zgl
+                        cost = energyStatisticsCost(oc_list, stae, ende, EnergyClass)
+                        costtotal = costtotal + cost
+                        dir_list_i["耗量"] = zgl
+                        dir_list_i["成本"] = cost
                         dir_list.append(dir_list_i)
                 elif TimeClass == "月":
                     for i in range(int(StartTime[5:7]), int(EndTime[5:7])+1):
@@ -1223,9 +1229,13 @@ def energycost():
                         endeM = datetime.datetime.strftime(emonth[0], "%Y-%m-%d") + " 23:59:59"
                         dir_list_i = {}
                         dir_list_i["时间"] = StartTime[0:9] + addzero(i)
-                        dir_list_i["容量"] = str(float(volum.Volume)*30)
-                        dir_list_i["需量"] = energyStatistics(oc_list, staeM, endeM, EnergyClass)
-                        dir_list_i["成本"] = energyStatisticsCost(oc_list, staeM, endeM, EnergyClass)
+                        dir_list_i["容量"] = round(float(volum.Volume)*30, 2)
+                        zgl = energyStatistics(oc_list, staeM, endeM, EnergyClass)
+                        zgltotal = zgltotal + zgl
+                        cost = energyStatisticsCost(oc_list, staeM, endeM, EnergyClass)
+                        costtotal = costtotal + cost
+                        dir_list_i["耗量"] = zgl
+                        dir_list_i["成本"] = cost
                         dir_list.append(dir_list_i)
                 elif TimeClass == "年":
                     for i in range(int(StartTime[0:4]), int(EndTime[0:4])+1):
@@ -1234,9 +1244,13 @@ def energycost():
                         endeY = datetime.datetime.strftime(eyear[1], "%Y-%m-%d") + " 23:59:59"
                         dir_list_i = {}
                         dir_list_i["时间"] = str(i)
-                        dir_list_i["容量"] = str(float(volum.Volume)*365)
-                        dir_list_i["需量"] = energyStatistics(oc_list, staeY, endeY, EnergyClass)
-                        dir_list_i["成本"] = energyStatisticsCost(oc_list, staeY, endeY, EnergyClass)
+                        dir_list_i["容量"] = round(float(volum.Volume)*365, 2)
+                        zgl = energyStatistics(oc_list, staeY, endeY, EnergyClass)
+                        zgltotal = zgltotal + zgl
+                        cost = energyStatisticsCost(oc_list, staeY, endeY, EnergyClass)
+                        costtotal = costtotal + cost
+                        dir_list_i["耗量"] = zgl
+                        dir_list_i["成本"] = cost
                         dir_list.append(dir_list_i)
                 elif TimeClass == "时":
                     for i in range(int(StartTime[11:13]), int(EndTime[11:13])+1):
@@ -1244,16 +1258,26 @@ def energycost():
                         endeH = StartTime[0:11] + addzero(i) + ":59:59"
                         dir_list_i = {}
                         dir_list_i["时间"] = StartTime[0:11] + addzero(i)
-                        dir_list_i["容量"] = str(float(volum.Volume)/24)
-                        dir_list_i["需量"] = energyStatistics(oc_list, staeH, endeH, EnergyClass)
-                        dir_list_i["成本"] = energyStatisticsCost(oc_list, staeH, endeH, EnergyClass)
+                        dir_list_i["容量"] = round(float(volum.Volume)/24, 2)
+                        zgl = energyStatistics(oc_list, staeH, endeH, EnergyClass)
+                        zgltotal = zgltotal + zgl
+                        cost = energyStatisticsCost(oc_list, staeH, endeH, EnergyClass)
+                        costtotal = costtotal + cost
+                        dir_list_i["耗量"] = zgl
+                        dir_list_i["成本"] = cost
                         dir_list.append(dir_list_i)
+                dir["实际耗量"] = zgltotal
+                dir["实际电费"] = costtotal
+                dir["容量"] = round(float(volum.Volume), 2)
+                dir["容量单位"] = volum.Unit
+                dir["容量单价"] = volum.UnitPrice
+                dir["容量电费"] = round(float(volum.UnitPrice) * float(volum.Volume), 2)
             dir["rows"] = dir_list
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
             logger.error(e)
-            insertSyslog("error", "实时数据柱状图环形图查询报错Error：" + str(e), current_user.Name)
+            insertSyslog("error", "成本中心查询报错Error：" + str(e), current_user.Name)
 
 
 @energy.route('/energydetail', methods=['POST', 'GET'])
