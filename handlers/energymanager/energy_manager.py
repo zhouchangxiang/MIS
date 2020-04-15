@@ -1329,7 +1329,7 @@ def energycost():
                         dir_list_i["耗量"] = wsum
                         dir_list_i["成本"] = wsumcost
                         dir_list.append(dir_list_i)
-                wunit = db_session.query(WaterSteamPrice).filter(WaterSteamPrice.PriceType == "水", WaterSteamPrice.IsEnabled == "是").first()[0]
+                wunit = db_session.query(WaterSteamPrice.PriceValue).filter(WaterSteamPrice.PriceType == "水", WaterSteamPrice.IsEnabled == "是").first()[0]
                 dir["wunit"] = wunit
             elif EnergyClass == "汽":
                 ssumtotal = 0.0
@@ -1388,7 +1388,7 @@ def energycost():
                         dir_list_i["耗量"] = ssum
                         dir_list_i["成本"] = ssumcost
                         dir_list.append(dir_list_i)
-                wunit = db_session.query(WaterSteamPrice).filter(WaterSteamPrice.PriceType == "汽", WaterSteamPrice.IsEnabled == "是").first()[0]
+                wunit = db_session.query(WaterSteamPrice.PriceValue).filter(WaterSteamPrice.PriceType == "汽", WaterSteamPrice.IsEnabled == "是").first()[0]
                 dir["sunit"] = wunit
             dir["rows"] = dir_list
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
