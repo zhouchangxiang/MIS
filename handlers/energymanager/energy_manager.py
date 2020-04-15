@@ -1213,7 +1213,7 @@ def energycost():
                         stae = StartTime[0:8] + addzero(i) + " 00:00:00"
                         ende = StartTime[0:8] + addzero(i) + " 23:59:59"
                         dir_list_i = {}
-                        dir_list_i["时间"] = StartTime[0:9] + addzero(i)
+                        dir_list_i["时间"] = StartTime[0:8] + addzero(i)
                         dir_list_i["容量"] = round(float(volum.Volume), 2)
                         zgl = energyStatistics(oc_list, stae, ende, EnergyClass)
                         zgltotal = zgltotal + zgl
@@ -1228,7 +1228,7 @@ def energycost():
                         staeM = datetime.datetime.strftime(emonth[0], "%Y-%m-%d %H:%M:%S")
                         endeM = datetime.datetime.strftime(emonth[0], "%Y-%m-%d") + " 23:59:59"
                         dir_list_i = {}
-                        dir_list_i["时间"] = StartTime[0:9] + addzero(i)
+                        dir_list_i["时间"] = StartTime[0:8] + addzero(i)
                         dir_list_i["容量"] = round(float(volum.Volume)*30, 2)
                         zgl = energyStatistics(oc_list, staeM, endeM, EnergyClass)
                         zgltotal = zgltotal + zgl
