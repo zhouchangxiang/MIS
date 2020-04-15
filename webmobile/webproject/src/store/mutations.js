@@ -10,6 +10,10 @@ const mutations={
     },
     Sbnumbers:(state,value)=>{
         state.sbnumber=value
+    },
+    NumBox:(state,value)=>{
+        state.numberbox=[]
+        state.numberbox.push(value)
     }
 }
 export default mutations

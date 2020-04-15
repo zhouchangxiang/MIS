@@ -1,8 +1,8 @@
 <template>
-    <div class="content">
-        <DateC :newac="newac"></DateC>
-        <div class="show">
-        </div>
+    <div class="show-box">
+            <DateC :newac="newac"></DateC>
+            <div class="show" @click="getM()">
+            </div>
 
     </div>
 </template>
@@ -19,11 +19,24 @@ export default {
         DateC
     },
     methods:{
+        getM(){
+            // this.$http.get('/energyall',{params:{
+            //    ModelFlag:"在线检测情况" 
+            // }}).then(res=>{
+            //     console.log(res)
+            //     //接口还在写
+            //     // 只传递一个参数
+            //     //区分水电气
+            //     //返回name、online、total、rate
+            // })
+
+            
+        }
     }
 }
 </script>
 <style lang="less" scoped>
-    .content{
+    .show-box{
         position:relative;
         width:375px;
         height:526px;

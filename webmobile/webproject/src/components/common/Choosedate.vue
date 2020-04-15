@@ -56,16 +56,21 @@ export default {
             }else{
                 this.StartTime='2020-04-09 00:00:00'
             }
-             this.$http.get('/api'+this.myapi,{params:{
+            this.$http.all([
+                this.$http.get('/api'+this.myapi,{params:{
                 StartTime:this.StartTime,
                 EndTime:this.EndTime,
-                Area:this.$store.state.workplace
-            }}).then((res) => {
-                this.$store.commit('Sbnumbers',JSON.parse(res.data))
-            }).catch((err) => {
-                console.log(err)
-            })
-            
+                AreaName:this.$store.state.workplace
+                }}),
+                this.$http.get('/api/batchMaintainEnergy',{params:{
+                StartTime:this.StartTime,
+                EndTime:this.EndTime,
+                AreaName:this.$store.state.workplace
+            }})
+            ]).then(this.$http.spread((res1,res2)=>{
+                this.$store.commit('Sbnumbers',JSON.parse(res1.data))
+                this.$store.commit('NumBox',res2.data)
+            }))
         },
         ChooseKind(){
             this.$store.commit('Choosekind',this.choosekind)

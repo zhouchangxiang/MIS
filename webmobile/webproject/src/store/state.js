@@ -1,7 +1,8 @@
 const state={
     choosedate:0,
     choosekind:0,
-    workplace:'新建综合制剂楼',
-    sbnumber:{}
+    workplace:'前处理车间',
+    sbnumber:{},
+    numberbox:[]
 }
 export default state
