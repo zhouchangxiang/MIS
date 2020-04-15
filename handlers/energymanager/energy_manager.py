@@ -1203,14 +1203,13 @@ def energycost():
                 tags = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass,
                                                           TagDetail.AreaName == AreaName).all()
             for tag in tags:
-                oc_list.append(tag)
+                oc_list.append(tag.TagClassValue)
             if EnergyClass == "电":
-                "2020-04-14 14:41:54"
                 volum = db_session.query(ElectricVolumeMaintain).filter(ElectricVolumeMaintain.IsEnabled == "是").first()
                 if TimeClass == "日":
-                    for i in range(int(StartTime[8:10]), int(EndTime[8:10])):
-                        stae = StartTime[0:9] + addzero(i) + " 00:00:00"
-                        ende = StartTime[0:9] + addzero(i) + " 23:59:59"
+                    for i in range(int(StartTime[8:10]), int(EndTime[8:10])+1):
+                        stae = StartTime[0:8] + addzero(i) + " 00:00:00"
+                        ende = StartTime[0:8] + addzero(i) + " 23:59:59"
                         dir_list_i = {}
                         dir_list_i["时间"] = StartTime[0:9] + addzero(i)
                         dir_list_i["容量"] = volum.Volume
@@ -1218,10 +1217,10 @@ def energycost():
                         dir_list_i["成本"] = energyStatisticsCost(oc_list, stae, ende, EnergyClass)
                         dir_list.append(dir_list_i)
                 elif TimeClass == "月":
-                    for i in range(int(StartTime[5:7]), int(EndTime[5:7])):
+                    for i in range(int(StartTime[5:7]), int(EndTime[5:7])+1):
                         emonth = getMonthFirstDayAndLastDay(StartTime[0:4], i)
-                        staeM = emonth[0] + " 00:00:00"
-                        endeM = emonth[1] + " 23:59:59"
+                        staeM = datetime.datetime.strftime(emonth[0], "%Y-%m-%d %H:%M:%S")
+                        endeM = datetime.datetime.strftime(emonth[0], "%Y-%m-%d") + " 23:59:59"
                         dir_list_i = {}
                         dir_list_i["时间"] = StartTime[0:9] + addzero(i)
                         dir_list_i["容量"] = str(float(volum.Volume)*30)
@@ -1229,18 +1228,18 @@ def energycost():
                         dir_list_i["成本"] = energyStatisticsCost(oc_list, staeM, endeM, EnergyClass)
                         dir_list.append(dir_list_i)
                 elif TimeClass == "年":
-                    for i in range(int(StartTime[0:4]), int(EndTime[0:4])):
-                        staeY = i + "-01-01 00:00:00"
-                        eyear = getMonthFirstDayAndLastDay(1, 12)
-                        endeY = eyear[1] + " 23:59:59"
+                    for i in range(int(StartTime[0:4]), int(EndTime[0:4])+1):
+                        staeY = str(i) + "-01-01 00:00:00"
+                        eyear = getMonthFirstDayAndLastDay(i, 12)
+                        endeY = datetime.datetime.strftime(eyear[1], "%Y-%m-%d") + " 23:59:59"
                         dir_list_i = {}
-                        dir_list_i["时间"] = i
+                        dir_list_i["时间"] = str(i)
                         dir_list_i["容量"] = str(float(volum.Volume)*365)
                         dir_list_i["需量"] = energyStatistics(oc_list, staeY, endeY, EnergyClass)
                         dir_list_i["成本"] = energyStatisticsCost(oc_list, staeY, endeY, EnergyClass)
                         dir_list.append(dir_list_i)
                 elif TimeClass == "时":
-                    for i in range(int(StartTime[11:13]), int(EndTime[11:13])):
+                    for i in range(int(StartTime[11:13]), int(EndTime[11:13])+1):
                         staeH = StartTime[0:11] + addzero(i) + ":00:00"
                         endeH = StartTime[0:11] + addzero(i) + ":59:59"
                         dir_list_i = {}
