@@ -1,9 +1,9 @@
 <template>
   <el-row>
     <el-col :span="24" v-if="newAreaName.areaName === '整厂区' || newAreaName.areaName === ''">
-      <el-row :gutter="30" style="margin-bottom: 15px;">
+      <el-row :gutter="30">
         <el-col :span="8">
-          <div class="platformContainer">
+          <div class="platformContainer" style="clear: none;overflow: initial;display: inline-block">
             <el-col :span="24" style="border-bottom: 1px solid #d8d8d8;padding: 20px 0;">
               <el-col :span="6">
                 <div class="iconBlock float-left" style="color: #FB8A06;">
@@ -23,11 +23,11 @@
                 </div>
               </el-col>
             </el-col>
-            <el-col :span="24" style="margin-top: 20px;">
+            <el-col :span="24" style="margin-top: 15px;">
               <p class="text-size-small">- 总功率：{{ electricChartValue }}</p>
               <ve-line :data="electricChartData" :extend="chartExtend" :legend-visible="false" height="300px" v-loading="socketLoading"></ve-line>
             </el-col>
-            <el-col :span="24" style="margin-top: 20px;">
+            <el-col :span="24" style="margin-top: 15px;">
               <p class="text-color-info-shallow">日耗量</p>
               <el-col :span="12">
                 <ve-histogram :data="electricHistogram" height="200px" :extend="chartExtend" :legend-visible="false"></ve-histogram>
@@ -39,7 +39,7 @@
           </div>
         </el-col>
         <el-col :span="8">
-          <div class="platformContainer">
+          <div class="platformContainer" style="clear: none;overflow: initial;display: inline-block">
             <el-col :span="24" style="border-bottom: 1px solid #d8d8d8;padding: 20px 0;">
               <el-col :span="6">
                 <div class="iconBlock float-left" style="color: #228AD5;">
@@ -59,7 +59,7 @@
                 </div>
               </el-col>
             </el-col>
-            <el-col :span="24" style="margin-top: 20px;">
+            <el-col :span="24" style="margin-top: 15px;">
               <p class="text-size-small">- 累计流量：{{ waterChartValue }}</p>
               <ve-line :data="waterChartData" :extend="chartExtend" :legend-visible="false" height="300px" v-loading="socketLoading"></ve-line>
             </el-col>
@@ -75,7 +75,7 @@
           </div>
         </el-col>
         <el-col :span="8">
-          <div class="platformContainer">
+          <div class="platformContainer" style="clear: none;overflow: initial;display: inline-block">
             <el-col :span="24" style="border-bottom: 1px solid #d8d8d8;padding: 20px 0;">
               <el-col :span="6">
                 <div class="iconBlock float-left" style="color: #15CC48;">
@@ -594,7 +594,7 @@
           //汽
           that.todaySteam = todaySteamData.value
           that.SteamUnit = todaySteamData.unit
-          that.steaCost = todaySteamData.cost + "元"
+          that.steamCost = todaySteamData.cost + "元"
           that.steamHistogram.rows = [
             { '时间': "昨日", '累计流量': that.yesterdayElectricityValue},
             { '时间': "本日", '累计流量': that.todayElectricity},
@@ -619,7 +619,6 @@
           limit:this.pagesize,
           offset:this.currentPage - 1
         }
-        console.log(params)
         this.axios.get("/api/batchMaintainExcelSelect",{params:params}).then(res => {
           var data = res.data
           that.tableData = data.rows

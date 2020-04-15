@@ -2,26 +2,26 @@
   <el-row :gutter="2">
     <el-col :span="24">
       <el-form :model="formParameters">
+        <el-form-item label="能耗：" style="margin-bottom: 0;" @change="getEnergyChartsData">
+          <el-radio-group v-model="formParameters.energy" fill="#082F4C" size="mini">
+            <el-radio-button v-for="item in energyList" :key="item.name" :label="item.name"></el-radio-button>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item label="时间：" style="margin-bottom: 0;">
-          <el-radio-group v-model="formParameters.resourceTime" fill="#082F4C" size="mini">
+          <el-radio-group v-model="formParameters.resourceTime" fill="#082F4C" size="mini" @change="getEnergyChartsData">
             <el-radio-button v-for="item in radioTimeList" border :key="item.id" :label="item.name"></el-radio-button>
           </el-radio-group>
-          <el-date-picker type="month" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM" style="width: 150px;" :clearable="false"></el-date-picker> ~
-          <el-date-picker type="month" v-model="formParameters.endDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM" style="width: 150px;" :clearable="false"></el-date-picker>
+          <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false" @change="getEnergyChartsData"></el-date-picker> ~
+          <el-date-picker type="datetime" v-model="formParameters.endDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false" @change="getEnergyChartsData"></el-date-picker>
         </el-form-item>
-        <el-form-item style="float: right;margin-bottom: 0;">
-          <el-radio-group v-model="formParameters.energy" fill="#082F4C" size="small">
-            <el-radio-button v-for="item in energyList" :key="item.id" :label="item.name"></el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="参数：" style="margin-bottom: 10px;">
+        <el-form-item label="参数：" v-if="formParameters.energy === '电'" style="margin-bottom: 0;">
           <el-radio-group v-model="formParameters.resourceType" fill="#082F4C" size="mini">
             <el-radio-button v-for="item in radioTypeList" border :key="item.id" :label="item.name" :disabled="item.disabled"></el-radio-button>
           </el-radio-group>
         </el-form-item>
       </el-form>
     </el-col>
-    <el-col :span="24" v-if="formParameters.resourceType == '基本电费'">
+    <el-col :span="24" v-if="formParameters.resourceType === '基本电费' && formParameters.energy === '电'" style="margin-top: 10px;">
       <el-col :span="12" v-for="(item,index) in ElecCalculationTypeItem" :key="index">
         <div class="ElecCalculationType">
           <p>{{ item.title }}</p>
@@ -36,7 +36,7 @@
         </div>
       </el-col>
     </el-col>
-    <el-col :span="24" v-if="formParameters.resourceType == '电度电费'">
+    <el-col :span="24" v-if="formParameters.resourceType == '电度电费' && formParameters.energy === '电'" style="margin-top: 10px;">
       <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
         <div class="chartTile">趋势图</div>
         <div class="chartHeadRight">
@@ -92,7 +92,7 @@
         </div>
       </el-col>
     </el-col>
-    <el-col :span="24" v-if="formParameters.resourceType == '力调电费'">
+    <el-col :span="24" v-if="formParameters.resourceType == '力调电费' && formParameters.energy === '电'" style="margin-top: 10px;">
       <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
         <div class="chartTile">力调电费</div>
         <div class="chartHeadRight">
@@ -128,6 +128,7 @@
   var moment = require('moment');
   export default {
     name: "CostCenter",
+    inject:['newAreaName'],
     data(){
       this.basicElectricityChartSettings = {
         yAxisName: ['元']
@@ -153,15 +154,16 @@
       }
       return {
         formParameters:{
-          resourceTime:"月",
+          resourceTime:"日",
           resourceType:"基本电费",
-          startDate:moment().month(moment().month() - 1).startOf('month').format('YYYY-MM'),
-          endDate:Date.now(),
-          energy:"电能"
+          startDate:moment().day(moment().day()).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
+          endDate:moment().format('YYYY-MM-DD HH:mm:ss'),
+          energy:"电"
         },
         radioTimeList:[
-          {name:"月",id:1},
-          {name:"年",id:2}
+          {name:"日"},
+          {name:"月"},
+          {name:"年"}
         ],
         radioTypeList:[
           {name:"基本电费",id:1},
@@ -174,24 +176,24 @@
           }
         },
         energyList:[
-          {name:"电能",id:1},
-          {name:"水能",id:2},
-          {name:"汽能",id:3},
+          {name:"电"},
+          {name:"水"},
+          {name:"汽"},
         ],
         ElecCalculationTypeIndex:0,
         ElecCalculationTypeItem:[
           {title:"按容量计算",typeTitle:"变压器容量",typeData:"1000kVA",unit:"单价",unitData:"20元/千伏安.月",electricity:"电费",electricityData:"20000元"},
-          {title:"按需量计算",typeTitle:"最大需量",typeData:"536.44kw",unit:"单价",unitData:"20元/千瓦.月",electricity:"电费",electricityData:"20000元"}
+          {title:"按耗量计算",typeTitle:"实际耗量",typeData:"536.44kw",unit:"单价",unitData:"20元/千瓦.月",electricity:"电费",electricityData:"20000元"}
         ],
         basicElectricityChartData: {
-          columns: ['日期', '容量', '需量'],
+          columns: ['时间', '容量', '耗量','成本'],
           rows: [
-            { '日期': '2019-1', '容量': 1393, '需量': 1093 },
-            { '日期': '2019-2', '容量': 3530, '需量': 3230 },
-            { '日期': '2019-3', '容量': 2923, '需量': 2623 },
-            { '日期': '2019-4', '容量': 1723, '需量': 1423 },
-            { '日期': '2019-5', '容量': 3792, '需量': 3492 },
-            { '日期': '2019-6', '容量': 4593, '需量': 4293 }
+            { '时间': '2019-01-01', '容量': 1393, '耗量': 1093 ,'成本':1545},
+            { '时间': '2019-01-01', '容量': 3530, '耗量': 3230 ,'成本':1545},
+            { '时间': '2019-01-01', '容量': 2923, '耗量': 2623 ,'成本':1545},
+            { '时间': '2019-01-01', '容量': 1723, '耗量': 1423 ,'成本':1545},
+            { '时间': '2019-01-01', '容量': 3792, '耗量': 3492 ,'成本':1545},
+            { '时间': '2019-01-01', '容量': 4593, '耗量': 4293 ,'成本':1545}
           ]
         },
         periodTimeTypeItem:[
@@ -241,12 +243,30 @@
         }
       }
     },
-    mounted(){
-
+    created(){
+      this.getEnergyChartsData()
     },
     methods:{
       selectElecCalculationType(index){
         this.ElecCalculationTypeIndex = index;
+      },
+      getEnergyChartsData(){
+        var areaName = ""
+        if(this.newAreaName.areaName === "整厂区"){
+          areaName = ""
+        }else{
+          areaName = this.newAreaName.areaName
+        }
+        var params = {
+          EnergyClass: this.formParameters.energy,
+          StartTime:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss"),
+          EndTime:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss"),
+          TimeClass:this.formParameters.resourceTime,
+          AreaName:areaName
+        }
+        this.axios.get("/api/energycost",{params:params}).then(res => {
+          console.log(res.data)
+        })
       }
     }
   }
