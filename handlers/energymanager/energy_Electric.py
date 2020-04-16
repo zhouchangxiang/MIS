@@ -347,7 +347,7 @@ def electricnergycost():
                             dir_list_i["谷时刻"] = round(float(ele[1]), 2)
                     # 尖峰平谷价格
                     dir_list_i_price = {}
-                    dir_list_i_price["时间"] = StartTime[0:8] + addzero(i)
+                    dir_list_i_price["时间"] = str(i)
                     costs = timeelectricprice(oc_list, staeY, endeY, EnergyClass)
                     for ele in costs:
                         if ele[0] == "尖时刻":
@@ -387,7 +387,7 @@ def electricnergycost():
                             dir_list_i["谷时刻"] = round(float(ele[1]), 2)
                     # 尖峰平谷价格
                     dir_list_i_price = {}
-                    dir_list_i_price["时间"] = StartTime[0:8] + addzero(i)
+                    dir_list_i_price["时间"] = StartTime[0:11] + addzero(i)
                     costs = timeelectricprice(oc_list, staeH, endeH, EnergyClass)
                     for ele in costs:
                         if ele[0] == "尖时刻":
