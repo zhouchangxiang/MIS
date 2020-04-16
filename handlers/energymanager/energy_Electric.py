@@ -418,10 +418,10 @@ def electricnergycost():
             totalprice = jtimeprice
             periodTimeTypeItem = []
             if totalprice != 0.0:
-                jratio = str(round(jtimeprice / totalprice, 3))*100 + "%"
-                fratio = str(round(ftimeprice / totalprice, 3))*100 + "%"
-                pratio = str(round(ptimeprice / totalprice, 3))*100 + "%"
-                gratio = str(round(gtimeprice / totalprice, 3))*100 + "%"
+                jratio = round(jtimeprice / totalprice, 3)*100
+                fratio = round(ftimeprice / totalprice, 3)*100
+                pratio = round(ptimeprice / totalprice, 3)*100
+                gratio = round(gtimeprice / totalprice, 3)*100
             else:
                 jratio = 0
                 fratio = 0
