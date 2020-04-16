@@ -191,28 +191,10 @@
           columns: ['时间', '容量', '耗量','成本'],
           rows: []
         },
-        periodTimeTypeItem:[
-          {title:"尖时段",expendPrice:131521,unitPrice:0.6,Ratio:"33.1%",expendEnergy:1654,unit:"kwh"},
-          {title:"峰时段",expendPrice:131521,unitPrice:0.7,Ratio:"33.1%",expendEnergy:1645,unit:"kwh"},
-          {title:"平时段",expendPrice:131521,unitPrice:0.8,Ratio:"33.1%",expendEnergy:6942,unit:"kwh"},
-          {title:"谷时段",expendPrice:131521,unitPrice:0.9,Ratio:"33.1%",expendEnergy:9654,unit:"kwh"}
-        ],
+        periodTimeTypeItem:[],
         electricityPileChartData:{
-          columns: ['日期', '谷时段','平时段','峰时段','尖时段'],
-          rows: [
-            { '日期': '01-01', '尖时段': 4393, '峰时段': 4093 , '平时段': 2345, '谷时段': 235},
-            { '日期': '01-02', '尖时段': 5393, '峰时段': 4193 , '平时段': 2945, '谷时段': 635},
-            { '日期': '01-03', '尖时段': 3393, '峰时段': 4593 , '平时段': 2345, '谷时段': 235},
-            { '日期': '01-04', '尖时段': 5393, '峰时段': 4693 , '平时段': 3345, '谷时段': 935},
-            { '日期': '01-05', '尖时段': 6393, '峰时段': 4093 , '平时段': 2745, '谷时段': 235},
-            { '日期': '01-06', '尖时段': 5393, '峰时段': 4093 , '平时段': 2345, '谷时段': 235},
-            { '日期': '01-07', '尖时段': 7393, '峰时段': 4493 , '平时段': 2345, '谷时段': 735},
-            { '日期': '01-08', '尖时段': 3393, '峰时段': 4093 , '平时段': 2345, '谷时段': 235},
-            { '日期': '01-09', '尖时段': 5393, '峰时段': 4093 , '平时段': 2345, '谷时段': 235},
-            { '日期': '01-09', '尖时段': 5393, '峰时段': 4093 , '平时段': 2345, '谷时段': 235},
-            { '日期': '01-09', '尖时段': 5393, '峰时段': 4093 , '平时段': 2345, '谷时段': 235},
-            { '日期': '01-09', '尖时段': 5393, '峰时段': 4093 , '平时段': 2345, '谷时段': 235}
-          ]
+          columns: ['时间', '谷时段','平时段','峰时段','尖时段'],
+          rows: []
         },
         electricAnalyzeItem:[
           {title:"尖峰平谷分析",sharp:100,sharpTime:3,peak:85.7,peakTime:7,poise:33.3,poiseTime:6,ebb:12.5,ebbTime:8,total:553524.5,average:0.54},
@@ -296,6 +278,8 @@
             AreaName:areaName
           }}).then(res => {
             console.log(res.data)
+            that.periodTimeTypeItem = res.data.periodTimeTypeItem
+            that.electricityPileChartData.rows = res.data.rows
           })
         }
       }
