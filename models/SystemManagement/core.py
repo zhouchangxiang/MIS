@@ -37,6 +37,7 @@ Base = declarative_base(engine)
 
 # DepartmentManager_START:
 class DepartmentManager(Base):
+    '''部门'''
     __tablename__ = "DepartmentManager"
 
     # ID:
@@ -72,6 +73,7 @@ class MenuType(Base):
 
 # Role_START:
 class Role(Base):
+    '''角色'''
     __tablename__ = "Role"
 
     # ID:
@@ -250,6 +252,7 @@ class EquipmentMaintenanceStore(Base):
 
 # plantCalendarScheduling_START:
 class plantCalendarScheduling(Base):
+    '''日历'''
     __tablename__ = "plantCalendarScheduling"
 
     # ID:
@@ -325,6 +328,7 @@ class Factory(Base):
 
 # Station_START:
 class Station(Base):
+    '''岗位'''
     __tablename__ = "Station"
 
     # ID:
@@ -359,6 +363,7 @@ class Station(Base):
 
 # DeviceList_START:
 class DeviceList(Base):
+    '''器件'''
     __tablename__ = "DeviceList"
 
     # ID:
@@ -437,6 +442,7 @@ class RedisKey(Base):
 
 # AreaMaintain_START:
 class AreaMaintain(Base):
+    '''厂区'''
     __tablename__ = "AreaMaintain"
 
     # ID:
@@ -558,6 +564,7 @@ class BatchMaintain(Base):
 
 # WorkShop_START:
 class WorkShop(Base):
+    '''车间'''
     __tablename__ = "WorkShop"
 
     # ID:
