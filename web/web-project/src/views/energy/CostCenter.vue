@@ -15,7 +15,7 @@
           <el-date-picker type="datetime" v-model="formParameters.endDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd HH:mm" style="width: 160px;" :clearable="false" @change="getEnergyChartsData"></el-date-picker>
         </el-form-item>
         <el-form-item label="参数：" v-if="formParameters.energy === '电'" style="margin-bottom: 0;">
-          <el-radio-group v-model="formParameters.resourceType" fill="#082F4C" size="mini">
+          <el-radio-group v-model="formParameters.resourceType" fill="#082F4C" size="mini" @change="getEnergyChartsData">
             <el-radio-button v-for="item in radioTypeList" border :key="item.name" :label="item.name" :disabled="item.disabled"></el-radio-button>
           </el-radio-group>
         </el-form-item>
@@ -166,7 +166,7 @@
         radioTypeList:[
           {name:"基本电费"},
           {name:"电度电费"},
-          {name:"力调电费"}
+          // {name:"力调电费"}
         ],
         pickerOptions:{
           disabledDate(time) {
@@ -288,6 +288,16 @@
           that.waterAndSteamCostChartSettings.yAxisName = [res.data.unit,'成本']
           that.waterAndSteamCostChartData.rows = res.data.rows
         })
+        if(this.formParameters.resourceType === "电度电费" && this.formParameters.energy === "电"){
+          this.axios.get("/api/electricnergycost",{params:{
+            StartTime:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm"),
+            EndTime:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm"),
+            TimeClass:this.formParameters.resourceTime,
+            AreaName:areaName
+          }}).then(res => {
+            console.log(res.data)
+          })
+        }
       }
     }
   }
