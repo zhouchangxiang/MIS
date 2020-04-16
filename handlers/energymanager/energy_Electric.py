@@ -418,10 +418,10 @@ def electricnergycost():
             totalprice = jtimeprice
             periodTimeTypeItem = []
             if totalprice != 0.0:
-                jratio = round(jtimeprice / totalprice, 3)
-                fratio = round(ftimeprice / totalprice, 3)
-                pratio = round(ptimeprice / totalprice, 3)
-                gratio = round(gtimeprice / totalprice, 3)
+                jratio = str(round(jtimeprice / totalprice, 3))*100 + "%"
+                fratio = str(round(ftimeprice / totalprice, 3))*100 + "%"
+                pratio = str(round(ptimeprice / totalprice, 3))*100 + "%"
+                gratio = str(round(gtimeprice / totalprice, 3))*100 + "%"
             else:
                 jratio = 0
                 fratio = 0
@@ -461,6 +461,7 @@ def electricnergycost():
             periodTimeTypeItem.append(dir_gtime)
             dir["periodTimeTypeItem"] = periodTimeTypeItem
             dir["rows"] = dir_list
+            dir["totalPrice"] = round(jtimeprice + ftimeprice + ptimeprice + gtimeprice, 2)
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
