@@ -12,7 +12,7 @@ from handlers.energymanager.energy_manager import energyStatistics, energyStatis
 from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable, Equipment, \
     AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
-    AreaTimeEnergyColour, ElectricProportion, IncrementElectricTable
+    AreaTimeEnergyColour, ElectricProportion, IncrementElectricTable, ElectricPrice
 from tools.common import insert, delete, update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger, insertSyslog
@@ -208,3 +208,274 @@ def get_electric():
         result = db_session.execute(sql).fetchall()
         price = 0 if len(result) == 0 else str(round(result[0]['count'], 2))
         return json.dumps({'rows': data, 'total_column': total, 'price': price}, cls=AlchemyEncoder, ensure_ascii=False)
+
+
+@energyElectric.route('/electricnergycost', methods=['POST', 'GET'])
+def electricnergycost():
+    '''
+    成本中心-电度电费
+    return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            dir = {}
+            StartTime = data.get("StartTime")
+            EndTime = data.get("EndTime")
+            EnergyClass = "电"
+            TimeClass = data.get("TimeClass")
+            AreaName = data.get("AreaName")
+            dir_list = []
+            oc_list = []
+            if AreaName == "" or AreaName == None:
+                tags = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
+            else:
+                tags = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass,
+                                                          TagDetail.AreaName == AreaName).all()
+            for tag in tags:
+                oc_list.append(tag.TagClassValue)
+            if EnergyClass == "电":
+                zgltotal = 0.0
+                costtotal = 0.0
+                if TimeClass == "日":
+                    jtime = 0.0
+                    ftime = 0.0
+                    ptime = 0.0
+                    gtime = 0.0
+                    jtimeprice = 0.0
+                    ftimeprice = 0.0
+                    ptimeprice = 0.0
+                    gtimeprice = 0.0
+                    for i in range(int(StartTime[8:10]), int(EndTime[8:10])+1):
+                        stae = StartTime[0:8] + addzero(i) + " 00:00:00"
+                        ende = StartTime[0:8] + addzero(i) + " 23:59:59"
+                        dir_list_i = {}
+                        dir_list_i["时间"] = StartTime[0:8] + addzero(i)
+                        #尖峰平谷电量
+                        elecs = timeelectric(oc_list, stae, ende, EnergyClass)
+                        for ele in elecs:
+                            if ele[0] == "尖时刻":
+                                jtime = jtime + round(float(ele[1]), 2)
+                                dir_list_i["尖时段"] = round(float(ele[1]), 2)
+                            elif ele[0] == "峰时刻":
+                                ftime = ftime + float(ele[1])
+                                dir_list_i["峰时刻"] = round(float(ele[1]), 2)
+                            elif ele[0] == "平时刻":
+                                ptime = ptime + float(ele[1])
+                                dir_list_i["平时刻"] = round(float(ele[1]), 2)
+                            elif ele[0] == "谷时刻":
+                                gtime = gtime + float(ele[1])
+                                dir_list_i["谷时刻"] = round(float(ele[1]), 2)
+                        #尖峰平谷价格
+                        dir_list_i_price = {}
+                        dir_list_i_price["时间"] = StartTime[0:8] + addzero(i)
+                        costs = timeelectricprice(oc_list, stae, ende, EnergyClass)
+                        for ele in costs:
+                            if ele[0] == "尖时刻":
+                                jtimeprice = jtimeprice + round(float(ele[1]), 2)
+                                dir_list_i_price["尖时段"] = round(float(ele[1]), 2)
+                            elif ele[0] == "峰时刻":
+                                ftimeprice = ftimeprice + float(ele[1])
+                                dir_list_i_price["峰时刻"] = round(float(ele[1]), 2)
+                            elif ele[0] == "平时刻":
+                                ptimeprice = ptimeprice + float(ele[1])
+                                dir_list_i_price["平时刻"] = round(float(ele[1]), 2)
+                            elif ele[0] == "谷时刻":
+                                gtimeprice = gtimeprice + float(ele[1])
+                                dir_list_i_price["谷时刻"] = round(float(ele[1]), 2)
+                        dir_list.append(dir_list_i)
+                        dir_list.append(dir_list_i_price)
+                elif TimeClass == "月":
+                    for i in range(int(StartTime[5:7]), int(EndTime[5:7])+1):
+                        emonth = getMonthFirstDayAndLastDay(StartTime[0:4], i)
+                        staeM = datetime.datetime.strftime(emonth[0], "%Y-%m-%d %H:%M:%S")
+                        endeM = datetime.datetime.strftime(emonth[0], "%Y-%m-%d") + " 23:59:59"
+                        dir_list_i = {}
+                        dir_list_i["时间"] = StartTime[0:8] + addzero(i)
+                        # 尖峰平谷电量
+                        elecs = timeelectric(oc_list, staeM, endeM, EnergyClass)
+                        for ele in elecs:
+                            if ele[0] == "尖时刻":
+                                jtime = jtime + round(float(ele[1]), 2)
+                                dir_list_i["尖时段"] = round(float(ele[1]), 2)
+                            elif ele[0] == "峰时刻":
+                                ftime = ftime + float(ele[1])
+                                dir_list_i["峰时刻"] = round(float(ele[1]), 2)
+                            elif ele[0] == "平时刻":
+                                ptime = ptime + float(ele[1])
+                                dir_list_i["平时刻"] = round(float(ele[1]), 2)
+                            elif ele[0] == "谷时刻":
+                                gtime = gtime + float(ele[1])
+                                dir_list_i["谷时刻"] = round(float(ele[1]), 2)
+                        # 尖峰平谷价格
+                        dir_list_i_price = {}
+                        dir_list_i_price["时间"] = StartTime[0:8] + addzero(i)
+                        costs = timeelectricprice(oc_list, staeM, endeM, EnergyClass)
+                        for ele in costs:
+                            if ele[0] == "尖时刻":
+                                jtimeprice = jtimeprice + round(float(ele[1]), 2)
+                                dir_list_i_price["尖时段"] = round(float(ele[1]), 2)
+                            elif ele[0] == "峰时刻":
+                                ftimeprice = ftimeprice + float(ele[1])
+                                dir_list_i_price["峰时刻"] = round(float(ele[1]), 2)
+                            elif ele[0] == "平时刻":
+                                ptimeprice = ptimeprice + float(ele[1])
+                                dir_list_i_price["平时刻"] = round(float(ele[1]), 2)
+                            elif ele[0] == "谷时刻":
+                                gtimeprice = gtimeprice + float(ele[1])
+                                dir_list_i_price["谷时刻"] = round(float(ele[1]), 2)
+                        dir_list.append(dir_list_i)
+                        dir_list.append(dir_list_i_price)
+                elif TimeClass == "年":
+                    for i in range(int(StartTime[0:4]), int(EndTime[0:4])+1):
+                        staeY = str(i) + "-01-01 00:00:00"
+                        eyear = getMonthFirstDayAndLastDay(i, 12)
+                        endeY = datetime.datetime.strftime(eyear[1], "%Y-%m-%d") + " 23:59:59"
+                        dir_list_i = {}
+                        dir_list_i["时间"] = str(i)
+                        # 尖峰平谷电量
+                        elecs = timeelectric(oc_list, eyear, endeY, EnergyClass)
+                        for ele in elecs:
+                            if ele[0] == "尖时刻":
+                                jtime = jtime + round(float(ele[1]), 2)
+                                dir_list_i["尖时段"] = round(float(ele[1]), 2)
+                            elif ele[0] == "峰时刻":
+                                ftime = ftime + float(ele[1])
+                                dir_list_i["峰时刻"] = round(float(ele[1]), 2)
+                            elif ele[0] == "平时刻":
+                                ptime = ptime + float(ele[1])
+                                dir_list_i["平时刻"] = round(float(ele[1]), 2)
+                            elif ele[0] == "谷时刻":
+                                gtime = gtime + float(ele[1])
+                                dir_list_i["谷时刻"] = round(float(ele[1]), 2)
+                        # 尖峰平谷价格
+                        dir_list_i_price = {}
+                        dir_list_i_price["时间"] = StartTime[0:8] + addzero(i)
+                        costs = timeelectricprice(oc_list, eyear, endeY, EnergyClass)
+                        for ele in costs:
+                            if ele[0] == "尖时刻":
+                                jtimeprice = jtimeprice + round(float(ele[1]), 2)
+                                dir_list_i_price["尖时段"] = round(float(ele[1]), 2)
+                            elif ele[0] == "峰时刻":
+                                ftimeprice = ftimeprice + float(ele[1])
+                                dir_list_i_price["峰时刻"] = round(float(ele[1]), 2)
+                            elif ele[0] == "平时刻":
+                                ptimeprice = ptimeprice + float(ele[1])
+                                dir_list_i_price["平时刻"] = round(float(ele[1]), 2)
+                            elif ele[0] == "谷时刻":
+                                gtimeprice = gtimeprice + float(ele[1])
+                                dir_list_i_price["谷时刻"] = round(float(ele[1]), 2)
+                        dir_list.append(dir_list_i)
+                        dir_list.append(dir_list_i_price)
+                elif TimeClass == "时":
+                    for i in range(int(StartTime[11:13]), int(EndTime[11:13])+1):
+                        staeH = StartTime[0:11] + addzero(i) + ":00:00"
+                        endeH = StartTime[0:11] + addzero(i) + ":59:59"
+                        dir_list_i = {}
+                        dir_list_i["时间"] = StartTime[0:11] + addzero(i)
+                        # 尖峰平谷电量
+                        elecs = timeelectric(oc_list, staeH, endeH, EnergyClass)
+                        for ele in elecs:
+                            if ele[0] == "尖时刻":
+                                jtime = jtime + round(float(ele[1]), 2)
+                                dir_list_i["尖时段"] = round(float(ele[1]), 2)
+                            elif ele[0] == "峰时刻":
+                                ftime = ftime + float(ele[1])
+                                dir_list_i["峰时刻"] = round(float(ele[1]), 2)
+                            elif ele[0] == "平时刻":
+                                ptime = ptime + float(ele[1])
+                                dir_list_i["平时刻"] = round(float(ele[1]), 2)
+                            elif ele[0] == "谷时刻":
+                                gtime = gtime + float(ele[1])
+                                dir_list_i["谷时刻"] = round(float(ele[1]), 2)
+                        # 尖峰平谷价格
+                        dir_list_i_price = {}
+                        dir_list_i_price["时间"] = StartTime[0:8] + addzero(i)
+                        costs = timeelectricprice(oc_list, staeH, endeH, EnergyClass)
+                        for ele in costs:
+                            if ele[0] == "尖时刻":
+                                jtimeprice = jtimeprice + round(float(ele[1]), 2)
+                                dir_list_i_price["尖时段"] = round(float(ele[1]), 2)
+                            elif ele[0] == "峰时刻":
+                                ftimeprice = ftimeprice + float(ele[1])
+                                dir_list_i_price["峰时刻"] = round(float(ele[1]), 2)
+                            elif ele[0] == "平时刻":
+                                ptimeprice = ptimeprice + float(ele[1])
+                                dir_list_i_price["平时刻"] = round(float(ele[1]), 2)
+                            elif ele[0] == "谷时刻":
+                                gtimeprice = gtimeprice + float(ele[1])
+                                dir_list_i_price["谷时刻"] = round(float(ele[1]), 2)
+                        dir_list.append(dir_list_i)
+                        dir_list.append(dir_list_i_price)
+            unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == EnergyClass).first()[0]
+            priceunits = db_session.query(ElectricPrice).filter().all()
+            for priceunit in priceunits:
+                if priceunit.PriceName == "尖时刻":
+                    juint = float(priceunit.PriceValue)
+                elif priceunit.PriceName == "峰时刻":
+                    fuint = float(priceunit.PriceValue)
+                elif priceunit.PriceName == "平时刻":
+                    puint = float(priceunit.PriceValue)
+                elif priceunit.PriceName == "谷时刻":
+                    guint = float(priceunit.PriceValue)
+            totalprice = jtimeprice
+            periodTimeTypeItem = []
+            dir_jtime = {}
+            dir_jtime["title"] = "尖时刻"
+            dir_jtime["expendEnergy"] = jtime
+            dir_jtime["expendPrice"] = jtimeprice
+            dir_jtime["unit"] = unit
+            dir_jtime["Ratio"] = round(jtimeprice/totalprice,3)
+            dir_jtime["unitPrice"] = juint
+            periodTimeTypeItem.append(dir_jtime)
+            dir_ftime = {}
+            dir_ftime["title"] = "峰时刻"
+            dir_ftime["expendEnergy"] = ftime
+            dir_ftime["expendPrice"] = ftimeprice
+            dir_ftime["unit"] = unit
+            dir_ftime["Ratio"] = round(ftimeprice / totalprice, 3)
+            dir_ftime["unitPrice"] = fuint
+            periodTimeTypeItem.append(dir_ftime)
+            dir_ptime = {}
+            dir_ptime["title"] = "平时刻"
+            dir_ptime["expendEnergy"] = ptime
+            dir_ptime["expendPrice"] = ptimeprice
+            dir_ptime["unit"] = unit
+            dir_ptime["Ratio"] = round(ptimeprice / totalprice, 3)
+            dir_ptime["unitPrice"] = puint
+            periodTimeTypeItem.append(dir_ptime)
+            dir_gtime = {}
+            dir_gtime["title"] = "谷时刻"
+            dir_gtime["expendEnergy"] = gtime
+            dir_gtime["expendPrice"] = gtimeprice
+            dir_gtime["unit"] = unit
+            dir_gtime["Ratio"] = round(gtimeprice / totalprice, 3)
+            dir_gtime["unitPrice"] = guint
+            periodTimeTypeItem.append(dir_gtime)
+            dir["periodTimeTypeItem"] = periodTimeTypeItem
+            dir["rows"] = dir_list
+            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "成本中心-电度电费查询报错Error：" + str(e), current_user.Name)
+
+def timeelectricprice(oc_list, StartTime, EndTime, energy):
+    propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
+    pro = float(propor.Proportion)
+    sql = "select t2.PriceName,SUM(Cast(t1.IncremenValue as float)) * Cast(t2.PriceValue as float) FROM [DB_MICS].[dbo].[IncrementElectricTable] t1 with (INDEX =IX_IncrementElectricTable) INNER JOIN [DB_MICS].[dbo].[ElectricPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
+    oc_list)[
+                                                                                                                                                                                                                                                                                            1:-1] + ") and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue, t2.PriceName"
+    re = db_session.execute(sql).fetchall()
+    db_session.close()
+    return re
+
+def timeelectric(oc_list, StartTime, EndTime, energy):
+    propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
+    pro = float(propor.Proportion)
+    sql = "select t2.PriceName,SUM(Cast(t1.IncremenValue as float)) FROM [DB_MICS].[dbo].[IncrementElectricTable] t1 with (INDEX =IX_IncrementElectricTable) INNER JOIN [DB_MICS].[dbo].[ElectricPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
+    oc_list)[
+                                                                                                                                                                                                                                                                                            1:-1] + ") and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue, t2.PriceName"
+    re = db_session.execute(sql).fetchall()
+    db_session.close()
+    return re
