@@ -658,7 +658,6 @@
         this.socketLoading = false
         const resdata = JSON.parse(e.data);
         console.log(resdata)
-        console.log(this.newAreaName.areaName)
         for(var i=0;i<resdata.length;i++){
           if(resdata[i].AreaName === "" || resdata[i].AreaName === "整厂区"){
             this.electricChartValue = resdata[i].areaEZGL

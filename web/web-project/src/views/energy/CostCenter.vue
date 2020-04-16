@@ -31,7 +31,7 @@
       </el-col>
       <el-col :span="24">
         <div class="energyDataContainer">
-          <ve-histogram :data="basicElectricityChartData" :settings="basicElectricityChartSettings" :extend="ChartExtend"></ve-histogram>
+          <ve-histogram :data="basicElectricityChartData" :settings="basicElectricityChartSettings" :extend="ChartExtend" v-loading="chartsLoading"></ve-histogram>
         </div>
       </el-col>
     </el-col>
@@ -39,55 +39,27 @@
       <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
         <div class="chartTile">趋势图</div>
         <div class="chartHeadRight">
-          总电费：163411元
+          总电费：{{ totalPrice + '元' }}
         </div>
       </div>
       <el-col :span="6" v-for="(item,index) in periodTimeTypeItem" :key="index" style="margin-bottom:2px;">
         <div class="periodTimeTypeItem">
           <p>{{ item.title }} <span class="text-color-caption" style="float: right;">电价：{{ item.expendPrice }}元</span></p>
           <el-col :span="8"><p class="text-color-caption">电费/元</p>{{ item.unitPrice }}</el-col>
-          <el-col :span="8"><p class="text-color-caption">电费占比</p>{{ item.Ratio }}</el-col>
+          <el-col :span="8"><p class="text-color-caption">电费占比</p>{{ item.Ratio + '%' }}</el-col>
           <el-col :span="8"><p class="text-color-caption">用电量/{{ item.unit }}</p>{{ item.expendEnergy }}</el-col>
         </div>
       </el-col>
-      <div class="energyDataContainer" style="margin-bottom:10px;">
-        <ve-histogram :data="electricityPileChartData" :settings="electricityPileChartSettings" :extend="ChartExtend"></ve-histogram>
+      <div class="energyDataContainer" style="margin-bottom:2px;">
+        <el-radio-group v-model="formParameters.dataType" fill="#082F4C" size="mini" @change="getEnergyChartsData">
+          <el-radio-button v-for="item in dataTypeItem" :key="item.name" :label="item.name"></el-radio-button>
+        </el-radio-group>
+        <ve-histogram :data="electricityPileChartData" :settings="electricityPileChartSettings" :extend="ChartExtend" v-loading="chartsPileLoading" height="370px"></ve-histogram>
       </div>
-      <el-col :span="12" v-for="item in electricAnalyzeItem" :key="item.title">
-        <div class="electricAnalyze">
-          <p style="text-align: center;margin-bottom: 10px;">{{ item.title }}</p>
-          <el-row :gutter="20" style="margin-bottom: 10px;">
-            <el-col :span="8">
-              <p class="text-size-normol">尖时段</p>
-              <span class="text-size-mini text-color-info-shallow">共{{ item.sharpTime }}小时</span>
-              <p><el-progress :text-inside="true" :stroke-width="16" :percentage="item.sharp" color="#FB3A06"></el-progress></p>
-            </el-col>
-            <el-col :span="8">
-              <p class="text-size-normol">峰时段</p>
-              <span class="text-size-mini text-color-info-shallow">共{{ item.peakTime }}小时</span>
-              <p><el-progress :text-inside="true" :stroke-width="16" :percentage="item.peak" color="#FB8A06"></el-progress></p>
-            </el-col>
-            <el-col :span="8">
-              <p class="text-color-info-shallow" style="margin-bottom: 15px;">总电费：</p>
-              <p>{{ item.total }}元</p>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="8">
-              <p class="text-size-normol">平时段</p>
-              <span class="text-size-mini text-color-info-shallow">共{{ item.poiseTime }}小时</span>
-              <p><el-progress :text-inside="true" :stroke-width="16" :percentage="item.poise" color="#F8E71C"></el-progress></p>
-            </el-col>
-            <el-col :span="8">
-              <p class="text-size-normol">谷时段</p>
-              <span class="text-size-mini text-color-info-shallow">共{{ item.ebbTime }}小时</span>
-              <p><el-progress :text-inside="true" :stroke-width="16" :percentage="item.ebb" color="#15CC48"></el-progress></p>
-            </el-col>
-            <el-col :span="8">
-              <p class="text-color-info-shallow" style="margin-bottom: 15px;">平均电价：</p>
-              <p>{{ item.average }}元</p>
-            </el-col>
-          </el-row>
+      <el-col :span="6" v-for="item in periodTimeTypeItem" :key="item.title">
+        <div class="periodTimeTypeItem">
+          <p class="text-size-normol text-color-info">{{ item.title }}</p>
+          <p><el-progress :text-inside="true" :stroke-width="16" :percentage="item.Ratio" :color="item.color"></el-progress></p>
         </div>
       </el-col>
     </el-col>
@@ -134,28 +106,14 @@
     name: "CostCenter",
     inject:['newAreaName'],
     data(){
-      this.ChartExtend = {
-        grid:{
-          left:'0',
-          right:'20px',
-          bottom:'0',
-          top:'40px'
-        },
-        series:{
-          barMaxWidth : 30,
-          smooth: false
-        }
-      }
-      this.electricityPileChartSettings = {
-        stack: { '时段': ['谷时段','平时段','峰时段','尖时段'] }
-      }
       return {
         formParameters:{
           resourceTime:"时",
           resourceType:"基本电费",
           startDate:moment().day(moment().day()).startOf('day').format('YYYY-MM-DD HH:mm'),
           endDate:moment().format('YYYY-MM-DD HH:mm'),
-          energy:"电"
+          energy:"电",
+          dataType:"电费"
         },
         radioTimeList:[
           {name:"时"},
@@ -167,6 +125,10 @@
           {name:"基本电费"},
           {name:"电度电费"},
           // {name:"力调电费"}
+        ],
+        dataTypeItem:[
+          {name:"电费"},
+          {name:"电量"}
         ],
         pickerOptions:{
           disabledDate(time) {
@@ -183,6 +145,20 @@
           {title:"按容量计算",typeTitle:"变压器容量",typeData:"",electricity:"成本",electricityData:""},
           {title:"按耗量计算",typeTitle:"实际耗量",typeData:"",electricity:"成本",electricityData:""}
         ],
+        chartsLoading:false,
+        chartsPileLoading:false,
+        ChartExtend: {
+          grid:{
+            left:'0',
+            right:'20px',
+            bottom:'0',
+            top:'40px'
+          },
+          series:{
+            barMaxWidth : 30,
+            smooth: false
+          }
+        },
         basicElectricityChartSettings: {
           axisSite: { right: ['元'] },
           yAxisName: []
@@ -191,15 +167,15 @@
           columns: ['时间', '容量', '耗量','成本'],
           rows: []
         },
+        totalPrice:"",
         periodTimeTypeItem:[],
+        electricityPileChartSettings: {
+          stack: { '时段': ['谷时段','平时段','峰时段','尖时段'] }
+        },
         electricityPileChartData:{
           columns: ['时间', '谷时段','平时段','峰时段','尖时段'],
           rows: []
         },
-        electricAnalyzeItem:[
-          {title:"尖峰平谷分析",sharp:100,sharpTime:3,peak:85.7,peakTime:7,poise:33.3,poiseTime:6,ebb:12.5,ebbTime:8,total:553524.5,average:0.54},
-          {title:"避峰用谷分析（参考）",sharp:100,sharpTime:3,peak:85.7,peakTime:7,poise:33.3,poiseTime:6,ebb:12.5,ebbTime:8,total:553524.5,average:0.54}
-        ],
         forceElectricityParameter:{
           yearsTotal:263241.12,
           largestMonth:"12月",
@@ -245,6 +221,8 @@
         this.ElecCalculationTypeIndex = index;
       },
       getEnergyChartsData(){
+        this.chartsLoading = true
+        this.chartsPileLoading = true
         var that = this
         var areaName = ""
         if(this.newAreaName.areaName === "整厂区"){
@@ -260,7 +238,7 @@
           AreaName:areaName
         }
         this.axios.get("/api/energycost",{params:params}).then(res => {
-          console.log(res.data)
+          this.chartsLoading = false
           that.ElecCalculationTypeItem[0].typeData = res.data.transformerStorage + res.data.transformerUnit
           that.ElecCalculationTypeItem[0].electricityData = res.data.storageCost + "元"
           that.ElecCalculationTypeItem[1].typeData = res.data.expend + res.data.expendUnit
@@ -278,8 +256,14 @@
             AreaName:areaName
           }}).then(res => {
             console.log(res.data)
+            this.chartsPileLoading = false
             that.periodTimeTypeItem = res.data.periodTimeTypeItem
-            that.electricityPileChartData.rows = res.data.rows
+            that.totalPrice = res.data.totalPrice
+            if(that.formParameters.dataType === "电费"){
+              that.electricityPileChartData.rows = res.data.rows2
+            }else if(that.formParameters.dataType === "电量"){
+              that.electricityPileChartData.rows = res.data.rows1
+            }
           })
         }
       }
@@ -313,14 +297,6 @@
   .periodTimeTypeItem p{
     margin-bottom: 10px;
     white-space: nowrap;
-  }
-  .electricAnalyze{
-    background: #fff;
-    color: #082F4C;
-    font-size: 18px;
-    padding: 15px;
-    clear: both;
-    overflow: hidden;
   }
   .el-progress-bar .el-progress-bar__outer{
     border-radius: 4px;

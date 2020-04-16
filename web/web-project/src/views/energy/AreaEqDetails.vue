@@ -20,7 +20,7 @@
           <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
             <div class="chartTile">
               <el-select class="collapse-head-select" v-model="commodityValue" size="small">
-                <el-option v-for="item in commodityOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                <el-option v-for="item in commodityOptions" :key="item.ID" :label="item.FEFportIP" :value="item.TagClassValue "></el-option>
               </el-select>
             </div>
             <div class="chartHeadRight">
@@ -44,10 +44,10 @@
             <el-col :span="8">
               <div class="faultItemHead">
                 <span>电流</span>
-                <p>额定电流/A <span>53</span></p>
+                <p>额定电流/A <span>{{  }}</span></p>
               </div>
               <div class="faultItemBody">
-                <p>A项电流 <span>2.1514</span></p>
+                <p>A项电流 <span>{{  }}</span></p>
                 <p>B项电流 <span>0</span></p>
                 <p>C项电流 <span>2.1514</span></p>
               </div>
@@ -220,6 +220,7 @@
 <script>
   export default {
     name: "AreaEqDetails",
+    inject:['newAreaName'],
     data(){
       this.ChartExtend = {
         grid:{
@@ -254,17 +255,8 @@
             return time.getTime() > Date.now();
           }
         },
-        commodityValue:"电表1",
-        commodityOptions:[{
-          value: '选项1',
-          label: '电表1'
-        }, {
-          value: '选项2',
-          label: '电表2'
-        }, {
-          value: '选项3',
-          label: '电表3'
-        }],
+        commodityValue:"",
+        commodityOptions:[],
         ralTimeWarningTableData:[ //实时预警表格数据
           {area:"新建综合制剂楼",name:"汽表2",type:"温度不正常",date:"2020-01-02 12:05"},
           {area:"新建综合制剂楼",name:"汽表4",type:"温度不正常",date:"2020-01-02 12:05"},
@@ -323,9 +315,30 @@
         }
       }
     },
+    created(){
+      this.getEq()
+    },
     methods:{
       getSubsection(index){
         this.subsectionActive = index;
+      },
+      getEq(){
+        let that = this
+        console.log(this.newAreaName.areaName)
+        var params = {
+          tableName:"TagDetail",
+          field:"AreaName",
+          fieldValue:this.newAreaName.areaName,
+          limit:100000,
+          offset:0
+        }
+        this.axios.get("/api/CUID",{params:params}).then(res =>{
+          var resData = JSON.parse(res.data).rows
+          console.log(resData)
+          that.commodityOptions = resData
+        },res =>{
+          console.log("获取车间时请求错误")
+        })
       }
     }
   }

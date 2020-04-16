@@ -220,3 +220,13 @@
 .gradientColorItem:hover{
   border: 1px solid rgba(8,47,76,0.58);
 }
+/* 滑块 */
+.el-slider__runway{
+  background-color: #fff;
+}
+.el-slider__bar{
+  background: #082F4C;
+}
+.el-slider__button{
+  border: 2px solid #082F4C;
+}

@@ -100,7 +100,15 @@
         if(this.formParameters.resourceTime === "实时"){
           this.initWebSocket()
         }else{
-
+          this.websock.close()
+          var that = this
+          var nowTime = moment().format('HH:mm').substring(0,4) + "0"
+          var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
+          var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
+          var yesterdayStartTime = moment().subtract(1,'day').format('YYYY-MM-DD') + " 00:00"
+          var yesterdayEndTime = moment().subtract(1,'day').format('YYYY-MM-DD') + " " + nowTime
+          var thisStartMonth = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm')
+          var params = {}
         }
       },
       initWebSocket(){ //初始化weosocket
@@ -123,7 +131,6 @@
         this.socketLoading = false
         const resdata = JSON.parse(e.data);
         console.log(resdata)
-        console.log(this.newAreaName.areaName)
         // for(var i=0;i<resdata.length;i++){
         //   if(resdata[i].AreaName === "" || resdata[i].AreaName === "整厂区"){
         //     this.chartData.rows.push({

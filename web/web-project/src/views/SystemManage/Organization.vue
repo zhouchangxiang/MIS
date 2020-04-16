@@ -27,9 +27,9 @@
             <el-radio-button v-for="item in DepthSettings" :key="item.label" :label="item.label"></el-radio-button>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="曲度：">
+        <el-form-item label="曲度：" style="">
           <div style="width: 100px;">
-            <el-slider v-model="sliderValue" :max="1" :min="0.1" :step="0.1" @input="changeSettings"></el-slider>
+            <el-slider v-model="sliderValue" :max="1" :min="0" :step="0.1" @input="changeSettings"></el-slider>
           </div>
         </el-form-item>
         <el-form-item>
@@ -67,13 +67,20 @@
     value: 1,
     children: [
       {name: '生产部',value: 1,children: [
-          {name: '配料',value: 2},
-          {name: '压片',value: 2},
-          {name: '包衣',value: 2},
-          {name: '内包装',value: 2},
-          {name: '外包装',value: 2}
-        ]
-      },
+        {name: '配料',value: 2},
+        {name: '压片',value: 2},
+        {name: '包衣',value: 2,children: [
+          {name: '老张',value: 2},
+          {name: '老李',value: 2},
+          {name: '老王',value: 2},
+          {name: '老赵',value: 2}
+        ]},
+        {name: '内包装',value: 2,children: [
+          {name: '老周',value: 2},
+          {name: '老吴',value: 2}
+        ]},
+        {name: '外包装',value: 2}
+      ]},
       {name: '质检部',value: 1,children: [
           {name: '原料检验',value: 2},
           {name: '辅料检验',value: 2},
@@ -93,14 +100,10 @@
           {name: '送货',value: 2},
         ]
       },
-      {name: '行政部',value: 3,children: [
-          {name: 'c-a',value: 4},
-          {name: 'c-b',value: 2}
-        ]
-      },
       {name: '设备部',value: 3,children: [
-          {name: 'd-a',value: 4},
-          {name: 'd-b',value: 2}
+          {name: '部长',value: 4},
+          {name: '经理',value: 2},
+          {name: '维修工',value: 2}
         ]
       }
     ]
@@ -116,6 +119,7 @@
       {name: '综合车间',value: 1,children: [
           {name: '煎煮段',value: 2},
           {name: '浓缩段',value: 2},
+          {name: '提取段',value: 2},
         ]
       },
       {name: '新建综合制剂楼',value: 1,children: [
