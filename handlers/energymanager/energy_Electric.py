@@ -434,6 +434,7 @@ def electricnergycost():
             dir_jtime["unit"] = unit
             dir_jtime["Ratio"] = jratio
             dir_jtime["unitPrice"] = juint
+            dir_jtime["color"] = "#FB3A06"
             periodTimeTypeItem.append(dir_jtime)
             dir_ftime = {}
             dir_ftime["title"] = "峰时刻"
@@ -442,6 +443,7 @@ def electricnergycost():
             dir_ftime["unit"] = unit
             dir_ftime["Ratio"] = fratio
             dir_ftime["unitPrice"] = fuint
+            dir_ftime["color"] = "#FB8A06"
             periodTimeTypeItem.append(dir_ftime)
             dir_ptime = {}
             dir_ptime["title"] = "平时刻"
@@ -450,6 +452,7 @@ def electricnergycost():
             dir_ptime["unit"] = unit
             dir_ptime["Ratio"] = pratio
             dir_ptime["unitPrice"] = puint
+            dir_ptime["color"] = "#F8E71C"
             periodTimeTypeItem.append(dir_ptime)
             dir_gtime = {}
             dir_gtime["title"] = "谷时刻"
@@ -458,6 +461,7 @@ def electricnergycost():
             dir_gtime["unit"] = unit
             dir_gtime["Ratio"] = gratio
             dir_gtime["unitPrice"] = guint
+            dir_gtime["color"] = "#15CC48"
             periodTimeTypeItem.append(dir_gtime)
             dir["periodTimeTypeItem"] = periodTimeTypeItem
             dir["rows"] = dir_list
