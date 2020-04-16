@@ -226,6 +226,7 @@ def electricnergycost():
             TimeClass = data.get("TimeClass")
             AreaName = data.get("AreaName")
             dir_list = []
+            dir_list2 = []
             oc_list = []
             if AreaName == "" or AreaName == None:
                 tags = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
@@ -281,7 +282,7 @@ def electricnergycost():
                             gtimeprice = gtimeprice + float(ele[1])
                             dir_list_i_price["谷时刻"] = round(float(ele[1]), 2)
                     dir_list.append(dir_list_i)
-                    dir_list.append(dir_list_i_price)
+                    dir_list2.append(dir_list_i_price)
             elif TimeClass == "月":
                 for i in range(int(StartTime[5:7]), int(EndTime[5:7])+1):
                     emonth = getMonthFirstDayAndLastDay(StartTime[0:4], i)
@@ -322,7 +323,7 @@ def electricnergycost():
                             gtimeprice = gtimeprice + float(ele[1])
                             dir_list_i_price["谷时刻"] = round(float(ele[1]), 2)
                     dir_list.append(dir_list_i)
-                    dir_list.append(dir_list_i_price)
+                    dir_list2.append(dir_list_i_price)
             elif TimeClass == "年":
                 for i in range(int(StartTime[0:4]), int(EndTime[0:4])+1):
                     staeY = str(i) + "-01-01 00:00:00"
@@ -363,7 +364,7 @@ def electricnergycost():
                             gtimeprice = gtimeprice + float(ele[1])
                             dir_list_i_price["谷时刻"] = round(float(ele[1]), 2)
                     dir_list.append(dir_list_i)
-                    dir_list.append(dir_list_i_price)
+                    dir_list2.append(dir_list_i_price)
             elif TimeClass == "时":
                 for i in range(int(StartTime[11:13]), int(EndTime[11:13])+1):
                     staeH = StartTime[0:11] + addzero(i) + ":00:00"
@@ -403,7 +404,7 @@ def electricnergycost():
                             gtimeprice = gtimeprice + float(ele[1])
                             dir_list_i_price["谷时刻"] = round(float(ele[1]), 2)
                     dir_list.append(dir_list_i)
-                    dir_list.append(dir_list_i_price)
+                    dir_list2.append(dir_list_i_price)
             unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == EnergyClass).first()[0]
             priceunits = db_session.query(ElectricPrice).filter().all()
             for priceunit in priceunits:
@@ -464,7 +465,8 @@ def electricnergycost():
             dir_gtime["color"] = "#15CC48"
             periodTimeTypeItem.append(dir_gtime)
             dir["periodTimeTypeItem"] = periodTimeTypeItem
-            dir["rows"] = dir_list
+            dir["rows1"] = dir_list
+            dir["rows2"] = dir_list2
             dir["totalPrice"] = round(jtimeprice + ftimeprice + ptimeprice + gtimeprice, 2)
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
