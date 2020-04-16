@@ -36,21 +36,10 @@
   export default {
     name: "AreaBasicData",
     data(){
-      this.ChartExtend = {
-        grid:{
-          left:'0',
-          right:'0',
-          bottom:'0',
-          top:'40px'
-        },
-        series:{
-          smooth: false
-        }
-      }
       return {
         formParameters:{
           resourceTime:"实时",
-          date:moment().format("YYYY-MM-DD"),
+          date:moment().format("YYYY-MM-DD HH:mm"),
           energy:"电"
         },
         radioTimeList:[
@@ -59,8 +48,7 @@
           {name:"周"},
           {name:"月"},
           {name:"季"},
-          {name:"年"},
-          {name:"班次"}
+          {name:"年"}
         ],
         pickerOptions:{
           disabledDate(time) {
@@ -80,6 +68,17 @@
           {name:"1分钟",id:5}
         ],
         subsectionActive:1,
+        ChartExtend: {
+          grid:{
+            left:'0',
+            right:'0',
+            bottom:'0',
+            top:'40px'
+          },
+          series:{
+            smooth: false
+          }
+        },
         chartData: {
           columns: ['时间', '总有功电量', 'A相有功电量', 'B相有功电量','C相有功电量'],
           rows: []
@@ -103,11 +102,9 @@
           this.websock.close()
           var that = this
           var nowTime = moment().format('HH:mm').substring(0,4) + "0"
-          var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
-          var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
-          var yesterdayStartTime = moment().subtract(1,'day').format('YYYY-MM-DD') + " 00:00"
-          var yesterdayEndTime = moment().subtract(1,'day').format('YYYY-MM-DD') + " " + nowTime
-          var thisStartMonth = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm')
+          var dayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
+          var dayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
+          var weekStartTime = moment(this.formParameters.date).week(moment().week()).startOf('week').format('YYYY-MM-DD HH:mm')
           var params = {}
         }
       },

@@ -341,7 +341,7 @@
       },
       getEqData(){
         var params = {
-          TagClassValue:this.commodityValue,
+          TagClassValue:this.commodityValue.TagClassValue,
           EnergyClass:this.commodityValue.EnergyClass
         }
         this.axios.get("/api/EquipmentDetail",{params:params}).then(res =>{
