@@ -348,6 +348,7 @@ export default {
     border: none;
     clear: both;
     overflow: auto;
+    overflow-y: hidden;
   }
   .menu-ul::-webkit-scrollbar {
     display: none;  /* 隐藏滚动条 */

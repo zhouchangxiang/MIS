@@ -2,8 +2,8 @@
   <el-row :gutter="2">
     <el-col :span="24">
       <el-form :model="formParameters">
-        <el-form-item label="能耗：" style="margin-bottom: 0;" @change="getEnergyChartsData">
-          <el-radio-group v-model="formParameters.energy" fill="#082F4C" size="mini">
+        <el-form-item label="能耗：" style="margin-bottom: 0;">
+          <el-radio-group v-model="formParameters.energy" fill="#082F4C" size="mini" @change="getEnergyChartsData">
             <el-radio-button v-for="item in energyList" :key="item.name" :label="item.name"></el-radio-button>
           </el-radio-group>
         </el-form-item>
@@ -44,10 +44,10 @@
       </div>
       <el-col :span="6" v-for="(item,index) in periodTimeTypeItem" :key="index" style="margin-bottom:2px;">
         <div class="periodTimeTypeItem">
-          <p>{{ item.title }} <span class="text-color-caption" style="float: right;">电价：{{ item.electrovalence }}元</span></p>
-          <el-col :span="8"><p class="text-color-caption">电费/元</p>{{ item.electricity }}</el-col>
+          <p>{{ item.title }} <span class="text-color-caption" style="float: right;">电价：{{ item.expendPrice }}元</span></p>
+          <el-col :span="8"><p class="text-color-caption">电费/元</p>{{ item.unitPrice }}</el-col>
           <el-col :span="8"><p class="text-color-caption">电费占比</p>{{ item.Ratio }}</el-col>
-          <el-col :span="8"><p class="text-color-caption">用电量/kwh</p>{{ item.usageAmount }}</el-col>
+          <el-col :span="8"><p class="text-color-caption">用电量/{{ item.unit }}</p>{{ item.expendEnergy }}</el-col>
         </div>
       </el-col>
       <div class="energyDataContainer" style="margin-bottom:10px;">
@@ -122,7 +122,7 @@
     </el-col>
     <el-col :span="24" v-if="formParameters.energy === '水' || formParameters.energy === '汽'" style="margin-top: 10px;">
       <div class="energyDataContainer">
-        <ve-line :data="waterAndSteamCostChartData" :settings="waterAndSteamCostChartSettings" :extend="ChartExtend"></ve-line>
+        <ve-histogram :data="waterAndSteamCostChartData" :settings="waterAndSteamCostChartSettings" :extend="ChartExtend"></ve-histogram>
       </div>
     </el-col>
   </el-row>
@@ -192,10 +192,10 @@
           rows: []
         },
         periodTimeTypeItem:[
-          {title:"尖时段",electrovalence:131521,electricity:131541,Ratio:"33.1%",usageAmount:135454},
-          {title:"峰时段",electrovalence:131521,electricity:131541,Ratio:"33.1%",usageAmount:135454},
-          {title:"平时段",electrovalence:131521,electricity:131541,Ratio:"33.1%",usageAmount:135454},
-          {title:"谷时段",electrovalence:131521,electricity:131541,Ratio:"33.1%",usageAmount:135454}
+          {title:"尖时段",expendPrice:131521,unitPrice:0.6,Ratio:"33.1%",expendEnergy:1654,unit:"kwh"},
+          {title:"峰时段",expendPrice:131521,unitPrice:0.7,Ratio:"33.1%",expendEnergy:1645,unit:"kwh"},
+          {title:"平时段",expendPrice:131521,unitPrice:0.8,Ratio:"33.1%",expendEnergy:6942,unit:"kwh"},
+          {title:"谷时段",expendPrice:131521,unitPrice:0.9,Ratio:"33.1%",expendEnergy:9654,unit:"kwh"}
         ],
         electricityPileChartData:{
           columns: ['日期', '谷时段','平时段','峰时段','尖时段'],
@@ -285,6 +285,8 @@
           that.ElecCalculationTypeItem[1].electricityData = res.data.expendCost + "元"
           that.basicElectricityChartSettings.yAxisName = [res.data.expendUnit,'成本']
           that.basicElectricityChartData.rows = res.data.rows
+          that.waterAndSteamCostChartSettings.yAxisName = [res.data.unit,'成本']
+          that.waterAndSteamCostChartData.rows = res.data.rows
         })
       }
     }
