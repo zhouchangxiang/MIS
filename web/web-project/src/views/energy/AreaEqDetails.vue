@@ -19,8 +19,8 @@
         <el-col :span="16">
           <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
             <div class="chartTile">
-              <el-select class="collapse-head-select" v-model="commodityValue" size="small">
-                <el-option v-for="item in commodityOptions" :key="item.ID" :label="item.FEFportIP" :value="item.TagClassValue "></el-option>
+              <el-select class="collapse-head-select" v-model="commodityValue" size="small" @change="getEqData">
+                <el-option v-for="item in commodityOptions" :key="item.ID" :label="item.AreaName + item.FEFportIP" :value="item"></el-option>
               </el-select>
             </div>
             <div class="chartHeadRight">
@@ -317,6 +317,7 @@
     },
     created(){
       this.getEq()
+      this.getEqData()
     },
     methods:{
       getSubsection(index){
@@ -324,20 +325,27 @@
       },
       getEq(){
         let that = this
-        console.log(this.newAreaName.areaName)
         var params = {
           tableName:"TagDetail",
           field:"AreaName",
-          fieldValue:this.newAreaName.areaName,
+          fieldvalue:this.newAreaName.areaName,
           limit:100000,
           offset:0
         }
         this.axios.get("/api/CUID",{params:params}).then(res =>{
           var resData = JSON.parse(res.data).rows
-          console.log(resData)
           that.commodityOptions = resData
         },res =>{
-          console.log("获取车间时请求错误")
+          console.log("获取设备时请求错误")
+        })
+      },
+      getEqData(){
+        var params = {
+          TagClassValue:this.commodityValue,
+          EnergyClass:this.commodityValue.EnergyClass
+        }
+        this.axios.get("/api/EquipmentDetail",{params:params}).then(res =>{
+          console.log(res.data)
         })
       }
     }
