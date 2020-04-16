@@ -1,65 +1,140 @@
 <template>
     <div class="show-box">
+      <van-loading size="24px" vertical v-if="loading" color="lightgreen" type="spinner">加载中...</van-loading>
       <div class="tabbar">
-      <van-tabs v-model="active" line-height="0px" line-width="0px" @click="mss" :swipeable=true :border=false title-active-color="#fff" title-inactive-color="#76787E">
-        <van-tab title="新建制剂"></van-tab>
-        <van-tab title="提取二车"></van-tab>
-        <van-tab title="前车处理"></van-tab>
-        <van-tab title="研发中心"></van-tab>
-        <van-tab title="生物科技"></van-tab>
-        <van-tab title="原提取"></van-tab>
+      <van-tabs v-model="active" line-height="0px" line-width="0px" @click="getData($event)" :swipeable=true :border=false title-active-color="#fff" title-inactive-color="#76787E">
+        <van-tab :title="item" v-for="(item,index) in list" :key="index"></van-tab>
       </van-tabs>
       </div>
       <div class="compare">
-        <div class="c1">
+        <div class="c1" :class="{switchbgc:this.bgc1}" @click="switchShow1()">
           <div class="icon electric"></div>
-          <div class="dw electric">kwh</div>
-          <div class="number">13567.3</div>
+          <div class="dw electric1">kwh</div>
+          <div class="number">{{this.electric}}</div>
           <div class="comp">较昨日</div>
           <div class="sn">+1.456%</div>
         </div>
-         <div class="c2">
+         <div class="c2" :class="{switchbgc:this.bgc2}" @click="switchShow2()">
           <div class="icon water"></div>
           <div class="dw water">T</div>
-          <div class="number">13567.3</div>
+          <div class="number">{{this.water}}</div>
           <div class="comp">较昨日</div>
           <div class="sn">+1.456%</div>
         </div>
-        <div class="c3">
+        <div class="c3" :class="{switchbgc:this.bgc3}" @click="switchShow3()">
           <div class="icon steam"></div>
           <div class="dw">T</div>
-          <div class="number">13567.3</div>
+          <div class="number">{{this.steam}}</div>
           <div class="comp">较昨日</div>
           <div class="sn">+1.456%</div>
         </div>
       </div>
-         <DateC></DateC>
+        <div class="show-top">
+               <div class="tips">
+                   <van-tabs type="card" title-active-color="#1E222B" title-inactive-color="#fff" v-model="choosedate" @click="ChooseDate"> 
+                        <van-tab title="年"></van-tab>
+                        <van-tab title="月"></van-tab>
+                        <van-tab title="日"></van-tab>
+                    </van-tabs>
+                </div>
+               <div class="tips">
+                   <van-tabs type="card" title-active-color="#1E222B"  title-inactive-color="#fff" v-model="choosekind" @click="ChooseKind">
+                        <van-tab title="水"></van-tab>
+                        <van-tab title="电"></van-tab>
+                        <van-tab title="气"></van-tab>
+                    </van-tabs>
+               </div>
+        </div>
          <div class="piclist">zhangsh</div>
          <ShowNumber></ShowNumber>
+         <div class="bottom-dnh">
+           <div class="dnh">电能耗量</div>
+           <div class="dnh-number">00000000.00</div>
+           <div class="dw">kwh</div>
+           <div class="dwpc">单位批次电能耗量</div>
+           <div class="dwpc-number">00000000.00</div>
+           <div class="pc-dw">kwh/批</div>
+         </div>
        </div>
 </template>
 <script>
-import DateC from '../common/Choosedate.vue'
 import ShowNumber from '../common/Shownumber.vue'
 export default {
     data(){
         return {
           radio1:1,
           radio2:1,
-          active:2
+          active:2,
+          choosedate:0,
+          choosekind:0,
+          list:[],
+          water:0,
+          electric:0,
+          steam:0,
+          bgc1:false,
+          bgc2:false,
+          bgc3:false,
+          loading:false
         }
     },
     components:{
-      DateC,
       ShowNumber
+    },
+    mounted(){
+      this.getNavbar()
     },
     methods:{
       myc(){
         this.$toast(this.radio1)
       },
-      mss(){
-        this.$toast(this.active)
-
+      switchShow1(){
+       this.bgc1=!this.bgc1
+       this.bgc2=false
+       this.bgc3=false
+      },
+      switchShow2(){
+       this.bgc2=!this.bgc2
+       this.bgc1=false
+       this.bgc3=false
+      },
+      switchShow3(){
+       this.bgc3=!this.bgc3
+       this.bgc1=false
+       this.bgc2=false
+      },
+      getData(e){
+          let params={
+            StartTime:'2020-04-09 12:22:59',
+            EndTime:'2020-04-14 12:22:59',
+            AreaName:this.list[e]
+          }
+          this.$http.all([
+            this.$http.get('/api/energywater',{params}),
+            this.$http.get('/api/energyelectric',{params}),
+            this.$http.get('/api/energysteam',{params})]).then(this.$http.spread((res1,res2,res3)=>{
+                    this.water=JSON.parse(res1.data).value
+                    this.electric=JSON.parse(res2.data).value
+                    this.steam=JSON.parse(res3.data).value
+                  }))
+              },
+      ChooseKind(){
+        
+      },
+      ChooseDate(){
+        this.$toast('日期')
+      },
+      getNavbar(){
+        this.loading=true
+        this.$http.get('/api/areatimeenergycount',{params:{
+              EnergyClass:'电',CompareTime:'2020-04-14'
+            }}).then((res3) => {
+              this.loading=false
+              this.$store.commit('CompareBox',res3.data.rows)
+              let arr=this.$store.state.comparebox
+              for(var i=0;i<arr.length;i++){
+                this.list.push(arr[i]['区域'])
+        }
+      })
       }
     }
 }
@@ -71,7 +146,7 @@ export default {
      .show-box{
         position: relative;
         width: 375px;
-        height:526px;
+        height:800px;
         box-sizing: border-box;
         padding: 0 12px 12px 13px;
         background: @bgcc;
@@ -121,7 +196,7 @@ export default {
             line-height:11px;
             color:rgba(255,255,255,1);
             opacity:1;
-            &.electric{
+            &.electric1{
               left:42px;
             }
             &.water{
@@ -181,9 +256,6 @@ export default {
             float: left;
             margin-right: 20px;
             border-radius:4px;
-            &:active{
-              background-color: #fff;
-            }
           }
           .c2{
             position: relative;
@@ -202,11 +274,106 @@ export default {
             background:rgba(126,127,132,1);
             border-radius:4px;
           }
+          .switchbgc{
+            background-color: #FAC000;
+            .number{
+              background-color:rgba(0,0,0,.1);
+            }
+            .electric{
+              background-image: url('../../assets/png/flashlight_2.png');
+              }
+          }
         }
         .piclist{
           height: 185px;
           background-color: #666;
-          margin-top: 2px;
+          margin: 10px 0 20px;
+        }
+        .bottom-dnh{
+          position: relative;
+          height: 150px;
+          background-color: #1E222B;
+          margin: 20px 0 20px;
+          .dnh{
+            position: absolute;
+            top:10px;
+            left: 17px;
+            width:49px;
+            height:11px;
+            font-size:8px;
+            font-family:PingFang SC;
+            font-weight:400;
+            line-height:11px;
+            color:rgba(255,255,255,1);
+            opacity:1;
+          }
+          .dnh-number{
+            position: absolute;
+            top:30px;
+            left: 16px;
+            font-size: 24px;
+            color:rgba(250,192,0,1);
+            opacity:1;
+            letter-spacing: 2px;
+          }
+          .dw{
+            position: absolute;
+            top:44px;
+            left: 204px;
+            height:11px;
+            font-size:8px;
+            font-family:PingFang SC;
+            font-weight:500;
+            line-height:11px;
+            color:rgba(255,255,255,1);
+            opacity:1;
+          }
+        .dwpc{
+          position: absolute;
+          top:70px;
+          left: 17px;
+          height:11px;
+          font-size:8px;
+          font-family:PingFang SC;
+          font-weight:400;
+          line-height:11px;
+          color:rgba(255,255,255,1);
+          opacity:1;
+        }
+        .dwpc-number{
+          position: absolute;
+          top:90px;
+          left: 16px;
+          font-size: 24px;
+          color:rgba(250,192,0,1);
+          opacity:1;
+          letter-spacing: 2px;
+        }
+        .pc-dw{
+          position: absolute;
+          top:102px;
+          left: 204px;
+          height:11px;
+          font-size:8px;
+          font-family:PingFang SC;
+          font-weight:500;
+          line-height:11px;
+          color:rgba(255,255,255,1);
+          opacity:1;
+        }
         }
     }
+    .show-top{
+            height:18px;
+            opacity:1;
+            border-radius:4px;
+            color:#fff;
+            font-size: 10px;
+            .tips{
+                float: left;
+                margin-right: 20px;
+                background-color:#1E222B;
+                height: 18px;
+            }
+        }
 </style>

@@ -1,6 +1,7 @@
 <template>
     <div class="show-box">
         <DateC></DateC>
+         <van-loading size="24px" vertical v-if="loading" color="lightgreen" type="spinner">加载中...</van-loading>
         <div class="show-banner">
                   <div class="sb-name">厂区能耗</div>
                   <div class="sb-number">{{this.$store.state.sbnumber.value}}</div>
@@ -45,7 +46,8 @@ export default {
             myapi:'',
             area:[],
             StartTime:'2020-04-07 12:22:59',
-            numberbox:[]
+            numberbox:[],
+            loading:false
         }
     },
     components:{
@@ -57,6 +59,7 @@ export default {
     },
     methods:{
       onChange(picker, value) {
+        this.loading=true
         this.$store.commit("Chooseworkplace",value)
         this.$toast(value);
         let n=this.$store.state.choosedate
@@ -92,6 +95,7 @@ export default {
                 AreaName:this.$store.state.workplace
             }})
             ]).then(this.$http.spread((res1,res2)=>{
+                this.loading=false
                 this.$store.commit('Sbnumbers',JSON.parse(res1.data))
                 this.$store.commit('NumBox',res2.data)
                 this.numberbox=this.$store.state.numberbox
@@ -100,6 +104,7 @@ export default {
     initNum(){
         let str1=moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
         let str2=moment(new Date()).format('YYYY-MM-DD')
+        this.loading=true
         this.$http.all([
             this.$http.get('/api/energywater',{params:{
             StartTime:'2020-04-01 12:22:59',
@@ -115,7 +120,7 @@ export default {
               EnergyClass:'电',CompareTime:'2020-04-14'
             }})
         ]).then(this.$http.spread((res1,res2,res3)=>{
-            console.log(res3)
+            this.loading=false
             this.$store.commit('CompareBox',res3.data.rows)
             let arr=res3.data.rows
             for(var i=0;i<arr.length;i++){
