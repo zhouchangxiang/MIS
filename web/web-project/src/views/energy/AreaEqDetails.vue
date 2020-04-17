@@ -8,10 +8,8 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item label="时间：">
-            <el-radio-group v-model="formParameters.resourceTime" fill="#082F4C" size="mini">
-              <el-radio-button v-for="item in radioTimeList" border :key="item.id" :label="item.name"></el-radio-button>
-            </el-radio-group>
-            <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false"></el-date-picker>
+            <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false"></el-date-picker> ~
+            <el-date-picker type="datetime" v-model="formParameters.endDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false"></el-date-picker>
           </el-form-item>
         </el-form>
       </el-col>
@@ -226,6 +224,7 @@
 </template>
 
 <script>
+  var moment = require('moment');
   export default {
     name: "AreaEqDetails",
     inject:['newAreaName'],
@@ -244,7 +243,8 @@
       return {
         formParameters:{
           resourceTime:"班次",
-          startDate:Date.now(),
+          startDate:moment().day(moment().day()).startOf('day').format('YYYY-MM-DD HH:mm'),
+          endDate:moment().format("YYYY-MM-DD HH:mm"),
           eqComponentValue:"安全/故障"
         },
         radioTimeList:[
@@ -355,7 +355,9 @@
       getEqData(){
         var params = {
           TagClassValue:this.multipleSelection[0].TagClassValue,
-          EnergyClass:this.multipleSelection[0].EnergyClass
+          EnergyClass:this.multipleSelection[0].EnergyClass,
+          StartTime:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm"),
+          EndTime:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm")
         }
         this.axios.get("/api/EquipmentDetail",{params:params}).then(res =>{
           console.log(res.data)
