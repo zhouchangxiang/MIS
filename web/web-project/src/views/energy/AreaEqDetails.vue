@@ -16,12 +16,25 @@
         </el-form>
       </el-col>
       <el-col :span="24" v-if="formParameters.eqComponentValue === '安全/故障'">
+        <el-col :span="8">
+          <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
+            <div class="chartTile">设备</div>
+          </div>
+          <div class="platformContainer">
+            <el-table :data="TagDetailTableData" highlight-current-row ref="multipleTable" @selection-change="handleSelectionChange" @row-click="handleRowClick" size="mini" height="246px" max-height="246px" style="width: 100%">
+              <el-table-column type="selection"></el-table-column>
+              <el-table-column prop="AreaName" label="区域名称"></el-table-column>
+              <el-table-column prop="FEFportIP" label="站点地址"></el-table-column>
+              <el-table-column prop="DeviceNum" label="器件号"></el-table-column>
+              <el-table-column prop="EnergyClass" label="分类"></el-table-column>
+              <el-table-column prop="TagClassValue" label="Tag点"></el-table-column>
+            </el-table>
+          </div>
+        </el-col>
         <el-col :span="16">
           <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
             <div class="chartTile">
-              <el-select class="collapse-head-select" v-model="commodityValue" size="small" @change="getEqData" style="width: 200px;text-align: left;">
-                <el-option v-for="item in commodityOptions" :key="item.ID" :label="item.AreaName + '：' + item.FEFportIP" :value="item"></el-option>
-              </el-select>
+              设备信息
             </div>
             <div class="chartHeadRight">
               <el-button size="mini">档案</el-button>
@@ -72,23 +85,6 @@
             </el-col>
           </div>
         </el-col>
-        <el-col :span="8">
-          <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
-            <div class="chartTile">实时预警 <span class="text-color-info-shallow text-size-mini">所有设备</span></div>
-          </div>
-          <div class="platformContainer">
-            <el-table :data="ralTimeWarningTableData" size="mini" height="246px" max-height="246px" style="width: 100%">
-              <el-table-column prop="area" label="区域"></el-table-column>
-              <el-table-column prop="name" label="设备"></el-table-column>
-              <el-table-column prop="type" label="状态">
-                <template slot-scope="scope">
-                  <span class="text-size-mini text-color-warning">{{ scope.row.type }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column prop="date" label="时间"></el-table-column>
-            </el-table>
-          </div>
-        </el-col>
         <el-col :span="24" style="margin-bottom: 2px;">
           <div class="chartHead text-size-large text-color-info">
             <div class="chartTile">参数分析</div>
@@ -116,8 +112,20 @@
           </div>
         </el-col>
         <el-col :span="24">
-          <div class="chartHead text-size-large text-color-info" style="margin-bottom: 2px;">
-            <div class="chartTile">报警记录</div>
+          <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
+            <div class="chartTile">实时预警 <span class="text-color-info-shallow text-size-mini">所有记录</span></div>
+          </div>
+          <div class="platformContainer">
+            <el-table :data="ralTimeWarningTableData" size="mini" height="246px" max-height="246px" style="width: 100%">
+              <el-table-column prop="area" label="区域"></el-table-column>
+              <el-table-column prop="name" label="设备"></el-table-column>
+              <el-table-column prop="type" label="状态">
+                <template slot-scope="scope">
+                  <span class="text-size-mini text-color-warning">{{ scope.row.type }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="date" label="时间"></el-table-column>
+            </el-table>
           </div>
         </el-col>
       </el-col>
@@ -255,9 +263,8 @@
             return time.getTime() > Date.now();
           }
         },
-        commodityValue:"",
-        commodityOptions:[],
-        commodityArr:[],
+        multipleSelection:[],
+        TagDetailTableData:[],
         ralTimeWarningTableData:[ //实时预警表格数据
           {area:"新建综合制剂楼",name:"汽表2",type:"温度不正常",date:"2020-01-02 12:05"},
           {area:"新建综合制剂楼",name:"汽表4",type:"温度不正常",date:"2020-01-02 12:05"},
@@ -318,11 +325,14 @@
     },
     created(){
       this.getEq()
-      this.getEqData()
+      //this.getEqData()
     },
     methods:{
       getSubsection(index){
         this.subsectionActive = index;
+      },
+      handleSelectionChange(val){
+        this.multipleSelection = val;
       },
       getEq(){
         let that = this
@@ -335,21 +345,26 @@
         }
         this.axios.get("/api/CUID",{params:params}).then(res =>{
           var resData = JSON.parse(res.data).rows
-          that.commodityOptions = resData
+          that.TagDetailTableData = resData
+          that.$refs.multipleTable.setCurrentRow(that.TagDetailTableData[0])
+          that.handleRowClick(that.TagDetailTableData[0])
         },res =>{
           console.log("获取设备时请求错误")
         })
       },
-      getEqData(a){
-        this.commodityArr = a
-        this.commodityValue = this.commodityArr.AreaName + this.commodityArr.FEFportIP
+      getEqData(){
         var params = {
-          TagClassValue:this.commodityArr.TagClassValue,
-          EnergyClass:this.commodityArr.EnergyClass
+          TagClassValue:this.multipleSelection[0].TagClassValue,
+          EnergyClass:this.multipleSelection[0].EnergyClass
         }
         this.axios.get("/api/EquipmentDetail",{params:params}).then(res =>{
           console.log(res.data)
         })
+      },
+      handleRowClick(row){
+        this.$refs.multipleTable.clearSelection();
+        this.$refs.multipleTable.toggleRowSelection(row)
+        this.getEqData()
       }
     }
   }
