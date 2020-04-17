@@ -14,7 +14,8 @@ import { Button,
     Sidebar, SidebarItem,
     Tab, Tabs,
     List,
-    Picker } from 'vant'
+    Picker,
+    Loading} from 'vant'
 
 Vue.use(Toast);
 Vue.use(Cell);
@@ -34,3 +35,4 @@ Vue.use( Tab);
 Vue.use( Tabs);
 Vue.use( List);
 Vue.use( Picker);
+Vue.use( Loading);
