@@ -102,10 +102,45 @@
           this.websock.close()
           var that = this
           var nowTime = moment().format('HH:mm').substring(0,4) + "0"
-          var dayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
-          var dayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
+          var dayStartTime = moment(this.formParameters.date).format('YYYY-MM-DD') + " 00:00"
+          var dayEndTime = moment(this.formParameters.date).format('YYYY-MM-DD') + " " + nowTime
           var weekStartTime = moment(this.formParameters.date).week(moment().week()).startOf('week').format('YYYY-MM-DD HH:mm')
+          var weekEndTime = moment(this.formParameters.date).week(moment().week()).endOf('week').format('YYYY-MM-DD HH:mm')
+          var monthStartTime = moment(this.formParameters.date).month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm')
+          var monthEndTime = moment(this.formParameters.date).month(moment().month()).endOf('month').format('YYYY-MM-DD HH:mm')
+          var quarterStartTime = moment(this.formParameters.date).quarter(moment().quarter()).startOf('quarter').format('YYYY-MM-DD HH:mm')
+          var quarterEndTime = moment(this.formParameters.date).quarter(moment().quarter()).endOf('quarter').format('YYYY-MM-DD HH:mm')
+          var yearStartTime = moment(this.formParameters.date).year(moment().year()).startOf('year').format('YYYY-MM-DD HH:mm')
+          var yearEndTime = moment(this.formParameters.date).year(moment().year()).endOf('year').format('YYYY-MM-DD HH:mm')
           var params = {}
+          var areaName = ""
+          if(this.newAreaName.areaName === "整厂区"){
+            areaName = ""
+          }else{
+            areaName = this.newAreaName.areaName
+          }
+          if(this.formParameters.resourceTime === "日"){
+            params.StartTime = dayStartTime
+            params.EndTime = dayEndTime
+            params.AreaName = areaName
+          }else if(this.formParameters.resourceTime === "周"){
+            params.StartTime = weekStartTime
+            params.EndTime = weekEndTime
+            params.AreaName = areaName
+          }else if(this.formParameters.resourceTime === "月"){
+            params.StartTime = monthStartTime
+            params.EndTime = monthEndTime
+            params.AreaName = areaName
+          }else if(this.formParameters.resourceTime === "季"){
+            params.StartTime = quarterStartTime
+            params.EndTime = quarterEndTime
+            params.AreaName = areaName
+          }else if(this.formParameters.resourceTime === "年"){
+            params.StartTime = yearStartTime
+            params.EndTime = yearEndTime
+            params.AreaName = areaName
+          }
+          console.log(params)
         }
       },
       initWebSocket(){ //初始化weosocket

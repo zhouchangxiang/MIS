@@ -15,12 +15,12 @@
           </el-form-item>
         </el-form>
       </el-col>
-      <el-col :span="24" v-if="formParameters.eqComponentValue == '安全/故障'">
+      <el-col :span="24" v-if="formParameters.eqComponentValue === '安全/故障'">
         <el-col :span="16">
           <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
             <div class="chartTile">
-              <el-select class="collapse-head-select" v-model="commodityValue" size="small" @change="getEqData">
-                <el-option v-for="item in commodityOptions" :key="item.ID" :label="item.AreaName + item.FEFportIP" :value="item"></el-option>
+              <el-select class="collapse-head-select" v-model="commodityValue" size="small" @change="getEqData" style="width: 200px;text-align: left;">
+                <el-option v-for="item in commodityOptions" :key="item.ID" :label="item.AreaName + '：' + item.FEFportIP" :value="item"></el-option>
               </el-select>
             </div>
             <div class="chartHeadRight">
@@ -257,6 +257,7 @@
         },
         commodityValue:"",
         commodityOptions:[],
+        commodityArr:[],
         ralTimeWarningTableData:[ //实时预警表格数据
           {area:"新建综合制剂楼",name:"汽表2",type:"温度不正常",date:"2020-01-02 12:05"},
           {area:"新建综合制剂楼",name:"汽表4",type:"温度不正常",date:"2020-01-02 12:05"},
@@ -339,10 +340,12 @@
           console.log("获取设备时请求错误")
         })
       },
-      getEqData(){
+      getEqData(a){
+        this.commodityArr = a
+        this.commodityValue = this.commodityArr.AreaName + this.commodityArr.FEFportIP
         var params = {
-          TagClassValue:this.commodityValue.TagClassValue,
-          EnergyClass:this.commodityValue.EnergyClass
+          TagClassValue:this.commodityArr.TagClassValue,
+          EnergyClass:this.commodityArr.EnergyClass
         }
         this.axios.get("/api/EquipmentDetail",{params:params}).then(res =>{
           console.log(res.data)
