@@ -29,23 +29,16 @@
           <div class="sn">+1.456%</div>
         </div>
       </div>
-        <div class="show-top">
+        <div class="show-top singledate">
                <div class="tips">
-                   <van-tabs type="card" title-active-color="#1E222B" title-inactive-color="#fff" v-model="choosedate" @click="ChooseDate"> 
-                        <van-tab title="年"></van-tab>
-                        <van-tab title="月"></van-tab>
+                   <van-tabs type="card" title-active-color="#1E222B" title-inactive-color="#fff" v-model="choosedate" >
                         <van-tab title="日"></van-tab>
                     </van-tabs>
                 </div>
-               <div class="tips">
-                   <van-tabs type="card" title-active-color="#1E222B"  title-inactive-color="#fff" v-model="choosekind" @click="ChooseKind">
-                        <van-tab title="水"></van-tab>
-                        <van-tab title="电"></van-tab>
-                        <van-tab title="气"></van-tab>
-                    </van-tabs>
-               </div>
         </div>
-         <div class="piclist">zhangsh</div>
+         <div class="piclist">
+           <ve-line :data="electricChartData" :settings="chartSettings" width="350px" height="240px"></ve-line>
+         </div>
          <ShowNumber></ShowNumber>
          <div class="bottom-dnh">
            <div class="dnh">电能耗量</div>
@@ -59,14 +52,18 @@
 </template>
 <script>
 import ShowNumber from '../common/Shownumber.vue'
+var moment=require('moment')
 export default {
     data(){
+      this.chartSettings = {
+        yAxisType: ['KMB'],
+        yAxisName: ['单位']
+      }
         return {
           radio1:1,
           radio2:1,
           active:2,
           choosedate:0,
-          choosekind:0,
           list:[],
           water:0,
           electric:0,
@@ -74,19 +71,55 @@ export default {
           bgc1:false,
           bgc2:false,
           bgc3:false,
-          loading:false
-        }
+          loading:false,
+          websoc:null,
+          currentchoice:'',
+          electricChartData:{
+          columns:['日期', '数值'],
+          rows: [
+            { '日期': '00', '数值': 139 },
+            { '日期': '02', '数值': 345 },
+            { '日期': '04', '数值': 923 },
+            { '日期': '06', '数值': 723 },
+            { '日期': '08', '数值': 139 },
+            { '日期': '10', '数值': 345 },
+            { '日期': '12', '数值': 923 },
+            { '日期': '14', '数值': 723 },
+            { '日期': '16', '数值': 139 },
+            { '日期': '18', '数值': 345 },
+            { '日期': '20', '数值': 923 },
+            { '日期': '22', '数值': 723 },]
+        },
+          waterChartData: {
+          columns: ['日期', '数值'],
+          rows: [
+            { '日期': '00', '数值': 139 },
+            { '日期': '02', '数值': 345 },
+            { '日期': '04', '数值': 923 },
+          ]
+        },
+        steamChartData:{
+          columns: ['日期', '数值'],
+          rows: [
+            { '日期': '00', '数值': 139 },
+            { '日期': '02', '数值': 345 },
+            { '日期': '04', '数值': 923 },
+          ]
+        }}
     },
     components:{
       ShowNumber
     },
+    created(){
+      this.initWebSocket()
+    },
     mounted(){
       this.getNavbar()
     },
+    destroyed(){
+      this.websoc.close()
+    },
     methods:{
-      myc(){
-        this.$toast(this.radio1)
-      },
       switchShow1(){
        this.bgc1=!this.bgc1
        this.bgc2=false
@@ -102,12 +135,55 @@ export default {
        this.bgc1=false
        this.bgc2=false
       },
-      getData(e){
+      //websocket 获取数据方法汇总
+       initWebSocket(){
+            this.websoc=new WebSocket('ws://127.0.0.1:5002')
+            this.websoc.onopen=this.webscop
+            this.websoc.onmessage=this.webscom
+            this.websoc.onerror=this.webscoer
+            this.websoc.onclose=this.webscoclos
+        },
+        webscsend(data){
+            this.websoc.send(data)
+        },
+        webscop(){
+          this.webscsend()  
+        },
+        webscom(evt){
+            var arr=JSON.parse(evt.data)
+            for(var i=0;i<arr.length;i++){
+              if(arr[i]['AreaName']==this.currentchoice){
+              this.electricChartData.rows.push({
+                "日期": moment(new Date()).format("ss"),
+                "数值": arr[i]['areaEZGL']
+              })
+              this.electricChartData.rows.shift()
+              this.waterChartData.rows.push({
+                "日期": moment(new Date()).format("ss"),
+                "数值": arr[i]['areaWSum']
+              })
+              this.waterChartData.rows.shift()
+               this.steamChartData.rows.push({
+                "日期": moment(new Date()).format("ss"),
+                "数值": arr[i]['areaSSum']
+              })
+              this.steamChartData.rows.shift()
+                }
+              }
+        },
+        webscoer(){
+            console.log('连接失败。。。')
+        },
+        webscoclos(){
+            console.log('关闭连接。。。')
+        },
+        getData(e){
           let params={
             StartTime:'2020-04-09 12:22:59',
             EndTime:'2020-04-14 12:22:59',
             AreaName:this.list[e]
           }
+          this.currentchoice=this.list[e]
           this.$http.all([
             this.$http.get('/api/energywater',{params}),
             this.$http.get('/api/energyelectric',{params}),
@@ -117,12 +193,6 @@ export default {
                     this.steam=JSON.parse(res3.data).value
                   }))
               },
-      ChooseKind(){
-        
-      },
-      ChooseDate(){
-        this.$toast('日期')
-      },
       getNavbar(){
         this.loading=true
         this.$http.get('/api/areatimeenergycount',{params:{
@@ -285,9 +355,9 @@ export default {
           }
         }
         .piclist{
-          height: 185px;
+          height: 200px;
           background-color: #666;
-          margin: 10px 0 20px;
+          margin: 0 0 20px;
         }
         .bottom-dnh{
           position: relative;

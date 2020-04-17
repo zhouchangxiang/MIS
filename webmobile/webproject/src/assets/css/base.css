@@ -79,3 +79,6 @@
 .van-loading__text{
     color: lightgreen;
 }
+.singledate .van-tabs__nav--card{
+    width:40px;
+  }
