@@ -16,7 +16,7 @@ import calendar
 from dbset.main.BSFramwork import AlchemyEncoder
 from dbset.database import db_operate
 from dbset.log.BK2TLogger import logger,insertSyslog
-from handlers.energymanager.energy_manager import energyStatistics
+from handlers.energymanager.energy_manager import energyStatistics, energyStatisticsFlowSumWD
 from tools.common import insert,delete,update
 from dbset.database.db_operate import db_session
 from models.SystemManagement.core import Equipment, Instrumentation, TagDetail
@@ -101,8 +101,21 @@ def EquipmentDetail():
                 endeH = StartTime[0:11] + addzero(i) + ":59:59"
                 dir_list_i = {}
                 dir_list_i["时间"] = StartTime[0:11] + addzero(i)
-                elecs = energyStatistics(oc_list, staeH, endeH, EnergyClass)
-                dir_list_i["功率"] = elecs
+                if EnergyClass == "电":
+                    elecs = energyStatistics(oc_list, staeH, endeH, EnergyClass)
+                    dir_list_i["功率"] = elecs
+                elif EnergyClass == "水":
+                    rews = energyStatisticsFlowSumWD(oc_list, staeH, endeH, EnergyClass)
+                    wats = energyStatistics(oc_list, staeH, endeH, EnergyClass)
+                    dir_list_i["累计量"] = wats
+                    dir_list_i["瞬时量"] = rews[0]
+                elif EnergyClass == "汽":
+                    stes = energyStatistics(oc_list, staeH, endeH, EnergyClass)
+                    steams = energyStatisticsFlowSumWD(oc_list, staeH, endeH, EnergyClass)
+                    dir_list_i["瞬时量"] = steams[0]
+                    dir_list_i["累计量"] = stes
+                    dir_list_i["体积"] = steams[1]
+                    dir_list_i["温度"] = steams[2]
                 dir_list.append(dir_list_i)
             dir["row"] = dir_list
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)

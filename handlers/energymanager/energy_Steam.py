@@ -203,3 +203,41 @@ def get_steam():
         result = db_session.execute(sql).fetchall()
         price = 0 if len(result) == 0 else str(round(result[0]['count'], 2))
         return json.dumps({'rows': data, 'total_column': total, 'price': price}, cls=AlchemyEncoder, ensure_ascii=False)
+
+@energySteam.route('/energydetail', methods=['POST', 'GET'])
+def energydetail():
+    '''
+    能耗明细
+    return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            dir = {}
+            StartTime = data.get("StartTime")
+            EndTime = data.get("EndTime")
+            EnergyClass = data.get("EnergyClass")
+            AreaName = data.get("AreaName")
+            oc_list = []
+            if AreaName == "" or AreaName == None:
+                tags = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
+            else:
+                tags = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass,
+                                                          TagDetail.AreaName == AreaName).all()
+            for tag in tags:
+                oc_list.append(tag.TagClassValue)
+            if EnergyClass == "水":
+                ocalss = db_session.query(WaterEnergy).filter(WaterEnergy.TagClassValue.in_(oc_list), WaterEnergy.CollectionDate.between(StartTime, EndTime)).all()
+            elif EnergyClass == "电":
+                ocalss = db_session.query(ElectricEnergy).filter(ElectricEnergy.TagClassValue.in_(oc_list),
+                                                                 ElectricEnergy.CollectionDate.between(StartTime,
+                                                                                                 EndTime)).all()
+            elif EnergyClass == "汽":
+                ocalss = db_session.query(SteamEnergy).filter(SteamEnergy.TagClassValue.in_(oc_list),
+                                                              SteamEnergy.CollectionDate.between(StartTime,
+                                                                                                 EndTime)).all()
+            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "能耗明细查询报错Error：" + str(e), current_user.Name)

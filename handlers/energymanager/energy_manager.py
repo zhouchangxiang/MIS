@@ -258,6 +258,32 @@ def energyStatisticsCost(oc_list, StartTime, EndTime, energy):
     else:
         return 0.0
 
+def energyStatisticsFlowSumWD(oc_list, StartTime, EndTime, energy):
+    '''
+    :param oc_list: tag点的List
+    :param StartTime:
+    :param EndTime:
+    :param energy: 水，电 ，气
+    :return:历史表的瞬时值、温度、体积
+    '''
+    propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
+    pro = float(propor.Proportion)
+    if energy == "水":
+        sql = "SELECT SUM(Cast(t.WaterFlow as float)) as WaterFlow  FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_WaterTable)  WHERE t.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+    elif energy == "电":
+        sql = "SELECT SUM(Cast(t.ZGL as float)) as ZGL  FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricTable)  WHERE t.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+    elif energy == "汽":
+        sql = "SELECT SUM(Cast(t.FlowValue as float)) as FlowValue,SUM(Cast(t.Volume as float)) as Volume,AVG(t.WD) AS WD  FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_StreamTable)  WHERE t.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+    re = db_session.execute(sql).fetchall()
+    db_session.close()
+    return re
+
 
 def energyselect(data):
     if request.method == 'GET':
@@ -1396,52 +1422,3 @@ def energycost():
             print(e)
             logger.error(e)
             insertSyslog("error", "成本中心查询报错Error：" + str(e), current_user.Name)
-
-
-@energy.route('/energydetail', methods=['POST', 'GET'])
-def energydetail():
-    '''
-    能耗明细
-    return:
-    '''
-    if request.method == 'GET':
-        data = request.values
-        try:
-            dir = {}
-            StartTime = data.get("StartTime")
-            EndTime = data.get("EndTime")
-            EnergyClass = data.get("EnergyClass")
-            araes = db_session.query(AreaTable).filter().all()
-            wdir_list = []
-            edir_list = []
-            sdir_list = []
-            for area in araes:
-                wdir_coll = {}
-                edir_coll = {}
-                sdir_coll = {}
-                wdir_coll["区域"] = area.AreaName
-                edir_coll["区域"] = area.AreaName
-                sdir_coll["区域"] = area.AreaName
-                oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == area.AreaName).all()
-                oc_list = []
-                for oc in oclass:
-                    oc_list.append(oc.TagClassValue)
-                if len(oc_list) > 0:
-                    wdir_coll["能耗量"] = energyStatistics(oc_list, currentdayestart, currentdayend, "水")
-                    edir_coll["能耗量"] = energyStatistics(oc_list, currentdayestart, currentdayend, "电")
-                    sdir_coll["能耗量"] = energyStatistics(oc_list, currentdayestart, currentdayend, "汽")
-                else:
-                    wdir_coll["能耗量"] = 0.0
-                    edir_coll["能耗量"] = 0.0
-                    sdir_coll["能耗量"] = 0.0
-                wdir_list.append(wdir_coll)
-                edir_list.append(edir_coll)
-                sdir_list.append(sdir_coll)
-            dir["wrow"] = wdir_list
-            dir["erow"] = edir_list
-            dir["srow"] = sdir_list
-            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
-        except Exception as e:
-            print(e)
-            logger.error(e)
-            insertSyslog("error", "实时数据柱状图环形图查询报错Error：" + str(e), current_user.Name)
