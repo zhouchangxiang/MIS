@@ -16,6 +16,7 @@ import calendar
 from dbset.main.BSFramwork import AlchemyEncoder
 from dbset.database import db_operate
 from dbset.log.BK2TLogger import logger,insertSyslog
+from handlers.energymanager.energy_manager import energyStatistics
 from tools.common import insert,delete,update
 from dbset.database.db_operate import db_session
 from models.SystemManagement.core import Equipment, Instrumentation, TagDetail
@@ -73,14 +74,38 @@ def EquipmentDetail():
         try:
             dir = {}
             TagClassValue = data.get("TagClassValue")
-            dir["ZGL"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "_ZGL"))
-            ZGLSamptime = returnb(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "_ZGL_Samptime"))
-            dir["AU"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "_AU"))
-            dir["AI"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "_AI"))
-            dir["BU"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "_BU"))
-            dir["BI"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "_BI"))
-            dir["CU"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "_CU"))
-            dir["CI"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "_CI"))
+            EnergyClass = data.get("EnergyClass")
+            StartTime = data.get("StartTime")
+            EndTime = data.get("EndTime")
+            if EnergyClass == "电":
+                dir["ZGL"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "_ZGL"))
+                dir["AU"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "_AU"))
+                dir["AI"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "_AI"))
+                dir["BU"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "_BU"))
+                dir["BI"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "_BI"))
+                dir["CU"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "_CU"))
+                dir["CI"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "_CI"))
+            elif EnergyClass == "水":
+                dir["WaterS"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "S"))  # 水的累计流量
+                dir["WaterF"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "F"))  # 水的瞬时流量
+            elif EnergyClass == "汽":
+                dir["SteamF"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "F"))  # 蒸汽瞬时流量
+                dir["SteamS"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "S"))  # 蒸汽累计流量
+                dir["SteamV"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "V"))  # 蒸汽体积
+                dir["SteamWD"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "WD"))  # 蒸汽体积
+            oc_list = []
+            dir_list = []
+            oc_list.append(TagClassValue)
+            re = energyStatistics(oc_list, StartTime, EndTime, EnergyClass)
+            for i in range(int(StartTime[11:13]), int(EndTime[11:13]) + 1):
+                staeH = StartTime[0:11] + addzero(i) + ":00:00"
+                endeH = StartTime[0:11] + addzero(i) + ":59:59"
+                dir_list_i = {}
+                dir_list_i["时间"] = StartTime[0:11] + addzero(i)
+                elecs = energyStatistics(oc_list, staeH, endeH, EnergyClass)
+                dir_list_i["功率"] = elecs
+                dir_list.append(dir_list_i)
+            dir["row"] = dir_list
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
@@ -99,3 +124,8 @@ def returnb(rod):
         return ""
     else:
         return rod.decode()
+def addzero(j):
+    if j < 10:
+        return "0" + str(j)
+    else:
+        return str(j)
