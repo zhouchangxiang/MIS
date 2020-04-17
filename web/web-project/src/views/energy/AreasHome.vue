@@ -169,17 +169,17 @@
                 </div>
               </el-col>
               <el-col :span="18">
-              <div class="itemMarginBottom text-size-normol text-color-info-shallow">本日耗汽量</div>
-              <div class="itemMarginBottom text-size-big text-color-info">{{ todaySteam }} {{ SteamUnit }}</div>
-              <div class="itemMarginBottom">
-                <span class="text-size-mini text-color-info-shallow">今日汽费</span>
-                <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
-              </div>
-              <div class="itemMarginBottom">
-                <span class="text-size-normol text-color-info">{{ steamCost }}</span>
-                <span class="text-size-normol float-right" :class="todaySteam-yesterdaySteamValue>0?'text-color-danger':'text-color-success'">{{ SteamCompare }}</span>
-              </div>
-            </el-col>
+                <div class="itemMarginBottom text-size-normol text-color-info-shallow">本日耗汽量</div>
+                <div class="itemMarginBottom text-size-big text-color-info">{{ todaySteam }} {{ SteamUnit }}</div>
+                <div class="itemMarginBottom">
+                  <span class="text-size-mini text-color-info-shallow">今日汽费</span>
+                  <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
+                </div>
+                <div class="itemMarginBottom">
+                  <span class="text-size-normol text-color-info">{{ steamCost }}</span>
+                  <span class="text-size-normol float-right" :class="todaySteam-yesterdaySteamValue>0?'text-color-danger':'text-color-success'">{{ SteamCompare }}</span>
+                </div>
+              </el-col>
             </el-col>
           </div>
         </el-col>
@@ -189,33 +189,27 @@
           <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
             <div class="chartTile">生产详情</div>
           </div>
-          <div class="platformContainer" style="margin-bottom:2px;">
-            <el-table :data="batchTableData" style="width: 100%">
-              <el-table-column prop="Name" label="品名"></el-table-column>
-              <el-table-column prop="Batch" label="批次"></el-table-column>
+          <div class="platformContainer" style="margin-bottom:3px;">
+            <el-table :data="commodityTable" style="width: 100%" height="305px">
+              <el-table-column prop="BrandName" label="品名"></el-table-column>
             </el-table>
           </div>
           <div class="platformContainer">
             <el-col :span="24">
               <div class="itemMarginBottom">
                 <span class="text-size-normol text-color-info-shallow">今日品名数</span>
-                <span class="text-size-normol text-color-info-shallow float-right">今日总成本</span>
               </div>
               <div class="itemMarginBottom">
-                <span class="text-size-normol text-color-info">2</span>
-                <span class="text-size-normol text-color-info float-right">24562.23元</span>
+                <span class="text-size-normol text-color-info">{{ todayBrandTypeNum }}</span>
               </div>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="24">
               <div class="itemMarginBottom">
                 <span class="text-size-normol text-color-info-shallow">今日批次数</span>
               </div>
               <div class="itemMarginBottom">
-                <span class="text-size-normol text-color-info">5</span>
+                <span class="text-size-normol text-color-info">{{ todayBatchCount }}</span>
               </div>
-            </el-col>
-            <el-col :span="12">
-              <ve-ring :data="batchRingChartData" :settings="batchChartSettings" :extend="batchChartExtend" width="100%" height="100px"></ve-ring>
             </el-col>
           </div>
         </el-col>
@@ -407,25 +401,10 @@
           columns: ['区域', '能耗量'],
           rows: []
         },
-        batchTableData:[
-          {Name:"药品A",Batch:"JUSA2374627"},
-          {Name:"药品B",Batch:"JUSA2374627"},
-          {Name:"药品C",Batch:"JUSA2374627"},
-          {Name:"药品D",Batch:"JUSA2374627"},
-        ],
+        commodityTable:[],
         ChartSettings: {
           radius: [30,60],
           offsetY:"100px",
-          label:{
-            show:false
-          },
-          labelLine:{
-            show:false
-          }
-        },
-        batchChartSettings: {
-          radius: [20,40],
-          offsetY:"50px",
           label:{
             show:false
           },
@@ -438,29 +417,19 @@
             show:false
           }
         },
-        batchChartExtend: {
-          legend:{
-            show:false
-          }
-        },
-        batchRingChartData: {
-          columns: ['日期', '访问用户'],
-          rows: [
-            { '日期': '药品A', '访问用户': 1393 },
-            { '日期': '药品B', '访问用户': 3530 },
-            { '日期': '药品C', '访问用户': 2923 },
-            { '日期': '药品D', '访问用户': 1723 }
-          ]
-        },
         tableData:[],
         total:0,
         pagesize:5,
         currentPage:1,
+        todayBrandTypeNum:"",
+        todayBatchCount:"",
         onlineEquipmentOption:[], //在线情况采集
       }
     },
     created(){
       this.getEnergyPreview()
+      this.getBrandName()
+      this.getBrandData()
       this.initWebSocket()
       this.getBatchTable()
       this.getOnLineEq()
@@ -605,6 +574,21 @@
           that.steamRing.rows = todayAreaData.data.srow
         }))
       },
+      getBrandName(){
+        var that = this
+        this.axios.get("/api/CUID",{
+          params: {
+            tableName: "BrandMaintain",
+            limit:100000000,
+            offset:0
+          }
+        }).then(res =>{
+          var data = JSON.parse(res.data)
+          that.commodityTable = data.rows
+        },res =>{
+          console.log("获取品名时请求错误")
+        })
+      },
       getBatchTable(){
         var that = this
         var nowTime = moment().format('HH:mm').substring(0,4) + "0"
@@ -623,6 +607,27 @@
           var data = res.data
           that.tableData = data.rows
           that.total = data.total
+        })
+      },
+      getBrandData(){
+        var that = this
+        var nowTime = moment().format('HH:mm').substring(0,4) + "0"
+        var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
+        var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
+        var areaName = ""
+        if(this.newAreaName.areaName === "整厂区"){
+          areaName = ""
+        }else{
+          areaName = this.newAreaName.areaName
+        }
+        var params = {
+          AreaName:areaName,
+          StartTime:todayStartTime,
+          EndTime:todayEndTime
+        }
+        this.axios.get("/api/batchMaintainEnergy",{params:params}).then(res => {
+          that.todayBrandTypeNum = res.data.typeNum
+          that.todayBatchCount = res.data.batchCount
         })
       },
       handleSizeChange(pagesize){ //每页条数切换

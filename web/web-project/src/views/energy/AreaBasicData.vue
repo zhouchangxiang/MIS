@@ -3,13 +3,13 @@
     <el-col :span="24">
       <el-form :inline="true" :model="formParameters">
         <el-form-item label="时间：">
-          <el-radio-group v-model="formParameters.resourceTime" fill="#082F4C" size="mini">
+          <el-radio-group v-model="formParameters.resourceTime" fill="#082F4C" size="mini" @change="getChartData">
             <el-radio-button v-for="item in radioTimeList" border :key="item.name" :label="item.name"></el-radio-button>
           </el-radio-group>
-          <el-date-picker type="date" v-model="formParameters.date" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 150px;" :clearable="false"></el-date-picker>
+          <el-date-picker type="date" v-model="formParameters.date" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 150px;" :clearable="false" @change="getChartData"></el-date-picker>
         </el-form-item>
         <el-form-item style="float: right;">
-          <el-radio-group v-model="formParameters.energy" fill="#082F4C" size="small">
+          <el-radio-group v-model="formParameters.energy" fill="#082F4C" size="mini" @change="getChartData">
             <el-radio-button v-for="item in energyList" :key="item.id" :label="item.name"></el-radio-button>
           </el-radio-group>
         </el-form-item>
@@ -19,7 +19,7 @@
       <div class="chartHead text-size-large text-color-info">
         <div class="chartTile">趋势图</div>
         <ul class="subsectionList">
-          <li v-for="item in subsectionList"><a href="javascript:;" :class="{active:subsectionActive == item.id}" @click="getSubsection(item.id)">{{ item.name }}</a></li>
+          <li v-for="item in subsectionList"><a href="javascript:;" :class="{active:subsectionActive === item.id}" @click="getSubsection(item.id)">{{ item.name }}</a></li>
         </ul>
       </div>
     </el-col>
@@ -35,6 +35,7 @@
   var moment = require('moment');
   export default {
     name: "AreaBasicData",
+    inject:['newAreaName'],
     data(){
       return {
         formParameters:{
@@ -123,24 +124,32 @@
             params.StartTime = dayStartTime
             params.EndTime = dayEndTime
             params.AreaName = areaName
+            params.EnergyClass = this.formParameters.energy
           }else if(this.formParameters.resourceTime === "周"){
             params.StartTime = weekStartTime
             params.EndTime = weekEndTime
             params.AreaName = areaName
+            params.EnergyClass = this.formParameters.energy
           }else if(this.formParameters.resourceTime === "月"){
             params.StartTime = monthStartTime
             params.EndTime = monthEndTime
             params.AreaName = areaName
+            params.EnergyClass = this.formParameters.energy
           }else if(this.formParameters.resourceTime === "季"){
             params.StartTime = quarterStartTime
             params.EndTime = quarterEndTime
             params.AreaName = areaName
+            params.EnergyClass = this.formParameters.energy
           }else if(this.formParameters.resourceTime === "年"){
             params.StartTime = yearStartTime
             params.EndTime = yearEndTime
             params.AreaName = areaName
+            params.EnergyClass = this.formParameters.energy
           }
           console.log(params)
+          this.axios.get("/api/energyall",{params:params}).then(res => {
+            console.log(res.data)
+          })
         }
       },
       initWebSocket(){ //初始化weosocket

@@ -2,14 +2,14 @@
     <el-row :gutter="10">
       <el-col :span="24">
         <el-form :model="formParameters">
-          <el-form-item label="参数：" style="margin-bottom: 0;">
+          <el-form-item label="时间：" style="margin-bottom: 0;">
+            <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false"></el-date-picker> ~
+            <el-date-picker type="datetime" v-model="formParameters.endDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false"></el-date-picker>
+          </el-form-item>
+          <el-form-item label="参数：">
             <el-radio-group v-model="formParameters.eqComponentValue" fill="#082F4C" size="small">
               <el-radio-button v-for="item in eqComponentList" :key="item.id" :label="item.name"></el-radio-button>
             </el-radio-group>
-          </el-form-item>
-          <el-form-item label="时间：">
-            <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false"></el-date-picker> ~
-            <el-date-picker type="datetime" v-model="formParameters.endDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false"></el-date-picker>
           </el-form-item>
         </el-form>
       </el-col>
@@ -18,7 +18,7 @@
           <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
             <div class="chartTile">设备</div>
           </div>
-          <div class="platformContainer">
+          <div class="platformContainer" style="margin-bottom: 10px;">
             <el-table :data="TagDetailTableData" highlight-current-row ref="multipleTable" @selection-change="handleSelectionChange" @row-click="handleRowClick" size="mini" height="246px" max-height="246px" style="width: 100%">
               <el-table-column type="selection"></el-table-column>
               <el-table-column prop="AreaName" label="区域名称"></el-table-column>
@@ -35,18 +35,18 @@
               设备信息
             </div>
             <div class="chartHeadRight">
-              <el-button size="mini">档案</el-button>
-              <el-button size="mini">历史事件</el-button>
+              <!--<el-button size="mini">档案</el-button>-->
+              <!--<el-button size="mini">历史事件</el-button>-->
             </div>
           </div>
-          <div class="platformContainer" style="margin-bottom:10px;">
+          <div class="platformContainer" style="margin-bottom:10px;" v-if="EnergyClass === '电'">
             <el-col :span="8">
               <div class="faultItemHead">
                 <span>功率</span>
-                <p>额定功率/kw <span>53</span></p>
+                <!--<p>额定功率/kw <span>{{  }}</span></p>-->
               </div>
               <div class="faultItemBody">
-                <p style="padding: 29px 0;">有功功率/kw <span>2.1514</span></p>
+                <p style="padding: 29px 0;">有功功率/kwh <span>{{ forEqParameters.ZGL }}</span></p>
               </div>
               <div class="faultWarn">
                 <p class="text-color-success" style="line-height: 60px;">未发现异常</p>
@@ -55,12 +55,12 @@
             <el-col :span="8">
               <div class="faultItemHead">
                 <span>电流</span>
-                <p>额定电流/A <span>{{  }}</span></p>
+                <!--<p>额定电流/A <span>{{  }}</span></p>-->
               </div>
               <div class="faultItemBody">
-                <p>A项电流 <span>{{  }}</span></p>
-                <p>B项电流 <span>0</span></p>
-                <p>C项电流 <span>2.1514</span></p>
+                <p>A项电流 <span>{{ forEqParameters.AI }}</span></p>
+                <p>B项电流 <span>{{ forEqParameters.BI }}</span></p>
+                <p>C项电流 <span>{{ forEqParameters.CI }}</span></p>
               </div>
               <div class="faultWarn">
                 <span>2020-02-04 17:56</span>
@@ -70,15 +70,85 @@
             <el-col :span="8">
               <div class="faultItemHead">
                 <span>电压</span>
-                <p>额定电压/V <span>5</span></p>
+                <!--<p>额定电压/V <span>{{  }}</span></p>-->
               </div>
               <div class="faultItemBody">
-                <p>A项电压 <span>2.1514</span></p>
-                <p>B项电压 <span>0</span></p>
-                <p>C项电压 <span>2.1514</span></p>
+                <p>A项电压 <span>{{ forEqParameters.AU }}</span></p>
+                <p>B项电压 <span>{{ forEqParameters.BU }}</span></p>
+                <p>C项电压 <span>{{ forEqParameters.CU }}</span></p>
               </div>
               <div class="faultWarn">
                 <p class="text-color-success" style="line-height: 60px;">未发现异常</p>
+              </div>
+            </el-col>
+          </div>
+          <div class="platformContainer" style="margin-bottom:10px;" v-if="EnergyClass === '水'">
+            <el-col :span="12">
+              <div class="faultItemHead">
+                <span>损失量</span>
+              </div>
+              <div class="faultItemBody">
+                <p style="padding: 29px 0;"><span>{{ forEqParameters.WaterF }}</span></p>
+              </div>
+              <div class="faultWarn">
+
+              </div>
+            </el-col>
+            <el-col :span="12">
+              <div class="faultItemHead">
+                <span>累计量</span>
+              </div>
+              <div class="faultItemBody">
+                <p style="padding: 29px 0;"><span>{{ forEqParameters.WaterS }}</span></p>
+              </div>
+              <div class="faultWarn">
+
+              </div>
+            </el-col>
+          </div>
+          <div class="platformContainer" style="margin-bottom:10px;" v-if="EnergyClass === '汽'">
+            <el-col :span="6">
+              <div class="faultItemHead">
+                <span>损失量</span>
+              </div>
+              <div class="faultItemBody">
+                <p style="padding: 29px 0;"><span>{{ forEqParameters.SteamF }}</span></p>
+              </div>
+              <div class="faultWarn">
+
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <div class="faultItemHead">
+                <span>累计量</span>
+              </div>
+              <div class="faultItemBody">
+                <p style="padding: 29px 0;"><span>{{ forEqParameters.SteamS }}</span></p>
+              </div>
+              <div class="faultWarn">
+
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <div class="faultItemHead">
+                <span>体积</span>
+              </div>
+              <div class="faultItemBody">
+                <p style="padding: 29px 0;"><span>{{ forEqParameters.SteamV }}</span></p>
+              </div>
+              <div class="faultWarn">
+
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <div class="faultItemHead">
+                <span>温度</span>
+              </div>
+              <div class="faultItemBody">
+                <p style="padding: 29px 0;"><span>{{ forEqParameters.SteamWD }}</span></p>
+              </div>
+              <div class="faultWarn">
+
               </div>
             </el-col>
           </div>
@@ -86,9 +156,9 @@
         <el-col :span="24" style="margin-bottom: 2px;">
           <div class="chartHead text-size-large text-color-info">
             <div class="chartTile">参数分析</div>
-            <ul class="subsectionList">
-              <li v-for="item in subsectionList"><a href="javascript:;" :class="{active:subsectionActive == item.id}" @click="getSubsection(item.id)">{{ item.name }}</a></li>
-            </ul>
+            <!--<ul class="subsectionList">-->
+              <!--<li v-for="item in subsectionList"><a href="javascript:;" :class="{active:subsectionActive == item.id}" @click="getSubsection(item.id)">{{ item.name }}</a></li>-->
+            <!--</ul>-->
           </div>
         </el-col>
         <el-col :span="24">
@@ -242,20 +312,13 @@
       }
       return {
         formParameters:{
-          resourceTime:"班次",
           startDate:moment().day(moment().day()).startOf('day').format('YYYY-MM-DD HH:mm'),
           endDate:moment().format("YYYY-MM-DD HH:mm"),
           eqComponentValue:"安全/故障"
         },
-        radioTimeList:[
-          {name:"班次",id:1},
-          {name:"日",id:2},
-          {name:"周",id:3},
-          {name:"月",id:4}
-        ],
         eqComponentList:[
           {name:"安全/故障",id:1},
-          {name:"设备利用率",id:2},
+          //{name:"设备利用率",id:2},
           {name:"电能质量",id:3},
         ],
         pickerOptions:{
@@ -265,12 +328,9 @@
         },
         multipleSelection:[],
         TagDetailTableData:[],
-        ralTimeWarningTableData:[ //实时预警表格数据
-          {area:"新建综合制剂楼",name:"汽表2",type:"温度不正常",date:"2020-01-02 12:05"},
-          {area:"新建综合制剂楼",name:"汽表4",type:"温度不正常",date:"2020-01-02 12:05"},
-          {area:"新建综合制剂楼",name:"电表1",type:"三项电流不平衡",date:"2020-01-02 12:05"},
-          {area:"新建综合制剂楼",name:"汽表2",type:"温度不正常",date:"2020-01-02 12:05"}
-        ],
+        forEqParameters:{},
+        EnergyClass:"电",
+        ralTimeWarningTableData:[],
         subsectionList:[
           {name:"视在功率",id:1},
           {name:"有功功率",id:2},
@@ -281,23 +341,14 @@
         ],
         subsectionActive:1,
         faultChartData: {
-          columns: ['时间', '总有功电量', 'A相有功电量', 'B相有功电量','C相有功电量'],
-          rows: [
-            { '时间': '00:00', '总有功电量': 4647, 'A相有功电量': 193, 'B相有功电量': 454 ,'C相有功电量':124},
-            { '时间': '01:00', '总有功电量': 8457, 'A相有功电量': 320, 'B相有功电量': 546 ,'C相有功电量':544},
-            { '时间': '02:00', '总有功电量': 4875, 'A相有功电量': 223, 'B相有功电量': 454 ,'C相有功电量':254},
-            { '时间': '03:00', '总有功电量': 9755, 'A相有功电量': 143, 'B相有功电量': 247 ,'C相有功电量':274},
-            { '时间': '04:00', '总有功电量': 7545, 'A相有功电量': 342, 'B相有功电量': 844 ,'C相有功电量':457},
-            { '时间': '05:00', '总有功电量': 6488, 'A相有功电量': 423, 'B相有功电量': 648 ,'C相有功电量':948}
-          ]
+          columns: ['时间', '功率'],
+          rows: []
         },
         overview:{
-          maxValue:"222.3V",
-          maxTime:"13:00",
-          maxSite:"A项电压",
-          minValue:"212.6V",
-          minTime:"9:00",
-          minSite:"B项电压",
+          maxValue:"",
+          maxTime:"",
+          minValue:"",
+          minTime:""
         },
         equiRunChartData:{
           columns: ['时间', '开机', '关机', '空载','重载'],
@@ -325,7 +376,6 @@
     },
     created(){
       this.getEq()
-      //this.getEqData()
     },
     methods:{
       getSubsection(index){
@@ -353,6 +403,8 @@
         })
       },
       getEqData(){
+        var that = this
+        this.EnergyClass = this.multipleSelection[0].EnergyClass
         var params = {
           TagClassValue:this.multipleSelection[0].TagClassValue,
           EnergyClass:this.multipleSelection[0].EnergyClass,
@@ -360,6 +412,8 @@
           EndTime:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm")
         }
         this.axios.get("/api/EquipmentDetail",{params:params}).then(res =>{
+          that.forEqParameters = res.data
+          that.faultChartData.rows = res.data.row
           console.log(res.data)
         })
       },
@@ -374,6 +428,7 @@
 
 <style scoped>
   .faultItemHead{
+    height: 70px;
     background: #EEEEEE;
     border-radius:4px;
     padding: 10px;
