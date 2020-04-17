@@ -174,17 +174,17 @@ def handler_msg(conn):
                         finally:
                             pass
                     area_dir["AreaName"] = area.AreaName
-                    area_dir["areaSFlow"] = areaSFlow
-                    area_dir["areaSSum"] = areaSSum
-                    area_dir["areaWFlow"] = areaWFlow
-                    area_dir["areaWSum"] = areaWSum
-                    area_dir["areaEZGL"] = areaEZGL
-                    area_dir["areaEAI"] = areaEAI
-                    area_dir["areaEAU"] = areaEAU
-                    area_dir["areaEBI"] = areaEBI
-                    area_dir["areaEBU"] = areaEBU
-                    area_dir["areaECI"] = areaEBI
-                    area_dir["areaECU"] = areaEBU
+                    area_dir["areaSFlow"] = strtofloat(areaSFlow)
+                    area_dir["areaSSum"] = strtofloat(areaSSum)
+                    area_dir["areaWFlow"] = strtofloat(areaWFlow)
+                    area_dir["areaWSum"] = strtofloat(areaWSum)
+                    area_dir["areaEZGL"] = strtofloat(areaEZGL)
+                    area_dir["areaEAI"] = strtofloat(areaEAI)
+                    area_dir["areaEAU"] = strtofloat(areaEAU)
+                    area_dir["areaEBI"] = strtofloat(areaEBI)
+                    area_dir["areaEBU"] = strtofloat(areaEBU)
+                    area_dir["areaECI"] = strtofloat(areaEBI)
+                    area_dir["areaECU"] = strtofloat(areaEBU)
                     if i == 1:
                         areaSFlowT = 0.0
                         areaSSumT = 0.0
@@ -233,17 +233,17 @@ def handler_msg(conn):
                             finally:
                                 pass
                         area_dir["AreaName"] = ""
-                        area_dir["areaSFlow"] = areaSFlowT
-                        area_dir["areaSSum"] = areaSSumT
-                        area_dir["areaWFlow"] = areaWFlowT
-                        area_dir["areaWSum"] = areaWSumT
-                        area_dir["areaEZGL"] = areaEZGLT
-                        area_dir["areaEAI"] = areaEAIT
-                        area_dir["areaEAU"] = areaEAUT
-                        area_dir["areaEBI"] = areaEBIT
-                        area_dir["areaEBU"] = areaEBUT
-                        area_dir["areaECI"] = areaEBIT
-                        area_dir["areaECU"] = areaEBUT
+                        area_dir["areaSFlow"] = strtofloat(areaSFlowT)
+                        area_dir["areaSSum"] = strtofloat(areaSSumT)
+                        area_dir["areaWFlow"] = strtofloat(areaWFlowT)
+                        area_dir["areaWSum"] = strtofloat(areaWSumT)
+                        area_dir["areaEZGL"] = strtofloat(areaEZGLT)
+                        area_dir["areaEAI"] =strtofloat(areaEAIT)
+                        area_dir["areaEAU"] =strtofloat(areaEAUT)
+                        area_dir["areaEBI"] =strtofloat(areaEBIT)
+                        area_dir["areaEBU"] =strtofloat(areaEBUT)
+                        area_dir["areaECI"] =strtofloat(areaEBIT)
+                        area_dir["areaECU"] =strtofloat(areaEBUT)
                     area_list.append(area_dir)
                 # i = 0
                 # for tag in Tags:

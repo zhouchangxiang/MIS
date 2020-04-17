@@ -96,7 +96,6 @@ def EquipmentDetail():
             oc_list = []
             dir_list = []
             oc_list.append(TagClassValue)
-            re = energyStatistics(oc_list, StartTime, EndTime, EnergyClass)
             for i in range(int(StartTime[11:13]), int(EndTime[11:13]) + 1):
                 staeH = StartTime[0:11] + addzero(i) + ":00:00"
                 endeH = StartTime[0:11] + addzero(i) + ":59:59"
