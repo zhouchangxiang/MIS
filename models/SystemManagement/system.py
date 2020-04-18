@@ -1251,6 +1251,21 @@ class ElectricVolumeMaintain(Base):
     # 创建日期:
     CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+class SteamTotal(Base):
+    '''汽能总量'''
+    __tablename__ = "SteamTotal"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+
+    # 汽能总量值:
+    TotalSumValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 时间(按天维护）:
+    MaintainTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 创建日期:
+    CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 # 生成表单的执行语句
 Base.metadata.create_all(engine)
