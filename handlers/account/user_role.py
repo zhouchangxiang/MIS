@@ -61,12 +61,52 @@ def delete_department():
 
 @user_manager.route('/system_tree/update_department', methods=['PATCH'])
 def update_department():
-    code = request.headers.get('department_code')
-    department_name = request.headers.get('department_name')
-    department = db_session.query(DepartmentManager).filter(DepartmentManager.DepartCode == code).first()
+    did = request.json.get('did')
+    code = request.json.get('department_code')
+    department_name = request.json.get('department_name')
+    department = db_session.query(DepartmentManager).filter(DepartmentManager.ID == did).first()
     department.DepartCode = code
     department.DepartName = department_name
     db_session.commit()
     return json.dumps({'code': 10002, 'msg': '更新成功'})
 
-# @user_manager.route('/system_tree/add_user')
+
+@user_manager.route('/system_tree/add_role', methods=['POST'])
+def add_role():
+    rid = request.json.get('role_code')
+    rname = request.json.get('role_name')
+    fname = request.json.get('factory_name')
+    role = Role(DepartCode=rid, DepartName=rname, DepartLoad=fname)
+    db_session.add(role)
+    db_session.commit()
+    return json.dumps({'code': 10003, 'msg': '新增成功', 'data': {'Did': role.ID}})
+
+
+@user_manager.route('/system_tree/delete_role', methods=['DELETE'])
+def delete_role():
+    code = request.headers.get('role_code')
+    role = db_session.query(Role).filter(Role.DepartCode == code).first()
+    # role_query = db_session.query(Role).filter(Role.ParentNode == department.DepartCode).all()
+    # for item in role_query:
+    #     item.ParentNode = ''
+    db_session.commit()
+    user_query = db_session.query(User).filter(User.RoleName == role.DepartName).all()
+    for item in user_query:
+        item.OrganizationName = ''
+    db_session.commit()
+    db_session.delete(role)
+    db_session.commit()
+    return json.dumps({'code': 10004, 'msg': '删除成功'})
+
+
+@user_manager.route('/system_tree/update_role', methods=['PATCH'])
+def update_role():
+    code = request.headers.get('role_code')
+    role_name = request.headers.get('role_name')
+    role = db_session.query(Role).filter(Role.DepartCode == code).first()
+    role.DepartCode = code
+    role.DepartName = role_name
+    db_session.commit()
+    return json.dumps({'code': 10005, 'msg': '更新成功'})
+
+
