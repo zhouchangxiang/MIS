@@ -44,7 +44,7 @@ def add_department():
 
 @user_manager.route('/system_tree/delete_department', methods=['DELETE'])
 def delete_department():
-    code = request.headers.get('code')
+    code = request.headers.get('department_code')
     department = db_session.query(DepartmentManager).filter(DepartmentManager.DepartCode == code).first()
     role_query = db_session.query(Role).filter(Role.ParentNode == department.DepartCode).all()
     for item in role_query:
@@ -61,10 +61,12 @@ def delete_department():
 
 @user_manager.route('/system_tree/update_department', methods=['PATCH'])
 def update_department():
-    code = request.headers.get('code')
+    code = request.headers.get('department_code')
     department_name = request.headers.get('department_name')
     department = db_session.query(DepartmentManager).filter(DepartmentManager.DepartCode == code).first()
     department.DepartCode = code
     department.DepartName = department_name
     db_session.commit()
     return json.dumps({'code': 10002, 'msg': '更新成功'})
+
+# @user_manager.route('/system_tree/add_user')
