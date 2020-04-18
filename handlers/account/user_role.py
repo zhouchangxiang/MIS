@@ -19,16 +19,15 @@ def get_user():
         role_query = db_session.query(Role).filter(Role.ParentNode == department.DepartCode).all()
         role_list = []
         for data in role_query:
-            user_list = {'name': data.RoleName, 'value': data.RoleCode, 'children': []}
+            user_list = {'name': data.RoleName, 'value': data.RoleCode, 'type': 'role', 'children': []}
             user_query = db_session.query(User).filter(User.RoleName == data.RoleName).all()
             for user in user_query:
-                user_data = {'name': user.Name, 'value': user.WorkNumber}
-                user_list['children'] = user_data
-            if user_list:
-                role_list.append(user_list)
-        department_data = {'name': department.DepartName, 'value': department.DepartCode, 'children': role_list}
+                user_data = {'name': user.Name, 'value': user.WorkNumber, 'type': 'user'}
+                user_list['children'].append(user_data)
+            role_list.append(user_list)
+        department_data = {'name': department.DepartName, 'value': department.DepartCode, 'type': 'department', 'children': role_list}
         queryset.append(department_data)
-    data = {'name': factory.FactoryName, 'value': factory.AreaCode, 'children': queryset}
+    data = {'name': factory.FactoryName, 'value': factory.AreaCode, 'type': 'factory', 'children': queryset}
     return json.dumps(data, cls=AlchemyEncoder, ensure_ascii=False)
 
 
@@ -43,3 +42,16 @@ def add_department():
     return json.dumps({'code': 10000, 'msg': '新增成功', 'data': {'Did': depart.ID}})
 
 
+@user_manager.route('/system_tree/delete_department', methods=['DELETE'])
+def dedepartment():
+    code = request.headers.get('code')
+    department = db_session.query(DepartmentManager).filter(DepartmentManager.DepartCode == code).first()
+    role_query = db_session.query(Role).filter(Role.ParentNode == department.DepartCode).all()
+    role_update = [item.ParentNode == '' for item in role_query]
+    user_query = db_session.query(User).filter(User.OrganizationName == department.DepartName).all()
+    user_update = [item.OrganizationName == '' for item in user_query]
+    db_session.delete(department)
+    db_session.add_all(role_update)
+    db_session.add_all(user_update)
+    db_session.commit()
+    return json.dumps({'code': 10001, 'msg': '删除成功'})
