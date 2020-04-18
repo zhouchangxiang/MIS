@@ -12,7 +12,7 @@ from handlers.energymanager.energy_manager import energyStatistics, energyStatis
 from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable, Equipment, \
     AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
-    AreaTimeEnergyColour, ElectricProportion, IncrementStreamTable
+    AreaTimeEnergyColour, ElectricProportion, IncrementStreamTable, SteamTotal
 from tools.common import insert, delete, update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger, insertSyslog
@@ -304,7 +304,10 @@ def steamlossanalysis():
             for tag in tags:
                 oc_list.append(tag.TagClassValue)
             reto = energyStatistics(oc_list, StartTime, EndTime, EnergyClass)
-            total = 10000#之后要获取
+            sts = db_session.query(SteamTotal).filter(SteamTotal.MaintainTime.between(StartTime, EndTime)).all()
+            total = 0.0
+            for st in sts:
+                total = total + float(st.TotalSumValue)
             dir["输入总蒸汽量"] = total
             dir["输出总蒸汽量"] = reto
             if reto > 0:
@@ -326,7 +329,11 @@ def steamlossanalysis():
                     dir_list_i = {}
                     dir_list_i["时间"] = StartTime[0:8] + addzero(i)
                     re = energyStatistics(oc_list, stae, ende, EnergyClass)
-                    loss = total - re
+                    stsm = db_session.query(SteamTotal).filter(SteamTotal.MaintainTime.between(StartTime, EndTime)).all()
+                    totalm = 0.0
+                    for stm in stsm:
+                        totalm = totalm + float(stm.TotalSumValue)
+                    loss = totalm - re
                     dir_list_i["管损"] = loss
                     dir_list.append(dir_list_i)
             elif TimeClass == "月":
@@ -337,7 +344,12 @@ def steamlossanalysis():
                     dir_list_i = {}
                     dir_list_i["时间"] = StartTime[0:8] + addzero(i)
                     re = energyStatistics(oc_list, staeM, endeM, EnergyClass)
-                    loss = total - re
+                    stsm = db_session.query(SteamTotal).filter(
+                        SteamTotal.MaintainTime.between(StartTime, EndTime)).all()
+                    totalm = 0.0
+                    for stm in stsm:
+                        totalm = totalm + float(stm.TotalSumValue)
+                    loss = totalm - re
                     dir_list_i["管损"] = loss
                     dir_list.append(dir_list_i)
             elif TimeClass == "年":
@@ -348,7 +360,12 @@ def steamlossanalysis():
                     dir_list_i = {}
                     dir_list_i["时间"] = str(i)
                     re = energyStatistics(oc_list, staeY, endeY, EnergyClass)
-                    loss = total - re
+                    stsm = db_session.query(SteamTotal).filter(
+                        SteamTotal.MaintainTime.between(StartTime, EndTime)).all()
+                    totalm = 0.0
+                    for stm in stsm:
+                        totalm = totalm + float(stm.TotalSumValue)
+                    loss = totalm - re
                     dir_list_i["管损"] = loss
                     dir_list.append(dir_list_i)
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
