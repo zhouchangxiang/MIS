@@ -108,7 +108,7 @@ def EquipmentDetail():
                     rews = energyStatisticsFlowSumWD(oc_list, staeH, endeH, EnergyClass)
                     wats = energyStatistics(oc_list, staeH, endeH, EnergyClass)
                     dir_list_i["累计量"] = wats
-                    dir_list_i["瞬时量"] = roundtwo(rews[0])
+                    dir_list_i["瞬时量"] = roundtwo(rews[0][0])
                 elif EnergyClass == "汽":
                     stes = energyStatistics(oc_list, staeH, endeH, EnergyClass)
                     steams = energyStatisticsFlowSumWD(oc_list, staeH, endeH, EnergyClass)
