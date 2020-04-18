@@ -108,15 +108,21 @@ def EquipmentDetail():
                     rews = energyStatisticsFlowSumWD(oc_list, staeH, endeH, EnergyClass)
                     wats = energyStatistics(oc_list, staeH, endeH, EnergyClass)
                     dir_list_i["累计量"] = wats
-                    dir_list_i["瞬时量"] = rews[0]
+                    dir_list_i["瞬时量"] = roundtwo(rews[0])
                 elif EnergyClass == "汽":
                     stes = energyStatistics(oc_list, staeH, endeH, EnergyClass)
                     steams = energyStatisticsFlowSumWD(oc_list, staeH, endeH, EnergyClass)
-                    dir_list_i["瞬时量"] = steams[0]
+                    dir_list_i["瞬时量"] = roundtwo(steams[0][0])
                     dir_list_i["累计量"] = stes
-                    dir_list_i["体积"] = steams[1]
-                    dir_list_i["温度"] = steams[2]
+                    dir_list_i["体积"] = roundtwo(steams[0][1])
+                    dir_list_i["温度"] = roundtwo(steams[0][2])
                 dir_list.append(dir_list_i)
+            # print(dir_list)
+            # if EnergyClass == "汽":
+            #     objects = sorted(dir_list_i, key=lambda obj: obj["volum"])
+            #     print(objects[0].volum)
+            #     dir["max"] = objects[0].volum
+            #     dir["min"] = objects[-1].volum
             dir["row"] = dir_list
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
