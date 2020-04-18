@@ -5,6 +5,7 @@ from dbset.account import auth_lib
 from handlers.SystemManagement.calendar import cale
 from handlers.account import account_auth
 from handlers.SystemManagement import user_management, PermissionAssignment, Role_management
+from handlers.account.user_role import user_manager
 from handlers.energymanager.energy_Electric import energyElectric, energyElectricSelect
 from handlers.energymanager.energy_Steam import energySteam, energySteamSelect
 from handlers.energymanager.energy_Water import energyWater, energyWaterSelect
@@ -59,7 +60,8 @@ app.register_blueprint(energyElectric)
 app.register_blueprint(energySteam)
 # 水能管理
 app.register_blueprint(energyWater)
-# 手机端用户登录
+# 组织架构
+app.register_blueprint(user_manager)
 
 
 @app.route('/')
