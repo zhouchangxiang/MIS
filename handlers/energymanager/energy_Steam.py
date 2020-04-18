@@ -226,18 +226,56 @@ def energydetail():
                                                           TagDetail.AreaName == AreaName).all()
             for tag in tags:
                 oc_list.append(tag.TagClassValue)
+            dic_lisct = []
             if EnergyClass == "水":
-                ocalss = db_session.query(WaterEnergy).filter(WaterEnergy.TagClassValue.in_(oc_list), WaterEnergy.CollectionDate.between(StartTime, EndTime)).all()
+                sql = "SELECT t.CollectionDate,t.WaterSum,t.WaterFlow FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_WaterEnergy)  WHERE t.TagClassValue in (" + str(
+                    oc_list)[
+                                                                                                                                                                             1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+                re = db_session.execute(sql).fetchall()
+                db_session.close()
+                for i in re:
+                    dic_lisct_i = {}
+                    dic_lisct_i["时间"] = i[0]
+                    dic_lisct_i["累计量"] = roundtwo(i[1])
+                    dic_lisct_i["瞬时量"] = roundtwo(i[2])
+                    dic_lisct.append(dic_lisct_i)
             elif EnergyClass == "电":
-                ocalss = db_session.query(ElectricEnergy).filter(ElectricEnergy.TagClassValue.in_(oc_list),
-                                                                 ElectricEnergy.CollectionDate.between(StartTime,
-                                                                                                 EndTime)).all()
+                sql = "SELECT t.CollectionDate,t.ZGL FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricEnergy)  WHERE t.TagClassValue in (" + str(
+                    oc_list)[
+                                                                                                                                                                       1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+
+                re = db_session.execute(sql).fetchall()
+                db_session.close()
+                for i in re:
+                    dic_lisct_i = {}
+                    dic_lisct_i["时间"] = i[0]
+                    dic_lisct_i["总功率"] = roundtwo(i[1])
+                    dic_lisct.append(dic_lisct_i)
             elif EnergyClass == "汽":
-                ocalss = db_session.query(SteamEnergy).filter(SteamEnergy.TagClassValue.in_(oc_list),
-                                                              SteamEnergy.CollectionDate.between(StartTime,
-                                                                                                 EndTime)).all()
+                sql = "SELECT t.CollectionDate,t.SumValue,t.FlowValue,t.Volume,t.WD  FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy)  WHERE t.TagClassValue in (" + str(
+                    oc_list)[
+                                                                                                                                                                                                                                                   1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+                re = db_session.execute(sql).fetchall()
+                db_session.close()
+                for i in re:
+                    dic_lisct_i = {}
+                    dic_lisct_i["时间"] = i[0]
+                    dic_lisct_i["累计量"] = roundtwo(i[1])
+                    dic_lisct_i["瞬时量"] = roundtwo(i[2])
+                    dic_lisct_i["体积"] = roundtwo(i[3])
+                    dic_lisct_i["温度"] = roundtwo(i[4])
+                    dic_lisct.append(dic_lisct_i)
+            dir["row"] = dic_lisct
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
             logger.error(e)
             insertSyslog("error", "能耗明细查询报错Error：" + str(e), current_user.Name)
+
+def roundtwo(rod):
+    if rod == None or rod == "" or rod == b'':
+        return 0.0
+    else:
+        if float(rod) < 0:
+            return 0.0
+        return round(float(rod), 2)
