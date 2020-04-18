@@ -25,7 +25,7 @@ def get_user():
                 user_data = {'name': user.Name, 'value': user.WorkNumber, 'type': 'user'}
                 user_list['children'].append(user_data)
             role_list.append(user_list)
-        department_data = {'name': department.DepartName, 'value': department.DepartCode, 'type': 'department', 'children': role_list}
+        department_data = {'name': department.DepartName, 'value': department.DepartCode, 'type': 'department', 'id': department.ID, 'children': role_list}
         queryset.append(department_data)
     data = {'name': factory.FactoryName, 'value': factory.AreaCode, 'type': 'factory', 'children': queryset}
     return json.dumps(data, cls=AlchemyEncoder, ensure_ascii=False)
@@ -61,9 +61,10 @@ def delete_department():
 
 @user_manager.route('/system_tree/update_department', methods=['PATCH'])
 def update_department():
+    did = request.json.get('id')
     code = request.json.get('department_code')
     department_name = request.json.get('department_name')
-    department = db_session.query(DepartmentManager).filter(DepartmentManager.ID == code).first()
+    department = db_session.query(DepartmentManager).filter(DepartmentManager.ID == did).first()
     department.DepartCode = code
     department.DepartName = department_name
     db_session.commit()
