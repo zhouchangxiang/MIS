@@ -308,9 +308,13 @@ def steamlossanalysis():
             dir["输入总蒸汽量"] = total
             dir["输出总蒸汽量"] = reto
             if reto > 0:
-                losst = (str(total - reto/total)*100) + "%"
-            dir["管损率"] = losst
-            dir["管损"] = total - reto
+                losst = total - reto
+                if losst > 0:
+                    lossr = str(round((losst/total)*100, 2)) + "%"
+            else:
+                losst = "100%"
+            dir["管损率"] = lossr
+            dir["管损"] = losst
             dir_list = []
             if TimeClass == "日":
                 for i in range(int(StartTime[8:10]), int(EndTime[8:10])+1):
