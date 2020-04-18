@@ -61,10 +61,9 @@ def delete_department():
 
 @user_manager.route('/system_tree/update_department', methods=['PATCH'])
 def update_department():
-    did = request.json.get('did')
     code = request.json.get('department_code')
     department_name = request.json.get('department_name')
-    department = db_session.query(DepartmentManager).filter(DepartmentManager.ID == did).first()
+    department = db_session.query(DepartmentManager).filter(DepartmentManager.ID == code).first()
     department.DepartCode = code
     department.DepartName = department_name
     db_session.commit()
