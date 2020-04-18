@@ -63,10 +63,8 @@ def delete_department():
 def update_department():
     code = request.headers.get('code')
     department_name = request.headers.get('department_name')
-    department_load = request.headers.get('load')
     department = db_session.query(DepartmentManager).filter(DepartmentManager.DepartCode == code).first()
     department.DepartCode = code
     department.DepartName = department_name
-    department.DepartLoad = department_load
     db_session.commit()
-    return json.dumps({'code': 10001, 'msg': '更新成功'})
+    return json.dumps({'code': 10002, 'msg': '更新成功'})
