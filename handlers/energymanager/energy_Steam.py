@@ -279,3 +279,86 @@ def roundtwo(rod):
         if float(rod) < 0:
             return 0.0
         return round(float(rod), 2)
+
+@energySteam.route('/steamlossanalysis', methods=['POST', 'GET'])
+def steamlossanalysis():
+    '''
+    管损分析
+    return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            dir = {}
+            StartTime = data.get("StartTime")
+            EndTime = data.get("EndTime")
+            EnergyClass = "汽"
+            AreaName = data.get("AreaName")
+            TimeClass = data.get("TimeClass")
+            oc_list = []
+            if AreaName == "" or AreaName == None:
+                tags = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
+            else:
+                tags = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass,
+                                                          TagDetail.AreaName == AreaName).all()
+            for tag in tags:
+                oc_list.append(tag.TagClassValue)
+            reto = energyStatistics(oc_list, StartTime, EndTime, EnergyClass)
+            total = 10000#之后要获取
+            dir["输入总蒸汽量"] = total
+            dir["输出总蒸汽量"] = reto
+            if reto > 0:
+                losst = (str(reto/total)*100) + "%"
+            dir["管损率"] = losst
+            dir_list = []
+            if TimeClass == "日":
+                for i in range(int(StartTime[8:10]), int(EndTime[8:10])+1):
+                    stae = StartTime[0:8] + addzero(i) + " 00:00:00"
+                    ende = StartTime[0:8] + addzero(i) + " 23:59:59"
+                    dir_list_i = {}
+                    dir_list_i["时间"] = StartTime[0:8] + addzero(i)
+                    re = energyStatistics(oc_list, stae, ende, EnergyClass)
+                    if re > 0:
+                        loss = re/total
+                    dir_list_i["管损率"] = loss
+                    dir_list.append(dir_list_i)
+            elif TimeClass == "月":
+                for i in range(int(StartTime[5:7]), int(EndTime[5:7])+1):
+                    emonth = getMonthFirstDayAndLastDay(StartTime[0:4], i)
+                    staeM = datetime.datetime.strftime(emonth[0], "%Y-%m-%d %H:%M:%S")
+                    endeM = datetime.datetime.strftime(emonth[0], "%Y-%m-%d") + " 23:59:59"
+                    dir_list_i = {}
+                    dir_list_i["时间"] = StartTime[0:8] + addzero(i)
+                    re = energyStatistics(oc_list, staeM, endeM, EnergyClass)
+                    if re > 0:
+                        loss = re / total
+                    dir_list_i["管损率"] = loss
+                    dir_list.append(dir_list_i)
+            elif TimeClass == "年":
+                for i in range(int(StartTime[0:4]), int(EndTime[0:4])+1):
+                    staeY = str(i) + "-01-01 00:00:00"
+                    eyear = getMonthFirstDayAndLastDay(i, 12)
+                    endeY = datetime.datetime.strftime(eyear[1], "%Y-%m-%d") + " 23:59:59"
+                    dir_list_i = {}
+                    dir_list_i["时间"] = str(i)
+                    re = energyStatistics(oc_list, staeY, endeY, EnergyClass)
+                    if re > 0:
+                        loss = re / total
+                    dir_list_i["管损率"] = loss
+                    dir_list.append(dir_list_i)
+            elif TimeClass == "时":
+                for i in range(int(StartTime[11:13]), int(EndTime[11:13])+1):
+                    staeH = StartTime[0:11] + addzero(i) + ":00:00"
+                    endeH = StartTime[0:11] + addzero(i) + ":59:59"
+                    dir_list_i = {}
+                    dir_list_i["时间"] = StartTime[0:11] + addzero(i)
+                    re = energyStatistics(oc_list, staeH, endeH, EnergyClass)
+                    if re > 0:
+                        loss = re / total
+                    dir_list_i["管损率"] = loss
+                    dir_list.append(dir_list_i)
+            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "管损分析查询报错Error：" + str(e), current_user.Name)

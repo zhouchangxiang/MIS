@@ -199,7 +199,7 @@ def energyStatistics(oc_list, StartTime, EndTime, energy):
     :param StartTime:
     :param EndTime:
     :param energy: 水，电 ，气
-    :return:
+    :return:获取水电汽增量值
     '''
     propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
     pro = float(propor.Proportion)
