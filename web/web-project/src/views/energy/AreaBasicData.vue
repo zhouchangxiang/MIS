@@ -147,7 +147,7 @@
             params.EnergyClass = this.formParameters.energy
           }
           console.log(params)
-          this.axios.get("/api/energyall",{params:params}).then(res => {
+          this.axios.get("/api/energydetail",{params:params}).then(res => {
             console.log(res.data)
           })
         }
