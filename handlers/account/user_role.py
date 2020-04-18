@@ -33,9 +33,9 @@ def get_user():
 
 @user_manager.route('/system_tree/add_department', methods=['POST'])
 def add_department():
-    did = request.json.get('department_id')
-    dname = request.json.get('department_name')
-    fname = request.json.get('factory_name')
+    did = request.values.get('department_code')
+    dname = request.values.get('department_name')
+    fname = request.values.get('factory_name')
     depart = DepartmentManager(DepartCode=did, DepartName=dname, DepartLoad=fname)
     db_session.add(depart)
     db_session.commit()
@@ -43,15 +43,30 @@ def add_department():
 
 
 @user_manager.route('/system_tree/delete_department', methods=['DELETE'])
-def dedepartment():
+def delete_department():
     code = request.headers.get('code')
     department = db_session.query(DepartmentManager).filter(DepartmentManager.DepartCode == code).first()
     role_query = db_session.query(Role).filter(Role.ParentNode == department.DepartCode).all()
-    role_update = [item.ParentNode == '' for item in role_query]
+    for item in role_query:
+        item.ParentNode = ''
+    db_session.commit()
     user_query = db_session.query(User).filter(User.OrganizationName == department.DepartName).all()
-    user_update = [item.OrganizationName == '' for item in user_query]
+    for item in user_query:
+        item.OrganizationName = ''
+    db_session.commit()
     db_session.delete(department)
-    db_session.add_all(role_update)
-    db_session.add_all(user_update)
     db_session.commit()
     return json.dumps({'code': 10001, 'msg': '删除成功'})
+
+
+@user_manager.route('/system_tree/update_department', methods=['PATCH'])
+def update_department():
+    code = request.headers.get('code')
+    department_name = request.headers.get('department_name')
+    department_load = request.heades.get('load')
+    department = db_session.query(DepartmentManager).filter(DepartmentManager.DepartCode == code).first()
+    department.DepartCode = code
+    department.DepartName = department_name
+    department.DepartLoad = department_load
+    db_session.commit()
+    return json.dumps({'code': 10001, 'msg': '更新成功'})
