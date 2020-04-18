@@ -311,8 +311,11 @@ def steamlossanalysis():
                 losst = total - reto
                 if losst > 0:
                     lossr = str(round((losst/total)*100, 2)) + "%"
+                else:
+                    lossr = "100%"
             else:
-                losst = "100%"
+                losst = total
+                lossr = "100%"
             dir["管损率"] = lossr
             dir["管损"] = losst
             dir_list = []
