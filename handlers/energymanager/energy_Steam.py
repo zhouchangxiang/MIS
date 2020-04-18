@@ -308,8 +308,9 @@ def steamlossanalysis():
             dir["输入总蒸汽量"] = total
             dir["输出总蒸汽量"] = reto
             if reto > 0:
-                losst = (str(reto/total)*100) + "%"
+                losst = (str(total - reto/total)*100) + "%"
             dir["管损率"] = losst
+            dir["管损"] = total - reto
             dir_list = []
             if TimeClass == "日":
                 for i in range(int(StartTime[8:10]), int(EndTime[8:10])+1):
@@ -318,9 +319,8 @@ def steamlossanalysis():
                     dir_list_i = {}
                     dir_list_i["时间"] = StartTime[0:8] + addzero(i)
                     re = energyStatistics(oc_list, stae, ende, EnergyClass)
-                    if re > 0:
-                        loss = re/total
-                    dir_list_i["管损率"] = loss
+                    loss = total - re
+                    dir_list_i["管损"] = loss
                     dir_list.append(dir_list_i)
             elif TimeClass == "月":
                 for i in range(int(StartTime[5:7]), int(EndTime[5:7])+1):
@@ -330,9 +330,8 @@ def steamlossanalysis():
                     dir_list_i = {}
                     dir_list_i["时间"] = StartTime[0:8] + addzero(i)
                     re = energyStatistics(oc_list, staeM, endeM, EnergyClass)
-                    if re > 0:
-                        loss = re / total
-                    dir_list_i["管损率"] = loss
+                    loss = total - re
+                    dir_list_i["管损"] = loss
                     dir_list.append(dir_list_i)
             elif TimeClass == "年":
                 for i in range(int(StartTime[0:4]), int(EndTime[0:4])+1):
@@ -342,20 +341,8 @@ def steamlossanalysis():
                     dir_list_i = {}
                     dir_list_i["时间"] = str(i)
                     re = energyStatistics(oc_list, staeY, endeY, EnergyClass)
-                    if re > 0:
-                        loss = re / total
-                    dir_list_i["管损率"] = loss
-                    dir_list.append(dir_list_i)
-            elif TimeClass == "时":
-                for i in range(int(StartTime[11:13]), int(EndTime[11:13])+1):
-                    staeH = StartTime[0:11] + addzero(i) + ":00:00"
-                    endeH = StartTime[0:11] + addzero(i) + ":59:59"
-                    dir_list_i = {}
-                    dir_list_i["时间"] = StartTime[0:11] + addzero(i)
-                    re = energyStatistics(oc_list, staeH, endeH, EnergyClass)
-                    if re > 0:
-                        loss = re / total
-                    dir_list_i["管损率"] = loss
+                    loss = total - re
+                    dir_list_i["管损"] = loss
                     dir_list.append(dir_list_i)
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
