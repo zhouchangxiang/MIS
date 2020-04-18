@@ -33,9 +33,9 @@ def get_user():
 
 @user_manager.route('/system_tree/add_department', methods=['POST'])
 def add_department():
-    did = request.values.get('department_code')
-    dname = request.values.get('department_name')
-    fname = request.values.get('factory_name')
+    did = request.json.get('department_code')
+    dname = request.json.get('department_name')
+    fname = request.json.get('factory_name')
     depart = DepartmentManager(DepartCode=did, DepartName=dname, DepartLoad=fname)
     db_session.add(depart)
     db_session.commit()
@@ -63,7 +63,7 @@ def delete_department():
 def update_department():
     code = request.headers.get('code')
     department_name = request.headers.get('department_name')
-    department_load = request.heades.get('load')
+    department_load = request.headers.get('load')
     department = db_session.query(DepartmentManager).filter(DepartmentManager.DepartCode == code).first()
     department.DepartCode = code
     department.DepartName = department_name
