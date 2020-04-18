@@ -230,3 +230,12 @@
 .el-slider__button{
   border: 2px solid #082F4C;
 }
+/*  */
+.card-head-select .el-input__inner{
+  background-color: #082F4C;
+  border:none;
+  color:#fff;
+}
+.card-head-select .el-select__caret{
+  line-height: 48px;
+}

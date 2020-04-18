@@ -3,10 +3,10 @@
     <el-col :span="24">
       <el-form :inline="true" :model="formParameters">
         <el-form-item label="时间：">
-          <el-radio-group v-model="formParameters.resourceTime" fill="#082F4C" size="mini">
+          <el-radio-group v-model="formParameters.resourceTime" fill="#082F4C" size="mini" @change="getPipeData">
             <el-radio-button v-for="item in radioTimeList" border :key="item.id" :label="item.name"></el-radio-button>
           </el-radio-group>
-          <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false"></el-date-picker>
+          <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false" @change="getPipeData"></el-date-picker>
         </el-form-item>
       </el-form>
     </el-col>
@@ -48,6 +48,7 @@
 </template>
 
 <script>
+  var moment = require('moment');
   export default {
     name: "EfficiencyAnalysisPipe",
     data(){
@@ -68,14 +69,13 @@
       }
       return {
         formParameters:{
-          resourceTime:"班次",
-          startDate:Date.now()
+          resourceTime:"日",
+          startDate:moment().format("YYYY-MM-DD HH:mm:ss")
         },
         radioTimeList:[
-          {name:"班次",id:1},
-          {name:"日",id:2},
-          {name:"周",id:3},
-          {name:"月",id:4},
+          {name:"日"},
+          {name:"月"},
+          {name:"年"},
         ],
         pickerOptions:{
           disabledDate(time) {
@@ -93,6 +93,38 @@
             { '时间': '05:00', '今日': 688, '选择日': 423}
           ]
         }
+      }
+    },
+    created(){
+      this.getPipeData()
+    },
+    methods:{
+      getPipeData(){
+        var that = this
+        var dayStartTime = moment(this.formParameters.startDate).format('YYYY-MM-DD') + " 00:00:00"
+        var dayEndTime = moment(this.formParameters.startDate).format('YYYY-MM-DD HH:mm:ss')
+        var monthStartTime = moment(this.formParameters.startDate).month(moment(this.formParameters.startDate).month()).startOf('month').format('YYYY-MM-DD HH:mm:ss')
+        var monthEndTime = moment(this.formParameters.startDate).month(moment(this.formParameters.startDate).month()).endOf('month').format('YYYY-MM-DD HH:mm:ss')
+        var yearStartTime = moment(this.formParameters.startDate).year(moment(this.formParameters.startDate).year()).startOf('year').format('YYYY-MM-DD HH:mm:ss')
+        var yearEndTime = moment(this.formParameters.startDate).year(moment(this.formParameters.startDate).year()).endOf('year').format('YYYY-MM-DD HH:mm:ss')
+        var params = {}
+        if(this.formParameters.resourceTime === "日"){
+          params.StartTime = dayStartTime
+          params.EndTime = dayEndTime
+          params.TimeClass = this.formParameters.resourceTime
+        }else if(this.formParameters.resourceTime === "月"){
+          params.StartTime = monthStartTime
+          params.EndTime = monthEndTime
+          params.TimeClass = this.formParameters.resourceTime
+        }else if(this.formParameters.resourceTime === "年"){
+          params.StartTime = yearStartTime
+          params.EndTime = yearEndTime
+          params.TimeClass = this.formParameters.resourceTime
+        }
+        console.log(params)
+        this.axios.get("/api/steamlossanalysis",{params:params}).then(res => {
+          console.log(res.data)
+        })
       }
     }
   }

@@ -105,14 +105,14 @@
           var nowTime = moment().format('HH:mm').substring(0,4) + "0"
           var dayStartTime = moment(this.formParameters.date).format('YYYY-MM-DD') + " 00:00"
           var dayEndTime = moment(this.formParameters.date).format('YYYY-MM-DD') + " " + nowTime
-          var weekStartTime = moment(this.formParameters.date).week(moment().week()).startOf('week').format('YYYY-MM-DD HH:mm')
-          var weekEndTime = moment(this.formParameters.date).week(moment().week()).endOf('week').format('YYYY-MM-DD HH:mm')
-          var monthStartTime = moment(this.formParameters.date).month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm')
-          var monthEndTime = moment(this.formParameters.date).month(moment().month()).endOf('month').format('YYYY-MM-DD HH:mm')
-          var quarterStartTime = moment(this.formParameters.date).quarter(moment().quarter()).startOf('quarter').format('YYYY-MM-DD HH:mm')
-          var quarterEndTime = moment(this.formParameters.date).quarter(moment().quarter()).endOf('quarter').format('YYYY-MM-DD HH:mm')
-          var yearStartTime = moment(this.formParameters.date).year(moment().year()).startOf('year').format('YYYY-MM-DD HH:mm')
-          var yearEndTime = moment(this.formParameters.date).year(moment().year()).endOf('year').format('YYYY-MM-DD HH:mm')
+          var weekStartTime = moment(this.formParameters.date).week(moment(this.formParameters.date).week()).startOf('week').format('YYYY-MM-DD HH:mm')
+          var weekEndTime = moment(this.formParameters.date).week(moment(this.formParameters.date).week()).endOf('week').format('YYYY-MM-DD HH:mm')
+          var monthStartTime = moment(this.formParameters.date).month(moment(this.formParameters.date).month()).startOf('month').format('YYYY-MM-DD HH:mm')
+          var monthEndTime = moment(this.formParameters.date).month(moment(this.formParameters.date).month()).endOf('month').format('YYYY-MM-DD HH:mm')
+          var quarterStartTime = moment(this.formParameters.date).quarter(moment(this.formParameters.date).quarter()).startOf('quarter').format('YYYY-MM-DD HH:mm')
+          var quarterEndTime = moment(this.formParameters.date).quarter(moment(this.formParameters.date).quarter()).endOf('quarter').format('YYYY-MM-DD HH:mm')
+          var yearStartTime = moment(this.formParameters.date).year(moment(this.formParameters.date).year()).startOf('year').format('YYYY-MM-DD HH:mm')
+          var yearEndTime = moment(this.formParameters.date).year(moment(this.formParameters.date).year()).endOf('year').format('YYYY-MM-DD HH:mm')
           var params = {}
           var areaName = ""
           if(this.newAreaName.areaName === "整厂区"){

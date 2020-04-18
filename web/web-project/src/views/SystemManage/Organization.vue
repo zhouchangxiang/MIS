@@ -1,6 +1,14 @@
 <template>
   <el-row>
     <el-col :span="24">
+      <div class="card-head">
+        <i v-if="showTypeValue === '看板视图'" class="el-icon-share" style="color: #FB3A06"></i>
+        <i v-if="showTypeValue === '表格视图'" class="el-icon-s-grid" style="color: #FB3A06"></i>
+        <span style="margin-left: 10px;" class="text-size-normol">组织结构</span>
+        <el-select class="card-head-select" v-model="showTypeValue" placeholder="请选择">
+          <el-option v-for="(item,index) in showType" :key="index" :value="item.value" v-html="item.label"></el-option>
+        </el-select>
+      </div>
       <el-form :inline="true">
         <el-form-item>
           <el-radio-group v-model="layoutValue" fill="#082F4C" size="small" @change="changeSettings">
@@ -62,72 +70,6 @@
 </template>
 
 <script>
-  const tree1Data = {
-    name: '好护士药业有限责任公司',
-    value: 1,
-    children: [
-      {name: '生产部',value: 1,children: [
-        {name: '配料',value: 2},
-        {name: '压片',value: 2},
-        {name: '包衣',value: 2,children: [
-          {name: '老张',value: 2},
-          {name: '老李',value: 2},
-          {name: '老王',value: 2},
-          {name: '老赵',value: 2}
-        ]},
-        {name: '内包装',value: 2,children: [
-          {name: '老周',value: 2},
-          {name: '老吴',value: 2}
-        ]},
-        {name: '外包装',value: 2}
-      ]},
-      {name: '质检部',value: 1,children: [
-          {name: '原料检验',value: 2},
-          {name: '辅料检验',value: 2},
-          {name: '包材检验',value: 2},
-          {name: '半成品检验',value: 2},
-          {name: '成品检验',value: 2}
-        ]
-      },
-      {name: '物流部',value: 1,children: [
-          {name: '物流主管',value: 2},
-          {name: '中药仓',value: 2},
-          {name: '车队',value: 2},
-          {name: '拣货',value: 2},
-          {name: '扫描',value: 2},
-          {name: '市场',value: 2},
-          {name: '退货',value: 2},
-          {name: '送货',value: 2},
-        ]
-      },
-      {name: '设备部',value: 3,children: [
-          {name: '部长',value: 4},
-          {name: '经理',value: 2},
-          {name: '维修工',value: 2}
-        ]
-      }
-    ]
-  }
-  const tree2Data = {
-    name: '好护士药业有限责任公司',
-    value: 1,
-    children: [
-      {name: '提取二车间',value: 1,children: [
-          {name: '提取段',value: 2},
-        ]
-      },
-      {name: '综合车间',value: 1,children: [
-          {name: '煎煮段',value: 2},
-          {name: '浓缩段',value: 2},
-          {name: '提取段',value: 2},
-        ]
-      },
-      {name: '新建综合制剂楼',value: 1,children: [
-          {name: '收粉段',value: 2},
-        ]
-      }
-    ]
-  }
   export default {
     name: "Organization",
     data(){
@@ -138,6 +80,11 @@
         }
       }
       return {
+        showTypeValue:"看板视图",
+        showType:[
+          {label:"<i class='el-icon-share'></i>看板视图",value:"看板视图"},
+          {label:"<i class='el-icon-s-grid'></i>表格视图",value:"表格视图"}
+        ],
         orientValue:'向右',
         orientSettings: [
           {label:'向右'},
@@ -181,11 +128,7 @@
         sliderValue:0.5,
         chartSettings: {
           seriesMap:{
-            tree1: {
-              top: '5%',
-              left: '5%',
-              bottom: '5%',
-              right: '50%',
+            tree: {
               orient: 'LR',
               lineStyle:{
                 curveness:0.5,
@@ -203,30 +146,7 @@
                 color:"#228AD5",
                 borderColor:"#082F4C"
               }
-            },
-            tree2: {
-              top: '5%',
-              left: '55%',
-              bottom: '5%',
-              right: '5%',
-              orient: 'LR',
-              lineStyle:{
-                curveness:0.5,
-                width: 1.5,
-                color: "#B9B9B9"
-              },
-              roam:false,
-              layout:"orthogonal",
-              initialTreeDepth:-1,
-              symbolSize: 8,
-              label:{
-                position: 'right',
-              },
-              itemStyle:{
-                color:"#228AD5",
-                borderColor:"#082F4C"
-              }
-            },
+            }
           },
         },
         chartExtend: {
@@ -237,14 +157,9 @@
         },
         chartData: {
           columns: ['name', 'value'],
-          rows: [{
-            name: 'tree1',
-            value: [tree1Data]
-          },
-          {
-            name:"tree2",
-            value: [tree2Data]
-          }]
+          rows: [
+            {name:"tree",value: []}
+          ]
         },
         drawer:false,
         drawerTitle:"",
@@ -259,64 +174,54 @@
         },
       }
     },
+    created(){
+      this.getTreeData()
+    },
     methods: {
+      getTreeData(){
+        var that = this
+        this.axios.get("/api/system_tree").then(res => {
+          that.chartData.rows[0].value = [res.data]
+        })
+      },
       changeSettings(a){
-        this.chartSettings.seriesMap.tree1.lineStyle.curveness = this.sliderValue
-        this.chartSettings.seriesMap.tree2.lineStyle.curveness = this.sliderValue
+        this.chartSettings.seriesMap.tree.lineStyle.curveness = this.sliderValue
         if(a === "向下"){
-          this.chartSettings.seriesMap.tree1.orient="TB"
-          this.chartSettings.seriesMap.tree2.orient="TB"
+          this.chartSettings.seriesMap.tree.orient="TB"
         }else if(a === "向右"){
-          this.chartSettings.seriesMap.tree1.orient="LR"
-          this.chartSettings.seriesMap.tree2.orient="LR"
+          this.chartSettings.seriesMap.tree.orient="LR"
         }else if(a === "向左"){
-          this.chartSettings.seriesMap.tree1.orient="RL"
-          this.chartSettings.seriesMap.tree2.orient="RL"
+          this.chartSettings.seriesMap.tree.orient="RL"
         }else if(a === "向上"){
-          this.chartSettings.seriesMap.tree1.orient="BT"
-          this.chartSettings.seriesMap.tree2.orient="BT"
+          this.chartSettings.seriesMap.tree.orient="BT"
         }else if(a === "关闭"){
-          this.chartSettings.seriesMap.tree1.roam=false
-          this.chartSettings.seriesMap.tree2.roam=false
+          this.chartSettings.seriesMap.tree.roam=false
         }else if(a === "缩放"){
-          this.chartSettings.seriesMap.tree1.roam="scale"
-          this.chartSettings.seriesMap.tree2.roam="scale"
+          this.chartSettings.seriesMap.tree.roam="scale"
         }else if(a === "平移"){
-          this.chartSettings.seriesMap.tree1.roam="move"
-          this.chartSettings.seriesMap.tree2.roam="move"
+          this.chartSettings.seriesMap.tree.roam="move"
         }else if(a === "缩放和平移"){
-          this.chartSettings.seriesMap.tree1.roam=true
-          this.chartSettings.seriesMap.tree2.roam=true
+          this.chartSettings.seriesMap.tree.roam=true
         }else if(a === "正交布局"){
-          this.chartSettings.seriesMap.tree1.layout="orthogonal"
-          this.chartSettings.seriesMap.tree2.layout="orthogonal"
+          this.chartSettings.seriesMap.tree.layout="orthogonal"
         }else if(a === "径向布局"){
-          this.chartSettings.seriesMap.tree1.layout="radial"
-          this.chartSettings.seriesMap.tree2.layout="radial"
+          this.chartSettings.seriesMap.tree.layout="radial"
         }else if(a === "展示全部"){
-          this.chartSettings.seriesMap.tree1.initialTreeDepth=-1
-          this.chartSettings.seriesMap.tree2.initialTreeDepth=-1
+          this.chartSettings.seriesMap.tree.initialTreeDepth=-1
         }else if(a === "1层"){
-          this.chartSettings.seriesMap.tree1.initialTreeDepth=0
-          this.chartSettings.seriesMap.tree2.initialTreeDepth=0
+          this.chartSettings.seriesMap.tree.initialTreeDepth=0
         }else if(a === "2层"){
-          this.chartSettings.seriesMap.tree1.initialTreeDepth=1
-          this.chartSettings.seriesMap.tree2.initialTreeDepth=1
+          this.chartSettings.seriesMap.tree.initialTreeDepth=1
         }else if(a === "3层"){
-          this.chartSettings.seriesMap.tree1.initialTreeDepth=2
-          this.chartSettings.seriesMap.tree2.initialTreeDepth=2
+          this.chartSettings.seriesMap.tree.initialTreeDepth=2
         }else if(a === "标签靠右"){
-          this.chartSettings.seriesMap.tree1.label.position="right"
-          this.chartSettings.seriesMap.tree2.label.position="right"
+          this.chartSettings.seriesMap.tree.label.position="right"
         }else if(a === "靠下"){
-          this.chartSettings.seriesMap.tree1.label.position="bottom"
-          this.chartSettings.seriesMap.tree2.label.position="bottom"
+          this.chartSettings.seriesMap.tree.label.position="bottom"
         }else if(a === "靠左"){
-          this.chartSettings.seriesMap.tree1.label.position="left"
-          this.chartSettings.seriesMap.tree2.label.position="left"
+          this.chartSettings.seriesMap.tree.label.position="left"
         }else if(a === "靠上"){
-          this.chartSettings.seriesMap.tree1.label.position="top"
-          this.chartSettings.seriesMap.tree2.label.position="top"
+          this.chartSettings.seriesMap.tree.label.position="top"
         }
       },
       clickTree(e){
@@ -370,6 +275,21 @@
 </script>
 
 <style scoped>
+  .card-head{
+    width: 100%;
+    margin-bottom:10px;
+    background: #082F4C;
+    color: #fff;
+    font-size: 18px;
+    height: 48px;
+    line-height: 48px;
+    padding: 0 10px;
+    border-radius:4px;
+  }
+  .card-head-select{
+    float: right;
+    width: 100px;
+  }
   .chartContainer{
     padding: 15px;
     background: #fff;

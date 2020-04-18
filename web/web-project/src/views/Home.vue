@@ -665,14 +665,6 @@
     float: right;
     width: 85px;
   }
-  .card-head-select .el-input__inner{
-    background-color: #082F4C;
-    border:none;
-    color:#fff;
-  }
-  .card-head-select .el-select__caret{
-    line-height: 48px;
-  }
   .home-card-body{
     background: #fff;
     border-radius:4px;

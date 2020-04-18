@@ -252,8 +252,8 @@ export default {
       }else if(index == 1){
         this.subMenulist = [
           {name:"组织架构",icon:"el-icon-office-building",url:"/Organization"},
-          {name:"厂区管理",icon:"el-icon-location-information",url:"/Factory"},
-          {name:"角色管理",icon:"el-icon-s-check",url:"/Role"},
+          // {name:"厂区管理",icon:"el-icon-location-information",url:"/Factory"},
+          // {name:"角色管理",icon:"el-icon-s-check",url:"/Role"},
           {name:"人员管理",icon:"el-icon-user",url:"/Personnel"},
           {name:"工厂日历",icon:"el-icon-date",url:"/Calendar"},
           {name:"系统日志",icon:"el-icon-notebook-1",url:"/Log"},
