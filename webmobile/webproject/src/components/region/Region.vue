@@ -31,22 +31,31 @@
       </div>
         <div class="show-top singledate">
                <div class="tips">
-                   <van-tabs type="card" title-active-color="#1E222B" title-inactive-color="#fff" v-model="choosedate" >
+                   <van-tabs type="card" title-active-color="#1E222B" title-inactive-color="#fff">
                         <van-tab title="日"></van-tab>
                     </van-tabs>
                 </div>
         </div>
          <div class="piclist">
-           <ve-line :data="electricChartData" :settings="chartSettings" width="350px" height="240px"></ve-line>
+           <ve-line :data="kong" :settings="chartSettings" width="350px" height="240px"></ve-line>
          </div>
-         <ShowNumber></ShowNumber>
+         <div class="show-foot">
+               <div class="sf-l">
+                   <div class="hf">{{this.kind}}耗费成本</div>
+                   <div class="all-money">{{this.cost}}<span>元</span></div>
+               </div>
+                <div class="sf-r">
+                   <div class="machine">设备在线情况</div>
+                   <div class="tj"><span>12</span>&nbsp;/&nbsp;<span>23</span></div>
+               </div>
+        </div>
          <div class="bottom-dnh">
-           <div class="dnh">电能耗量</div>
-           <div class="dnh-number">00000000.00</div>
-           <div class="dw">kwh</div>
-           <div class="dwpc">单位批次电能耗量</div>
-           <div class="dwpc-number">00000000.00</div>
-           <div class="pc-dw">kwh/批</div>
+           <div class="dnh">{{this.kind}}能耗量</div>
+           <div class="dnh-number">{{this.kind==='水'?this.water:(this.kind==='电'?this.electric:this.steam)}}</div>
+           <div class="dw">{{this.kind==='电'?'kwh':'t'}}</div>
+           <div class="dwpc">单位批次{{this.kind}}能耗量</div>
+           <div class="dwpc-number">{{this.kind==='水'?this.water/2:(this.kind==='电'?this.electric/2:this.steam/2)}}</div>
+           <div class="pc-dw">{{this.kind==='电'?'kwh':'t'}}/批</div>
          </div>
        </div>
 </template>
@@ -60,50 +69,69 @@ export default {
         yAxisName: ['单位']
       }
         return {
-          radio1:1,
-          radio2:1,
-          active:2,
-          choosedate:0,
+          active:0,
           list:[],
           water:0,
           electric:0,
           steam:0,
+          cost1:[],
+          cost:'',
           bgc1:false,
           bgc2:false,
           bgc3:false,
           loading:false,
           websoc:null,
+          kind:'电',
           currentchoice:'',
+          kong:{},
           electricChartData:{
           columns:['日期', '数值'],
           rows: [
-            { '日期': '00', '数值': 139 },
-            { '日期': '02', '数值': 345 },
-            { '日期': '04', '数值': 923 },
-            { '日期': '06', '数值': 723 },
-            { '日期': '08', '数值': 139 },
-            { '日期': '10', '数值': 345 },
-            { '日期': '12', '数值': 923 },
-            { '日期': '14', '数值': 723 },
-            { '日期': '16', '数值': 139 },
-            { '日期': '18', '数值': 345 },
-            { '日期': '20', '数值': 923 },
-            { '日期': '22', '数值': 723 },]
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""}]
         },
           waterChartData: {
           columns: ['日期', '数值'],
           rows: [
-            { '日期': '00', '数值': 139 },
-            { '日期': '02', '数值': 345 },
-            { '日期': '04', '数值': 923 },
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""}
           ]
         },
         steamChartData:{
           columns: ['日期', '数值'],
           rows: [
-            { '日期': '00', '数值': 139 },
-            { '日期': '02', '数值': 345 },
-            { '日期': '04', '数值': 923 },
+          { '日期': '', '数值': ""},
+          { '日期': '', '数值': ""},
+          { '日期': '', '数值': ""},
+          { '日期': '', '数值': ""},
+          { '日期': '', '数值': ""},
+          { '日期': '', '数值': ""},
+          { '日期': '', '数值': ""},
+          { '日期': '', '数值': ""},
+          { '日期': '', '数值': ""},
+          { '日期': '', '数值': ""},
+          { '日期': '', '数值': ""},
+          { '日期': '', '数值': ""}
           ]
         }}
     },
@@ -124,16 +152,27 @@ export default {
        this.bgc1=!this.bgc1
        this.bgc2=false
        this.bgc3=false
+       this.kind='电'
+       this.kong=this.electricChartData
+       this.$toast('当前显示电数据')
+       this.cost=this.cost1[0]
       },
       switchShow2(){
-       this.bgc2=!this.bgc2
+        this.bgc2=!this.bgc2
        this.bgc1=false
        this.bgc3=false
+       this.kind='水'
+       this.kong=this.waterChartData
+       this.$toast('当前显示水数据')
+       this.cost=this.cost1[1]
       },
       switchShow3(){
+        this.bgc1=this.bgc2=false
        this.bgc3=!this.bgc3
-       this.bgc1=false
-       this.bgc2=false
+       this.kind='汽'
+       this.kong=this.steamChartData
+       this.$toast('当前显示汽数据')
+       this.cost=this.cost1[2]
       },
       //websocket 获取数据方法汇总
        initWebSocket(){
@@ -147,7 +186,7 @@ export default {
             this.websoc.send(data)
         },
         webscop(){
-          this.webscsend()  
+          this.webscsend()
         },
         webscom(evt){
             var arr=JSON.parse(evt.data)
@@ -184,6 +223,7 @@ export default {
             AreaName:this.list[e]
           }
           this.currentchoice=this.list[e]
+          this.$toast('当前数据展示'+this.currentchoice)
           this.$http.all([
             this.$http.get('/api/energywater',{params}),
             this.$http.get('/api/energyelectric',{params}),
@@ -191,6 +231,11 @@ export default {
                     this.water=JSON.parse(res1.data).value
                     this.electric=JSON.parse(res2.data).value
                     this.steam=JSON.parse(res3.data).value
+                    var newlist=[]
+                    newlist.push(JSON.parse(res1.data).cost)
+                    newlist.push(JSON.parse(res2.data).cost)
+                    newlist.push(JSON.parse(res3.data).cost)
+                    this.cost1=newlist
                   }))
               },
       getNavbar(){
@@ -444,6 +489,75 @@ export default {
                 margin-right: 20px;
                 background-color:#1E222B;
                 height: 18px;
+            }
+        }
+    .show-foot{
+            position: relative;
+            height:64px;
+            background:@bgca;
+            opacity:1;
+            border-radius:4px;
+            background-color:@bgcc;
+            .sf-l{
+                position: absolute;
+                left:0;
+                top:0;
+                width: 196px;
+                height: 64px;
+                border-radius: 4px;
+                background-color: @bgct;
+                .hf{
+                    position: absolute;
+                    top:8px;
+                    left: 13px;
+                    width:60px;
+                    height:11px;
+                    font-size:8px;
+                    font-weight:400;
+                    line-height:11px;
+                    color:rgba(255,255,255,1);
+                    opacity:1;
+                }
+                .all-money{
+                    position: absolute;
+                    left:16px;
+                    top:28px;
+                    height:23px;
+                    font-size: 23px;
+                    color:rgba(255,255,255,1);
+                    span{
+                        font-size: 12px;
+                        margin-left: 5px;
+                        }
+                }
+            }
+            .sf-r{
+                position: absolute;
+                right: 0;
+                top:0;
+                width:141px;
+                height: 64px;
+                border-radius: 4px;
+                background-color:@bgct;
+                .machine{
+                    position: absolute;
+                    top:8px;
+                    left: 12px;
+                    height:11px;
+                    font-size:8px;
+                    font-weight:400;
+                    line-height:11px;
+                    color:rgba(255,255,255,1);
+                }
+                .tj{
+                    position: absolute;
+                    left: 13px;
+                    top: 28px;
+                    font-size: 23px;
+                    font-weight: 500;
+                    color: #fff;
+                    letter-spacing: 5px;
+                }
             }
         }
 </style>
