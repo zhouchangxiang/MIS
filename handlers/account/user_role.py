@@ -82,11 +82,12 @@ def update_department():
 
 @user_manager.route('/system_tree/add_role', methods=['POST'])
 def add_role():
-    rid = request.json.get('role_code')
+    rcode = request.json.get('role_code')
+    did = request.json.get('did')
     rname = request.json.get('role_name')
     rdes = request.json.get('role_description')
-    dcode = request.json.get('department_code')
-    role = Role(RoleCode=rid, RoleName=rname, Description=rdes, ParentNode=dcode)
+    department = db_session.query(DepartmentManager).filter(DepartmentManager.ID == int(did)).first()
+    role = Role(RoleCode=rcode, RoleName=rname, Description=rdes, ParentNode=department.DepartCode)
     db_session.add(role)
     db_session.commit()
     return json.dumps({'code': 10003, 'msg': '新增成功', 'data': {'rid': role.ID}})
