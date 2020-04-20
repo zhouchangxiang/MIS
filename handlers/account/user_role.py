@@ -95,7 +95,7 @@ def add_role():
 
 @user_manager.route('/system_tree/delete_role', methods=['DELETE'])
 def delete_role():
-    rid = request.json.get('rid')
+    rid = request.headers.get('rid')
     role = db_session.query(Role).filter(Role.ID == rid).first()
     user_query = db_session.query(User).filter(User.RoleName == role.RoleName).all()
     for item in user_query:
