@@ -78,8 +78,9 @@ def update_department():
 def add_role():
     rid = request.json.get('role_code')
     rname = request.json.get('role_name')
+    rdes = request.json.get('role_description')
     dcode = request.json.get('department_code')
-    role = Role(RoleCode=rid, RoleName=rname, ParentNode=dcode)
+    role = Role(RoleCode=rid, RoleName=rname, Despription=rdes, ParentNode=dcode)
     db_session.add(role)
     db_session.commit()
     return json.dumps({'code': 10003, 'msg': '新增成功', 'data': {'rid': role.ID}})
@@ -102,12 +103,14 @@ def update_role():
     rid = request.json.get('rid')
     code = request.json.get('role_code')
     role_name = request.json.get('role_name')
+    rdes = request.json.get('role_description')
     role = db_session.query(Role).filter(Role.ID == rid).first()
     user_query = db_session.query(User).filter(User.RoleName == role.RoleName).all()
     for item in user_query:
         item.RoleName = ''
     role.DepartCode = code
     role.DepartName = role_name
+    role.Description = rdes
     db_session.commit()
     return json.dumps({'code': 10005, 'msg': '更新成功'})
 
