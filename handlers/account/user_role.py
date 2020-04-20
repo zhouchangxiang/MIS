@@ -20,7 +20,7 @@ def get_user():
         role_list = []
         for data in role_query:
             d = db_session.query(DepartmentManager).filter(DepartmentManager.DepartCode == data.ParentNode).first()
-            user_list = {'name': data.RoleName, 'value': data.RoleCode, 'type': 'role', 'rid': data.ID, 'did': d.ID, 'department_name': department.DepartName, 'children': []}
+            user_list = {'name': data.RoleName, 'value': data.RoleCode, 'role_description': data.Description, 'type': 'role', 'rid': data.ID, 'did': d.ID, 'department_name': department.DepartName, 'children': []}
             user_query = db_session.query(User).filter(User.RoleName == data.RoleName).all()
             for user in user_query:
                 d = db_session.query(DepartmentManager).filter(DepartmentManager.DepartName == user.OrganizationName).first()
