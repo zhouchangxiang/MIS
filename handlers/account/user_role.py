@@ -78,25 +78,20 @@ def update_department():
 def add_role():
     rid = request.json.get('role_code')
     rname = request.json.get('role_name')
-    fname = request.json.get('factory_name')
-    role = Role(DepartCode=rid, DepartName=rname, DepartLoad=fname)
+    dcode = request.json.get('department_code')
+    role = Role(RoleCode=rid, RoleName=rname, ParentNode=dcode)
     db_session.add(role)
     db_session.commit()
-    return json.dumps({'code': 10003, 'msg': '新增成功', 'data': {'Did': role.ID}})
+    return json.dumps({'code': 10003, 'msg': '新增成功', 'data': {'rid': role.ID}})
 
 
 @user_manager.route('/system_tree/delete_role', methods=['DELETE'])
 def delete_role():
     rid = request.json.get('rid')
     role = db_session.query(Role).filter(Role.ID == rid).first()
-    # role_query = db_session.query(Role).filter(Role.ParentNode == department.DepartCode).all()
-    # for item in role_query:
-    #     item.ParentNode = ''
-    # db_session.commit()
-    user_query = db_session.query(User).filter(User.RoleName == role.DepartName).all()
+    user_query = db_session.query(User).filter(User.RoleName == role.RoleName).all()
     for item in user_query:
         item.RoleName = ''
-    # db_session.commit()
     db_session.delete(role)
     db_session.commit()
     return json.dumps({'code': 10004, 'msg': '删除成功'})
@@ -105,28 +100,29 @@ def delete_role():
 @user_manager.route('/system_tree/update_role', methods=['PATCH'])
 def update_role():
     rid = request.json.get('rid')
-    # dcode = request.json.get('department_code')
     code = request.json.get('role_code')
     role_name = request.json.get('role_name')
-    # department = db_session.query(DepartmentManager).filter(DepartmentManager.DepartCode == dcode).first()
     role = db_session.query(Role).filter(Role.ID == rid).first()
+    user_query = db_session.query(User).filter(User.RoleName == role.RoleName).all()
+    for item in user_query:
+        item.RoleName = ''
     role.DepartCode = code
     role.DepartName = role_name
     db_session.commit()
     return json.dumps({'code': 10005, 'msg': '更新成功'})
 
 
-@user_manager.route('/system_tree/add_user', methods=['POST'])
-def add_user():
-    rid = request.json.get('role_code')
-    did = request.json.get('did')
-    rname = request.json.get('role_name')
-    fname = request.json.get('factory_name')
-    role = db_session.query(Role).filter(Role.ID == rid).first()
-    department = db_session.query(DepartmentManager).filter(DepartmentManager.ID == did).first()
-    role = User(DepartCode=rid, DepartName=rname, DepartLoad=fname)
-    db_session.add(role)
-    db_session.commit()
-    return json.dumps({'code': 10003, 'msg': '新增成功', 'data': {'Did': role.ID}})
+# @user_manager.route('/system_tree/add_user', methods=['POST'])
+# def add_user():
+#     rid = request.json.get('role_code')
+#     did = request.json.get('did')
+#     rname = request.json.get('role_name')
+#     fname = request.json.get('factory_name')
+#     role = db_session.query(Role).filter(Role.ID == rid).first()
+#     department = db_session.query(DepartmentManager).filter(DepartmentManager.ID == did).first()
+#     role = User(DepartCode=rid, DepartName=rname, DepartLoad=fname)
+#     db_session.add(role)
+#     db_session.commit()
+#     return json.dumps({'code': 10003, 'msg': '新增成功', 'data': {'Did': role.ID}})
 
 
