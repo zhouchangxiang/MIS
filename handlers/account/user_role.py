@@ -20,7 +20,7 @@ def get_user():
         role_list = []
         for data in role_query:
             d = db_session.query(DepartmentManager).filter(DepartmentManager.DepartCode == data.ParentNode).first()
-            user_list = {'name': data.RoleName, 'value': data.RoleCode, 'type': 'role', 'rid': data.ID, 'did': d.ID, 'children': []}
+            user_list = {'name': data.RoleName, 'value': data.RoleCode, 'type': 'role', 'rid': data.ID, 'did': d.ID, 'department_name': department.DepartName, 'children': []}
             user_query = db_session.query(User).filter(User.RoleName == data.RoleName).all()
             for user in user_query:
                 d = db_session.query(DepartmentManager).filter(DepartmentManager.DepartName == user.OrganizationName).first()
@@ -28,7 +28,7 @@ def get_user():
                 user_list['children'].append(user_data)
             role_list.append(user_list)
         area = db_session.query(AreaMaintain).filter(AreaMaintain.FactoryName == department.DepartLoad).first()
-        department_data = {'name': department.DepartName, 'value': department.DepartCode, 'type': 'department', 'did': department.ID, 'fid': area.ID, 'children': role_list}
+        department_data = {'name': department.DepartName, 'value': department.DepartCode, 'type': 'department', 'did': department.ID, 'fid': area.ID, 'factory_name': factory.FactoryName, 'children': role_list}
         queryset.append(department_data)
     data = {'name': factory.FactoryName, 'value': factory.AreaCode, 'type': 'factory', 'fid': factory.ID, 'children': queryset}
     return json.dumps(data, cls=AlchemyEncoder, ensure_ascii=False)
