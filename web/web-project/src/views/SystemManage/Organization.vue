@@ -47,20 +47,23 @@
         </el-form-item>
       </el-form>
       <div class="chartContainer">
-        <ve-tree :data="chartData" :settings="chartSettings" :extend="chartExtend" :events="events" height="600px"></ve-tree>
+        <ve-tree :data="chartData" :settings="chartSettings" :events="events" height="600px"></ve-tree>
       </div>
-      <el-drawer title="我是标题" :visible.sync="drawer" :with-header="false">
+      <el-drawer :visible.sync="departmentDrawer" :with-header="false">
         <div style="padding: 20px;">
           <h3>{{ drawerTitle }}</h3>
-          <el-form :model="organizationForm" label-width="80px" :rules="rules" ref="ruleForm">
-            <el-form-item label="id">
-              <el-input v-model="organizationForm.id" :disabled="true"></el-input>
+          <el-form :model="departmentForm" label-width="80px" :rules="rules" ref="ruleForm">
+            <el-form-item label="父节点">
+              <el-input v-model="departmentForm.factory_name" :disabled="true"></el-input>
             </el-form-item>
-            <el-form-item label="节点名称" prop="name">
-              <el-input v-model="organizationForm.name"></el-input>
+            <el-form-item label="部门名称" prop="department_name">
+              <el-input v-model="departmentForm.department_name"></el-input>
+            </el-form-item>
+            <el-form-item label="部门编码" prop="department_code">
+              <el-input v-model="departmentForm.department_code"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="save('ruleForm')">保存</el-button>
+              <el-button type="primary" @click="departmentSave('ruleForm')">保存</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -149,28 +152,30 @@
             }
           },
         },
-        chartExtend: {
-          tooltip: {
-
-          },
-
-        },
         chartData: {
           columns: ['name', 'value'],
           rows: [
             {name:"tree",value: []}
           ]
         },
-        drawer:false,
+        departmentDrawer:false,
         drawerTitle:"",
-        organizationForm:{
+        clicktype:"",
+        departmentForm:{
           id:"",
-          name:""
+          factory_name:"",
+          department_name:"",
+          department_code:""
         },
+        delDepartmentCode:"",
+        delDepartmentName:"",
         rules:{
-          name:[
-            {required: true, message: '请输入节点名称', trigger: 'blur'}
+          department_name:[
+            {required: true, message: '请输入部门名称', trigger: 'blur'}
           ],
+          department_code:[
+            {required: true, message: '请输入部门编码', trigger: 'blur'}
+          ]
         },
       }
     },
@@ -226,25 +231,63 @@
       },
       clickTree(e){
         console.log(e)
+        var clickType = e.data.type
         this.drawerTitle = this.modeValue
         if(this.modeValue === "添加子节点"){
-          this.drawer = true
-          this.organizationForm = {
-            id:"",
-            name:""
+          if(clickType === "factory"){
+            this.departmentDrawer = true
+            this.departmentForm = {
+              factory_name:e.data.name,
+              department_name:"",
+              department_code:""
+            }
+          }else if(clickType === "department"){
+
+          }else if(clickType === "role"){
+
+          }else if(clickType === "user"){
+
           }
         }else if(this.modeValue === "修改"){
-          this.drawer = true
-          this.organizationForm = {
-            id:e.data.id,
-            name:e.data.name
+          if(clickType === "factory"){
+
+          }else if(clickType === "department"){
+            this.departmentDrawer = true
+            this.departmentForm = {
+              id:e.data.id,
+              department_name:e.data.name,
+              department_code:e.data.value
+            }
+          }else if(clickType === "role"){
+
+          }else if(clickType === "user"){
+
           }
         }else if(this.modeValue === "删除"){
-          this.$confirm('此操作将永久删除该节点, 是否继续?', '删除节点'+e.data.name, {
+          this.$confirm('此操作将永久删除'+ e.data.name +'节点, 是否继续?', '删除节点'+e.data.name, {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
+            var headers = {
+              department_code:e.data.value
+            }
+            this.axios.delete("/api/system_tree/delete_department",{headers:headers}).then(res => {
+              console.log(res.data)
+              if(res.data.code === 10001){
+                this.$message({
+                  type: 'success',
+                  message: res.data.msg
+                });
+                this.departmentDrawer = false
+                this.getTreeData()
+              }else{
+                this.$message({
+                  type: 'info',
+                  message: "新增失败"
+                });
+              }
+            })
             this.$message({
               type: 'success',
               message: '删除成功!'
@@ -257,14 +300,43 @@
           });
         }
       },
-      save(formName){
+      departmentSave(formName){
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.$message({
-              type: 'success',
-              message: "保存成功"
-            });
-            this.drawer = false
+            if(this.drawerTitle === "添加子节点"){
+              this.axios.post("/api/system_tree/add_department",this.departmentForm).then(res => {
+                if(res.data.code === 10000){
+                  this.$message({
+                    type: 'success',
+                    message: res.data.msg
+                  });
+                  this.departmentDrawer = false
+                  this.getTreeData()
+                }else{
+                  this.$message({
+                    type: 'info',
+                    message: "新增失败"
+                  });
+                }
+              })
+            }else if(this.drawerTitle === "修改"){
+              console.log(this.departmentForm)
+              this.axios.patch("/api/system_tree/update_department",this.departmentForm).then(res => {
+                if(res.data.code === 10002){
+                  this.$message({
+                    type: 'success',
+                    message: res.data.msg
+                  });
+                  this.departmentDrawer = false
+                  this.getTreeData()
+                }else{
+                  this.$message({
+                    type: 'info',
+                    message: "修改失败"
+                  });
+                }
+              })
+            }
           } else {
             return false;
           }
