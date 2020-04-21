@@ -133,7 +133,9 @@ def update(data):
             tableName = str(data.get("tableName"))
             obj = Base.classes.get(tableName)
             ss = obj()
+            ID = data.get('ID')
             if tableName == "User":
+                ID = data.get('id')
                 oclass = db_session.query(obj).filter_by(id=int(data.get('id'))).first()
             else:
                 oclass = db_session.query(obj).filter_by(ID=int(data.get('ID'))).first()
@@ -155,7 +157,7 @@ def update(data):
                 aud = AuditTrace()
                 aud.TableName = tableName
                 aud.Operation =current_user.Name+" 对表"+tableName+"的数据做了更新操作！"
-                aud.DeitalMSG = "用户："+current_user.Name+" 对表"+tableName+"ID为："+data.get('ID')+"做了更新操作："+json.dumps(data.to_dict())
+                aud.DeitalMSG = "用户："+current_user.Name+" 对表"+tableName+"ID为："+ID+"做了更新操作："+json.dumps(data.to_dict())
                 aud.ReviseDate = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 aud.User = current_user.Name
                 db_session.add(aud)
