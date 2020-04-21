@@ -368,6 +368,7 @@ def steamlossanalysis():
                     loss = totalm - re
                     dir_list_i["管损"] = loss
                     dir_list.append(dir_list_i)
+            dir["row"] = dir_list
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
