@@ -15,14 +15,6 @@ db_session = Session()
 Base = declarative_base(engine)
 
 
-# # 菜单与角色关联表
-# Role_Menu = Table(
-#     "role_menu",
-#     Base.metadata,
-#     Column("Role_ID", Integer, ForeignKey("role.ID"), nullable=False, primary_key=True),
-#     Column("Menu_ID", Integer, ForeignKey("menu.ID"), nullable=False, primary_key=True)
-# )
-
 class SysLog(Base):
     __tablename__ = "SysLog"
 
@@ -1282,6 +1274,8 @@ class RatedPowerMaintain(Base):
 
     # 创建日期:
     CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+
 
 # 生成表单的执行语句
 Base.metadata.create_all(engine)

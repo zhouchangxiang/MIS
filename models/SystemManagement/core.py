@@ -34,6 +34,17 @@ SessionFactory = sessionmaker(bind=engine)
 session = SessionFactory()
 Base = declarative_base(engine)
 
+# Role_Menu_START:
+# 菜单与角色关联表
+Role_Menu = Table(
+    "role_menu",
+    Base.metadata,
+    Column("Role_ID", Integer, ForeignKey("Role.ID"), nullable=False, primary_key=True),
+    Column("Menu_ID", Integer, ForeignKey("Menu.ID"), nullable=False, primary_key=True)
+)
+
+# Role_Menu_END:
+
 
 # DepartmentManager_START:
 class DepartmentManager(Base):
@@ -91,9 +102,44 @@ class Role(Base):
     # 所属部门:
     ParentNode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+    # 查询权限
+    menus = relationship("Menu", secondary=Role_Menu)
+
 
 # Role_END:
 
+# Menu_START:
+# 模块菜单表
+class Menu(Base):
+    __tablename__ = 'Menu'
+    # 模块ID
+    ID = Column(Integer, primary_key=True, autoincrement=True)
+
+    # 模块名称
+    ModuleName = Column(Unicode(32), nullable=False)
+
+    # 模块编码
+    ModuleCode = Column(String(100),nullable=False)
+
+    # 模块路由
+    Url = Column(String(100), nullable=True)
+
+    # 描述
+    Description = Column(Unicode(1024), nullable=True)
+
+    # 创建时间
+    CreateDate = Column(DateTime, default=datetime.now, nullable=True)
+
+    # 创建人
+    Creator = Column(Unicode(50), nullable=True)
+
+    # 父节点
+    ParentNode = Column(Integer, nullable=True)
+
+    # 查询角色
+    roles = relationship("Role", secondary=Role_Menu)
+
+# Menu_END:
 
 # SpareStock_START:
 class SpareStock(Base):
