@@ -115,10 +115,10 @@
           params.TimeClass = this.formParameters.resourceTime
         }
         this.axios.get("/api/steamlossanalysis",{params:params}).then(res => {
-          that.PipeDamage = res.data.PipeDamage
+          that.PipeDamage = res.data.PipeDamage + res.data.Unit
           that.PipeDamageRate = res.data.PipeDamageRate
-          that.inputSteam = res.data.inputSteam
-          that.outputSteam = res.data.outputSteam
+          that.inputSteam = res.data.inputSteam + res.data.Unit
+          that.outputSteam = res.data.outputSteam + res.data.Unit
           that.runEfficiencyChartData.rows = res.data.row
         })
       }
