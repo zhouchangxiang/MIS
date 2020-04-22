@@ -321,6 +321,8 @@ def steamlossanalysis():
                 lossr = "100%"
             dir["PipeDamageRate"] = lossr
             dir["PipeDamage"] = losst
+            unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == EnergyClass).first()[0]
+            dir["Unit"] = unit
             dir_list = []
             if TimeClass == "日":
                 for i in range(int(StartTime[8:10]), int(EndTime[8:10])+1):
