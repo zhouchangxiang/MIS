@@ -541,7 +541,7 @@ def runefficiency():
                         lpd = runem / float(RatedPower)
                     else:
                         lpd = 0.0
-                    dir_list_i["当前负荷率"] = lpd
+                    dir_list_i["负荷率"] = lpd
                     dir_list.append(dir_list_i)
             elif TimeClass == "月":
                 for i in range(int(StartTime[5:7]), int(EndTime[5:7])+1):
@@ -559,7 +559,7 @@ def runefficiency():
                         lpd = runem / float(RatedPower)
                     else:
                         lpd = 0.0
-                    dir_list_i["当前负荷率"] = lpd
+                    dir_list_i["负荷率"] = lpd
                     dir_list.append(dir_list_i)
             elif TimeClass == "年":
                 for i in range(int(StartTime[0:4]), int(EndTime[0:4])+1):
@@ -577,7 +577,7 @@ def runefficiency():
                         lpd = runem / float(RatedPower)
                     else:
                         lpd = 0.0
-                    dir_list_i["当前负荷率"] = lpd
+                    dir_list_i["负荷率"] = lpd
                     dir_list.append(dir_list_i)
             dir["row"] = dir_list
             return json.dumps(dir)
