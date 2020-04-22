@@ -114,7 +114,11 @@
           var mulId = []
           if(this.tableData.multipleSelection.length >= 1){
             this.tableData.multipleSelection.forEach(item =>{
-              mulId.push({id:item[this.tableData.deleteKey]});
+              if(this.tableData.tableName === "User"){
+                mulId.push({id:item.id});
+              }else{
+                mulId.push({id:item.ID});
+              }
             })
             params.delete_data = JSON.stringify(mulId)
             this.$confirm('确定删除所选记录？', '提示', {

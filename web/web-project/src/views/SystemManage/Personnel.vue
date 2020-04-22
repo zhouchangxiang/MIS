@@ -29,7 +29,6 @@
             {prop:"CreateTime",label:"创建时间"},
             {prop:"LastLoginTime",label:"最近在线时间"},
           ],
-          deleteKey:"id",
           data:[],
           limit:5,
           offset:1,
@@ -90,116 +89,6 @@
         },res =>{
           console.log("请求错误")
         })
-      },
-      handleSelectionChange(val){  //选择行数
-        this.multipleSelection = val;
-      },
-      openDialog(val){
-        this.dialogTitle = val
-        if(val === "add"){
-          this.dialogVisible = true
-          this.UserForm = {
-            ID:"",
-            Name:"",
-            Password:"",
-            WorkNumber:"",
-            Creater: sessionStorage.getItem('UserName'),
-            CreateTime:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
-          }
-        }else if(val === "edit"){
-          if(this.multipleSelection.length === 1){
-            this.dialogVisible = true
-            let data = this.multipleSelection[0]
-            this.UserForm = {
-              ID:data.id,
-              Name:data.Name,
-              Password:data.Password,
-              WorkNumber:data.WorkNumber
-            }
-          }else{
-            this.$message({
-              message: '请选择一条数据进行修改',
-              type: 'warning'
-            });
-          }
-        }
-      },
-      save(formName){
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            this.UserForm.tableName = "User"
-            if(this.dialogTitle == "add"){
-              this.axios.post("/api/CUID",this.qs.stringify(this.UserForm)).then(res =>{
-                if(res.data == "OK"){
-                  this.getTableData()
-                }else{
-                  this.$message({
-                    type: 'info',
-                    message: res.data
-                  });
-                }
-                this.dialogVisible = false
-              },res =>{
-                console.log("请求错误")
-              })
-            }else if(this.dialogTitle == "edit"){
-              this.axios.put("/api/CUID",this.qs.stringify(this.UserForm)).then(res =>{
-                if(res.data == "OK"){
-                  this.getTableData()
-                }else{
-                  this.$message({
-                    type: 'info',
-                    message: res.data
-                  });
-                }
-                this.dialogVisible = false
-              },res =>{
-                console.log("请求错误")
-              })
-            }
-          } else {
-            return false;
-          }
-        });
-      },
-      del(){
-        let mulId = []
-        this.multipleSelection.forEach(item=>{
-            mulId.push({id:item.id});
-        })
-        if(this.multipleSelection.length >= 1){
-          this.$confirm('确定删除所选记录？', '提示', {
-            distinguishCancelAndClose:true,
-            type: 'warning'
-          }).then(()  => {
-            this.axios.delete("/api/CUID",{
-              params: {
-                tableName: "User",
-                delete_data: JSON.stringify(mulId)
-              }
-            }).then(res =>{
-              if(res.data == "OK"){
-                this.$message({
-                  type: 'success',
-                  message: '删除成功'
-                });
-              }
-              this.getTableData()
-            },res =>{
-              console.log("请求错误")
-            })
-          }).catch(()   => {
-            this.$message({
-              type: 'info',
-              message: '已取消删除'
-            });
-          });
-        }else{
-          this.$message({
-            message: '至少选择一条数据进行删除',
-            type: 'warning'
-          });
-        }
       }
     }
   }
