@@ -12,7 +12,7 @@ from handlers.energymanager.energy_manager import energyStatistics, energyStatis
 from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable, Equipment, \
     AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
-    AreaTimeEnergyColour, ElectricProportion, IncrementElectricTable, ElectricPrice
+    AreaTimeEnergyColour, ElectricProportion, IncrementElectricTable, ElectricPrice, RatedPowerMaintain
 from tools.common import insert, delete, update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger, insertSyslog
@@ -507,7 +507,7 @@ def runefficiency():
             StartTime = data.get("StartTime")
             EndTime = data.get("EndTime")
             TimeClass = data.get("TimeClass")
-            RatedPower = data.get("RatedPower")
+            RatedPower = db_session.query(RatedPowerMaintain).filter().first()[0]
             EnergyClass = "电"
             tags = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
             propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == EnergyClass).first()

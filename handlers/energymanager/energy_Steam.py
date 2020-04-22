@@ -308,8 +308,8 @@ def steamlossanalysis():
             total = 0.0
             for st in sts:
                 total = total + float(st.TotalSumValue)
-            dir["输入总蒸汽量"] = total
-            dir["输出总蒸汽量"] = reto
+            dir["inputSteam"] = total
+            dir["outputSteam"] = reto
             if reto > 0:
                 losst = total - reto
                 if losst > 0:
@@ -319,8 +319,8 @@ def steamlossanalysis():
             else:
                 losst = total
                 lossr = "100%"
-            dir["管损率"] = lossr
-            dir["管损"] = losst
+            dir["PipeDamageRate"] = lossr
+            dir["PipeDamage"] = losst
             dir_list = []
             if TimeClass == "日":
                 for i in range(int(StartTime[8:10]), int(EndTime[8:10])+1):
@@ -368,6 +368,7 @@ def steamlossanalysis():
                     loss = totalm - re
                     dir_list_i["管损"] = loss
                     dir_list.append(dir_list_i)
+            dir["row"] = dir_list
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)

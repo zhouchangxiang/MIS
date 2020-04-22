@@ -104,8 +104,10 @@
 
 <style scoped>
   .platformItem{
-   background: #EEEEEE;
-   border-radius:4px;
-   padding: 15px;
- }
+    background: #EEEEEE;
+    border-radius:4px;
+    padding: 15px;
+    overflow: hidden;
+    clear: both;
+  }
 </style>
