@@ -228,7 +228,7 @@ def energydetail():
                 oc_list.append(tag.TagClassValue)
             dic_lisct = []
             if EnergyClass == "水":
-                sql = "SELECT t.CollectionDate,t.WaterSum,t.WaterFlow FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_WaterEnergy)  WHERE t.TagClassValue in (" + str(
+                sql = "SELECT distinct(t.CollectionDate),t.WaterSum,t.WaterFlow FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_WaterEnergy)  WHERE t.TagClassValue in (" + str(
                     oc_list)[
                                                                                                                                                                              1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' order by t.CollectionDate"
                 re = db_session.execute(sql).fetchall()
@@ -240,7 +240,7 @@ def energydetail():
                     dic_lisct_i["瞬时量"] = roundtwo(i[2])
                     dic_lisct.append(dic_lisct_i)
             elif EnergyClass == "电":
-                sql = "SELECT t.CollectionDate,t.ZGL FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricEnergy)  WHERE t.TagClassValue in (" + str(
+                sql = "SELECT distinct(t.CollectionDate),t.ZGL FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricEnergy)  WHERE t.TagClassValue in (" + str(
                     oc_list)[
                                                                                                                                                                        1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' order by t.CollectionDate"
 
@@ -252,7 +252,7 @@ def energydetail():
                     dic_lisct_i["总功率"] = roundtwo(i[1])
                     dic_lisct.append(dic_lisct_i)
             elif EnergyClass == "汽":
-                sql = "SELECT t.CollectionDate,t.SumValue,t.FlowValue,t.Volume,t.WD  FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy)  WHERE t.TagClassValue in (" + str(
+                sql = "SELECT distinct(t.CollectionDate),t.SumValue,t.FlowValue,t.Volume,t.WD  FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy)  WHERE t.TagClassValue in (" + str(
                     oc_list)[
                                                                                                                                                                                                                                                    1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' order by t.CollectionDate"
                 re = db_session.execute(sql).fetchall()
