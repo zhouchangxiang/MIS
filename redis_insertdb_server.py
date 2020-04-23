@@ -24,7 +24,7 @@ from dbset.log.BK2TLogger import logger,insertSyslog
 pool = redis.ConnectionPool(host=constant.REDIS_HOST)
 def run():
     while True:
-        # time.sleep(180)
+        time.sleep(180)
         print("Redis数据开始写入数据库")
         # a = arrow.now()
         # currentyear = str(a.shift(years=0))[0:4]
