@@ -439,8 +439,8 @@ def electricnergycost():
             periodTimeTypeItem.append(dir_jtime)
             dir_ftime = {}
             dir_ftime["title"] = "峰时刻"
-            dir_ftime["expendEnergy"] = ftime
-            dir_ftime["expendPrice"] = ftimeprice
+            dir_ftime["expendEnergy"] = round(ftime, 2)
+            dir_ftime["expendPrice"] = round(ftimeprice, 2)
             dir_ftime["unit"] = unit
             dir_ftime["Ratio"] = fratio
             dir_ftime["unitPrice"] = fuint
@@ -448,8 +448,8 @@ def electricnergycost():
             periodTimeTypeItem.append(dir_ftime)
             dir_ptime = {}
             dir_ptime["title"] = "平时刻"
-            dir_ptime["expendEnergy"] = ptime
-            dir_ptime["expendPrice"] = ptimeprice
+            dir_ptime["expendEnergy"] = round(ptime, 2)
+            dir_ptime["expendPrice"] = round(ptimeprice, 2)
             dir_ptime["unit"] = unit
             dir_ptime["Ratio"] = pratio
             dir_ptime["unitPrice"] = puint
@@ -457,8 +457,8 @@ def electricnergycost():
             periodTimeTypeItem.append(dir_ptime)
             dir_gtime = {}
             dir_gtime["title"] = "谷时刻"
-            dir_gtime["expendEnergy"] = gtime
-            dir_gtime["expendPrice"] = gtimeprice
+            dir_gtime["expendEnergy"] = round(gtime, 2)
+            dir_gtime["expendPrice"] = round(gtimeprice, 2)
             dir_gtime["unit"] = unit
             dir_gtime["Ratio"] = gratio
             dir_gtime["unitPrice"] = guint
