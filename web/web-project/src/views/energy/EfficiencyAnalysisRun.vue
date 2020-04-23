@@ -108,7 +108,7 @@
           params.TimeClass = this.formParameters.resourceTime
         }
         this.axios.get("/api/runefficiency",{params:params}).then(res => {
-          that.loadRate = res.data.loadRate
+          that.loadRate = res.data.loadRate + "%"
           that.ratedPower = res.data.ratedPower
           that.activePower = res.data.activePower
           that.runEfficiencyChartData.rows = res.data.row

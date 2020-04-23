@@ -38,7 +38,7 @@
             {label:"用户名",prop:"Name"},
             {label:"工号",prop:"WorkNumber"}
           ],
-          tableSelection:true, //是否需要选择框
+          tableSelection:true, //是否在第一列添加复选框
           tableSelectionRadio:false, //是否需要单选
           searchVal:"",
           multipleSelection: [],

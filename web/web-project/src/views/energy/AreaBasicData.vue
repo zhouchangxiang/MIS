@@ -18,14 +18,11 @@
     <el-col :span="24" style="margin-bottom:2px;">
       <div class="chartHead text-size-large text-color-info">
         <div class="chartTile">趋势图</div>
-        <ul class="subsectionList">
-          <li v-for="item in subsectionList"><a href="javascript:;" :class="{active:subsectionActive === item.id}" @click="getSubsection(item.id)">{{ item.name }}</a></li>
-        </ul>
       </div>
     </el-col>
     <el-col :span="24">
       <div class="energyDataContainer">
-        <ve-line :data="chartData" :extend="ChartExtend"></ve-line>
+        <ve-line :data="chartData" :extend="ChartExtend" :data-zoom="dataZoom" v-loading="chartsLoading"></ve-line>
       </div>
     </el-col>
   </el-row>
@@ -61,19 +58,19 @@
           {name:"水"},
           {name:"汽"},
         ],
-        subsectionList:[
-          {name:"小时",id:1},
-          {name:"30分钟",id:2},
-          {name:"15分钟",id:3},
-          {name:"5分钟",id:4},
-          {name:"1分钟",id:5}
-        ],
         subsectionActive:1,
+        dataZoom: [
+          {
+            type: 'slider',
+            start: 0,
+            end: 20
+          }
+        ],
         ChartExtend: {
           grid:{
             left:'0',
             right:'0',
-            bottom:'0',
+            bottom:'40px',
             top:'40px'
           },
           series:{
@@ -81,9 +78,10 @@
           }
         },
         chartData: {
-          columns: ['时间', '总有功电量', 'A相有功电量', 'B相有功电量','C相有功电量'],
+          columns: [],
           rows: []
-        }
+        },
+        chartsLoading:false,
       }
     },
     created(){
@@ -98,9 +96,11 @@
       },
       getChartData(){
         if(this.formParameters.resourceTime === "实时"){
+          this.chartsLoading = true
           this.initWebSocket()
         }else{
           this.websock.close()
+          this.chartsLoading = true
           var that = this
           var nowTime = moment().format('HH:mm').substring(0,4) + "0"
           var dayStartTime = moment(this.formParameters.date).format('YYYY-MM-DD') + " 00:00"
@@ -146,16 +146,32 @@
             params.AreaName = areaName
             params.EnergyClass = this.formParameters.energy
           }
-          console.log(params)
           this.axios.get("/api/energydetail",{params:params}).then(res => {
             console.log(res.data)
+            this.chartsLoading = false
+            if(that.formParameters.energy === "电"){
+              that.chartData = {
+                columns: ['时间', '总功率'],
+                rows: res.data.row
+              }
+            }else if(that.formParameters.energy === "水"){
+              that.chartData = {
+                columns: ['时间', '累计量', '瞬时量'],
+                rows: res.data.row
+              }
+            }else if(that.formParameters.energy === "汽"){
+              that.chartData = {
+                columns: ['时间', '累计量', '瞬时量', '体积', '温度'],
+                rows: res.data.row
+              }
+            }
           })
         }
       },
       initWebSocket(){ //初始化weosocket
         const wsuri = "ws://127.0.0.1:5002";
         this.websock = new WebSocket(wsuri);
-        this.socketLoading = true
+        this.chartsLoading = true
         this.websock.onmessage = this.websocketonmessage;
         this.websock.onopen = this.websocketonopen;
         this.websock.onerror = this.websocketonerror;
@@ -165,11 +181,14 @@
         this.websocketsend();
       },
       websocketonerror(){//连接建立失败
-        //this.initWebSocket();
-        console.log("连接失败")
+        this.$notify.info({
+          title: 'websocket连接失败',
+          message: '实时数据的服务连接失败',
+          duration: 0
+        });
       },
       websocketonmessage(e){ //数据接收
-        this.socketLoading = false
+        this.chartsLoading = false
         const resdata = JSON.parse(e.data);
         console.log(resdata)
         // for(var i=0;i<resdata.length;i++){
@@ -185,7 +204,11 @@
         this.websock.send(Data);
       },
       websocketclose(e){  //关闭
-        console.log('断开连接');
+        this.$notify.info({
+          title: 'websocket关闭',
+          message: '实时数据的服务程序已关闭',
+          duration: 0
+        });
       }
     }
   }

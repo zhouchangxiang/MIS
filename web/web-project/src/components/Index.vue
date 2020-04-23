@@ -42,10 +42,26 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </li>
-            <li><el-tooltip class="head-menu-item" effect="dark" content="采集点分布图" placement="bottom"><i class="el-icon-office-building" @click="scattergram"></i></el-tooltip></li>
-            <li><el-tooltip class="head-menu-item" effect="dark" content="全屏" placement="bottom"><i :class="isFullScreen?'el-icon-aim':'el-icon-full-screen'" @click="getFullCreeen"></i></el-tooltip></li>
-            <li style="margin-right: 10px;" v-if="weatherDesc === 'OK'"><el-tooltip class="head-menu-item" effect="dark" :content="weatherType" placement="bottom"><i :class="weatherIcon"></i></el-tooltip></li>
-            <li><div>{{ time }}</div></li>
+            <li>
+              <el-tooltip class="head-menu-item" effect="dark" content="采集点分布图" placement="bottom">
+                <i class="el-icon-office-building" @click="scattergram"></i>
+              </el-tooltip>
+            </li>
+            <li>
+              <el-tooltip class="head-menu-item" effect="dark" content="全屏" placement="bottom">
+                <i :class="isFullScreen?'el-icon-aim':'el-icon-full-screen'" @click="getFullCreeen"></i>
+              </el-tooltip>
+            </li>
+            <li>
+              <el-tooltip class="head-menu-item" effect="dark" content="基础表管理" placement="bottom">
+                <i class="el-icon-c-scale-to-original" @click="$router.push({path:'/config'})"></i>
+              </el-tooltip>
+            </li>
+            <li style="margin-right: 10px;" v-if="weatherDesc === 'OK'">
+              <el-tooltip class="head-menu-item" effect="dark" :content="weatherType" placement="bottom"><i :class="weatherIcon"></i>
+              </el-tooltip></li>
+            <li>
+            <div>{{ time }}</div></li>
           </ul>
         </div>
         <div class="head-right-menu">
@@ -125,7 +141,7 @@ export default {
       subMenulist:[], //子菜单导航列表
       energyMenulist:[
         {name: "桓仁厂区", icon: "el-icon-location-outline", children:[]},
-        {name: "能效分析", icon: "el-icon-time", url: "/EfficiencyAnalysis"},
+        {name: "能效分析", icon: "el-icon-data-analysis", url: "/EfficiencyAnalysis"},
         {name: "综合报表", icon: "el-icon-document", url: "/DataReport"},
         {name: "批次维护表", icon: "el-icon-set-up", url: "/MaintainedBatch"},
         {name: "基础维护表", icon: "el-icon-s-operation", url: "/MaintainedBoard"},
