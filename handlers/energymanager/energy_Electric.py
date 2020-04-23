@@ -518,7 +518,7 @@ def runefficiency():
                 re = loadRate(tag.TagClassValue, StartTime, EndTime)
                 if re[0][0] != None:
                     rune = rune + re[0][0]
-            dir["activePower"] = rune
+            dir["activePower"] = round(rune, 2)
             if RatedPower != 0.0:
                 lp = 100*(rune / float(RatedPower))
             else:
@@ -527,18 +527,18 @@ def runefficiency():
             dir["ratedPower"] = RatedPower
             dir_list = []
             if TimeClass == "日":
-                for i in range(int(StartTime[8:10]), int(EndTime[8:10])+1):
-                    stae = StartTime[0:8] + addzero(i) + " 00:00:00"
-                    ende = StartTime[0:8] + addzero(i) + " 23:59:59"
+                for i in range(int(StartTime[11:13]), int(EndTime[11:13]) + 1):
+                    stasH = StartTime[0:11] + addzero(i) + ":00:00"
+                    endsH = StartTime[0:11] + addzero(i) + ":59:59"
                     dir_list_i = {}
-                    dir_list_i["时间"] = StartTime[0:8] + addzero(i)
+                    dir_list_i["时间"] = StartTime[0:11] + addzero(i)
                     runem = 0.0
                     for tag in tags:
-                        rem = loadRate(tag.TagClassValue, stae, ende)
+                        rem = loadRate(tag.TagClassValue, stasH, endsH)
                         if rem[0][0] != None:
                             runem = runem + rem[0][0]
                     if RatedPower != 0.0:
-                        lpd = 100*(runem / float(RatedPower))
+                        lpd = 100 * (runem / float(RatedPower))
                     else:
                         lpd = 0.0
                     dir_list_i["负荷率"] = round(lpd, 2)

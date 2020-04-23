@@ -325,6 +325,21 @@ def steamlossanalysis():
             dir["Unit"] = unit
             dir_list = []
             if TimeClass == "日":
+                for i in range(int(StartTime[11:13]), int(EndTime[11:13]) + 1):
+                    stasH = StartTime[0:11] + addzero(i) + ":00:00"
+                    endsH = StartTime[0:11] + addzero(i) + ":59:59"
+                    dir_list_i = {}
+                    dir_list_i["时间"] = StartTime[0:11] + addzero(i)
+                    re = energyStatistics(oc_list, stasH, endsH, EnergyClass)
+                    stsm = db_session.query(SteamTotal).filter(
+                        SteamTotal.MaintainTime.between(StartTime, EndTime)).all()
+                    totalm = 0.0
+                    for stm in stsm:
+                        totalm = totalm + float(stm.TotalSumValue)
+                    loss = totalm - re
+                    dir_list_i["管损"] = loss
+                    dir_list.append(dir_list_i)
+            elif TimeClass == "月":
                 for i in range(int(StartTime[8:10]), int(EndTime[8:10])+1):
                     stae = StartTime[0:8] + addzero(i) + " 00:00:00"
                     ende = StartTime[0:8] + addzero(i) + " 23:59:59"
@@ -338,7 +353,7 @@ def steamlossanalysis():
                     loss = totalm - re
                     dir_list_i["管损"] = loss
                     dir_list.append(dir_list_i)
-            elif TimeClass == "月":
+            elif TimeClass == "年":
                 for i in range(int(StartTime[5:7]), int(EndTime[5:7])+1):
                     emonth = getMonthFirstDayAndLastDay(StartTime[0:4], i)
                     staeM = datetime.datetime.strftime(emonth[0], "%Y-%m-%d %H:%M:%S")
@@ -346,22 +361,6 @@ def steamlossanalysis():
                     dir_list_i = {}
                     dir_list_i["时间"] = StartTime[0:8] + addzero(i)
                     re = energyStatistics(oc_list, staeM, endeM, EnergyClass)
-                    stsm = db_session.query(SteamTotal).filter(
-                        SteamTotal.MaintainTime.between(StartTime, EndTime)).all()
-                    totalm = 0.0
-                    for stm in stsm:
-                        totalm = totalm + float(stm.TotalSumValue)
-                    loss = totalm - re
-                    dir_list_i["管损"] = loss
-                    dir_list.append(dir_list_i)
-            elif TimeClass == "年":
-                for i in range(int(StartTime[0:4]), int(EndTime[0:4])+1):
-                    staeY = str(i) + "-01-01 00:00:00"
-                    eyear = getMonthFirstDayAndLastDay(i, 12)
-                    endeY = datetime.datetime.strftime(eyear[1], "%Y-%m-%d") + " 23:59:59"
-                    dir_list_i = {}
-                    dir_list_i["时间"] = str(i)
-                    re = energyStatistics(oc_list, staeY, endeY, EnergyClass)
                     stsm = db_session.query(SteamTotal).filter(
                         SteamTotal.MaintainTime.between(StartTime, EndTime)).all()
                     totalm = 0.0
