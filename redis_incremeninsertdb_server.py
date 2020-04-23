@@ -31,7 +31,7 @@ def run():
             #汽能插入-----------------------------------------------------------------------------------增量库
             steam_value = list()
             stekeys = db_session.query(SteamEnergy).filter(SteamEnergy.IncrementFlag == "0",
-                                                           SteamEnergy.SumValue != "0.0", SteamEnergy.PrevID != None).order_by(desc("ID")).all()
+                                                           SteamEnergy.SumValue != "0.0").order_by(desc("CollectionDate")).all()[0:100]
             for key in stekeys:
                 proSumValue = db_session.query(SteamEnergy.SumValue).filter(SteamEnergy.ID == key.PrevID).first()
                 if proSumValue != None:
@@ -55,7 +55,7 @@ def run():
             #更新增量库原始数据库
             steam_IDS = list()
             steamInitial = list()
-            upstekeys = db_session.query(IncrementStreamTable).filter(IncrementStreamTable.insertFlag == "0").order_by(desc("ID")).all()
+            upstekeys = db_session.query(IncrementStreamTable).filter(IncrementStreamTable.insertFlag == "0").order_by(desc("CollectionDate")).all()
             for upskey in upstekeys:
                 st = ("1", upskey.ID)
                 stin = ("1", upskey.CalculationID)
@@ -74,8 +74,7 @@ def run():
             # 汽能体积插入-----------------------------------------------------------------增量库
             steamV_value = list()
             steVkeys = db_session.query(SteamEnergy).filter(SteamEnergy.insertVolumeFlag == "0",
-                                                           SteamEnergy.Volume != "0.0",
-                                                           SteamEnergy.PrevID != None).order_by(
+                                                           SteamEnergy.Volume != "0.0").order_by(
                 desc("ID")).all()
             for key in steVkeys:
                 proVolValue = db_session.query(SteamEnergy.Volume).filter(
@@ -102,7 +101,7 @@ def run():
             steamV_IDS = list()
             steamVInitial = list()
             upsteVkeys = db_session.query(IncrementStreamVolume).filter(
-                IncrementStreamVolume.insertFlag == "0").order_by(desc("ID")).all()
+                IncrementStreamVolume.insertFlag == "0").order_by(desc("CollectionDate")).all()
             for upskey in upsteVkeys:
                 stV = ("1", upskey.ID)
                 stinV = ("1", upskey.CalculationID)
@@ -121,7 +120,7 @@ def run():
             #电能----------------------------------------------------------------------------------KU
             electric_value = list()
             elekeys = db_session.query(ElectricEnergy).filter(ElectricEnergy.IncrementFlag == "0",
-                                                              ElectricEnergy.ZGL != "0.0", ElectricEnergy.PrevID != None).order_by(desc("ID")).all()
+                                                              ElectricEnergy.ZGL != "0.0").order_by(desc("CollectionDate")).all()
             for key in elekeys:
                 proZGLmValue = db_session.query(ElectricEnergy.ZGL).filter(ElectricEnergy.ID == key.PrevID).first()
                 if proZGLmValue != None:
@@ -146,7 +145,7 @@ def run():
             electric_IDS = list()
             electricInitial = list()
             upeleskeys = db_session.query(IncrementElectricTable).filter(
-                IncrementElectricTable.insertFlag == "0").order_by(desc("ID")).all()
+                IncrementElectricTable.insertFlag == "0").order_by(desc("CollectionDate")).all()
             for upelekey in upeleskeys:
                 ele = ("1", upelekey.ID)
                 elein = ("1", upelekey.CalculationID)
@@ -165,7 +164,7 @@ def run():
             #水------------------------------------------------------------------------------------------
             water_value = list()
             elekeys = db_session.query(WaterEnergy).filter(WaterEnergy.IncrementFlag == "0",
-                                                           WaterEnergy.WaterSum != "0.0", WaterEnergy.PrevID != None).order_by(desc("ID")).all()
+                                                           WaterEnergy.WaterSum != "0.0").order_by(desc("CollectionDate")).all()
             for key in elekeys:
                 proWsumValue = db_session.query(WaterEnergy.WaterSum).filter(WaterEnergy.ID == key.PrevID).first()
                 if proWsumValue != None:
@@ -190,7 +189,7 @@ def run():
             water_IDS = list()
             waterInitial = list()
             upwatskeys = db_session.query(IncrementWaterTable).filter(
-                IncrementElectricTable.insertFlag == "0").order_by(desc("ID")).all()
+                IncrementElectricTable.insertFlag == "0").order_by(desc("CollectionDate")).all()
             for upwkey in upwatskeys:
                 wat = ("1", upwkey.ID)
                 watin = ("1", upwkey.CalculationID)
