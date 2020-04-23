@@ -520,10 +520,10 @@ def runefficiency():
                     rune = rune + re[0][0]
             dir["activePower"] = rune
             if RatedPower != 0.0:
-                lp = rune / float(RatedPower)
+                lp = 100*(rune / float(RatedPower))
             else:
                 lp = 0.0
-            dir["loadRate"] = lp
+            dir["loadRate"] = round(lp, 2)
             dir["ratedPower"] = RatedPower
             dir_list = []
             if TimeClass == "日":
@@ -538,10 +538,10 @@ def runefficiency():
                         if rem[0][0] != None:
                             runem = runem + rem[0][0]
                     if RatedPower != 0.0:
-                        lpd = runem / float(RatedPower)
+                        lpd = 100*(runem / float(RatedPower))
                     else:
                         lpd = 0.0
-                    dir_list_i["负荷率"] = lpd
+                    dir_list_i["负荷率"] = round(lpd, 2)
                     dir_list.append(dir_list_i)
             elif TimeClass == "月":
                 for i in range(int(StartTime[5:7]), int(EndTime[5:7])+1):
@@ -556,10 +556,10 @@ def runefficiency():
                         if rem[0][0] != None:
                             runem = runem + rem[0][0]
                     if RatedPower != 0.0:
-                        lpd = runem / float(RatedPower)
+                        lpd = 100*(runem / float(RatedPower))
                     else:
                         lpd = 0.0
-                    dir_list_i["负荷率"] = lpd
+                    dir_list_i["负荷率"] = round(lpd, 2)
                     dir_list.append(dir_list_i)
             elif TimeClass == "年":
                 for i in range(int(StartTime[0:4]), int(EndTime[0:4])+1):
@@ -574,10 +574,10 @@ def runefficiency():
                         if rem[0][0] != None:
                             runem = runem + rem[0][0]
                     if RatedPower != 0.0:
-                        lpd = runem / float(RatedPower)
+                        lpd = 100*(runem / float(RatedPower))
                     else:
                         lpd = 0.0
-                    dir_list_i["负荷率"] = lpd
+                    dir_list_i["负荷率"] = round(lpd, 2)
                     dir_list.append(dir_list_i)
             dir["row"] = dir_list
             return json.dumps(dir)
