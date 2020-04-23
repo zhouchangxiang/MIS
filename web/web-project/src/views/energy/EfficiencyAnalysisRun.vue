@@ -12,31 +12,25 @@
     </el-col>
     <el-col :span="24">
       <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
-        <div class="chartTile">运行效率 <span class="text-color-info-shallow text-size-normol">当前视在功率等级 优 额定功率 10kw</span></div>
+        <div class="chartTile">运行效率</div>
       </div>
       <div class="platformContainer">
-        <el-col :span="6">
+        <el-col :span="8">
           <div class="platformItem">
-            <p style="margin-bottom: 10px;">当前负荷率<span class="float-right text-size-mini text-color-info-shallow"></span></p>
-            <p><label class="text-size-big text-color-primary">72.3%</label><span class="float-right"></span></p>
+            <p style="margin-bottom: 10px;">负荷率<span class="float-right text-size-mini text-color-info-shallow"></span></p>
+            <p><label class="text-size-big text-color-primary">{{ loadRate }}</label><span class="float-right"></span></p>
           </div>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="8">
           <div class="platformItem">
-            <p style="margin-bottom: 10px;">当前负荷率<span class="float-right text-size-mini text-color-info-shallow"></span></p>
-            <p><label class="text-size-big text-color-primary">72.3%</label><span class="float-right"></span></p>
+            <p style="margin-bottom: 10px;">额定功率<span class="float-right text-size-mini text-color-info-shallow"></span></p>
+            <p><label class="text-size-big text-color-primary">{{ ratedPower }}</label><span class="float-right"></span></p>
           </div>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="8">
           <div class="platformItem">
-            <p style="margin-bottom: 10px;">当前负荷率<span class="float-right text-size-mini text-color-info-shallow"></span></p>
-            <p><label class="text-size-big text-color-primary">72.3%</label><span class="float-right"></span></p>
-          </div>
-        </el-col>
-        <el-col :span="6">
-          <div class="platformItem">
-            <p style="margin-bottom: 10px;">当前负荷率<span class="float-right text-size-mini text-color-info-shallow"></span></p>
-            <p><label class="text-size-big text-color-primary">72.3%</label><span class="float-right"></span></p>
+            <p style="margin-bottom: 10px;">有功功率<span class="float-right text-size-mini text-color-info-shallow"></span></p>
+            <p><label class="text-size-big text-color-primary">{{ activePower }}</label><span class="float-right"></span></p>
           </div>
         </el-col>
       </div>
@@ -67,7 +61,9 @@
             return time.getTime() > Date.now();
           }
         },
-
+        loadRate:"",
+        ratedPower:"",
+        activePower:"",
         ChartExtend: {
           grid:{
             left:'0',
@@ -80,7 +76,7 @@
           }
         },
         runEfficiencyChartData:{
-          columns: ['时间', '今日', '选择日'],
+          columns: ['时间', '负荷率'],
           rows: []
         }
       }
@@ -112,8 +108,10 @@
           params.TimeClass = this.formParameters.resourceTime
         }
         this.axios.get("/api/runefficiency",{params:params}).then(res => {
-          console.log(res.data)
-
+          that.loadRate = res.data.loadRate
+          that.ratedPower = res.data.ratedPower
+          that.activePower = res.data.activePower
+          that.runEfficiencyChartData.rows = res.data.row
         })
       }
     }

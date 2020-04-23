@@ -7,6 +7,13 @@
       <div class="platformContainer">
         <tableView :tableData="TableData" @getTableData="getRoleTable" @privileges="privileges"></tableView>
       </div>
+      <el-dialog title="提示" :visible.sync="dialogVisible" width="60%">
+        <el-transfer v-model="transferValue" :data="transferData"></el-transfer>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        </span>
+      </el-dialog>
     </el-col>
   </el-row>
 </template>
@@ -40,6 +47,9 @@
             {type:"primary",label:"分配权限",clickEvent:"privileges"},
           ],
         },
+        dialogVisible:false,
+        transferValue:"",
+        transferData:[]
       }
     },
     created(){
@@ -64,7 +74,21 @@
         })
       },
       privileges(){
-        console.log("权限分配")
+        this.dialogVisible = true
+        var that = this
+        var params = {
+          tableName: this.TableData.tableName,
+          limit:100000000,
+          offset:0
+        }
+        this.axios.get("/api/CUID",{
+          params: params
+        }).then(res =>{
+          var data = JSON.parse(res.data)
+          console.log(data)
+        },res =>{
+          console.log("请求错误")
+        })
       }
     }
   }
