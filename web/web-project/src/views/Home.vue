@@ -45,7 +45,7 @@
                   </ul>
                 </el-col>
                 <el-col :span="12">
-                  <ve-line :data="contrastMonthChartData" :settings="contrastMonthChartSettings" :extend="contrastMonthChartExtend" width="120px" height="100px" :legend-visible="false"></ve-line>
+                  <ve-line :data="contrastMonthChartData" :settings="contrastMonthChartSettings" :extend="contrastMonthChartExtend" v-loading="ChartsLoading" width="120px" height="100px" :legend-visible="false"></ve-line>
                 </el-col>
               </el-col>
               <el-col :span="8" style="white-space:nowrap;">
@@ -71,7 +71,7 @@
             </el-row>
             <el-row>
               <el-col :span="24">
-                <ve-line :data="realtimeChartData" :extend="realtimeChartExtend" height="260px" :legend-visible="true"></ve-line>
+                <ve-line :data="realtimeChartData" :extend="realtimeChartExtend" v-loading="ChartsLoading" height="260px" :legend-visible="true"></ve-line>
               </el-col>
             </el-row>
           </div>
@@ -85,7 +85,7 @@
               </el-select>
             </div>
             <div class="home-card-body" style="height:280px;">
-              <ve-bar :data="areaChartData" :extend="areaTimeChartExtend" height="260px" :legend-visible="false"></ve-bar>
+              <ve-bar :data="areaChartData" :extend="areaTimeChartExtend" v-loading="areaTimeChartsLoading" height="260px" :legend-visible="false"></ve-bar>
             </div>
           </el-col>
           <el-col :span="7">
@@ -273,6 +273,7 @@
         contrastMonthChartSettings: { //本月对比上月能耗图表配置
           area: true,
         },
+        ChartsLoading:false,
         contrastMonthChartExtend: {
           yAxis:{
             show:false
@@ -323,6 +324,7 @@
             symbolSize: 1
           }
         },
+        areaTimeChartsLoading:false,
         areaTimeChartExtend: {
           yAxis:{
             show:false,
@@ -505,6 +507,7 @@
     },
     methods: {
       getEnergyPreview() {  //获取能耗预览内的数据
+        this.ChartsLoading = true
         var api = ""
         var that = this
         if(this.previewEnergyValue == "电"){
@@ -544,6 +547,7 @@
             params: {ModelFlag: "能耗预览",CompareDate:moment(this.CompareDate).format('YYYY-MM-DD'),EnergyClass:this.previewEnergyValue}
           })//获取对比图表
         ]).then(this.axios.spread(function(todayCon,compareDateCon,thisMonthCon,lastMonthCon,thisYearCon,lastYearCon,compareData){
+          that.ChartsLoading = false
           that.todayCon = JSON.parse(todayCon.data).value
           that.unit = JSON.parse(todayCon.data).unit
           that.compareDateCon = JSON.parse(compareDateCon.data).value
@@ -556,11 +560,13 @@
         }))
       },
       getAreaTimeEnergy(){
+        this.areaTimeChartsLoading = true
         var params = {
           EnergyClass: this.areaTimeEnergyValue,
           CompareTime:moment().format("YYYY-MM-DD")
         }
         this.axios.get("/api/areatimeenergycount",{params:params}).then(res => {
+          this.areaTimeChartsLoading = false
           var arr = []
           for(var i=0;i<res.data.rows.length;i++){
             if(i < 4){

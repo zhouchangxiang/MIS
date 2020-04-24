@@ -15,7 +15,7 @@
       <el-col :span="24" v-if="newAreaName.areaName != '整厂区'">
         <el-col :span="18">
           <div class="energyDataCard">
-            <ve-line :data="chartData" :settings="chartSettings" :extend="ChartExtend"></ve-line>
+            <ve-line :data="chartData" :settings="chartSettings" :extend="ChartExtend" v-loading="ChartsLoading"></ve-line>
           </div>
           <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
             <div class="chartTile">尖峰平谷分析</div>
@@ -133,7 +133,7 @@
       <el-col :span="24" v-if="newAreaName.areaName == '整厂区'">
         <el-col :span="18">
           <div class="energyDataCard">
-            <ve-line :data="chartData" :settings="chartSettings" :extend="ChartExtend" height="300px"></ve-line>
+            <ve-line :data="chartData" :settings="chartSettings" :extend="ChartExtend" v-loading="ChartsLoading" height="300px"></ve-line>
           </div>
         </el-col>
         <el-col :span="6">
@@ -236,6 +236,7 @@
         chartSettings: {
           area:true
         },
+        ChartsLoading:false,
         ChartExtend: {
           title:{
             text:"能耗趋势"
@@ -346,8 +347,10 @@
         }))
       },
       getChartData(){
+        this.ChartsLoading = true
         var selectDate = moment(this.formParameters.date).format("YYYY-MM-DD")
         this.axios.get("/api/trendlookboard",{params: {EnergyClass: this.formParameters.energy,CompareTime:selectDate}}).then(res =>{
+          this.ChartsLoading = false
           this.chartData.rows = res.data.rows
         })
       },
