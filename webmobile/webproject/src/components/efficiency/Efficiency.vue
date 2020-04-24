@@ -1,28 +1,27 @@
 <template>
     <div class="show-box">
           <div class="cir-choose">
-              <van-tabs type="card" title-active-color="#1E222B" title-inactive-color="#fff"  v-model="active"  @click="mhy"> 
+              <van-tabs type="card" title-active-color="#1E222B" title-inactive-color="#fff"  v-model="active"  @click="switchCard($event)"> 
                         <van-tab title="运行效率"></van-tab>
                         <van-tab title="线损情况"></van-tab>
                         <van-tab title="管损情况"></van-tab>
               </van-tabs>
           </div>
           <div class="show-banner">
-              <div class="tips">线损率=</div>
-              <div class="input-elc1">输入电量(kw)：</div>
-              <div class="output-elc">输出电量(kw):</div>
-              <div class="input-elc2">输出电量(kw):</div>
-              <div class="ou">1.38%</div>
+              <div class="tips">{{value1}}</div>
+              <div class="input-elc1">{{value2}}</div>
+              <div class="output-elc">{{value3}}</div>
+              <div class="input-elc2">{{value4}}</div>
+              <div class="ou" v-html="value5"></div>
               <div class="shownumber">
-                  <span class="num1">00.00</span>
-                  <span class="num2">00.00</span>
-                  <span class="num3">00.00</span>
-                  <span class="fh1"></span>
-                  <span class="fh2">/</span>
-                  <span class="fh3">%</span>
+                  <span class="num1">{{num1}}</span>
+                  <span class="num2">{{num2}}</span>
+                  <span class="num3">{{num3}}</span>
                   </div>
           </div>
-          <div class="piclist">数图标区域</div>
+          <div class="piclist">
+               <ve-histogram :data="chartData" :settings="chartSettings" width="340px" height="240px"></ve-histogram>
+          </div>
           <div class="compare">
               <div class="left-box">
                   <div class="lt">本日最高负荷率:</div>
@@ -45,20 +44,68 @@
 <script>
 export default {
     data(){
+        this.chartSettings = {
+         axisSite: { right: ['下单率'] },
+         yAxisType: ['KMB', 'percent'],
+         yAxisName: ['数值', '比率'],
+      }
         return {
-            radio1:3,
-            radio2:3,
-            active: 0
+            active: 0,
+            value1:'运行效率',
+            value2:'有功功率(kwh):',
+            value3:'额定功率(kwh):',
+            value4:'当前负荷率:',
+            value5:'功率等级&nbsp;优',
+            num1:'00.00',
+            num2:'00.00',
+            num3:'00.00',
+            chartData: {
+                columns: ['日期', '有功功率', '额定功率', '负荷率'],
+                rows: [
+                    { '日期': '1/1', '有功功率': 1393, '额定功率': 1093, '负荷率': 0.9 },
+                    { '日期': '1/2', '有功功率': 3530, '额定功率': 3230, '负荷率': 0.26 },
+                    { '日期': '1/3', '有功功率': 2923, '额定功率': 2623, '负荷率': 0.76 },
+                    { '日期': '1/4', '有功功率': 1723, '额定功率': 1423, '负荷率': 0.49 },
+                    { '日期': '1/5', '有功功率': 3792, '额定功率': 3492, '负荷率': 0.323 },
+                    { '日期': '1/6', '有功功率': 4593, '额定功率': 4293, '负荷率': 0.78 }
+                ]
         }
-    },
+      }
+        },
     methods:{
-        myc(){
-            this.$toast(this.radio1)
-    },
-    mhy(){
-        this.$toast(this.active)
+    switchCard(e){
+      if(e===0){
+          this.value1='运行效率'
+          this.value2='有功功率(kwh):',
+          this.value3='额定功率(kwh):',
+          this.value4='当前负荷率:'
+          this.value5='功率等级&nbsp;优'
+      }
+      if(e===1){
+          this.value1='线损率='
+          this.value2='输入电量(kwh):',
+          this.value3='输出电量(kwh):',
+          this.value4='输入电量(kwh):'
+          this.value5='1.83%'  
+      }
+    if(e===2){
+        this.value1='管损率='
+        this.value2='输入汽量(T):',
+        this.value3='输出汽量(T):',
+        this.value4='管损:'
+        this.value5='1.83%'
+        this.$http.get('/api/steamlossanalysis',{params:{
+            StartTime: "2020-04-20 00:00:00",
+            EndTime: "2020-04-20 23:59:59",
+            TimeClass: "日"
+        }}).then((res) => {
+            this.value5=res.data.PipeDamageRate
+            this.num1=res.data.inputSteam
+            this.num2=res.data.outputSteam
+            this.num3=res.data.PipeDamage
+        })
     }
-
+    }
     }
 }
 </script>
@@ -72,7 +119,7 @@ export default {
      .show-box{
         position: relative;
         width: 375px;
-        height:526px;
+        height:576px;
         box-sizing: border-box;
         padding: 0 12px 12px 13px;
         background-color: @bgcc;
@@ -90,7 +137,7 @@ export default {
           position: relative;
           width:350px;
           height:130px;
-          margin-top: 20px;
+          margin-top: 10px;
           background:rgba(126,127,132,1);
           box-shadow:0px 0px 6px rgba(255,255,255,0.16);
           opacity:1;
@@ -99,7 +146,7 @@ export default {
             position: absolute;
             top: 14px;
             left: 15px;
-            width:55px;
+            width:70px;
             height:20px;
             font-size:14px;
             font-family:PingFang SC;
@@ -150,14 +197,14 @@ export default {
         .ou{
             position: absolute;
             top:14px;
-            left:300px;
-            width:28px;
+            left:267px;
+            width:67px;
             height:14px;
             font-size:10px;
             font-family:PingFang SC;
             font-weight:400;
             line-height:14px;
-            color:rgba(0,250,231,1);
+            color: #fff;
             opacity:1;
         }
         .shownumber{
@@ -228,15 +275,15 @@ export default {
         }
       }
       .piclist{
-          margin-top: 30px;
-          height: 131px;
-          background-color: #ccc;
+          margin-top: 15px;
+          height: 190px;
+          background-color:rgba(255,255,255,.5);
       }
       .compare{
           position: relative;
           height: 129px;
           width: 100%;
-          margin-top: 30px;
+          margin-top: 15px;
            .lt{
                   position: absolute;
                   top:14px;

@@ -1,7 +1,22 @@
 <template>
     <div class="show-box">
-        <DateC></DateC>
-         <van-loading size="24px" vertical v-if="loading" color="lightgreen" type="spinner">加载中...</van-loading>
+        <div class="show-top">
+               <div class="tips">
+                   <van-tabs type="card" title-active-color="#1E222B" title-inactive-color="#fff" v-model="choosedate" @click="ChooseDate"> 
+                        <van-tab title="年"></van-tab>
+                        <van-tab title="月"></van-tab>
+                        <van-tab title="日"></van-tab>
+                    </van-tabs>
+                </div>
+               <div class="tips">
+                   <van-tabs type="card" title-active-color="#1E222B"  title-inactive-color="#fff" v-model="choosekind" @click="ChooseKind">
+                        <van-tab title="水"></van-tab>
+                        <van-tab title="电"></van-tab>
+                        <van-tab title="气"></van-tab>
+                    </van-tabs>
+               </div>
+        </div>
+        <van-loading size="24px" vertical v-if="loading" color="lightgreen" type="spinner">加载中...</van-loading>
         <div class="show-banner">
                   <div class="sb-name">厂区能耗</div>
                   <div class="sb-number">{{this.$store.state.sbnumber.value}}</div>
@@ -10,9 +25,7 @@
                   <div class="sb-dw">单位</div>
                   <div class="sb-t">{{this.$store.state.sbnumber.unit}}</div>
                   <div class="tabbar">
-                      <ul>
-                          <li v-for="(item,index) in $store.state.comparebox" :key="index"><div>{{item['区域']}}</div><span v-bind:style="{width:(item['能耗量']>20000?(item['能耗量']/2000000+'px'):(item['能耗量']/50+'px'))}"></span></li>
-                      </ul>
+                      <ve-bar :data="chartData" width="150px" height="150px" :legend-visible="false" :extend="areaTimeChartExtend"></ve-bar>
                    </div>
            </div>
            <div class="show-body">
@@ -20,51 +33,93 @@
                    <div class="scpc">生产批次</div>
                    <div class="scpc-s">{{item.batchCount}}</div>
                    <div class="znhl">总耗能量</div>
-                   <div class="znhl-s">{{$store.state.choosekind==0?item.waterCon:item.steamCon}}</div>
+                   <div class="znhl-s">{{choosekind==0?item.waterCon:item.steamCon}}</div>
                    <div class="dwnh">单位批次能耗</div>
-                   <div class="dwnh-s">{{$store.state.choosekind==0?item.waterEveryBatch:item.steamEveryBatch}}</div>
-                   <div class="dw-kwh">{{$store.state.choosekind==0?item.waterUnit:item.steamUnit}}</div>
-                   <div class="dw-pc">{{$store.state.choosekind==0?item.waterUnit:item.steamUnit}}&nbsp;/&nbsp;批</div>
+                   <div class="dwnh-s">{{choosekind==0?item.waterEveryBatch:item.steamEveryBatch}}</div>
+                   <div class="dw-kwh">{{choosekind==0?item.waterUnit:item.steamUnit}}</div>
+                   <div class="dw-pc">{{choosekind==0?item.waterUnit:item.steamUnit}}&nbsp;/&nbsp;批</div>
                </div>
                <div class="sb-r">
                     <van-picker :columns="area" @change="onChange" :default-index="2"/>
                </div>
            </div>
-        <ShowNumber></ShowNumber>
+           <ShowNumber></ShowNumber>
        </div>
 </template>
 <script>
 var moment=require('moment')
 import ShowNumber from '../common/Shownumber.vue'
-import DateC from '../common/Choosedate.vue'
 import store from '../../store/index'
-import ChoosedateVue from '../common/Choosedate.vue'
 var moment=require('moment')
 export default {
     data(){
         return {
+            areaTimeChartExtend: {
+                yAxis:{
+                    show:false,
+                    inverse:true
+                },
+                xAxis:{
+                    show:false,
+                    inverse:true
+                },
+                grid:{
+                    containLabel: false,
+                    left: '0',
+                    right: '0',
+                    bottom: '0',
+                    top:'0'
+                },
+                series: {
+                    barMaxWidth : '6px',
+                    smooth: false
+                },
+                label:{
+                    show:true,
+                    position:"top",
+                    formatter: '{b}: {@score}'
+                },
+                itemStyle: {
+                    color:"#fff"
+                }
+                },
             myapi:'',
             area:[],
             StartTime:'2020-04-07 12:22:59',
             numberbox:[],
-            loading:false
+            loading:false,
+            chartData: {
+            columns: ['区域', '能耗量'],
+            rows: [
+                { '区域': '污水站', '能耗量': 100},
+                { '区域': '前提取车间', '能耗量': 100},
+                { '区域': '二车间', '能耗量': 100},
+                { '区域': '综合车间', '能耗量': 100}
+            ]
+            },
+            choosedate:0,
+            choosekind:0,
+            StartTime:'2020-04-07 12:22:59',
+            EndTime:'',
+            myapi:'',
+            myobj:{},
+            kind:''
         }
     },
     components:{
-        DateC,
         ShowNumber
     },
     mounted(){
         this.initNum()
     },
     methods:{
-      onChange(picker, value) {
+    onChange(picker, value) {
         this.loading=true
         this.$store.commit("Chooseworkplace",value)
         this.$toast(value);
         let n=this.$store.state.choosedate
         this.EndTime=moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
-        let x=this.$store.state.choosekind
+        var x=this.choosekind
             switch(x){
                 case 0:
                     this.myapi='/energywater';
@@ -98,7 +153,7 @@ export default {
                 this.loading=false
                 this.$store.commit('Sbnumbers',JSON.parse(res1.data))
                 this.$store.commit('NumBox',res2.data)
-                this.numberbox=this.$store.state.numberbox
+                this.numberbox=this.$store.state.numberbox 
             }))
     },
     initNum(){
@@ -121,7 +176,7 @@ export default {
             }})
         ]).then(this.$http.spread((res1,res2,res3)=>{
             this.loading=false
-            this.$store.commit('CompareBox',res3.data.rows)
+            this.chartData.rows=res3.data.rows.slice(0, 4)
             let arr=res3.data.rows
             for(var i=0;i<arr.length;i++){
                this.area.push(arr[i]['区域'])
@@ -130,8 +185,86 @@ export default {
             this.$store.commit('NumBox',res2.data)
             this.numberbox=this.$store.state.numberbox
 
-    }))}
-    }
+    }))},
+    ChooseDate(){
+            this.$store.commit('Choosedate',this.choosedate)
+            let n=this.$store.state.choosedate
+            this.EndTime=moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+            var x=this.choosekind
+            switch(x){
+                case 0:
+                    this.myapi='/energywater';
+                    break;
+                case 1:
+                    this.myapi='/energyelectric';
+                    break;
+                case 2:
+                    this.myapi='/energysteam';
+                    break;
+            }
+            if(n===0){
+                this.StartTime='2020-04-01 00:00:00'
+            }else if(n===1){
+                this.StartTime='2020-04-07 00:00:00'
+            }else{
+                this.StartTime='2020-04-09 00:00:00'
+            }
+            this.$http.all([
+                this.$http.get('/api'+this.myapi,{params:{
+                StartTime:this.StartTime,
+                EndTime:this.EndTime,
+                AreaName:this.$store.state.workplace
+                }}),
+                this.$http.get('/api/batchMaintainEnergy',{params:{
+                StartTime:this.StartTime,
+                EndTime:this.EndTime,
+                AreaName:this.$store.state.workplace
+            }})
+            ]).then(this.$http.spread((res1,res2)=>{
+                this.$store.commit('Sbnumbers',JSON.parse(res1.data))
+                this.$store.commit('NumBox',res2.data)
+            }))
+        },
+        ChooseKind(){
+            this.$store.commit('Choosekind',this.choosekind)
+            var x=this.$store.state.choosedate
+            var n=this.choosekind
+            switch(x){
+                case 0:
+                    this.StartTime='2020-04-01 00:00:00';
+                    break;
+                case 1:
+                     this.StartTime='2020-04-07 00:00:00';
+                    break;
+                case 2:
+                      this.StartTime='2020-04-09 00:00:00';
+                    break;
+            }
+            if(n===0){
+                this.myapi='/energywater',
+                this.kind='水'
+            }else if(n===1){
+                this.myapi='/energyelectric',
+                this.kind='电'
+            }else{
+                this.myapi='/energysteam',
+                this.kind='汽'
+            }
+            this.$http.all([
+                this.$http.get('/api'+this.myapi,{params:{
+                StartTime:this.StartTime,
+                EndTime:this.EndTime,
+                AreaName:this.$store.state.workplace
+                }}),
+            this.$http.get('/api/areatimeenergycount',{params:{
+                EnergyClass:this.kind,CompareTime:'2020-04-01'
+            }})
+            ]).then(this.$http.spread((res1,res2)=>{
+                this.$store.commit('Sbnumbers',JSON.parse(res1.data))
+                this.chartData.rows=res2.data.rows.slice(0, 4)
+            }))
+        }
+}
 }
 </script>
 <style lang="less" scoped>
@@ -231,28 +364,9 @@ export default {
             .tabbar{
                 position: absolute;
                 top:15px;
-                right:15px;
-                ul{
-                    margin: 0;
-                    padding: 0;
-                    height: 144px;
-                    overflow: hidden;
-                    li{
-                        height:36px;
-                        text-align: right;
-                        font-size:8px;
-                        font-weight:400;
-                        color: #fff;
-                        span{
-                            display: block;
-                            margin-top: 5px;
-                            float: right;
-                            height: 4px;
-                            width: 30px;
-                            background-color: #fff;
-                        }
-                    }
-                }
+                right:5px;
+                width: 150px;
+                height: 150px;
             }
            
         }
@@ -366,7 +480,19 @@ export default {
                 }
             }
         }
-        
+        .show-top{
+            height:18px;
+            opacity:1;
+            border-radius:4px;
+            color:#fff;
+            font-size: 10px;
+            .tips{
+                float: left;
+                margin-right: 20px;
+                background-color:#1E222B;
+                height: 18px;
+            }
+        }    
 
     }
 </style>
