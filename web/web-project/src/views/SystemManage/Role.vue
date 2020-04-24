@@ -8,7 +8,7 @@
         <tableView :tableData="TableData" @getTableData="getRoleTable" @privileges="privileges"></tableView>
       </div>
       <el-dialog title="提示" :visible.sync="dialogVisible" width="60%">
-        <el-transfer v-model="transferValue" :data="transferData"></el-transfer>
+        <el-transfer :titles="['全部权限', '当前权限']" v-model="transferValue" :data="transferData"></el-transfer>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false">取 消</el-button>
           <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
@@ -48,7 +48,7 @@
           ],
         },
         dialogVisible:false,
-        transferValue:"",
+        transferValue:[],
         transferData:[]
       }
     },
@@ -77,7 +77,7 @@
         this.dialogVisible = true
         var that = this
         var params = {
-          tableName: this.TableData.tableName,
+          tableName: "Menu",
           limit:100000000,
           offset:0
         }

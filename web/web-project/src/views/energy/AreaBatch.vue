@@ -62,7 +62,7 @@
         <el-radio-group v-model="formParameters.chartTimeValue" fill="#082F4C" size="small" @change="getCommodityPreview">
           <el-radio-button v-for="(item,index) in chartTimeType" :key="index" :label="item.name"></el-radio-button>
         </el-radio-group>
-        <ve-chart :data="chartData" :extend="ChartExtend" :settings="ChartExtendSettings" :legend-visible="false" height="360px"></ve-chart>
+        <ve-chart :data="chartData" :extend="ChartExtend" :settings="ChartExtendSettings" v-loading="ChartsLoading" :legend-visible="false" height="360px"></ve-chart>
       </div>
     </el-col>
     <el-col :span="24" style="margin-top:10px;margin-bottom:2px;">
@@ -157,6 +157,7 @@
             smooth: false
           }
         },
+        ChartsLoading:false,
         chartData: {
           columns: [],
           rows: []
@@ -241,6 +242,7 @@
     },
     methods: {
       getCommodityPreview() {
+        this.ChartsLoading = true
         var that = this
         var nowTime = moment().format('HH:mm').substring(0,4) + "0"
         var nowDate = moment().format('MM-DD') + " " + nowTime
@@ -361,6 +363,7 @@
           this.axios.get("/api/batchMaintainEnergyEcharts",{params: chartParams}),
           this.axios.get("/api/batchMaintainExcelSelect",{params: tableParams}),
         ]).then(this.axios.spread(function(res,contrastRes,chartRes,tableRes){
+          that.ChartsLoading = false
           if(that.formParameters.energy === "水"){
             that.Unit = res.data.waterUnit
             that.Total = res.data.waterCon

@@ -439,8 +439,8 @@ def electricnergycost():
             periodTimeTypeItem.append(dir_jtime)
             dir_ftime = {}
             dir_ftime["title"] = "峰时刻"
-            dir_ftime["expendEnergy"] = ftime
-            dir_ftime["expendPrice"] = ftimeprice
+            dir_ftime["expendEnergy"] = round(ftime, 2)
+            dir_ftime["expendPrice"] = round(ftimeprice, 2)
             dir_ftime["unit"] = unit
             dir_ftime["Ratio"] = fratio
             dir_ftime["unitPrice"] = fuint
@@ -448,8 +448,8 @@ def electricnergycost():
             periodTimeTypeItem.append(dir_ftime)
             dir_ptime = {}
             dir_ptime["title"] = "平时刻"
-            dir_ptime["expendEnergy"] = ptime
-            dir_ptime["expendPrice"] = ptimeprice
+            dir_ptime["expendEnergy"] = round(ptime, 2)
+            dir_ptime["expendPrice"] = round(ptimeprice, 2)
             dir_ptime["unit"] = unit
             dir_ptime["Ratio"] = pratio
             dir_ptime["unitPrice"] = puint
@@ -457,8 +457,8 @@ def electricnergycost():
             periodTimeTypeItem.append(dir_ptime)
             dir_gtime = {}
             dir_gtime["title"] = "谷时刻"
-            dir_gtime["expendEnergy"] = gtime
-            dir_gtime["expendPrice"] = gtimeprice
+            dir_gtime["expendEnergy"] = round(gtime, 2)
+            dir_gtime["expendPrice"] = round(gtimeprice, 2)
             dir_gtime["unit"] = unit
             dir_gtime["Ratio"] = gratio
             dir_gtime["unitPrice"] = guint
@@ -518,30 +518,30 @@ def runefficiency():
                 re = loadRate(tag.TagClassValue, StartTime, EndTime)
                 if re[0][0] != None:
                     rune = rune + re[0][0]
-            dir["activePower"] = rune
+            dir["activePower"] = round(rune, 2)
             if RatedPower != 0.0:
-                lp = rune / float(RatedPower)
+                lp = 100*(rune / float(RatedPower))
             else:
                 lp = 0.0
-            dir["loadRate"] = lp
+            dir["loadRate"] = round(lp, 2)
             dir["ratedPower"] = RatedPower
             dir_list = []
             if TimeClass == "日":
-                for i in range(int(StartTime[8:10]), int(EndTime[8:10])+1):
-                    stae = StartTime[0:8] + addzero(i) + " 00:00:00"
-                    ende = StartTime[0:8] + addzero(i) + " 23:59:59"
+                for i in range(int(StartTime[11:13]), int(EndTime[11:13]) + 1):
+                    stasH = StartTime[0:11] + addzero(i) + ":00:00"
+                    endsH = StartTime[0:11] + addzero(i) + ":59:59"
                     dir_list_i = {}
-                    dir_list_i["时间"] = StartTime[0:8] + addzero(i)
+                    dir_list_i["时间"] = StartTime[0:11] + addzero(i)
                     runem = 0.0
                     for tag in tags:
-                        rem = loadRate(tag.TagClassValue, stae, ende)
+                        rem = loadRate(tag.TagClassValue, stasH, endsH)
                         if rem[0][0] != None:
                             runem = runem + rem[0][0]
                     if RatedPower != 0.0:
-                        lpd = runem / float(RatedPower)
+                        lpd = 100 * (runem / float(RatedPower))
                     else:
                         lpd = 0.0
-                    dir_list_i["负荷率"] = lpd
+                    dir_list_i["负荷率"] = round(lpd, 2)
                     dir_list.append(dir_list_i)
             elif TimeClass == "月":
                 for i in range(int(StartTime[5:7]), int(EndTime[5:7])+1):
@@ -556,10 +556,10 @@ def runefficiency():
                         if rem[0][0] != None:
                             runem = runem + rem[0][0]
                     if RatedPower != 0.0:
-                        lpd = runem / float(RatedPower)
+                        lpd = 100*(runem / float(RatedPower))
                     else:
                         lpd = 0.0
-                    dir_list_i["负荷率"] = lpd
+                    dir_list_i["负荷率"] = round(lpd, 2)
                     dir_list.append(dir_list_i)
             elif TimeClass == "年":
                 for i in range(int(StartTime[0:4]), int(EndTime[0:4])+1):
@@ -574,10 +574,10 @@ def runefficiency():
                         if rem[0][0] != None:
                             runem = runem + rem[0][0]
                     if RatedPower != 0.0:
-                        lpd = runem / float(RatedPower)
+                        lpd = 100*(runem / float(RatedPower))
                     else:
                         lpd = 0.0
-                    dir_list_i["负荷率"] = lpd
+                    dir_list_i["负荷率"] = round(lpd, 2)
                     dir_list.append(dir_list_i)
             dir["row"] = dir_list
             return json.dumps(dir)

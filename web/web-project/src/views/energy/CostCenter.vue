@@ -255,7 +255,6 @@
             TimeClass:this.formParameters.resourceTime,
             AreaName:areaName
           }}).then(res => {
-            console.log(res.data)
             this.chartsPileLoading = false
             that.periodTimeTypeItem = res.data.periodTimeTypeItem
             that.totalPrice = res.data.totalPrice

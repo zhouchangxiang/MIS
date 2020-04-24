@@ -35,7 +35,7 @@
         </el-col>
       </div>
       <div class="energyDataContainer">
-        <ve-line :data="runEfficiencyChartData" :extend="ChartExtend"></ve-line>
+        <ve-line :data="runEfficiencyChartData" :extend="ChartExtend" v-loading="chartsLoading"></ve-line>
       </div>
     </el-col>
   </el-row>
@@ -78,7 +78,8 @@
         runEfficiencyChartData:{
           columns: ['时间', '负荷率'],
           rows: []
-        }
+        },
+        chartsLoading:false
       }
     },
     created(){
@@ -86,6 +87,7 @@
     },
     methods:{
       getPipeData(){
+        this.chartsLoading = true
         var that = this
         var dayStartTime = moment(this.formParameters.startDate).format('YYYY-MM-DD') + " 00:00:00"
         var dayEndTime = moment(this.formParameters.startDate).format('YYYY-MM-DD HH:mm:ss')
@@ -108,7 +110,8 @@
           params.TimeClass = this.formParameters.resourceTime
         }
         this.axios.get("/api/runefficiency",{params:params}).then(res => {
-          that.loadRate = res.data.loadRate
+          that.chartsLoading = false
+          that.loadRate = res.data.loadRate + "%"
           that.ratedPower = res.data.ratedPower
           that.activePower = res.data.activePower
           that.runEfficiencyChartData.rows = res.data.row

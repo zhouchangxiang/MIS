@@ -658,8 +658,7 @@
       websocketonerror(){//连接建立失败重连
         this.$notify.info({
           title: 'websocket连接失败',
-          message: '实时数据的服务连接失败',
-          duration: 0
+          message: '实时数据的服务连接失败'
         });
       },
       websocketonmessage(e){ //数据接收
@@ -698,8 +697,7 @@
       websocketclose(e){  //关闭
         this.$notify.info({
           title: 'websocket关闭',
-          message: '实时数据的服务程序已关闭',
-          duration: 0
+          message: '实时数据的服务程序已关闭'
         });
       }
     }
