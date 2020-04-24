@@ -228,9 +228,9 @@ def energydetail():
                 oc_list.append(tag.TagClassValue)
             dic_lisct = []
             if EnergyClass == "水":
-                sql = "SELECT t.CollectionDate,t.WaterSum,t.WaterFlow FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_WaterEnergy)  WHERE t.TagClassValue in (" + str(
+                sql = "SELECT distinct(t.CollectionDate),t.WaterSum,t.WaterFlow FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_WaterEnergy)  WHERE t.TagClassValue in (" + str(
                     oc_list)[
-                                                                                                                                                                             1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+                                                                                                                                                                             1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' order by t.CollectionDate"
                 re = db_session.execute(sql).fetchall()
                 db_session.close()
                 for i in re:
@@ -240,9 +240,9 @@ def energydetail():
                     dic_lisct_i["瞬时量"] = roundtwo(i[2])
                     dic_lisct.append(dic_lisct_i)
             elif EnergyClass == "电":
-                sql = "SELECT t.CollectionDate,t.ZGL FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricEnergy)  WHERE t.TagClassValue in (" + str(
+                sql = "SELECT distinct(t.CollectionDate),t.ZGL FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricEnergy)  WHERE t.TagClassValue in (" + str(
                     oc_list)[
-                                                                                                                                                                       1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+                                                                                                                                                                       1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' order by t.CollectionDate"
 
                 re = db_session.execute(sql).fetchall()
                 db_session.close()
@@ -252,9 +252,9 @@ def energydetail():
                     dic_lisct_i["总功率"] = roundtwo(i[1])
                     dic_lisct.append(dic_lisct_i)
             elif EnergyClass == "汽":
-                sql = "SELECT t.CollectionDate,t.SumValue,t.FlowValue,t.Volume,t.WD  FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy)  WHERE t.TagClassValue in (" + str(
+                sql = "SELECT distinct(t.CollectionDate),t.SumValue,t.FlowValue,t.Volume,t.WD  FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy)  WHERE t.TagClassValue in (" + str(
                     oc_list)[
-                                                                                                                                                                                                                                                   1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+                                                                                                                                                                                                                                                   1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' order by t.CollectionDate"
                 re = db_session.execute(sql).fetchall()
                 db_session.close()
                 for i in re:
@@ -308,8 +308,8 @@ def steamlossanalysis():
             total = 0.0
             for st in sts:
                 total = total + float(st.TotalSumValue)
-            dir["输入总蒸汽量"] = total
-            dir["输出总蒸汽量"] = reto
+            dir["inputSteam"] = total
+            dir["outputSteam"] = reto
             if reto > 0:
                 losst = total - reto
                 if losst > 0:
@@ -319,10 +319,27 @@ def steamlossanalysis():
             else:
                 losst = total
                 lossr = "100%"
-            dir["管损率"] = lossr
-            dir["管损"] = losst
+            dir["PipeDamageRate"] = lossr
+            dir["PipeDamage"] = losst
+            unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == EnergyClass).first()[0]
+            dir["Unit"] = unit
             dir_list = []
             if TimeClass == "日":
+                for i in range(int(StartTime[11:13]), int(EndTime[11:13]) + 1):
+                    stasH = StartTime[0:11] + addzero(i) + ":00:00"
+                    endsH = StartTime[0:11] + addzero(i) + ":59:59"
+                    dir_list_i = {}
+                    dir_list_i["时间"] = StartTime[0:11] + addzero(i)
+                    re = energyStatistics(oc_list, stasH, endsH, EnergyClass)
+                    stsm = db_session.query(SteamTotal).filter(
+                        SteamTotal.MaintainTime.between(StartTime, EndTime)).all()
+                    totalm = 0.0
+                    for stm in stsm:
+                        totalm = totalm + float(stm.TotalSumValue)
+                    loss = totalm - re
+                    dir_list_i["管损"] = loss
+                    dir_list.append(dir_list_i)
+            elif TimeClass == "月":
                 for i in range(int(StartTime[8:10]), int(EndTime[8:10])+1):
                     stae = StartTime[0:8] + addzero(i) + " 00:00:00"
                     ende = StartTime[0:8] + addzero(i) + " 23:59:59"
@@ -336,7 +353,7 @@ def steamlossanalysis():
                     loss = totalm - re
                     dir_list_i["管损"] = loss
                     dir_list.append(dir_list_i)
-            elif TimeClass == "月":
+            elif TimeClass == "年":
                 for i in range(int(StartTime[5:7]), int(EndTime[5:7])+1):
                     emonth = getMonthFirstDayAndLastDay(StartTime[0:4], i)
                     staeM = datetime.datetime.strftime(emonth[0], "%Y-%m-%d %H:%M:%S")
@@ -352,22 +369,7 @@ def steamlossanalysis():
                     loss = totalm - re
                     dir_list_i["管损"] = loss
                     dir_list.append(dir_list_i)
-            elif TimeClass == "年":
-                for i in range(int(StartTime[0:4]), int(EndTime[0:4])+1):
-                    staeY = str(i) + "-01-01 00:00:00"
-                    eyear = getMonthFirstDayAndLastDay(i, 12)
-                    endeY = datetime.datetime.strftime(eyear[1], "%Y-%m-%d") + " 23:59:59"
-                    dir_list_i = {}
-                    dir_list_i["时间"] = str(i)
-                    re = energyStatistics(oc_list, staeY, endeY, EnergyClass)
-                    stsm = db_session.query(SteamTotal).filter(
-                        SteamTotal.MaintainTime.between(StartTime, EndTime)).all()
-                    totalm = 0.0
-                    for stm in stsm:
-                        totalm = totalm + float(stm.TotalSumValue)
-                    loss = totalm - re
-                    dir_list_i["管损"] = loss
-                    dir_list.append(dir_list_i)
+            dir["row"] = dir_list
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)

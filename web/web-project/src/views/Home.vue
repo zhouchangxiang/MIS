@@ -45,7 +45,7 @@
                   </ul>
                 </el-col>
                 <el-col :span="12">
-                  <ve-line :data="contrastMonthChartData" :settings="contrastMonthChartSettings" :extend="contrastMonthChartExtend" width="120px" height="100px" :legend-visible="false"></ve-line>
+                  <ve-line :data="contrastMonthChartData" :settings="contrastMonthChartSettings" :extend="contrastMonthChartExtend" v-loading="ChartsLoading" width="120px" height="100px" :legend-visible="false"></ve-line>
                 </el-col>
               </el-col>
               <el-col :span="8" style="white-space:nowrap;">
@@ -71,7 +71,7 @@
             </el-row>
             <el-row>
               <el-col :span="24">
-                <ve-line :data="realtimeChartData" :extend="realtimeChartExtend" height="260px" :legend-visible="true"></ve-line>
+                <ve-line :data="realtimeChartData" :extend="realtimeChartExtend" v-loading="ChartsLoading" height="260px" :legend-visible="true"></ve-line>
               </el-col>
             </el-row>
           </div>
@@ -85,7 +85,7 @@
               </el-select>
             </div>
             <div class="home-card-body" style="height:280px;">
-              <ve-bar :data="areaChartData" :extend="areaTimeChartExtend" height="260px" :legend-visible="false"></ve-bar>
+              <ve-bar :data="areaChartData" :extend="areaTimeChartExtend" v-loading="areaTimeChartsLoading" height="260px" :legend-visible="false"></ve-bar>
             </div>
           </el-col>
           <el-col :span="7">
@@ -100,7 +100,7 @@
                 <li><i class="bg-best"></i><span>优</span></li>
               </ul>
               <ve-gauge :data="electricLoadRateChartData" :extend="electricLoadRateChartExtend" height="200px"></ve-gauge>
-              <el-select class="" v-model="electricLoadRateTime" size="small" style="width: 80px;">
+              <el-select class="" v-model="electricLoadRateTime" size="small" style="width: 80px;" @change="getElectricLoadRateTime">
                 <el-option v-for="(item,index) in electricLoadRateTimeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </div>
@@ -273,6 +273,7 @@
         contrastMonthChartSettings: { //本月对比上月能耗图表配置
           area: true,
         },
+        ChartsLoading:false,
         contrastMonthChartExtend: {
           yAxis:{
             show:false
@@ -323,6 +324,7 @@
             symbolSize: 1
           }
         },
+        areaTimeChartsLoading:false,
         areaTimeChartExtend: {
           yAxis:{
             show:false,
@@ -358,7 +360,7 @@
         electricLoadRateChartData:{
           columns: ['type', 'value'],
           rows: [
-            { type: '占比', value: 45 }
+            { type: '占比', value: 0 }
           ]
         },
         electricLoadRateChartExtend: { //电能负荷率图表配置
@@ -397,29 +399,29 @@
           }
         },
         electricLoadRateTimeOptions: [{ //电能负荷率下拉框
-          value: '选项1',
+          value: '日',
           label: '本日'
         }, {
-          value: '选项2',
+          value: '月',
           label: '本月'
         }, {
-          value: '选项3',
+          value: '年',
           label: '本年'
         }],
-        electricLoadRateTime:'本日', //默认下拉
+        electricLoadRateTime:'日', //默认下拉
         onlineEquipmentOption:[], //在线情况采集
         ralTimeWarningTableData:[],//实时预警表格数据
         areaNameValue:"提取二车间",
         areaOptions:[],  //批次能耗内区域下拉框
-        lotsEnergyValue:"本日",
+        lotsEnergyValue:"日",
         lotsEnergyOptions:[{ //批次能耗时段下拉框
-          value: '本日',
+          value: '日',
           label: '本日'
         }, {
-          value: '本月',
+          value: '月',
           label: '本月'
         }, {
-          value: '本年',
+          value: '年',
           label: '本年'
         }],
         lotsBatchCount:"",
@@ -434,6 +436,7 @@
     created(){
       this.getEnergyPreview()
       this.getAreaTimeEnergy()
+      this.getElectricLoadRateTime()
       this.getOnLineEq()
       this.getArea()
       this.getBatchEnergy()
@@ -504,6 +507,7 @@
     },
     methods: {
       getEnergyPreview() {  //获取能耗预览内的数据
+        this.ChartsLoading = true
         var api = ""
         var that = this
         if(this.previewEnergyValue == "电"){
@@ -543,6 +547,7 @@
             params: {ModelFlag: "能耗预览",CompareDate:moment(this.CompareDate).format('YYYY-MM-DD'),EnergyClass:this.previewEnergyValue}
           })//获取对比图表
         ]).then(this.axios.spread(function(todayCon,compareDateCon,thisMonthCon,lastMonthCon,thisYearCon,lastYearCon,compareData){
+          that.ChartsLoading = false
           that.todayCon = JSON.parse(todayCon.data).value
           that.unit = JSON.parse(todayCon.data).unit
           that.compareDateCon = JSON.parse(compareDateCon.data).value
@@ -555,11 +560,13 @@
         }))
       },
       getAreaTimeEnergy(){
+        this.areaTimeChartsLoading = true
         var params = {
           EnergyClass: this.areaTimeEnergyValue,
           CompareTime:moment().format("YYYY-MM-DD")
         }
         this.axios.get("/api/areatimeenergycount",{params:params}).then(res => {
+          this.areaTimeChartsLoading = false
           var arr = []
           for(var i=0;i<res.data.rows.length;i++){
             if(i < 4){
@@ -568,6 +575,32 @@
           }
           this.areaChartData.rows = arr
           this.areaTimeChartExtend.label.formatter =  '{b}: {@score}' + res.data.unit
+        })
+      },
+      getElectricLoadRateTime(){
+        var that = this
+        var dayStartTime = moment().format('YYYY-MM-DD') + " 00:00:00"
+        var dayEndTime = moment().format('YYYY-MM-DD HH:mm:ss')
+        var monthStartTime = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm:ss')
+        var monthEndTime = moment().month(moment().month()).endOf('month').format('YYYY-MM-DD HH:mm:ss')
+        var yearStartTime = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD HH:mm:ss')
+        var yearEndTime = moment().year(moment().year()).endOf('year').format('YYYY-MM-DD HH:mm:ss')
+        var params = {}
+        if(this.electricLoadRateTime === "日"){
+          params.StartTime = dayStartTime
+          params.EndTime = dayEndTime
+          params.TimeClass = this.electricLoadRateTime
+        }else if(this.electricLoadRateTime === "月"){
+          params.StartTime = monthStartTime
+          params.EndTime = monthEndTime
+          params.TimeClass = this.electricLoadRateTime
+        }else if(this.electricLoadRateTime === "年"){
+          params.StartTime = yearStartTime
+          params.EndTime = yearEndTime
+          params.TimeClass = this.electricLoadRateTime
+        }
+        this.axios.get("/api/runefficiency",{params:params}).then(res => {
+          that.electricLoadRateChartData.rows[0].value = res.data.loadRate
         })
       },
       getOnLineEq(){

@@ -1245,8 +1245,8 @@ def energycost():
                         zgltotal = zgltotal + zgl
                         cost = energyStatisticsCost(oc_list, stae, ende, EnergyClass)
                         costtotal = costtotal + cost
-                        dir_list_i["耗量"] = zgl
-                        dir_list_i["成本"] = cost
+                        dir_list_i["耗量"] = round(zgl, 2)
+                        dir_list_i["成本"] = round(cost, 2)
                         dir_list.append(dir_list_i)
                 elif TimeClass == "月":
                     for i in range(int(StartTime[5:7]), int(EndTime[5:7])+1):
@@ -1260,8 +1260,8 @@ def energycost():
                         zgltotal = zgltotal + zgl
                         cost = energyStatisticsCost(oc_list, staeM, endeM, EnergyClass)
                         costtotal = costtotal + cost
-                        dir_list_i["耗量"] = zgl
-                        dir_list_i["成本"] = cost
+                        dir_list_i["耗量"] = round(zgl, 2)
+                        dir_list_i["成本"] = round(cost, 2)
                         dir_list.append(dir_list_i)
                 elif TimeClass == "年":
                     for i in range(int(StartTime[0:4]), int(EndTime[0:4])+1):
@@ -1275,8 +1275,8 @@ def energycost():
                         zgltotal = zgltotal + zgl
                         cost = energyStatisticsCost(oc_list, staeY, endeY, EnergyClass)
                         costtotal = costtotal + cost
-                        dir_list_i["耗量"] = zgl
-                        dir_list_i["成本"] = cost
+                        dir_list_i["耗量"] = round(zgl, 2)
+                        dir_list_i["成本"] = round(cost, 2)
                         dir_list.append(dir_list_i)
                 elif TimeClass == "时":
                     for i in range(int(StartTime[11:13]), int(EndTime[11:13])+1):
@@ -1289,11 +1289,11 @@ def energycost():
                         zgltotal = zgltotal + zgl
                         cost = energyStatisticsCost(oc_list, staeH, endeH, EnergyClass)
                         costtotal = costtotal + cost
-                        dir_list_i["耗量"] = zgl
-                        dir_list_i["成本"] = cost
+                        dir_list_i["耗量"] = round(zgl, 2)
+                        dir_list_i["成本"] = round(cost, 2)
                         dir_list.append(dir_list_i)
-                dir["expend"] = zgltotal
-                dir["expendCost"] = costtotal
+                dir["expend"] = round(zgltotal, 2)
+                dir["expendCost"] = round(costtotal, 2)
                 dir["expendUnit"] = volum.Unit
                 dir["transformerStorage"] = round(float(volum.Volume), 2)
                 dir["transformerUnit"] = volum.Unit
@@ -1311,8 +1311,8 @@ def energycost():
                         wsumtotal = wsumtotal + wsum
                         wsumcost = energyStatisticsCost(oc_list, staw, endw, EnergyClass)
                         costtotal = wsumcosttotal + wsumcost
-                        dir_list_i["耗量"] = wsum
-                        dir_list_i["成本"] = wsumcost
+                        dir_list_i["耗量"] = round(wsum, 2)
+                        dir_list_i["成本"] = round(wsumcost, 2)
                         dir_list.append(dir_list_i)
                 elif TimeClass == "月":
                     for i in range(int(StartTime[5:7]), int(EndTime[5:7]) + 1):
@@ -1325,8 +1325,8 @@ def energycost():
                         wsumtotal = wsumtotal + wsum
                         wsumcost = energyStatisticsCost(oc_list, stawM, endwM, EnergyClass)
                         wsumcosttotal = wsumcosttotal + wsumcost
-                        dir_list_i["耗量"] = wsum
-                        dir_list_i["成本"] = wsumcost
+                        dir_list_i["耗量"] = round(wsum, 2)
+                        dir_list_i["成本"] = round(wsumcost, 2)
                         dir_list.append(dir_list_i)
                 elif TimeClass == "年":
                     for i in range(int(StartTime[0:4]), int(EndTime[0:4]) + 1):
@@ -1339,8 +1339,8 @@ def energycost():
                         wsumtotal = wsumtotal + wsum
                         wsumcost = energyStatisticsCost(oc_list, stawY, wndeY, EnergyClass)
                         wsumcosttotal = wsumcosttotal + wsumcost
-                        dir_list_i["耗量"] = wsum
-                        dir_list_i["成本"] = wsumcost
+                        dir_list_i["耗量"] = round(wsum, 2)
+                        dir_list_i["成本"] = round(wsumcost, 2)
                         dir_list.append(dir_list_i)
                 elif TimeClass == "时":
                     for i in range(int(StartTime[11:13]), int(EndTime[11:13]) + 1):
@@ -1352,8 +1352,8 @@ def energycost():
                         wsumtotal = wsumtotal + wsum
                         wsumcost = energyStatisticsCost(oc_list, stawH, endwH, EnergyClass)
                         wsumcosttotal = wsumcosttotal + wsumcost
-                        dir_list_i["耗量"] = wsum
-                        dir_list_i["成本"] = wsumcost
+                        dir_list_i["耗量"] = round(wsum, 2)
+                        dir_list_i["成本"] = round(wsumcost, 2)
                         dir_list.append(dir_list_i)
                 wunit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "水").first()[0]
                 dir["unit"] = wunit
@@ -1370,8 +1370,8 @@ def energycost():
                         ssumtotal = ssumtotal + ssum
                         ssumcost = energyStatisticsCost(oc_list, stas, ends, EnergyClass)
                         ssumcosttotal = ssumcosttotal + ssumcost
-                        dir_list_i["耗量"] = ssum
-                        dir_list_i["成本"] = ssumcost
+                        dir_list_i["耗量"] = round(ssum, 2)
+                        dir_list_i["成本"] = round(ssumcost, 2)
                         dir_list.append(dir_list_i)
                 elif TimeClass == "月":
                     for i in range(int(StartTime[5:7]), int(EndTime[5:7]) + 1):
@@ -1384,8 +1384,8 @@ def energycost():
                         ssumtotal = ssumtotal + ssum
                         ssumcost = energyStatisticsCost(oc_list, stasM, endsM, EnergyClass)
                         ssumcosttotal = ssumcosttotal + ssumcost
-                        dir_list_i["耗量"] = ssum
-                        dir_list_i["成本"] = ssumcost
+                        dir_list_i["耗量"] = round(ssum, 2)
+                        dir_list_i["成本"] = round(ssumcost, 2)
                         dir_list.append(dir_list_i)
                 elif TimeClass == "年":
                     for i in range(int(StartTime[0:4]), int(EndTime[0:4]) + 1):
@@ -1398,8 +1398,8 @@ def energycost():
                         ssumtotal = ssumtotal + ssum
                         ssumcost = energyStatisticsCost(oc_list, stawY, sndeY, EnergyClass)
                         ssumcosttotal = ssumcosttotal + ssumcost
-                        dir_list_i["耗量"] = ssum
-                        dir_list_i["成本"] = ssumcost
+                        dir_list_i["耗量"] = round(ssum, 2)
+                        dir_list_i["成本"] = round(ssumcost, 2)
                         dir_list.append(dir_list_i)
                 elif TimeClass == "时":
                     for i in range(int(StartTime[11:13]), int(EndTime[11:13]) + 1):
@@ -1411,8 +1411,8 @@ def energycost():
                         ssumtotal = ssumtotal + ssum
                         ssumcost = energyStatisticsCost(oc_list, stasH, endsH, EnergyClass)
                         ssumcosttotal = ssumcosttotal + ssumcost
-                        dir_list_i["耗量"] = ssum
-                        dir_list_i["成本"] = ssumcost
+                        dir_list_i["耗量"] = round(ssum, 2)
+                        dir_list_i["成本"] = round(ssumcost, 2)
                         dir_list.append(dir_list_i)
                 wunit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽").first()[0]
                 dir["unit"] = wunit

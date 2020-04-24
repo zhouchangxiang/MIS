@@ -13,7 +13,7 @@
                 <el-menu-item v-if="!item.children" :index="item.name" :src="item.url" @click="clickSubMenu(item.name,item.url)"><i :class="item.icon"></i><span slot="title">{{ item.name }}</span></el-menu-item>
                 <el-submenu v-if="!item.url" :index="item.name">
                     <template slot="title"><i :class="item.icon"></i><span>{{ item.name }}</span></template>
-                    <el-menu-item v-for="(child,childIndex) in item.children" :key="childIndex" :index="childIndex+''" :src="child.url" @click="clickSubMenu(child.name,child.url)"><span style="margin-left:10px;">{{child.name}}</span></el-menu-item>
+                    <el-menu-item v-for="(child,childIndex) in item.children" :key="childIndex" :index="child.name" :src="child.url" @click="clickSubMenu(child.name,child.url)"><span style="margin-left:10px;">{{child.name}}</span></el-menu-item>
                 </el-submenu>
               </template>
             </el-menu>
@@ -42,13 +42,28 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </li>
-            <li><el-tooltip class="head-menu-item" effect="dark" content="采集点分布图" placement="bottom"><i class="el-icon-office-building" @click="scattergram"></i></el-tooltip></li>
-            <li><el-tooltip class="head-menu-item" effect="dark" content="全屏" placement="bottom"><i :class="isFullScreen?'el-icon-aim':'el-icon-full-screen'" @click="getFullCreeen"></i></el-tooltip></li>
-            <li style="margin-right: 10px;" v-if="weatherDesc === 'OK'"><el-tooltip class="head-menu-item" effect="dark" :content="weatherType" placement="bottom"><i :class="weatherIcon"></i></el-tooltip></li>
-            <li><div>{{ time }}</div></li>
+            <li>
+              <el-tooltip class="head-menu-item" effect="dark" content="采集点分布图" placement="bottom">
+                <i class="el-icon-office-building" @click="scattergram"></i>
+              </el-tooltip>
+            </li>
+            <li>
+              <el-tooltip class="head-menu-item" effect="dark" content="全屏" placement="bottom">
+                <i :class="isFullScreen?'el-icon-aim':'el-icon-full-screen'" @click="getFullCreeen"></i>
+              </el-tooltip>
+            </li>
+            <li>
+              <el-tooltip class="head-menu-item" effect="dark" content="基础表管理" placement="bottom">
+                <i class="el-icon-c-scale-to-original" @click="$router.push({path:'/config'})"></i>
+              </el-tooltip>
+            </li>
+            <li style="margin-right: 10px;" v-if="weatherDesc === 'OK'">
+              <el-tooltip class="head-menu-item" effect="dark" :content="weatherType" placement="bottom"><i :class="weatherIcon"></i>
+              </el-tooltip></li>
+            <li>
+            <div>{{ time }}</div></li>
           </ul>
         </div>
-        <!--<div class="head-right-menu"><ul><li class="active"><i class="el-icon-menu"></i></li></ul></div>-->
         <div class="head-right-menu">
           <ul>
             <li v-for="(item,index) in mainMenuList" :key="index" @click="clickMainMenu(index)" v-bind:class="{active:index==isactive}">{{ item.text }}</li>
@@ -105,7 +120,6 @@
 <script>
 var moment = require('moment');
 import screenfull from "screenfull"
-import {mapState} from 'vuex'
 export default {
   name: 'Index',
   data () {
@@ -115,6 +129,8 @@ export default {
       },
       isCollapse: false, //左侧菜单栏是否缩进了
       sideIcon:'el-icon-arrow-left', //左侧菜单栏缩进点击切换图标
+      isClickElseMenu:false,
+      AreaArr:[],
       time:"",  //实时显示当前的时间
       dialogUserVisible:false, //是否弹出个人信息
       isactive:"0", //主菜单选中索引值
@@ -123,6 +139,20 @@ export default {
         {text:"系统管理"}
       ],
       subMenulist:[], //子菜单导航列表
+      energyMenulist:[
+        {name: "桓仁厂区", icon: "el-icon-location-outline", children:[]},
+        {name: "能效分析", icon: "el-icon-data-analysis", url: "/EfficiencyAnalysis"},
+        {name: "综合报表", icon: "el-icon-document", url: "/DataReport"},
+        {name: "批次维护表", icon: "el-icon-set-up", url: "/MaintainedBatch"},
+        {name: "基础维护表", icon: "el-icon-s-operation", url: "/MaintainedBoard"},
+      ],
+      systemMenulist:[
+        {name:"组织架构",icon:"el-icon-office-building",url:"/Organization"},
+        {name:"角色管理",icon:"el-icon-s-check",url:"/Role"},
+        {name:"人员管理",icon:"el-icon-user",url:"/Personnel"},
+        {name:"工厂日历",icon:"el-icon-date",url:"/Calendar"},
+        {name:"系统日志",icon:"el-icon-notebook-1",url:"/Log"}
+      ],
       isFullScreen:false, //是否全屏
       weatherDesc:"",
       weatherType:"",
@@ -171,6 +201,7 @@ export default {
   created(){
     window.addEventListener('resize', this.getMenuHeight);
     this.getMenuHeight()
+    this.getAreaSubMenu()
     if(sessionStorage.getItem("LoginStatus")) {
       this.$store.commit('setUser',sessionStorage.getItem('WorkNumber'))
       var params = {
@@ -221,44 +252,48 @@ export default {
     clickMainMenu(index){  //切换模块
       this.isactive = index
       if(index == 0) {
-        var params = {
-          tableName: "AreaTable",
-          limit:1000,
-          offset:0
-        }
-        var arr = []
-        this.axios.get("/api/CUID",{params:params}).then(res =>{
-          var resData = JSON.parse(res.data).rows
-          arr.push({
-            name:"整厂区",
-            url:"/Areas?areaName=整厂区"
+        this.subMenulist = this.energyMenulist
+        if(this.isClickElseMenu){
+          this.$router.push({
+            path:this.subMenulist[0].children[0].url,
+            query:{
+              t:Date.now()
+            }
           })
-          for(var i=0;i < resData.length;i++){
-            arr.push({
-              name:resData[i].AreaName,
-              url:"/Areas?areaName=" + resData[i].AreaName
-            })
-          }
-        },res =>{
-          console.log("获取车间时请求错误")
-        })
-        this.subMenulist = [
-          {name: "桓仁厂区", icon: "el-icon-location-outline", children:arr},
-          {name: "能效分析", icon: "el-icon-time", url: "/EfficiencyAnalysis"},
-          {name: "综合报表", icon: "el-icon-document", url: "/DataReport"},
-          {name: "批次维护表", icon: "el-icon-set-up", url: "/MaintainedBatch"},
-          {name: "基础维护表", icon: "el-icon-s-operation", url: "/MaintainedBoard"},
-        ]
+        }
       }else if(index == 1){
-        this.subMenulist = [
-          {name:"组织架构",icon:"el-icon-office-building",url:"/Organization"},
-          // {name:"厂区管理",icon:"el-icon-location-information",url:"/Factory"},
-          // {name:"角色管理",icon:"el-icon-s-check",url:"/Role"},
-          {name:"人员管理",icon:"el-icon-user",url:"/Personnel"},
-          {name:"工厂日历",icon:"el-icon-date",url:"/Calendar"},
-          {name:"系统日志",icon:"el-icon-notebook-1",url:"/Log"},
-        ]
+        this.subMenulist = this.systemMenulist
+        this.$router.push({
+          path:this.subMenulist[0].url,
+          query:{
+            t:Date.now()
+          }
+        })
       }
+    },
+    getAreaSubMenu(){ //获取车间加入子菜单
+      var params = {
+        tableName: "AreaTable",
+        limit:1000,
+        offset:0
+      }
+      this.axios.get("/api/CUID",{params:params}).then(res =>{
+        var resData = JSON.parse(res.data).rows
+        this.AreaArr.push({
+          name:"整厂区",
+          url:"/Areas?areaName=整厂区"
+        })
+        for(var i=0;i < resData.length;i++){
+          this.AreaArr.push({
+            name:resData[i].AreaName,
+            url:"/Areas?areaName=" + resData[i].AreaName
+          })
+        }
+        this.energyMenulist[0].children = this.AreaArr
+        this.isClickElseMenu = true
+      },res =>{
+        console.log("获取车间时请求错误")
+      })
     },
     beforeDestroy() {  //时间定时器
       if (this.timer) {
@@ -278,7 +313,7 @@ export default {
     getWeather(){
       this.axios.get("http://wthrcdn.etouch.cn/weather_mini",{
         params: {
-          city: "昆明",
+          city: "本溪",
         }
       }).then(res =>{
         var weatherType = res.data.data.forecast[0].type
@@ -297,6 +332,10 @@ export default {
           this.weatherIcon = "el-icon-light-rain"
         }else if(weatherType === "暴雨"){
           this.weatherIcon = "el-icon-heavy-rain"
+        }else if(weatherType === "阵雪"){
+          this.weatherIcon = "fa fa-snowflake-o"
+        }else if(weatherType === "大雪"){
+          this.weatherIcon = "fa fa-snowflake-o"
         }
       })
     },
@@ -348,10 +387,11 @@ export default {
     border: none;
     clear: both;
     overflow: auto;
-    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
   .menu-ul::-webkit-scrollbar {
-    display: none;  /* 隐藏滚动条 */
+    display: none;
   }
   .el-menu-item .fa {
     margin-right: 5px;

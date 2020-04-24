@@ -151,6 +151,17 @@
 .itemMarginBottom{
   margin-bottom: 15px;
 }
+.card-head{
+  width: 100%;
+  margin-bottom:10px;
+  background: #082F4C;
+  color: #fff;
+  font-size: 18px;
+  height: 48px;
+  line-height: 48px;
+  padding: 0 10px;
+  border-radius:4px;
+}
 /* 卡片内下拉框 */
 .collapse-head-select{
   width: 100px;
