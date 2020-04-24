@@ -35,7 +35,7 @@
         <el-form-item v-for="(item,index) in tableData.handleForm" :key="index" :label="item.label" :prop="item.prop">
           <el-input v-if="item.type === 'input'" v-model="item.value" :disabled="item.disabled"></el-input>
           <el-select v-if="item.type === 'select'" v-model="item.value" placeholder="请选择">
-            <el-option v-for="(i,d) in item.DownData" :key="d" :label="i[item.showDownField]" :value="i[item.showDownField]"></el-option>
+            <el-option v-for="(i,d) in DownDataEven(item.DownData)" :key="d" :label="i[item.showDownField]" :value="i[item.showDownField]"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -144,7 +144,7 @@
               },res =>{
                 console.log("请求错误")
               })
-            }).catch(()   => {
+            }).catch(() => {
               this.$message({
                 type: 'info',
                 message: '已取消删除'
@@ -163,7 +163,6 @@
       determineSubmitType(){  //判断表单提交的字段类型
         this.tableData.handleForm.forEach(item =>{
           if(item.type === "select"){
-            var that = this
             var params = {
               tableName: item.Downtable,
               limit:100000000,
@@ -179,6 +178,62 @@
             })
           }
         })
+      },
+      DownDataEven: function (data) {
+        this.tableData.handleForm.forEach(item =>{
+          if(item.hasOwnProperty('childSelect')) {
+            this.tableData.handleForm.forEach(v => {
+              if (v.prop === item.childSelect) {
+                var params = {
+                  tableName: v.Downtable,
+                  field: v.searchField,
+                  fieldvalue: item.value,
+                  limit: 100000000,
+                  offset: 0
+                }
+                this.axios.get("/api/CUID", {
+                  params: params
+                }).then(res => {
+                  var resdata = JSON.parse(res.data)
+                  v.DownData = resdata.rows
+                  return data
+                }, res => {
+                  console.log("请求错误")
+                })
+              }
+            })
+          }
+        })
+        return data
+      },
+      determineSubmitTypeChange(){
+        // var that = this
+        // this.tableData.handleForm.forEach(item =>{
+        //   if(item.hasOwnProperty('childSelect')){
+        //     this.tableData.handleForm.forEach(v =>{
+        //       if(v.prop === item.childSelect){
+        //         var params = {
+        //           tableName: v.Downtable,
+        //           field:v.searchField,
+        //           fieldvalue:item.value,
+        //           limit:100000000,
+        //           offset:0
+        //         }
+        //         this.axios.get("/api/CUID",{
+        //           params: params
+        //         }).then(res =>{
+        //           var data = JSON.parse(res.data)
+        //           that.$set(that.tableData.handleForm)
+        //           v.DownData = data.rows
+        //         },res =>{
+        //           console.log("请求错误")
+        //         })
+        //       }
+        //     })
+        //   }else if(item.hasOwnProperty('searchField')){
+        //
+        //   }
+        // })
       },
       save(){
         if(this.tableData.dialogTitle === "添加"){

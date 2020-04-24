@@ -22,7 +22,7 @@
     </el-col>
     <el-col :span="24">
       <div class="energyDataContainer">
-        <ve-line :data="chartData" :extend="ChartExtend" :data-zoom="dataZoom" v-loading="chartsLoading"></ve-line>
+        <ve-chart :data="chartData" :extend="ChartExtend" :settings="chartSettings" :data-zoom="dataZoom" v-loading="chartsLoading"></ve-chart>
       </div>
     </el-col>
   </el-row>
@@ -68,14 +68,18 @@
         ],
         ChartExtend: {
           grid:{
-            left:'0',
-            right:'0',
+            left:'10px',
+            right:'10px',
             bottom:'40px',
             top:'40px'
           },
           series:{
             smooth: false
           }
+        },
+        chartSettings: {
+          type:"line",
+          yAxisName: ['能耗量']
         },
         chartData: {
           columns: [],
@@ -154,15 +158,29 @@
                 columns: ['时间', '总功率'],
                 rows: res.data.row
               }
+              that.chartSettings = {
+                type:"line",
+                yAxisName: ['能耗量']
+              }
             }else if(that.formParameters.energy === "水"){
               that.chartData = {
                 columns: ['时间', '累计量', '瞬时量'],
                 rows: res.data.row
               }
+              that.chartSettings = {
+                type:"line",
+                yAxisName: ['能耗量']
+              }
             }else if(that.formParameters.energy === "汽"){
               that.chartData = {
                 columns: ['时间', '累计量', '瞬时量', '体积', '温度'],
                 rows: res.data.row
+              }
+              that.chartSettings = {
+                type:"histogram",
+                axisSite: { right: ['温度'] },
+                showLine: ['温度','体积'],
+                yAxisName: ['能耗量', '温度','体积']
               }
             }
           })
@@ -183,8 +201,7 @@
       websocketonerror(){//连接建立失败
         this.$notify.info({
           title: 'websocket连接失败',
-          message: '实时数据的服务连接失败',
-          duration: 0
+          message: '实时数据的服务连接失败'
         });
       },
       websocketonmessage(e){ //数据接收
@@ -206,8 +223,7 @@
       websocketclose(e){  //关闭
         this.$notify.info({
           title: 'websocket关闭',
-          message: '实时数据的服务程序已关闭',
-          duration: 0
+          message: '实时数据的服务程序已关闭'
         });
       }
     }
