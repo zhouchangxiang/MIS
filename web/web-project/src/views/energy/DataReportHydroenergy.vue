@@ -11,7 +11,7 @@
     </el-col>
     <el-col :span="24">
       <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
-        <div class="chartTile">电能报表</div>
+        <div class="chartTile">水能报表</div>
         <el-select v-model="areaValue" size="mini" @change="searchTime">
           <el-option v-for="(item,index) in areaOptions" :key="item.index" :label="item.AreaName" :value="item.value"></el-option>
         </el-select>
@@ -78,7 +78,7 @@
             return time.getTime() > Date.now();
           }
         },
-        areaValue:"桓仁厂区",
+        areaValue:"整厂区",
         areaOptions:[],
         tableData:[],
         total:0,

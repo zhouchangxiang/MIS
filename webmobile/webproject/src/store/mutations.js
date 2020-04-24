@@ -6,7 +6,7 @@ const mutations={
         state.choosekind=choosekind
     },  
     Chooseworkplace:(state,workplace)=>{
-    state.workplace=workplace
+        state.workplace=workplace
     },
     Sbnumbers:(state,value)=>{
         state.sbnumber=value
@@ -14,9 +14,6 @@ const mutations={
     NumBox:(state,value)=>{
         state.numberbox=[]
         state.numberbox.push(value)
-    },
-    CompareBox:(state,value)=>{
-        state.comparebox=value
     }
 }
 export default mutations

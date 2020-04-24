@@ -3,7 +3,6 @@ const state={
     choosekind:0,
     workplace:'前处理车间',
     sbnumber:{},
-    numberbox:[],
-    comparebox:[]
+    numberbox:[]
 }
 export default state
