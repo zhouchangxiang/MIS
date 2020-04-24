@@ -12,25 +12,22 @@
                         required
                         clearable
                         type="tel"
-                        label="手机号"
                         label-width="53px"
                         left-icon="contact"
                         right-icon="question-o"
                         placeholder="输入登录账号"
-                        @click-right-icon="$toast('请填写11位手机号码')"
+                        @click-right-icon="$toast('请输入分配的账号')"
                        
                     />
                     <van-field
                         v-model="password"
-                        label="密码"
                         label-width="53px"
-                        left-icon="closed-eye"
+                        left-icon="eye-o"
                         right-icon="question-o"
                         placeholder="输入登录密码"
                         required
                         clearable
                         @click-right-icon="$toast('请牢记你的输入密码,不要泄露')"
-                   
                     />
       <div class='submit'><van-button color="#00FAE7FF" size="large" @click="login">登录</van-button></div>
     </div>
@@ -52,8 +49,12 @@ export default {
           this.$toast("用户名不能为空");
           return false;
         }
+        // if(!(/^1[34578]\d{9}$/.test(this.username))){
+        //   this.$toast("请输入正确的手机号码");
+        //   return false;
+        // }
         if(this.password.trim() == ''){
-          this.$toast("密码不能为空");
+          this.$toast('密码不能为空');
           return false;
         }else{
           let comment={WorkNumber:this.username,password:this.password}

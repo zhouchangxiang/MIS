@@ -7,24 +7,24 @@
       </van-tabs>
       </div>
       <div class="compare">
-        <div class="c1" :class="{switchbgc:this.bgc1}" @click="switchShow1()">
+        <div class="c1" :class="{switchbgc:bgc1}" @click="switchShow1()">
           <div class="icon electric"></div>
           <div class="dw electric1">kwh</div>
-          <div class="number">{{this.electric}}</div>
+          <div class="number">{{electric}}</div>
           <div class="comp">较昨日</div>
           <div class="sn">+1.456%</div>
         </div>
-         <div class="c2" :class="{switchbgc:this.bgc2}" @click="switchShow2()">
+         <div class="c2" :class="{switchbgc:bgc2}" @click="switchShow2()">
           <div class="icon water"></div>
           <div class="dw water">T</div>
-          <div class="number">{{this.water}}</div>
+          <div class="number">{{water}}</div>
           <div class="comp">较昨日</div>
           <div class="sn">+1.456%</div>
         </div>
-        <div class="c3" :class="{switchbgc:this.bgc3}" @click="switchShow3()">
+        <div class="c3" :class="{switchbgc:bgc3}" @click="switchShow3()">
           <div class="icon steam"></div>
           <div class="dw">T</div>
-          <div class="number">{{this.steam}}</div>
+          <div class="number">{{steam}}</div>
           <div class="comp">较昨日</div>
           <div class="sn">+1.456%</div>
         </div>
@@ -37,12 +37,12 @@
                 </div>
         </div>
          <div class="piclist">
-           <ve-line :data="kong" :settings="chartSettings" width="350px" height="240px"></ve-line>
+           <ve-line :data="kong" :settings="chartSettings" width="350px" height="240px"  :legend-visible="false"></ve-line>
          </div>
          <div class="show-foot">
                <div class="sf-l">
-                   <div class="hf">{{this.kind}}耗费成本</div>
-                   <div class="all-money">{{this.cost}}<span>元</span></div>
+                   <div class="hf">{{kind}}耗费成本</div>
+                   <div class="all-money">{{cost}}<span>元</span></div>
                </div>
                 <div class="sf-r">
                    <div class="machine">设备在线情况</div>
@@ -50,12 +50,12 @@
                </div>
         </div>
          <div class="bottom-dnh">
-           <div class="dnh">{{this.kind}}能耗量</div>
-           <div class="dnh-number">{{this.kind==='水'?this.water:(this.kind==='电'?this.electric:this.steam)}}</div>
-           <div class="dw">{{this.kind==='电'?'kwh':'t'}}</div>
+           <div class="dnh">{{kind}}能耗量</div>
+           <div class="dnh-number">{{kind==='水'?water:(kind==='电'?electric:steam)}}</div>
+           <div class="dw">{{kind==='电'?'kwh':'t'}}</div>
            <div class="dwpc">单位批次{{this.kind}}能耗量</div>
-           <div class="dwpc-number">{{this.kind==='水'?this.water/2:(this.kind==='电'?this.electric/2:this.steam/2)}}</div>
-           <div class="pc-dw">{{this.kind==='电'?'kwh':'t'}}/批</div>
+           <div class="dwpc-number">{{kind==='水'?water/2:(kind==='电'?electric/2:steam/2)}}</div>
+           <div class="pc-dw">{{kind==='电'?'kwh':'t'}}/批</div>
          </div>
        </div>
 </template>
@@ -83,7 +83,7 @@ export default {
           websoc:null,
           kind:'电',
           currentchoice:'',
-          kong:{},
+          kong:null,
           electricChartData:{
           columns:['日期', '数值'],
           rows: [
@@ -99,6 +99,23 @@ export default {
             { '日期': '', '数值': ""},
             { '日期': '', '数值': ""},
             { '日期': '', '数值': ""}]
+        },
+        resetChartData: {
+          columns: ['日期', '数值'],
+          rows: [
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""}
+          ]
         },
           waterChartData: {
           columns: ['日期', '数值'],
@@ -153,29 +170,41 @@ export default {
        this.bgc2=false
        this.bgc3=false
        this.kind='电'
-       this.kong=this.electricChartData
-       this.$toast('当前显示电数据')
+       if(this.bgc1){
+         this.$toast('当前显示电数据')
+         this.kong=this.electricChartData
+       }else{
+         this.kong=this.resetChartData
+       }
        this.cost=this.cost1[0]
       },
       switchShow2(){
-        this.bgc2=!this.bgc2
+       this.bgc2=!this.bgc2
        this.bgc1=false
        this.bgc3=false
        this.kind='水'
-       this.kong=this.waterChartData
-       this.$toast('当前显示水数据')
+       if(this.bgc2){
+         this.$toast('当前显示水数据')
+         this.kong=this.waterChartData
+       }else{
+         this.kong=this.resetChartData
+       }
        this.cost=this.cost1[1]
       },
       switchShow3(){
-        this.bgc1=this.bgc2=false
+       this.bgc1=this.bgc2=false
        this.bgc3=!this.bgc3
        this.kind='汽'
-       this.kong=this.steamChartData
-       this.$toast('当前显示汽数据')
+       if(this.bgc3){
+         this.$toast('当前显示汽数据')
+         this.kong=this.steamChartData
+       }else{
+         this.kong=this.resetChartData
+       }
        this.cost=this.cost1[2]
       },
       //websocket 获取数据方法汇总
-       initWebSocket(){
+      initWebSocket(){
             this.websoc=new WebSocket('ws://127.0.0.1:5002')
             this.websoc.onopen=this.webscop
             this.websoc.onmessage=this.webscom
@@ -216,6 +245,7 @@ export default {
         webscoclos(){
             console.log('关闭连接。。。')
         },
+        //点击导航栏获取相关能耗数据
         getData(e){
           let params={
             StartTime:'2020-04-09 12:22:59',
@@ -236,18 +266,20 @@ export default {
                     newlist.push(JSON.parse(res2.data).cost)
                     newlist.push(JSON.parse(res3.data).cost)
                     this.cost1=newlist
+                    this.bgc1=this.bgc2=this.bgc3=false
+                    this.kong=this.resetChartData
                   }))
               },
-      getNavbar(){
+        //初始化获取navbar数据条
+        getNavbar(){
         this.loading=true
         this.$http.get('/api/areatimeenergycount',{params:{
               EnergyClass:'电',CompareTime:'2020-04-14'
             }}).then((res3) => {
               this.loading=false
-              this.$store.commit('CompareBox',res3.data.rows)
-              let arr=this.$store.state.comparebox
+              let arr=res3.data.rows
               for(var i=0;i<arr.length;i++){
-                this.list.push(arr[i]['区域'])
+              this.list.push(arr[i]['区域'])
         }
       })
       }
@@ -261,7 +293,7 @@ export default {
      .show-box{
         position: relative;
         width: 375px;
-        height:800px;
+        height:750px;
         box-sizing: border-box;
         padding: 0 12px 12px 13px;
         background: @bgcc;
