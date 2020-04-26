@@ -4,7 +4,8 @@ from flask_login import login_required
 from dbset.account import auth_lib
 from handlers.SystemManagement.calendar import cale
 from handlers.account import account_auth
-from handlers.SystemManagement import user_management, PermissionAssignment,Role_management
+from handlers.SystemManagement import user_management, PermissionAssignment, Role_management
+from handlers.account.user_role import user_manager
 from handlers.energymanager.energy_Electric import energyElectric, energyElectricSelect
 from handlers.energymanager.energy_Steam import energySteam, energySteamSelect
 from handlers.energymanager.energy_Water import energyWater, energyWaterSelect
@@ -37,11 +38,11 @@ app.register_blueprint(Role_management.role_management)
 app.register_blueprint(system_manage.system_set)
 # 权限分配
 app.register_blueprint(PermissionAssignment.permission_distribution)
-#组织机构
+# 组织机构
 app.register_blueprint(organiza)
-#设备管理
+# 设备管理
 app.register_blueprint(equip)
-#生产数据管理
+# 生产数据管理
 app.register_blueprint(produce)
 # 过程连续数据
 # app.register_blueprint(ProcessContinuousData.continuous_data)
@@ -51,23 +52,29 @@ app.register_blueprint(systemlog)
 app.register_blueprint(batch)
 # 日历管理
 app.register_blueprint(cale)
-#能耗管理
+# 能耗管理
 app.register_blueprint(energy)
-#电能管理
+# 电能管理
 app.register_blueprint(energyElectric)
-#汽能管理
+# 汽能管理
 app.register_blueprint(energySteam)
-#水能管理
+# 水能管理
 app.register_blueprint(energyWater)
+# 组织架构
+app.register_blueprint(user_manager)
+
+
 @app.route('/')
 @login_required
 def index():
     return render_template("./main/index.html")
 
+
 @app.route('/home')
 @login_required
 def home():
     return render_template("./main/home.html")
+
 
 @app.route('/config')
 @login_required
@@ -76,6 +83,7 @@ def config():
         return render_template("./main/config.html")
     else:
         return "没有此权限！"
+
 
 api = Api(app)
 
@@ -131,7 +139,7 @@ class TodoList(Resource):
 api.add_resource(TodoList, '/todos')
 api.add_resource(Todo, '/todos/<todo_id>')
 
-#----------------------------------------------------------------------------------------------------------------------%%%%%%%%%%%
+# ----------------------------------------------------------------------------------------------------------------------%%%%%%%%%%%
 
 CUIDS = {
     'todo1': {'task': 'build an API'},
@@ -140,6 +148,8 @@ CUIDS = {
 }
 parser = reqparse.RequestParser()
 parser.add_argument('task')
+
+
 class CUID(Resource):
     def get(self, cuid_id):
         abort_if_todo_doesnt_exist(cuid_id)
@@ -155,13 +165,15 @@ class CUID(Resource):
         task = {'task': args['task']}
         CUIDS[cuid_id] = task
         return task, 201
+
+
 class CUIDList(Resource):
     def get(self):
         data = request.values
         searchModes = data.get("searchModes")
         if searchModes == "精确查询":
             return accurateSelect(request.values)
-        else:#模糊查询
+        else:  # 模糊查询
             return select(request.values)
 
     def post(self):
@@ -172,21 +184,32 @@ class CUIDList(Resource):
 
     def delete(self):
         return delete(request.values)
+
+
 api.add_resource(CUIDList, '/CUID')
 api.add_resource(CUID, '/CUID/<cuid_id>')
+
 
 class ENERGY(Resource):
     def get(self):
         return energyselect(request.values)
+
+
 class WATER(Resource):
     def get(self):
         return energyWaterSelect(request.values)
+
+
 class STEAM(Resource):
     def get(self):
-            return energySteamSelect(request.values)
+        return energySteamSelect(request.values)
+
+
 class ELECTRIC(Resource):
     def get(self):
         return energyElectricSelect(request.values)
+
+
 api.add_resource(ENERGY, '/energyall')
 api.add_resource(WATER, '/energywater')
 api.add_resource(STEAM, '/energysteam')
@@ -198,5 +221,4 @@ if __name__ == '__main__':
     server = Server(app.wsgi_app)
     server.watch('**/*.*')
     server.serve()
-    # app.run(debug=True)
-
+    # app.run()

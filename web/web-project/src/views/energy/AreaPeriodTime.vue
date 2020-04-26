@@ -3,20 +3,19 @@
       <el-col :span="24">
         <el-form :inline="true" :model="formParameters">
           <el-form-item label="时间：">
-            <el-date-picker type="date" v-model="formParameters.date" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false"></el-date-picker>
-            <el-checkbox v-model="AllArea" style="margin-left: 10px;">整厂区</el-checkbox>
+            <el-date-picker type="date" v-model="formParameters.date" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false" @change="getChartData(),getAreaTimeEnergy()"></el-date-picker>
           </el-form-item>
           <el-form-item style="float: right;">
-            <el-radio-group v-model="formParameters.energy" fill="#082F4C" size="small">
-              <el-radio-button v-for="item in energyList" :key="item.id" :label="item.name"></el-radio-button>
+            <el-radio-group v-model="formParameters.energy" fill="#082F4C" size="small" @change="getDayEnergy(),getChartData(),getAreaTimeEnergy()">
+              <el-radio-button v-for="(item,index) in energyList" :key="item.index" :label="item.label"></el-radio-button>
             </el-radio-group>
           </el-form-item>
         </el-form>
       </el-col>
-      <el-col :span="24" v-if="AllArea == false">
+      <el-col :span="24" v-if="newAreaName.areaName != '整厂区'">
         <el-col :span="18">
           <div class="energyDataCard">
-            <ve-line :data="chartData" :settings="chartSettings" :extend="ChartExtend"></ve-line>
+            <ve-line :data="chartData" :settings="chartSettings" :extend="ChartExtend" v-loading="ChartsLoading"></ve-line>
           </div>
           <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
             <div class="chartTile">尖峰平谷分析</div>
@@ -86,23 +85,22 @@
         </el-col>
         <el-col :span="6">
           <div class="energyDataCard">
-            <div class="realTimeCardTitle">实时数据 <span>kwh</span></div>
-            <div class="realTimeData">22432</div>
-            <div style="margin-top: 10px;"><span class="text-color-info-shallow">日累计能耗</span><span class="float-right text-color-info">4543.56kwh</span></div>
+            <div class="realTimeCardTitle">今日能耗<span>{{ todayConUnit }}</span></div>
+            <div class="realTimeData itemMarginBottom text-color-primary" v-html="todayHtml">{{ todayCon }}</div>
           </div>
           <div class="energyDataCard">
             <div class="energyDataItem">
               <div class="energyDataItemTitle">
-                <el-date-picker type="date" v-model="contrastDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false"></el-date-picker>
+                <el-date-picker type="date" v-model="CompareDate" :picker-options="pickerOptions" size="mini" style="width: 130px;" :clearable="false"></el-date-picker>
               </div>
             </div>
             <div class="energyDataItem">
-              <div class="energyDataItemTitle">今日能耗</div>
-              <div class="energyDataItemData">2342.23 kwh</div>
+              <div class="energyDataItemTitle">对比日能耗</div>
+              <div class="energyDataItemData">{{ CompareDateCon }} {{ todayConUnit }}</div>
             </div>
             <div class="energyDataItem">
               <div class="energyDataItemTitle">对比</div>
-              <div class="energyDataItemData">+9.5% </div>
+              <div class="energyDataItemData">{{ compareRatio }}</div>
             </div>
           </div>
           <div class="energyDataCard">
@@ -132,31 +130,30 @@
           </div>
         </el-col>
       </el-col>
-      <el-col :span="24" v-if="AllArea == true">
+      <el-col :span="24" v-if="newAreaName.areaName == '整厂区'">
         <el-col :span="18">
           <div class="energyDataCard">
-            <ve-line :data="chartData" :settings="chartSettings" :extend="ChartExtend"></ve-line>
+            <ve-line :data="chartData" :settings="chartSettings" :extend="ChartExtend" v-loading="ChartsLoading" height="300px"></ve-line>
           </div>
         </el-col>
         <el-col :span="6">
           <div class="energyDataCard">
-            <div class="realTimeCardTitle">实时数据 <span>kwh</span></div>
-            <div class="realTimeData">22432</div>
-            <div style="margin-top: 10px;"><span class="text-color-info-shallow">日累计能耗</span><span class="float-right text-color-info">4543.56kwh</span></div>
+            <div class="realTimeCardTitle">今日能耗<span>{{ todayConUnit }}</span></div>
+            <div class="realTimeData itemMarginBottom text-color-primary" v-html="todayHtml">{{ todayCon }}</div>
           </div>
-          <div class="energyDataCard">
-            <div class="energyDataItem">
+          <div class="energyDataCard" style="margin-bottom: 0">
+            <div class="energyDataItem" style="margin-top: 8px">
               <div class="energyDataItemTitle">
-                <el-date-picker type="date" v-model="contrastDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false"></el-date-picker>
+                <el-date-picker type="date" v-model="CompareDate" :picker-options="pickerOptions" size="mini" style="width: 130px;" :clearable="false" @change="getDayEnergy"></el-date-picker>
               </div>
             </div>
             <div class="energyDataItem">
-              <div class="energyDataItemTitle">今日能耗</div>
-              <div class="energyDataItemData">2342.23 kwh</div>
+              <div class="energyDataItemTitle">对比日能耗</div>
+              <div class="energyDataItemData">{{ CompareDateCon }} {{ todayConUnit }}</div>
             </div>
             <div class="energyDataItem">
               <div class="energyDataItemTitle">对比</div>
-              <div class="energyDataItemData">+9.5% </div>
+              <div class="energyDataItemData">{{ compareRatio }}</div>
             </div>
           </div>
         </el-col>
@@ -168,20 +165,41 @@
               <li><i class="bg-center"></i><span>中</span></li>
               <li><i class="bg-tall"></i><span>高</span></li>
             </ul>
-            <ul class="gradientList">
-              <li v-for="item in colorBarOption">
-                <p>{{ item.name }}</p>
+            <ul class="gradientList itemMarginBottom">
+              <li v-for="(item,index) in colorBarOption">
+                <p class="text-size-small text-color-info">{{ item.AreaName }}</p>
                 <el-popover trigger="hover">
-                  <div>0-4点：{{ item.value0 }}</div>
-                  <div>4-8点：{{ item.value4 }}</div>
-                  <div>8-12点：{{ item.value8 }}</div>
-                  <div>12-16点：{{ item.value12 }}</div>
-                  <div>16-20点：{{ item.value16 }}</div>
-                  <div>20-24点：{{ item.value20 }}</div>
+                  <div v-for="valueItem in item.valuelist">{{ valueItem.date }}点：{{ valueItem.value }}</div>
                   <div slot="reference" class="gradientColorItem" :style='{background:item.backgroundColor}'></div>
                 </el-popover>
               </li>
             </ul>
+            <el-row :gutter="1">
+              <el-col :span="1"><div class="periodTimeItem">0</div></el-col>
+              <el-col :span="1"><div class="periodTimeItem">1</div></el-col>
+              <el-col :span="1"><div class="periodTimeItem">2</div></el-col>
+              <el-col :span="1"><div class="periodTimeItem">3</div></el-col>
+              <el-col :span="1"><div class="periodTimeItem">4</div></el-col>
+              <el-col :span="1"><div class="periodTimeItem">5</div></el-col>
+              <el-col :span="1"><div class="periodTimeItem">6</div></el-col>
+              <el-col :span="1"><div class="periodTimeItem">7</div></el-col>
+              <el-col :span="1"><div class="periodTimeItem">8</div></el-col>
+              <el-col :span="1"><div class="periodTimeItem">9</div></el-col>
+              <el-col :span="1"><div class="periodTimeItem">10</div></el-col>
+              <el-col :span="1"><div class="periodTimeItem">11</div></el-col>
+              <el-col :span="1"><div class="periodTimeItem">12</div></el-col>
+              <el-col :span="1"><div class="periodTimeItem">13</div></el-col>
+              <el-col :span="1"><div class="periodTimeItem">14</div></el-col>
+              <el-col :span="1"><div class="periodTimeItem">15</div></el-col>
+              <el-col :span="1"><div class="periodTimeItem">16</div></el-col>
+              <el-col :span="1"><div class="periodTimeItem">17</div></el-col>
+              <el-col :span="1"><div class="periodTimeItem">18</div></el-col>
+              <el-col :span="1"><div class="periodTimeItem">19</div></el-col>
+              <el-col :span="1"><div class="periodTimeItem">20</div></el-col>
+              <el-col :span="1"><div class="periodTimeItem">21</div></el-col>
+              <el-col :span="1"><div class="periodTimeItem">22</div></el-col>
+              <el-col :span="1"><div class="periodTimeItem">23</div></el-col>
+            </el-row>
           </div>
         </el-col>
       </el-col>
@@ -189,18 +207,42 @@
 </template>
 
 <script>
-    export default {
-      name: "AreaPeriodTime",
-      data(){
-        this.chartSettings = {
+  var moment = require('moment');
+  export default {
+    name: "AreaPeriodTime",
+    inject:['newAreaName'],
+    data(){
+      return {
+        formParameters:{
+          date:moment().format('YYYY-MM-DD'),
+          energy:"电"
+        },
+        energyList:[
+          {label:"电"},
+          {label:"水"},
+          {label:"汽"},
+        ],
+        todayCon:"",
+        todayConUnit:"",
+        CompareDate:moment().subtract(1,'day').format('YYYY-MM-DD'),
+        CompareDateCon:"",
+        todayHtml:"",
+        pickerOptions:{
+          disabledDate(time) {
+            return time.getTime() > Date.now();
+          }
+        },
+        AllArea:false,
+        chartSettings: {
           area:true
-        }
-        this.ChartExtend = {
+        },
+        ChartsLoading:false,
+        ChartExtend: {
           title:{
             text:"能耗趋势"
           },
           grid:{
-            left:'10px',
+            left:'0px',
             right:'10px',
             bottom:'0',
             top:'50px'
@@ -208,75 +250,121 @@
           series:{
             smooth: false
           }
-        }
-        return {
-          formParameters:{
-            date:Date.now(),
-            energy:"电能"
-          },
-          energyList:[
-            {name:"电能",id:1},
-            {name:"水能",id:2},
-            {name:"汽能",id:3},
-          ],
-          pickerOptions:{
-            disabledDate(time) {
-              return time.getTime() > Date.now();
+        },
+        chartData:{
+          columns:["时间","能耗量"],
+          rows:[]
+        },
+        electricAnalyze:{
+          sharpTime:3,
+          sharp:100,
+          peakTime:7,
+          peak:87.5,
+          total:553524.5,
+          poiseTime:6,
+          poise:33.3,
+          ebbTime:8,
+          ebb:12.5,
+          average:0.89,
+        },
+        rationalAnalyze:{
+          sharpTime:3,
+          sharp:100,
+          peakTime:7,
+          peak:87.5,
+          poiseTime:6,
+          poise:33.3,
+          ebbTime:8,
+          ebb:12.5,
+          total:553524.5,
+          average:0.89
+        },
+        colorBarOption:[]
+      }
+    },
+    created(){
+      this.getDayEnergy()
+      this.getAreaTimeEnergy()
+      this.getChartData()
+      this.$watch("todayCon", function (newValue, oldValue) {
+        if(newValue > 0){
+          var thisYearConStr = newValue.toString().split("")
+          var item = ""
+          for(var i=0;i<thisYearConStr.length;i++){
+            if(thisYearConStr[i] === "."){
+              item += `<span style="margin-right: 3px;">${thisYearConStr[i]}</span>`
+            }else{
+              item += `<span class="numBlock">${thisYearConStr[i]}</span>`
             }
-          },
-          AllArea:false,
-          chartData:{
-            columns:["时间","能耗量"],
-            rows:[
-              {"时间":"00:00","能耗量":273},
-              {"时间":"01:00","能耗量":303},
-              {"时间":"02:00","能耗量":333},
-              {"时间":"03:00","能耗量":293},
-              {"时间":"04:00","能耗量":223},
-              {"时间":"05:00","能耗量":313},
-              {"时间":"06:00","能耗量":365},
-              {"时间":"07:00","能耗量":""},
-              {"时间":"08:00","能耗量":""},
-              {"时间":"09:00","能耗量":""},
-              {"时间":"10:00","能耗量":""},
-              {"时间":"11:00","能耗量":""},
-              {"时间":"12:00","能耗量":""}
-            ]
-          },
-          electricAnalyze:{
-            sharpTime:3,
-            sharp:100,
-            peakTime:7,
-            peak:87.5,
-            total:553524.5,
-            poiseTime:6,
-            poise:33.3,
-            ebbTime:8,
-            ebb:12.5,
-            average:0.89,
-          },
-          rationalAnalyze:{
-            sharpTime:3,
-            sharp:100,
-            peakTime:7,
-            peak:87.5,
-            poiseTime:6,
-            poise:33.3,
-            ebbTime:8,
-            ebb:12.5,
-            total:553524.5,
-            average:0.89
-          },
-          colorBarOption:[
-            {name: "新建综合制剂楼", value0: 2342,value4: 4234,value8: 2232,value12: 235,value16: 2042,value20: 264, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'},
-            {name: "提取二车间", value0: 2342,value4: 2342,value8: 2342,value12: 2342,value16: 2342,value20: 2342, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'},
-            {name: "新建综合制剂楼", value0: 2342,value4: 2342,value8: 2342,value12: 2342,value16: 2342,value20: 2342, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'},
-            {name: "新建综合制剂楼", value0: 2342,value4: 2342,value8: 2342,value12: 2342,value16: 2342,value20: 2342, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'}
-          ],
-          contrastDate:Date.now()
+          }
+          this.todayHtml = item
+        }else{
+          this.todayHtml = `<span class="numBlock">0</span>`
+        }
+      })
+    },
+    computed:{
+      compareRatio(){
+        if(this.todayCon > 0){
+          var compare = (this.todayCon - this.CompareDateCon) / this.todayCon * 100
+          if(this.todayCon - this.CompareDateCon > 0){
+            return "+" + compare.toFixed(2) + "%"
+          }else{
+            return compare.toFixed(2) + "%"
+          }
+        }else{
+          if(this.CompareDateCon > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
         }
       }
+    },
+    methods:{
+      getDayEnergy(){
+        var api = ""
+        var that = this
+        if(this.formParameters.energy == "电"){
+          api = "/api/energyelectric"
+        }else if(this.formParameters.energy == "水"){
+          api = "/api/energywater"
+        }else if(this.formParameters.energy == "汽"){
+          api = "/api/energysteam"
+        }
+        var nowTime = moment().format('HH:mm').substring(0,4) + "0"
+        var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
+        var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
+        var compareDateStartTime = moment(this.CompareDate).format('YYYY-MM-DD') + " 00:00"
+        var compareDateEndTime = moment(this.CompareDate).format('YYYY-MM-DD') + " " + nowTime
+        this.axios.all([
+          this.axios.get(api,{params: {StartTime: todayStartTime,EndTime:todayEndTime}}),//获取今天能耗
+          this.axios.get(api,{params: {StartTime: compareDateStartTime,EndTime:compareDateEndTime}})//获取对比天能耗
+        ]).then(this.axios.spread(function(todayCon,CompareDateCon){
+          that.todayCon = JSON.parse(todayCon.data).value
+          that.todayConUnit = JSON.parse(todayCon.data).unit
+          that.CompareDateCon = JSON.parse(CompareDateCon.data).value
+        }))
+      },
+      getChartData(){
+        this.ChartsLoading = true
+        var selectDate = moment(this.formParameters.date).format("YYYY-MM-DD")
+        this.axios.get("/api/trendlookboard",{params: {EnergyClass: this.formParameters.energy,CompareTime:selectDate}}).then(res =>{
+          this.ChartsLoading = false
+          this.chartData.rows = res.data.rows
+        })
+      },
+      getAreaTimeEnergy(){
+        var params = {
+          energyType: this.formParameters.energy,
+          CompareDate:moment(this.formParameters.date).format('YYYY-MM-DD')
+        }
+        this.axios.get("/api/areaTimeEnergy",{params:params}).then(res => {
+          this.colorBarOption = res.data
+        })
+      },
     }
+  }
 </script>
 
 <style scoped>
@@ -333,5 +421,10 @@
   .energyDataItemData{
     float: left;
     color: #082F4C;
+  }
+  .periodTimeItem {
+    text-align: center;
+    border: 1px solid rgba(8, 47, 76, 0.58);
+    color: rgba(8, 47, 76, 0.58);
   }
 </style>

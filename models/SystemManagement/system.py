@@ -1,6 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
-from sqlalchemy import create_engine,ForeignKey, Table,Column, DateTime, Integer, String, Unicode, Float
+from sqlalchemy import create_engine, ForeignKey, Table, Column, DateTime, Integer, String, Unicode, Float
 from sqlalchemy.dialects.mssql.base import BIT
 from werkzeug.security import generate_password_hash, check_password_hash
 from dbset.database.db_operate import GLOBAL_DATABASE_CONNECT_STRING
@@ -11,40 +11,34 @@ login_manager = LoginManager()
 # 创建对象的基类
 engine = create_engine(GLOBAL_DATABASE_CONNECT_STRING, deprecate_large_types=True)
 Session = sessionmaker(bind=engine)
-db_session= Session()
+db_session = Session()
 Base = declarative_base(engine)
 
-# # 菜单与角色关联表
-# Role_Menu = Table(
-#     "role_menu",
-#     Base.metadata,
-#     Column("Role_ID", Integer, ForeignKey("role.ID"), nullable=False, primary_key=True),
-#     Column("Menu_ID", Integer, ForeignKey("menu.ID"), nullable=False, primary_key=True)
-# )
 
 class SysLog(Base):
-	__tablename__ = "SysLog"
+    __tablename__ = "SysLog"
 
-	# ID:
-	ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
 
-	# IP:
-	IP = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+    # IP:
+    IP = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
 
-	# 计算机名称:
-	ComputerName = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+    # 计算机名称:
+    ComputerName = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
 
-	# 操作用户:
-	UserName = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+    # 操作用户:
+    UserName = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
 
-	# 操作日期:
-	OperationDate = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
+    # 操作日期:
+    OperationDate = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
 
-	# 操作内容:
-	OperationContent = Column(Unicode(2048), primary_key=False, autoincrement=False, nullable=True)
+    # 操作内容:
+    OperationContent = Column(Unicode(2048), primary_key=False, autoincrement=False, nullable=True)
 
-	# 类型:
-	OperationType = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+    # 类型:
+    OperationType = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+
 
 # Organization:
 class Organization(Base):
@@ -78,7 +72,8 @@ class Organization(Base):
     Img = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True, default="antonio.jpg")
 
     # 显示图标:
-    Color = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True,  default="#1696d3")
+    Color = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True, default="#1696d3")
+
 
 # 电子批记录
 class ElectronicBatch(Base):
@@ -125,6 +120,7 @@ class ElectronicBatch(Base):
     # 单位:
     Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+
 # 电子批记录
 class ElectronicBatchTwo(Base):
     __tablename__ = 'ElectronicBatchTwo'
@@ -170,6 +166,7 @@ class ElectronicBatchTwo(Base):
     # 单位:
     Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+
 # 审计追踪
 class AuditTrace(Base):
     __tablename__ = 'AuditTrace'
@@ -194,29 +191,31 @@ class AuditTrace(Base):
     # 其他:
     Other = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+
 class QualityControlTree(Base):
-	__tablename__ = "QualityControlTree"
+    __tablename__ = "QualityControlTree"
 
-	# ID:
-	ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
 
-	# 生产线
-	Name = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 生产线
+    Name = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-	# 工序
-	Note = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True	)
+    # 工序
+    Note = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-	# 设备号
-	EquipmentCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 设备号
+    EquipmentCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-	# 批次
-	BatchTag = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 批次
+    BatchTag = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-	# 品名W
-	Brand = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 品名W
+    Brand = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-	# 父节点
-	ParentNode = Column(Integer, primary_key = False, autoincrement = False, nullable = True)
+    # 父节点
+    ParentNode = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
 
 # 批次表
 class BatchInfo(Base):
@@ -242,6 +241,7 @@ class BatchInfo(Base):
 
     # 修改时间
     UpdateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 
 # 批次维护表
 class BatchInfoDetail(Base):
@@ -277,6 +277,7 @@ class BatchInfoDetail(Base):
     # 修改时间
     UpdateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+
 # 批记录操作步骤（SOP）
 class EletronicBatchDataStore(Base):
     __tablename__ = 'EletronicBatchDataStore'
@@ -295,11 +296,12 @@ class EletronicBatchDataStore(Base):
     # 操作值:
     OperationpValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    #操作人:
-    Operator = Column(Unicode(32), primary_key = False, autoincrement = False, nullable = True)
+    # 操作人:
+    Operator = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 描述:
     Description = Column(String(100), primary_key=False, autoincrement=False, nullable=True)
+
 
 # 批记录TYPE
 class BatchType(Base):
@@ -313,6 +315,7 @@ class BatchType(Base):
     # 批记录类型说明:
     Descrip = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
 
+
 # 品名维护表
 class BrandFlag(Base):
     __tablename__ = 'BrandFlag'
@@ -324,6 +327,7 @@ class BrandFlag(Base):
 
     # 品名标识:
     BrandNameFlag = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 
 # 流程确认表
 class FlowConfirm(Base):
@@ -348,6 +352,7 @@ class FlowConfirm(Base):
 
     # key:
     key = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+
 
 # 页面路由配置
 class PageRoute(Base):
@@ -395,6 +400,7 @@ class ModulMenus(Base):
     # 菜单创建人:
     Creator = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+
 # 资源菜单表
 class ResourceMenus(Base):
     __tablename__ = 'ResourceMenus'
@@ -427,6 +433,7 @@ class ResourceMenus(Base):
 
     # 菜单创建人:
     Creator = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 
 # 数据库建表配置
 class CreateTableSet(Base):
@@ -461,8 +468,9 @@ class CreateTableSet(Base):
     # ID字段:
     TableID = Column(Unicode(32), default="ID", primary_key=False, autoincrement=False, nullable=True)
 
+
 # 4.表字段配置：选择一个表，将此表的数据（字段）显示出来（新表只有ID）
-#字段表表头
+# 字段表表头
 class FieldSet(Base):
     __tablename__ = 'FieldSet'
     # id:
@@ -516,7 +524,8 @@ class FieldSet(Base):
     # 列宽:
     width = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-#是否
+
+# 是否
 class ISFlag(Base):
     __tablename__ = 'ISFlag'
     # id:
@@ -528,7 +537,8 @@ class ISFlag(Base):
     # 描述:
     Description = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-#是否
+
+# 是否
 class InputTypeTable(Base):
     __tablename__ = 'InputTypeTable'
     # id:
@@ -540,7 +550,8 @@ class InputTypeTable(Base):
     # 名称:
     Title = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-#表字段类型
+
+# 表字段类型
 class FieldType(Base):
     __tablename__ = 'FieldType'
     # id:
@@ -552,7 +563,8 @@ class FieldType(Base):
     # 描述:
     Description = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-#权限表
+
+# 权限表
 class Permission(Base):
     __tablename__ = 'Permission'
     # ID
@@ -574,7 +586,9 @@ class Permission(Base):
     WorkNumber = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
 
     # 创建时间
-    CreateData = Column(DateTime, primary_key=False, autoincrement=False, nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    CreateData = Column(DateTime, primary_key=False, autoincrement=False, nullable=True,
+                        default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+
 
 # 角色默认权限表
 class RolePermission(Base):
@@ -598,7 +612,8 @@ class RolePermission(Base):
     WorkNumber = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
 
     # 创建时间
-    CreateData = Column(DateTime, primary_key=False, autoincrement=False, nullable=True, default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    CreateData = Column(DateTime, primary_key=False, autoincrement=False, nullable=True,
+                        default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
     # 角色编码:
     RoleCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
@@ -709,6 +724,7 @@ class ElectricSiteURL(Base):
     # 备注:
     Description = Column(Unicode(150), primary_key=False, autoincrement=False, nullable=True)
 
+
 # 服务运行情况表
 class SystemRunDetail(Base):
     __tablename__ = 'SystemRunDetail'
@@ -732,6 +748,7 @@ class SystemRunDetail(Base):
 
     # 执行失败数:
     RunFailNum = Column(Unicode(150), primary_key=False, autoincrement=False, nullable=True)
+
 
 # 实时预警温度上下限维护表
 class EarlyWarningLimitMaintain(Base):
@@ -761,6 +778,7 @@ class EarlyWarningLimitMaintain(Base):
     # 时间:
     CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+
 # 实时预警三相电流不平衡百分比维护表
 class EarlyWarningPercentMaintain(Base):
     __tablename__ = 'EarlyWarningPercentMaintain'
@@ -782,6 +800,7 @@ class EarlyWarningPercentMaintain(Base):
 
     # 时间:
     CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 
 # 实时预警表
 class EarlyWarning(Base):
@@ -822,6 +841,7 @@ class WaterSteamBatchMaintain(Base):
     # 创建时间:
     CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+
 # 区域时段能耗颜色配置:
 class AreaTimeEnergyColour(Base):
     __tablename__ = "AreaTimeEnergyColour"
@@ -832,11 +852,15 @@ class AreaTimeEnergyColour(Base):
     # 区域:
     AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+    # 颜色值:
+    ColourSum = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
     # 颜色:
-    Colour = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    ColourValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 区域时段颜色分类:
     ColourName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 
 # 水汽价格维护表:
 class WaterSteamPrice(Base):
@@ -862,6 +886,10 @@ class WaterSteamPrice(Base):
 
     # 描述:
     Description = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
+
+    # 单位:
+    Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 
 # 电价格维护表:
 class ElectricPrice(Base):
@@ -891,9 +919,13 @@ class ElectricPrice(Base):
     # 描述:
     Description = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
 
-#增量表
-class IncremenTable(Base):
-    __tablename__ = "IncremenTable"
+    # 单位:
+    Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+
+# 水增量表
+class IncrementWaterTable(Base):
+    __tablename__ = "IncrementWaterTable"
 
     # ID:
     ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
@@ -903,6 +935,9 @@ class IncremenTable(Base):
 
     # 增量类型:
     IncremenType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 计算原始数据表ID:
+    CalculationID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
 
     # 价格表ID:
     PriceID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
@@ -917,7 +952,7 @@ class IncremenTable(Base):
     TagClassValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 采集时间:
-    CollectionDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    CollectionDate = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
 
     # 采集年:
     CollectionYear = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
@@ -928,7 +963,165 @@ class IncremenTable(Base):
     # 采集天:
     CollectionDay = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-#电价比重维护表
+    # 采集时:
+    CollectionHour = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 区域:
+    AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 增量库插入标识
+    insertFlag = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+# 电增量表
+class IncrementElectricTable(Base):
+    __tablename__ = "IncrementElectricTable"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 增量值:
+    IncremenValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 增量类型:
+    IncremenType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 计算原始数据表ID:
+    CalculationID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 价格表ID:
+    PriceID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 单位:
+    Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 仪表ID:
+    EquipmnetID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集点:
+    TagClassValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集时间:
+    CollectionDate = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集年:
+    CollectionYear = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集月:
+    CollectionMonth = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集天:
+    CollectionDay = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集时:
+    CollectionHour = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 区域:
+    AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 增量库插入标识
+    insertFlag = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+# 汽增量表
+class IncrementStreamTable(Base):
+    __tablename__ = "IncrementStreamTable"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 增量值:
+    IncremenValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 增量类型:
+    IncremenType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 计算原始数据表ID:
+    CalculationID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 价格表ID:
+    PriceID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 单位:
+    Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 仪表ID:
+    EquipmnetID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集点:
+    TagClassValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集时间:
+    CollectionDate = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集年:
+    CollectionYear = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集月:
+    CollectionMonth = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集天:
+    CollectionDay = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集时:
+    CollectionHour = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 区域:
+    AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 增量库插入标识
+    insertFlag = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+
+# 汽体积增量表
+class IncrementStreamVolume(Base):
+    __tablename__ = "IncrementStreamVolume"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 增量值:
+    IncremenValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 增量类型:
+    IncremenType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 计算原始数据表ID:
+    CalculationID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 价格表ID:
+    PriceID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 单位:
+    Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 仪表ID:
+    EquipmnetID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集点:
+    TagClassValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集时间:
+    CollectionDate = Column(DateTime, primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集年:
+    CollectionYear = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集月:
+    CollectionMonth = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集天:
+    CollectionDay = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集时:
+    CollectionHour = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 区域:
+    AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 增量库插入标识
+    insertFlag = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+
+# 电价比重维护表
 class ElectricProportion(Base):
     __tablename__ = "ElectricProportion"
 
@@ -944,10 +1137,145 @@ class ElectricProportion(Base):
     # 创建时间:
     CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+# BatchMaintain_START:
+class BatchMaintainTask(Base):
+    '''
+    任务表
+    '''
+    __tablename__ = "BatchMaintainTask"
 
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 工艺段:
+    PuidName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 计划单号:
+    PlanNum = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 批次号:
+    BatchID = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 品名:
+    BrandName = Column(Unicode(52), primary_key=False, autoincrement=False, nullable=True)
+
+    # 计划重量:
+    PlanQuantity = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 水用量:
+    WaterConsumption = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 汽用量:
+    SteamConsumption = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 创建日期:
+    CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 生产日期:
+    ProductionDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 开始时间:
+    StartTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 结束时间:
+    EndTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+class BrandMaintain(Base):
+    '''品名维护表'''
+    __tablename__ = "BrandMaintain"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+
+    # 产品名称:
+    BrandName = Column(Unicode(64), nullable=False, primary_key=False)
+
+    # 产品编码:
+    BrandCode = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+
+    # 创建日期:
+    CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+class PUIDMaintain(Base):
+    '''工艺维护表'''
+    __tablename__ = "PUIDMaintain"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+
+    # 工艺名称:
+    PUIDName = Column(Unicode(64), nullable=False, primary_key=False)
+
+    # 工艺编码:
+    PUIDCode = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+
+    # 产品名称:
+    BrandName = Column(Unicode(64), nullable=False, primary_key=False)
+
+    # 产品编码:
+    BrandCode = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
+
+    # 创建日期:
+    CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+class ElectricVolumeMaintain(Base):
+    '''电容量需量维护'''
+    __tablename__ = "ElectricVolumeMaintain"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+
+    # 变压器容量:
+    Volume = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 最大需量:
+    MaxVolume = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 单价:
+    UnitPrice = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 单位:
+    Unit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 是否启用:
+    IsEnabled = Column(Unicode(23), primary_key=False, autoincrement=False, nullable=True)
+
+    # 创建日期:
+    CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+class SteamTotal(Base):
+    '''汽能总量'''
+    __tablename__ = "SteamTotal"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+
+    # 汽能总量值:
+    TotalSumValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 时间(按天维护）:
+    MaintainTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 创建日期:
+    CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+class RatedPowerMaintain(Base):
+    '''额定功率'''
+    __tablename__ = "RatedPowerMaintain"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+
+    # 额定功率值:
+    RatedPowerValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 时间:
+    RatedPowerTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 创建日期:
+    CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 
 
 # 生成表单的执行语句
 Base.metadata.create_all(engine)
-

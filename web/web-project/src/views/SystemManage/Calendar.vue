@@ -11,8 +11,9 @@
                     @dateClick="handleDateClick"
                     @eventClick="handleEventClick"
                     @eventDrop="handleEventDrop"
+                    @eventResize="handleEventResize"
       />
-      <el-dialog title="添加日程" :visible.sync="dialogTableVisible">
+      <el-dialog title="添加日程" :visible.sync="dialogTableVisible" width="30%">
         <el-radio-group v-model="team" size="small">
           <el-radio-button v-for="(item,index) in teamList" :label="item.label" :value="item.value" :key="index"></el-radio-button>
         </el-radio-group>
@@ -33,6 +34,7 @@
   import '@fullcalendar/core/main.css';
   import '@fullcalendar/daygrid/main.css';
   import '@fullcalendar/timegrid/main.css';
+  var moment = require('moment');
   export default {
     name: "Calendar",
     components: {
@@ -87,16 +89,15 @@
         this.dialogTableVisible = true
       },
       handleEventClick(e) {  //点击日程删除
-        console.log(e)
         var ID = {
-          id:e.event._def.extendedProps.ID
+          id:e.event.extendedProps.ID
         }
         this.$confirm('此操作将永久删除该日程, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.axios.get("/api/CUID",{
+          this.axios.delete("/api/CUID",{
             params: {
               tableName: "plantCalendarScheduling",
               delete_data:JSON.stringify(ID),
@@ -119,10 +120,33 @@
           });
         });
       },
-      handleEventDrop(e){
-        var newDate = e.event.start
-        var oldDate = e.oldEvent.start
-        console.log(newDate,oldDate)
+      handleEventDrop(e){   //拖动日程
+        var startDate = moment(e.event.start).format('YYYY-MM-DD')
+        var EndDate = moment(e.event.end).format('YYYY-MM-DD')
+        var params = {
+          tableName: "plantCalendarScheduling",
+          ID:e.event.extendedProps.ID,
+          title:e.event.title,
+          start:startDate,
+          end:EndDate,
+          color:e.event.backgroundColor
+        }
+        this.axios.put("/api/CUID",this.qs.stringify(params)).then(res =>{
+          if(res.data == "OK"){
+            this.getData()
+            this.$message({
+              type: 'success',
+              message: "修改成功"
+            });
+          }else{
+            this.$message({
+              type: 'info',
+              message: res.data
+            });
+          }
+        },res =>{
+          console.log("请求错误")
+        })
       },
       addSave(){
         var params = {
@@ -144,6 +168,35 @@
               type: 'info',
               message: res.data
             });
+          }
+        },res =>{
+          console.log("请求错误")
+        })
+      },
+      handleEventResize(e){  //拖动改变日程长度
+        var startDate = moment(e.event.start).format('YYYY-MM-DD')
+        var EndDate = moment(e.event.end).format('YYYY-MM-DD')
+        var params = {
+          tableName: "plantCalendarScheduling",
+          ID:e.event.extendedProps.ID,
+          title:e.event.title,
+          start:startDate,
+          end:EndDate,
+          color:e.event.backgroundColor
+        }
+        this.axios.put("/api/CUID",this.qs.stringify(params)).then(res =>{
+          if(res.data == "OK"){
+            this.getData()
+            this.$message({
+              type: 'success',
+              message: "修改成功"
+            });
+          }else{
+            this.$message({
+              type: 'info',
+              message: res.data
+            });
+            this.getData()
           }
         },res =>{
           console.log("请求错误")

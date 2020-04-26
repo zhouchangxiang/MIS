@@ -30,6 +30,9 @@
   font-size: 20px;
 }
 /* 常用字体样式 */
+.float-left{
+  float: left;
+}
 .float-right{
   float: right;
 }
@@ -141,8 +144,23 @@
   color: #131414;
   padding: 10px;
   font-size: 16px;
+  border-radius:4px;
   clear: both;
   overflow: hidden;
+}
+.itemMarginBottom{
+  margin-bottom: 15px;
+}
+.card-head{
+  width: 100%;
+  margin-bottom:10px;
+  background: #082F4C;
+  color: #fff;
+  font-size: 18px;
+  height: 48px;
+  line-height: 48px;
+  padding: 0 10px;
+  border-radius:4px;
 }
 /* 卡片内下拉框 */
 .collapse-head-select{
@@ -183,4 +201,52 @@
 .paginationClass{
   margin:20px 0;
   text-align: right;
+}
+.el-pagination.is-background .el-pager li:not(.disabled).active{
+  background-color: #082F4C;
+}
+/* 数字排版样式 */
+.numBlock{
+  display: inline-block;
+  background:#228AD5;
+  color: #fff;
+  margin-right: 3px;
+  padding: 0 5px;
+  border-radius:4px;
+}
+/* 渐变色区域时段排版 */
+.gradientList{
+  clear: both;
+  overflow: hidden;
+}
+.gradientList li{
+  margin-top: 10px;
+}
+.gradientColorItem{
+  width: 100%;
+  height: 16px;
+  margin-top: 10px;
+  border: 1px solid #fff;
+}
+.gradientColorItem:hover{
+  border: 1px solid rgba(8,47,76,0.58);
+}
+/* 滑块 */
+.el-slider__runway{
+  background-color: #fff;
+}
+.el-slider__bar{
+  background: #082F4C;
+}
+.el-slider__button{
+  border: 2px solid #082F4C;
+}
+/*  */
+.card-head-select .el-input__inner{
+  background-color: #082F4C;
+  border:none;
+  color:#fff;
+}
+.card-head-select .el-select__caret{
+  line-height: 48px;
 }

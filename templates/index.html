@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/socket.io.js"></script>
+</head>
+<body>
+<h1 id="t"></h1><br>
+<h1 id="g"></h1>
+<script type="text/javascript">
+    $(document).ready(function() {
+        {#var namespace = '/test_conn';#}
+        {#var socket = io.connect('ws://' + '192.168.0.164' + ':' + '5001' + namespace);#}
+        {#socket.on('server_response', function(res) {#}
+        {#    console.log(res.data);#}
+        {#    $('#t').text(res.data);#}
+        {# });#}
+        var namespace1 = '/test_conn';
+        var socket1 = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace1);
+        socket1.on('server_response', function(res1) {
+            console.log(res1.data);
+            $('#g').text(res1.data);
+         });
+{#        var ws = new WebSocket("ws://127.0.0.1:5000");#}
+{#        ws.onopen = function(){#}
+{#          // Web Socket 已连接上，使用 send() 方法发送数据#}
+{#          ws.send();#}
+{#          alert("数据发送中...");#}
+{#        };#}
+{#                #}
+{#       ws.onmessage = function (evt){#}
+{#          var received_msg = evt.data;#}
+{#          console.log(received_msg)#}
+{#           $('#t').text(received_msg);#}
+{#       };#}
+{#                #}
+{#       ws.onclose = function(){#}
+{#          // 关闭 websocket#}
+{#          alert("连接已关闭...");#}
+{#       };#}
+
+    });
+</script>
+</body>
+</html>

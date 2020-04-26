@@ -1,0 +1,84 @@
+.van-tabs--line .van-tabs__wrap {
+    height: 20px;
+}
+.van-tab{
+    line-height: 20px;
+    padding: 0;
+    border-radius: 4px;
+}
+.van-tab__pane{
+    display: none;
+}
+.van-tabs__nav{
+    background-color: #3D4048;
+}
+.van-tabs__nav--card{
+    width: 105px;
+    height: 18px;
+    margin: 0px 0px;
+    border: 1px solid #3D4048;
+    border-radius: 4px;
+}
+.van-tabs__nav--card .van-tab {
+    color: #fff;
+    line-height: 18px;
+    border-right: 1px solid #3D4048;
+}
+.van-tabs--card>.van-tabs__wrap{
+    height: 18px;
+}
+.van-tabs__nav--card .van-tab.van-tab--active {
+    background-color: #fff;
+}
+.cir-choose .van-tabs__nav--card {
+    width: 193px;
+    height: 22px;
+    border: 1px solid #3D4048;
+}
+.cir-choose .van-tabs--card>.van-tabs__wrap {
+    height: 22px;
+}
+.cir-choose .van-tabs__nav--card .van-tab{
+    line-height: 22px;
+}
+.van-picker .van-picker__columns{
+    height: 199px!important;
+}
+.van-picker-column__wrapper{
+    line-height: 18px!important;
+}
+.van-picker-column{
+    background-color:#1E222B;
+}
+.van-picker__mask{
+    z-index: -10;
+}
+.van-picker-column{
+    font-size: 12px;
+    text-align:right;
+}
+.van-picker-column__item{
+    color:#76787E;
+    height: 18px;
+}
+.van-picker-column__item.van-picker-column__item--selected{
+    color: #fff;
+    height: 18px;
+    line-height: 18px;
+}
+.van-picker__frame{
+    z-index: -9;
+}
+.van-loading{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%);
+    z-index: 10;
+}
+.van-loading__text{
+    color: lightgreen;
+}
+.singledate .van-tabs__nav--card{
+    width:40px;
+  }

@@ -12,7 +12,7 @@
     </el-col>
     <el-col :span="24">
       <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
-        <div class="chartTile">趋势图 <span class="text-color-info-shallow text-size-normol">当前视在功率等级 优 额定功率 10kw</span></div>
+        <div class="chartTile">趋势图</div>
       </div>
       <div class="platformContainer">
         <el-col :span="6">
@@ -104,8 +104,10 @@
 
 <style scoped>
   .platformItem{
-   background: #EEEEEE;
-   border-radius:4px;
-   padding: 15px;
- }
+    background: #EEEEEE;
+    border-radius:4px;
+    padding: 15px;
+    overflow: hidden;
+    clear: both;
+  }
 </style>

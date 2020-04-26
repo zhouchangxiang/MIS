@@ -1,135 +1,72 @@
 <template>
-  <el-row style="background: #fff;">
-    <el-col :span="24" style="padding: 15px;">
-      <el-row>
-        <el-col :span="24">
-          <el-form :inline="true">
-            <el-form-item>
-              <el-select v-model="region" placeholder="请选择搜索字段" size="small">
-                <el-option v-for="(item,index) in regionList" :label="item.label" :value="item.value" :key="index"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item>
-              <el-input placeholder="请输入搜索内容" size="small" v-model="searchVal"></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="success" icon="el-icon-search" size="small" @click="searchTab">搜索</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" size="small" @click="openDialog('add')">添加</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="warning" size="small" @click="openDialog('edit')">修改</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="danger" size="small" @click="del">删除</el-button>
-            </el-form-item>
-          </el-form>
-        </el-col>
-      </el-row>
-      <el-table :data="tableData" border tooltip-effect="dark" @selection-change="handleSelectionChange">
-        <el-table-column type="selection"></el-table-column>
-        <el-table-column type="expand">
-            <template slot-scope="props">
-              <el-form label-position="left" class="table-expand">
-                <el-form-item label="ID">
-                  <span>{{ props.row.id }}</span>
-                </el-form-item>
-                <el-form-item label="密码">
-                  <span>{{ props.row.Password }}</span>
-                </el-form-item>
-                <el-form-item label="创建人">
-                  <span>{{ props.row.Creater }}</span>
-                </el-form-item>
-                <el-form-item label="创建时间">
-                  <span>{{ props.row.CreateTime }}</span>
-                </el-form-item>
-                <el-form-item label="最近在线时间">
-                  <span>{{ props.row.LastLoginTime }}</span>
-                </el-form-item>
-              </el-form>
-            </template>
-          </el-table-column>
-        <el-table-column prop="Name" label="用户名"></el-table-column>
-        <el-table-column prop="WorkNumber" label="工号"></el-table-column>
-        <el-table-column prop="StationName" label="所属岗位"></el-table-column>
-        <el-table-column prop="OrganizationName" label="所属部门"></el-table-column>
-        <el-table-column prop="FactoryName" label="所属厂区"></el-table-column>
-      </el-table>
-      <div class="paginationClass">
-        <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
-                       :total="total"
-                       :current-page="currentPage"
-                       :page-sizes="[5,10,20]"
-                       :page-size="pagesize"
-                       @size-change="handleSizeChange"
-                       @current-change="handleCurrentChange">
-        </el-pagination>
+  <el-row>
+    <el-col :span="24">
+      <div class="card-head">
+        <span style="margin-left: 10px;" class="text-size-normol">人员管理</span>
       </div>
-      <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false" width="40%">
-        <el-form :model="UserForm" label-width="80px" :rules="rules" ref="ruleForm">
-          <el-form-item label="ID">
-            <el-input v-model="UserForm.id" :disabled="true"></el-input>
-          </el-form-item>
-          <el-form-item label="用户名" prop="Name">
-            <el-input v-model="UserForm.Name"></el-input>
-          </el-form-item>
-          <el-form-item label="密码" prop="Password">
-            <el-input v-model="UserForm.Password"></el-input>
-          </el-form-item>
-          <el-form-item label="工号" prop="WorkNumber">
-            <el-input v-model="UserForm.WorkNumber"></el-input>
-          </el-form-item>
-          <el-form-item label="所属岗位">
-            <el-input v-model="UserForm.StationName"></el-input>
-          </el-form-item>
-          <el-form-item label="所属部门">
-            <el-input v-model="UserForm.OrganizationName"></el-input>
-          </el-form-item>
-          <el-form-item label="所属厂区">
-            <el-input v-model="UserForm.FactoryName"></el-input>
-          </el-form-item>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="save('ruleForm')">保存</el-button>
-        </span>
-      </el-dialog>
+      <div class="platformContainer">
+        <tableView :tableData="TableData" @getTableData="getTableData"></tableView>
+      </div>
     </el-col>
   </el-row>
 </template>
 
 <script>
   var moment = require('moment');
+  import tableView from '@/views/SystemManage/CommonTable'
   export default {
     name: "Personnel",
+    components:{tableView},
     data(){
       return {
-        tableData:[],
-        total:0,
-        pagesize:5,
-        currentPage:1,
-        multipleSelection: [],
-        dialogVisible: false,
-        UserForm:'',
-        dialogTitle:'',
-        rules:{
-          Name:[
-            {required: true, message: '请输入用户名', trigger: 'blur'}
+        TableData:{
+          tableName:"User",
+          column:[
+            {prop:"Name",label:"用户名"},
+            {prop:"Password",label:"密码"},
+            {prop:"WorkNumber",label:"工号"},
+            {prop:"Creater",label:"创建人"},
+            {prop:"CreateTime",label:"创建时间"},
+            {prop:"LastLoginTime",label:"最近在线时间"},
           ],
-          Password:[
-            {required: true, message: '请输入密码', trigger: 'blur'}
+          data:[],
+          limit:5,
+          offset:1,
+          total:0,
+          searchProp:"",
+          searchPropList:[
+            {label:"用户名",prop:"Name"},
+            {label:"工号",prop:"WorkNumber"}
           ],
-          WorkNumber:[
-            {required: true, message: '请输入工号', trigger: 'blur'}
-          ]
+          tableSelection:true, //是否在第一列添加复选框
+          tableSelectionRadio:false, //是否需要单选
+          searchVal:"",
+          multipleSelection: [],
+          dialogVisible: false,
+          dialogTitle:'',
+          rules:{
+            Name:[
+              {required: true, message: '请输入用户名', trigger: 'blur'}
+            ],
+            Password:[
+              {required: true, message: '请输入密码', trigger: 'blur'}
+            ],
+            WorkNumber:[
+              {required: true, message: '请输入工号', trigger: 'blur'}
+            ]
+          },
+          handleType:[
+            {type:"primary",label:"添加"},
+            {type:"warning",label:"修改"},
+            {type:"danger",label:"删除"},
+          ],
+          handleForm:[
+            {label:"ID",prop:"id",type:"input",value:"",disabled:true},
+            {label:"用户名",prop:"Name",type:"input",value:""},
+            {label:"密码",prop:"Password",type:"input",value:"",reg:"/^[0-9]+$/"},
+            {label:"工号",prop:"WorkNumber",type:"input",value:"",reg:"/^[0-9]+$/"}
+          ],
         },
-        region:"",
-        regionList:[
-          {label:"用户名",value:"Name"},
-          {label:"工号",value:"WorkNumber"}
-        ],
-        searchVal:""
       }
     },
     mounted() {
@@ -137,161 +74,21 @@
     },
     methods:{
       getTableData(){
+        var that = this
+        var params = {
+          tableName: this.TableData.tableName,
+          limit:this.TableData.limit,
+          offset:this.TableData.offset - 1
+        }
         this.axios.get("/api/CUID",{
-          params: {
-            tableName: "User",
-            limit:this.pagesize,
-            offset:this.currentPage - 1
-          }
+          params: params
         }).then(res =>{
           var data = JSON.parse(res.data)
-          this.tableData = data.rows
-          this.total = data.total
+          this.TableData.data = data.rows
+          this.TableData.total = data.total
         },res =>{
           console.log("请求错误")
         })
-      },
-      handleSizeChange(pagesize){ //每页条数切换
-        this.pagesize = pagesize
-        this.getTableData()
-      },
-      handleCurrentChange(currentPage) { // 页码切换
-        this.currentPage = currentPage
-        this.getTableData()
-      },
-      handleSelectionChange(val){  //选择行数
-        this.multipleSelection = val;
-      },
-      searchTab(){
-        this.axios.get("/api/CUID",{
-          params: {
-            tableName: "User",
-            field:this.region,
-            fieldvalue:this.searchVal,
-            limit:this.pagesize,
-            offset:this.currentPage - 1
-          }
-        }).then(res =>{
-          var data = JSON.parse(res.data)
-          this.tableData = data.rows
-          this.total = data.total
-        },res =>{
-          console.log("请求错误")
-        })
-      },
-      openDialog(val){
-        this.dialogTitle = val
-        if(val == "add"){
-          this.dialogVisible = true
-          this.UserForm = {
-            ID:"",
-            Name:"",
-            Password:"",
-            WorkNumber:"",
-            StationName:"",
-            OrganizationName:"",
-            FactoryName:"",
-            Creater: sessionStorage.getItem('UserName'),
-            CreateTime:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
-          }
-        }else if(val == "edit"){
-          if(this.multipleSelection.length == 1){
-            this.dialogVisible = true
-            let data = this.multipleSelection[0]
-            this.UserForm = {
-              ID:data.id,
-              Name:data.Name,
-              Password:data.Password,
-              WorkNumber:data.WorkNumber,
-              StationName:data.StationName,
-              OrganizationName:data.OrganizationName,
-              FactoryName:data.FactoryName
-            }
-          }else{
-            this.$message({
-              message: '请选择一条数据进行修改',
-              type: 'warning'
-            });
-          }
-        }
-      },
-      save(formName){
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            this.UserForm.tableName = "User"
-            if(this.dialogTitle == "add"){
-              console.log(this.UserForm)
-              this.axios.post("/api/CUID",this.qs.stringify(this.UserForm)).then(res =>{
-                if(res.data == "OK"){
-                  this.getTableData()
-                }else{
-                  this.$message({
-                    type: 'info',
-                    message: res.data
-                  });
-                }
-                this.dialogVisible = false
-              },res =>{
-                console.log("请求错误")
-              })
-            }else if(this.dialogTitle == "edit"){
-              this.axios.put("/api/CUID",this.qs.stringify(this.UserForm)).then(res =>{
-                if(res.data == "OK"){
-                  this.getTableData()
-                }else{
-                  this.$message({
-                    type: 'info',
-                    message: res.data
-                  });
-                }
-                this.dialogVisible = false
-              },res =>{
-                console.log("请求错误")
-              })
-            }
-          } else {
-            return false;
-          }
-        });
-      },
-      del(){
-        let mulId = []
-        this.multipleSelection.forEach(item=>{
-            mulId.push({id:item.id});
-        })
-        if(this.multipleSelection.length >= 1){
-          this.$confirm('确定删除所选记录？', '提示', {
-            distinguishCancelAndClose:true,
-            type: 'warning'
-          }).then(()  => {
-            this.axios.delete("/api/CUID",{
-              params: {
-                tableName: "User",
-                delete_data: JSON.stringify(mulId)
-              }
-            }).then(res =>{
-              if(res.data == "OK"){
-                this.$message({
-                  type: 'success',
-                  message: '删除成功'
-                });
-              }
-              this.getTableData()
-            },res =>{
-              console.log("请求错误")
-            })
-          }).catch(()   => {
-            this.$message({
-              type: 'info',
-              message: '已取消删除'
-            });
-          });
-        }else{
-          this.$message({
-            message: '至少选择一条数据进行删除',
-            type: 'warning'
-          });
-        }
       }
     }
   }

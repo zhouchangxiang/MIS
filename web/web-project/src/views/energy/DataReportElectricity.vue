@@ -2,78 +2,146 @@
   <el-row :gutter="20">
     <el-col :span="24">
       <el-form :model="formParameters">
-        <el-form-item label="时间：" style="margin-bottom: 0;">
-          <el-radio-group v-model="formParameters.resourceTime" fill="#082F4C" size="mini">
-            <el-radio-button v-for="item in radioTimeList" border :key="item.id" :label="item.name"></el-radio-button>
-          </el-radio-group>
-          <el-date-picker type="date" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false"></el-date-picker> ~
-          <el-date-picker type="date" v-model="formParameters.endDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false"></el-date-picker>
-        </el-form-item>
-        <el-form-item label="参数：">
-          <el-radio-group v-model="formParameters.electricityType" fill="#082F4C" size="mini">
-            <el-radio-button v-for="item in electricityTypeList" border :key="item.id" :label="item.name"></el-radio-button>
-          </el-radio-group>
+        <el-form-item label="时间：">
+          <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd HH:mm:ss"  style="width: 180px;" :clearable="false" @change="searchTime"></el-date-picker> ~
+          <el-date-picker type="datetime" v-model="formParameters.endDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd HH:mm:ss" style="width: 180px;" :clearable="false" @change="searchTime"></el-date-picker>
+          <el-button type="primary" size="mini" style="float: right;" @click="exportAllExcel">导出统计数据</el-button>
         </el-form-item>
       </el-form>
     </el-col>
     <el-col :span="24">
       <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
         <div class="chartTile">电能报表</div>
-        <el-select v-model="areaValue" size="mini">
-          <el-option v-for="item in areaOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+        <el-select v-model="areaValue" size="mini" @change="searchTime">
+          <el-option v-for="(item,index) in areaOptions" :key="item.index" :label="item.AreaName" :value="item.value"></el-option>
         </el-select>
-        <el-button type="primary" size="mini" style="float: right;margin: 9px 0;">导出</el-button>
+        <el-button type="primary" size="mini" style="float: right;margin: 9px 0;" @click="exportExcel">导出详细数据</el-button>
       </div>
       <div class="platformContainer">
-
+        <el-table :data="tableData" border tooltip-effect="dark" v-loading="loading">
+          <el-table-column prop="ZGL" label="总功率"></el-table-column>
+          <el-table-column prop="AU" label="A相电压"></el-table-column>
+          <el-table-column prop="AI" label="A相电流"></el-table-column>
+          <el-table-column prop="BU" label="B相电压"></el-table-column>
+          <el-table-column prop="BI" label="B相电流"></el-table-column>
+          <el-table-column prop="CU" label="C相电压"></el-table-column>
+          <el-table-column prop="CI" label="C相电流"></el-table-column>
+          <el-table-column prop="Unit" label="单位"></el-table-column>
+          <el-table-column prop="CollectionDate" label="采集时间"></el-table-column>
+          <el-table-column prop="AreaName" label="区域"></el-table-column>
+          <el-table-column prop="TagClassValue" label="采集点"></el-table-column>
+        </el-table>
+        <div class="paginationClass">
+          <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
+                         :total="total"
+                         :current-page="currentPage"
+                         :page-sizes="[5,10,20]"
+                         :page-size="pagesize"
+                         @size-change="handleSizeChange"
+                         @current-change="handleCurrentChange">
+          </el-pagination>
+        </div>
       </div>
     </el-col>
   </el-row>
 </template>
 
 <script>
+  var moment = require('moment');
   export default {
     name: "DataReportElectricity",
     data(){
       return {
         formParameters:{
-          resourceTime:"班次",
-          startDate:Date.now(),
-          endDate:Date.now(),
-          electricityType:"电量"
+          startDate:moment().day(moment().day() - 1).format('YYYY-MM-DD') + " 7:00",
+          endDate:moment().day(moment().day() - 1).format('YYYY-MM-DD') + " 19:00"
         },
-        radioTimeList:[
-          {name:"班次",id:1},
-          {name:"日",id:2},
-          {name:"周",id:3},
-          {name:"月",id:4},
-        ],
         pickerOptions:{
           disabledDate(time) {
             return time.getTime() > Date.now();
           }
         },
-        electricityTypeList:[
-          {name:"电量",id:1},
-          {name:"电流电压频率",id:2},
-          {name:"功率",id:3},
-        ],
-        areaValue:"桓仁厂区",
-        areaOptions:[
-          {value: 0,label: '桓仁厂区'},
-          {value: 1,label: '新建综合试剂楼'},
-          {value: 2,label: '提取二车间'},
-          {value: 3,label: '前处理车间'},
-          {value: 4,label: '研发中心'},
-          {value: 5,label: '生物科技楼'},
-          {value: 6,label: '原提取车间'},
-          {value: 7,label: '锅炉房'},
-          {value: 8,label: '综合办公楼'},
-          {value: 9,label: '综合车间'},
-          {value: 10,label: '污水站'},
-          {value: 11,label: '固体制剂车间'},
-          {value: 12,label: '展览馆'},
-        ]
+        areaValue:"",
+        areaOptions:[],
+        tableData:[],
+        total:0,
+        pagesize:5,
+        currentPage:1,
+        loading:false
+      }
+    },
+    created(){
+      this.getArea()
+      this.searchTime()
+    },
+    methods:{
+      exportAllExcel(){
+        var startTime = moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss")
+        var endTime = moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss")
+        this.$confirm('确定导出' +startTime+'至'+endTime+'电能统计记录？', '提示', {
+          type: 'warning'
+        }).then(()  => {
+          window.location.href = "http://127.0.0.1:5000/exceloutstatistic?StartTime="+startTime+"&EndTime="+endTime+"&EnergyClass=电"
+        });
+      },
+      exportExcel(){
+        var startTime = moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss")
+        var endTime = moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss")
+        var areaValue = this.areaValue
+        this.$confirm('确定导出' +startTime+'至'+endTime+" "+areaValue+'的电能详细记录？', '提示', {
+          type: 'warning'
+        }).then(()  => {
+          window.location.href = "http://127.0.0.1:5000/excelout?StartTime="+startTime+"&EndTime="+endTime+"&Area="+areaValue+"&EnergyClass=电"
+        });
+      },
+      getArea(){
+        var params = {
+          tableName: "AreaTable",
+          limit:1000,
+          offset:0
+        }
+        var that = this
+        this.axios.get("/api/CUID",{params:params}).then(res =>{
+          var resData = JSON.parse(res.data).rows
+          that.areaOptions.push({
+            AreaName:"整厂区",value:""
+          })
+          for(var i=0;i < resData.length;i++){
+            that.areaOptions.push({
+              AreaName:resData[i].AreaName,
+              value:resData[i].AreaName
+            })
+          }
+        },res =>{
+          console.log("获取车间时请求错误")
+        })
+      },
+      handleSizeChange(pagesize){ //每页条数切换
+        this.pagesize = pagesize
+        this.searchTime()
+      },
+      handleCurrentChange(currentPage) { // 页码切换
+        this.currentPage = currentPage
+        this.searchTime()
+      },
+      searchTime(){
+        this.loading = true
+        this.axios.get("/api/electric_report",{
+          params: {
+            start_time:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss"),
+            end_time:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss"),
+            area_name:this.areaValue,
+            limit:this.pagesize,
+            offset:this.currentPage
+          }
+        }).then(res =>{
+          var data = res.data
+          this.tableData = data.rows
+          this.total = data.total_column
+          this.loading = false
+        },res =>{
+          console.log("请求错误")
+        })
       }
     }
   }

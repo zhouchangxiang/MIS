@@ -13,41 +13,52 @@
             <el-row :gutter="10">
               <el-col :span="7" style="white-space:nowrap;">
                 <ul class="card-body-ul">
-                  <li><span class="text-size-large text-color-info">本日耗电量</span><span class="text-size-mini text-color-info-shallow">（截止12：00）</span></li>
+                  <li><span class="text-size-large text-color-info">本日耗{{ previewEnergyValue }}量</span>
+                    <span class="text-size-mini text-color-info-shallow">（截止{{ nowTime }}）</span>
+                    <span class="text-size-normol text-color-warning">{{ unit }}</span></li>
                   <li class="text-size-big text-color-warning">{{ todayCon }}</li>
                   <li><span class="text-size-mini text-color-info-shallow">对比</span>
                     <el-date-picker v-model="CompareDate" align="right" type="date" placeholder="选择日期" :picker-options="pickerOptions" @change="getEnergyPreview" :clearable="false" size="mini" style="width: 130px"></el-date-picker>
                   </li>
                   <li><span class="text-size-small text-color-primary">{{ compareDateCon }}</span>
-                    <span class="text-size-mini text-color-danger" style="margin-left: 20px;">{{ comparePer }}<i class="el-icon-top"></i></span></li>
+                    <span class="text-size-mini" :class="todayCon-compareDateCon>0?'text-color-danger':'text-color-success'" style="margin-left: 20px;">{{ comparePer }}</span></li>
                 </ul>
               </el-col>
               <el-col :span="9" style="white-space:nowrap;">
-                <ul class="card-body-ul" style="display: inline-block;">
-                  <li><span class="text-size-large text-color-info">本月耗电量</span></li>
-                  <li class="text-size-big text-color-warning">{{ thisMonthCon }}</li>
-                  <li style="margin-top: 15px;">
-                    <span class="text-size-mini text-color-info-shallow">上月同期</span>
-                    <span class="text-size-mini text-color-info">{{ lastMonthCon }}</span>
-                  </li>
-                  <li>
-                    <span class="text-size-mini text-color-info-shallow">上月同期</span>
-                    <span class="text-size-mini text-color-success">{{ lastMonthCompare }}<i class="el-icon-bottom"></i></span>
-                  </li>
-                </ul>
-                <ve-line :data="contrastMonthChartData" :settings="contrastMonthChartSettings" :extend="contrastMonthChartExtend" width="120px" height="100px" :legend-visible="false" style="display: inline-block;"></ve-line>
+                <el-col :span="24">
+                  <span class="text-size-large text-color-info">本月耗{{ previewEnergyValue }}量</span>
+                  <span class="text-size-mini text-color-info-shallow">（截止{{ nowDate }}）</span>
+                  <span class="text-size-normol text-color-warning">{{ unit }}</span>
+                </el-col>
+                <el-col :span="12">
+                  <ul class="card-body-ul">
+                    <li></li>
+                    <li class="text-size-big text-color-warning">{{ thisMonthCon }}</li>
+                    <li style="margin-top: 15px;">
+                      <span class="text-size-mini text-color-info-shallow">上月同期</span>
+                      <span class="text-size-mini text-color-info">{{ lastMonthCon }}</span>
+                    </li>
+                    <li>
+                      <span class="text-size-mini text-color-info-shallow">上月同期</span>
+                      <span class="text-size-mini" :class="thisMonthCon-lastMonthCon>0?'text-color-danger':'text-color-success'">{{ lastMonthCompare }}</span>
+                    </li>
+                  </ul>
+                </el-col>
+                <el-col :span="12">
+                  <ve-line :data="contrastMonthChartData" :settings="contrastMonthChartSettings" :extend="contrastMonthChartExtend" v-loading="ChartsLoading" width="120px" height="100px" :legend-visible="false"></ve-line>
+                </el-col>
               </el-col>
               <el-col :span="8" style="white-space:nowrap;">
                 <ul class="card-body-ul">
                   <li>
-                    <span class="text-size-large text-color-info">年累计耗电量</span>
-                    <span class="text-size-mini text-color-warning">kwh</span>
+                    <span class="text-size-large text-color-info">年累计耗{{ previewEnergyValue }}量</span>
+                    <span class="text-size-normol text-color-warning">{{ unit }}</span>
                   </li>
-                  <li class="text-size-big text-color-warning">{{ thisYearCon }}</li>
+                  <li class="text-size-big text-color-primary" v-html="thisYearHtml">{{ thisYearCon }}</li>
                   <li style="margin-top: 15px;">
                     <span class="text-size-mini text-color-info-shallow">上年同期</span>
                     <span class="text-size-mini text-color-info">{{ lastYearCon }}</span>
-                    <span style="margin-left: 20px;" class="text-size-mini text-color-danger">{{ lastYearCompare }}<i class="el-icon-top"></i></span>
+                    <span style="margin-left: 20px;" class="text-size-mini" :class="thisYearCon-lastYearCon>0?'text-color-danger':'text-color-success'">{{ lastYearCompare }}</span>
                   </li>
                 </ul>
               </el-col>
@@ -55,12 +66,12 @@
             <el-row>
               <el-col :span="24">
                 <span class="text-size-small text-color-info">今日对比能耗</span>
-                <span class="text-size-small text-color-primary" style="float: right">查看报表<i class="el-icon-d-arrow-right el-icon--right"></i></span>
+                <span class="text-size-small text-color-primary" @click="$router.push({ path:'/DataReport'})" style="float: right;cursor: pointer;">查看报表<i class="el-icon-d-arrow-right el-icon--right"></i></span>
               </el-col>
             </el-row>
             <el-row>
               <el-col :span="24">
-                  <ve-line :data="realtimeChartData" :settings="realtimeChartSettings" :extend="realtimeChartExtend" height="260px" :legend-visible="false"></ve-line>
+                <ve-line :data="realtimeChartData" :extend="realtimeChartExtend" v-loading="ChartsLoading" height="260px" :legend-visible="true"></ve-line>
               </el-col>
             </el-row>
           </div>
@@ -69,31 +80,12 @@
           <el-col :span="10">
             <div class="home-card-head">
               <span><i class="el-icon-guide el-icon--left" style="color: #228AD5;"></i>区域时段能耗</span>
-              <el-select class="card-head-select" v-model="areaTimeEnergyValue" placeholder="请选择">
+              <el-select class="card-head-select" v-model="areaTimeEnergyValue" placeholder="请选择" @change="getAreaTimeEnergy">
                 <el-option v-for="(item,index) in areaTimeEnergyOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </div>
             <div class="home-card-body" style="height:280px;">
-              <ul class="colorBar">
-                <li><i class="bg-dead"></i><span>停</span></li>
-                <li><i class="bg-low"></i><span>低</span></li>
-                <li><i class="bg-center"></i><span>中</span></li>
-                <li><i class="bg-tall"></i><span>高</span></li>
-              </ul>
-              <ul class="gradientList">
-                <li v-for="item in colorBarOption">
-                  <p>{{ item.name }}</p>
-                  <el-popover trigger="hover">
-                    <div>0-4点：{{ item.value0 }}</div>
-                    <div>4-8点：{{ item.value4 }}</div>
-                    <div>8-12点：{{ item.value8 }}</div>
-                    <div>12-16点：{{ item.value12 }}</div>
-                    <div>16-20点：{{ item.value16 }}</div>
-                    <div>20-24点：{{ item.value20 }}</div>
-                    <div slot="reference" class="gradientColorItem" :style='{background:item.backgroundColor}'></div>
-                  </el-popover>
-                </li>
-              </ul>
+              <ve-bar :data="areaChartData" :extend="areaTimeChartExtend" v-loading="areaTimeChartsLoading" height="260px" :legend-visible="false"></ve-bar>
             </div>
           </el-col>
           <el-col :span="7">
@@ -101,8 +93,14 @@
               <span><i class="el-icon-odometer el-icon--left" style="color: #FB3A06;"></i>电能负荷率</span>
             </div>
             <div class="home-card-body" style="height:280px;text-align: center">
-              <ve-gauge :data="electricLoadRateChartData" :settings="electricLoadRateChartSettings" :extend="electricLoadRateChartExtend" height="220px"></ve-gauge>
-              <el-select class="" v-model="electricLoadRateTime" size="small" style="width: 80px;">
+              <ul class="colorBar">
+                <li><i class="bg-tall"></i><span>差</span></li>
+                <li><i class="bg-center"></i><span>中</span></li>
+                <li><i class="bg-fine"></i><span>良</span></li>
+                <li><i class="bg-best"></i><span>优</span></li>
+              </ul>
+              <ve-gauge :data="electricLoadRateChartData" :extend="electricLoadRateChartExtend" height="200px"></ve-gauge>
+              <el-select class="" v-model="electricLoadRateTime" size="small" style="width: 80px;" @change="getElectricLoadRateTime">
                 <el-option v-for="(item,index) in electricLoadRateTimeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </div>
@@ -116,7 +114,7 @@
                 <li v-for="item in onlineEquipmentOption" style="margin-bottom: 5px;">
                   <p class="text-size-normol text-color-info">{{ item.name }}</p>
                   <p class="text-size-mini text-color-info-shallow" style="margin-top: 5px;"><span>上线数/总数</span><span style="float: right;">{{ item.online }}/{{ item.total }}</span></p>
-                  <el-progress :text-inside="true" :stroke-width="16" :percentage="item.rate"></el-progress>
+                  <el-progress :text-inside="true" :stroke-width="16" strokeLinecap="square" :percentage="item.rate"></el-progress>
                 </li>
               </ul>
             </div>
@@ -129,17 +127,17 @@
             <span><i class="el-icon-bell el-icon--left" style="color: #FB3A06;"></i>实时预警</span>
           </div>
           <div class="home-card-body" style="height: 300px;">
-            <el-table :data="ralTimeWarningTableData" size="mini" height="232px" max-height="232px" style="width: 100%">
-              <el-table-column prop="area" label="区域"></el-table-column>
-              <el-table-column prop="name" label="设备"></el-table-column>
-              <el-table-column prop="type" label="状态">
+            <el-table :data="ralTimeWarningTableData" size="mini" height="232px" max-height="232px" empty-text="暂无异常" style="width: 100%">
+              <el-table-column prop="AreaName" label="区域"></el-table-column>
+              <el-table-column prop="EQPName" label="设备"></el-table-column>
+              <el-table-column prop="WarningType" label="状态">
                 <template slot-scope="scope">
-                  <span class="text-size-mini text-color-warning">{{ scope.row.type }}</span>
+                  <span class="text-size-mini text-color-warning">{{ scope.row.WarningType }}</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="date" label="时间"></el-table-column>
+              <el-table-column prop="WarningDate" label="时间"></el-table-column>
             </el-table>
-            <span class="text-size-mini text-color-primary" style="float: right;margin-top: 15px;">更多记录<i class="el-icon-d-arrow-right el-icon--right"></i></span>
+            <span class="text-size-mini text-color-primary" @click="$router.push({ path:'/Areas?navOptionsCurrent=5'})" style="float: right;margin-top: 15px;cursor: pointer;">更多记录<i class="el-icon-d-arrow-right el-icon--right"></i></span>
           </div>
         </div>
         <div class="home-card">
@@ -148,25 +146,28 @@
           </div>
           <div class="home-card-body" style="height: 300px;">
             <p>
-              <span style="font-size: 48px;" class="text-color-primary">54<span class="text-size-mini">批</span></span>
-              <el-select class="" v-model="lotsEnergyValue" size="small" style="width: 80px;float: right;">
+              <span style="font-size: 48px;" class="text-color-primary">{{ lotsBatchCount }}<span class="text-size-mini">批</span></span>
+              <el-select class="" v-model="lotsEnergyValue" size="small" style="width: 80px;float: right;" @change="getBatchEnergy">
                 <el-option v-for="item in lotsEnergyOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+              </el-select>
+              <el-select class="" v-model="areaNameValue" size="small" style="width: 120px;float: right;margin-right: 10px;" @change="getBatchEnergy">
+                <el-option v-for="item in areaOptions" :key="item.ID" :label="item.AreaName" :value="item.AreaName"></el-option>
               </el-select>
             </p>
             <el-table :data="lotsEnergyTableData" size="small" height="160px" max-height="160px" style="width: 100%">
               <el-table-column prop="type" label="类型"></el-table-column>
               <el-table-column prop="total" label="总量">
                 <template slot-scope="scope">
-                  <span class="text-size-mini text-color-info-shallow">{{ scope.row.total }}</span>
+                  <span class="text-size-mini text-color-info-shallow">{{ scope.row.Con }}</span>
                 </template>
               </el-table-column>
               <el-table-column prop="unitNum" label="单位耗量">
                 <template slot-scope="scope">
-                  <span class="text-size-mini text-color-primary">{{ scope.row.unitNum }}</span>
+                  <span class="text-size-mini text-color-primary">{{ scope.row.EveryBatch }}</span>
                 </template>
               </el-table-column>
             </el-table>
-            <span class="text-size-mini text-color-primary" style="float: right;margin-top: 15px;">查看详情<i class="el-icon-d-arrow-right el-icon--right"></i></span>
+            <span class="text-size-mini text-color-primary" @click="$router.push({ path:'/Areas?navOptionsCurrent=4'})" style="float: right;margin-top: 15px;cursor: pointer;">查看详情<i class="el-icon-d-arrow-right el-icon--right"></i></span>
           </div>
         </div>
         <div class="home-card-body" style="height: 130px;text-align: center;">
@@ -207,62 +208,6 @@
   export default {
     name: "Home",
     data(){
-      this.contrastMonthChartSettings = { //本月对比上月能耗图表配置
-        area: true,
-      }
-      this.contrastMonthChartExtend = {
-        yAxis:{
-          show:false
-        },
-        xAxis:{
-          show:false
-        },
-        grid:{
-          left: '-40px',
-          right: '0',
-          bottom: '-20px',
-          top:'0'
-        },
-        series: {
-          smooth: false
-        }
-      }
-      this.realtimeChartSettings = { //今日对比能耗图表配置
-
-      }
-      this.realtimeChartExtend = {
-        grid:{
-          left: '-40px',
-          right: '0',
-          bottom: '0',
-          top:'20px'
-        },
-        series: {
-          smooth: false
-        }
-      }
-      this.electricLoadRateChartSettings = { //电能负荷率图表配置
-        dataType: {
-          '占比': 'percent'
-        },
-        seriesMap: {
-          '占比': {
-            min: 0,
-            max: 1
-          }
-        }
-      }
-      this.electricLoadRateChartExtend = {
-        grid:{
-          left: '0',
-          right: '0',
-          bottom: '-40px',
-          top:'0'
-        },
-        series: {
-          smooth: false
-        }
-      }
       return{
         previewEnergyOptions: [{
           value: '电',
@@ -306,17 +251,16 @@
             }
           }]
         },
+        nowTime:"", //当前时间整分
+        nowDate:"", //当前日时间整分
         CompareDate:Date.now() - 3600 * 1000 * 24, //默认对比日期
+        unit:"", //当前数据单位
         todayCon:"", //本日能耗量
         compareDateCon:"", //选择日期的能耗
-        comparePer:"", //对比今天能耗的百分比
-        comparePerState:"", //对比今天能耗上升/下降
         thisMonthCon:"", //本月能耗量
         lastMonthCon:"", //上月同期能耗量
-        lastMonthCompare:"", //上月同期百分比
-        lastMonthCompareState:"", //上月同期上升还是下降
         contrastMonthChartData:{
-          columns: ['时间', '上月能耗', '本月能耗'],
+          columns: ['日期', '上月能耗', '本月能耗'],
           rows:[]
         },
         realtimeChartData:{
@@ -324,59 +268,166 @@
           rows:[]
         },
         thisYearCon: "", //年能耗量
+        thisYearHtml:"",
         lastYearCon: "", //上年同期能耗
-        lastYearCompare: "", //上年同期百分比
-        lastYearCompareState: "", //上年同期上升/下降
-        colorBarOption:[
-          {name: "新建综合制剂楼", value0: 2342,value4: 4234,value8: 2232,value12: 235,value16: 2042,value20: 264, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'},
-          {name: "提取二车间", value0: 2342,value4: 2342,value8: 2342,value12: 2342,value16: 2342,value20: 2342, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'},
-          {name: "新建综合制剂楼", value0: 2342,value4: 2342,value8: 2342,value12: 2342,value16: 2342,value20: 2342, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'},
-          {name: "新建综合制剂楼", value0: 2342,value4: 2342,value8: 2342,value12: 2342,value16: 2342,value20: 2342, backgroundColor: '-webkit-linear-gradient(left,#ECF1F4,#F5E866,#FB8A06,#FB3A06,#F5E866,#FB8A06)'}
-        ],
+        contrastMonthChartSettings: { //本月对比上月能耗图表配置
+          area: true,
+        },
+        ChartsLoading:false,
+        contrastMonthChartExtend: {
+          yAxis:{
+            show:false
+          },
+          xAxis:{
+            show:false
+          },
+          grid:{
+            left: '-60px',
+            right: '0',
+            bottom: '-10px',
+            top:'0'
+          },
+          series: {
+            smooth: false,
+            symbolSize: 1
+          }
+        },
+        realtimeChartExtend: { //今日对比能耗图表配置
+          yAxis:{
+            axisLabel:{
+              show:false
+            }
+          },
+          grid:{
+            left: '0px',
+            right: '0',
+            bottom: '0',
+            top:'30px'
+          },
+          'series.0.itemStyle': {
+            color:"#228AD5"
+          },
+          'series.0.lineStyle':{
+            color:"#228AD5",
+            width:2
+          },
+          'series.1.itemStyle': {
+            color:"#FB8A06"
+          },
+          'series.1.lineStyle':{
+            color:"#FB8A06",
+            width:2,
+            type:'dotted'
+          },
+          series: {
+            smooth: false,
+            symbolSize: 1
+          }
+        },
+        areaTimeChartsLoading:false,
+        areaTimeChartExtend: {
+          yAxis:{
+            show:false,
+            inverse:true
+          },
+          xAxis:{
+            show:false
+          },
+          grid:{
+            containLabel: false,
+            left: '20px',
+            right: '0',
+            bottom: '0',
+            top:'0'
+          },
+          series: {
+            barMaxWidth : 30,
+            smooth: false
+          },
+          label:{
+            show:true,
+            position:"insideLeft",
+            formatter: '{b}: {@score}'
+          },
+          itemStyle: {
+            color:"#228AD5"
+          }
+        },
+        areaChartData:{
+          columns: ['区域', '能耗量'],
+          rows:[]
+        },
         electricLoadRateChartData:{
           columns: ['type', 'value'],
           rows: [
-            { type: '占比', value: 0.8 }
+            { type: '占比', value: 0 }
           ]
         },
+        electricLoadRateChartExtend: { //电能负荷率图表配置
+          series: {
+            min: 0,
+            max: 100,
+            radius: '90%',
+            axisLine:{ //轴线
+              lineStyle: {
+                width: 10,
+                color:[[0.3, '#FB3A06'], [0.5, '#FB8A06'], [0.8, '#228AD5'], [1, '#15CC48']]
+              }
+            },
+            splitLine:{ //分割线
+              length: 20,
+                lineStyle: {
+                  color: 'auto'
+                }
+            },
+            axisTick: { //刻度
+              length: 15,
+              lineStyle: {
+                color: 'auto'
+              }
+            },
+            axisLabel:{  //刻度标签
+              color: '#082F4C',
+            },
+            detail:{ //显示数据
+              formatter: '{value}%',
+              fontWeight: 'bold',
+              color: '#082F4C',
+              fontSize:24,
+              offsetCenter:["0","75%"]
+            }
+          }
+        },
         electricLoadRateTimeOptions: [{ //电能负荷率下拉框
-          value: '选项1',
+          value: '日',
           label: '本日'
         }, {
-          value: '选项2',
+          value: '月',
           label: '本月'
         }, {
-          value: '选项3',
+          value: '年',
           label: '本年'
         }],
-        electricLoadRateTime:'本日', //默认下拉
-        onlineEquipmentOption:[ //在线情况采集
-          {name:"交换机",online:11,total:12,rate:80},
-          {name:"电表",online:6,total:12,rate:70},
-          {name:"水表",online:8,total:12,rate:40},
-          {name:"汽表",online:15,total:15,rate:100},
-        ],
-        ralTimeWarningTableData:[ //实时预警表格数据
-          {area:"新建综合制剂楼",name:"汽表2",type:"温度不正常",date:"2020-01-02 12:05"},
-          {area:"新建综合制剂楼",name:"汽表4",type:"温度不正常",date:"2020-01-02 12:05"},
-          {area:"新建综合制剂楼",name:"电表1",type:"三项电流不平衡",date:"2020-01-02 12:05"},
-          {area:"新建综合制剂楼",name:"汽表2",type:"温度不正常",date:"2020-01-02 12:05"}
-        ],
-        lotsEnergyValue:"本日",
-        lotsEnergyOptions:[{ //电能负荷率下拉框
-          value: '选项1',
+        electricLoadRateTime:'日', //默认下拉
+        onlineEquipmentOption:[], //在线情况采集
+        ralTimeWarningTableData:[],//实时预警表格数据
+        areaNameValue:"提取二车间",
+        areaOptions:[],  //批次能耗内区域下拉框
+        lotsEnergyValue:"日",
+        lotsEnergyOptions:[{ //批次能耗时段下拉框
+          value: '日',
           label: '本日'
         }, {
-          value: '选项2',
+          value: '月',
           label: '本月'
         }, {
-          value: '选项3',
+          value: '年',
           label: '本年'
         }],
+        lotsBatchCount:"",
         lotsEnergyTableData:[
-          {type:"电能",total:"16456.24kwh",unitNum:"1246.15kwh/批"},
-          {type:"水能",total:"16456.24kwh",unitNum:"1246.15kwh/批"},
-          {type:"汽能",total:"16456.24kwh",unitNum:"1246.15kwh/批"}
+          {type:"水能",Con:"",EveryBatch:""},
+          {type:"汽能",Con:"",EveryBatch:""}
         ],
         systemCheckupDialogVisible:false, //是否展开系统体检对话框
         timelineData:[],
@@ -384,49 +435,232 @@
     },
     created(){
       this.getEnergyPreview()
-      this.getAreaTime()
+      this.getAreaTimeEnergy()
+      this.getElectricLoadRateTime()
+      this.getOnLineEq()
+      this.getArea()
+      this.getBatchEnergy()
+      this.$watch("thisYearCon", function (newValue, oldValue) {
+        if(newValue != ""){
+          var thisYearConStr = newValue.toString().split("")
+          var item = ""
+          for(var i=0;i<thisYearConStr.length;i++){
+            if(thisYearConStr[i] === "."){
+              item += `<span style="margin-right: 3px;">${thisYearConStr[i]}</span>`
+            }else{
+              item += `<span class="numBlock">${thisYearConStr[i]}</span>`
+            }
+          }
+          this.thisYearHtml = item
+        }
+      })
     },
-    mounted(){
-
+    computed:{ //计算属性
+      comparePer(){
+        if(this.todayCon > 0){
+          var compare = (this.todayCon - this.compareDateCon) / this.todayCon * 100
+          if(this.todayCon - this.compareDateCon > 0){
+            return "+" + compare.toFixed(2) + "%"
+          }else{
+            return compare.toFixed(2) + "%"
+          }
+        }else{
+          if(this.compareDateCon > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
+        }
+      },
+      lastMonthCompare(){
+        if(this.thisMonthCon > 0){
+          var compare = (this.thisMonthCon - this.lastMonthCon) / this.thisMonthCon * 100
+          if(this.thisMonthCon - this.lastMonthCon > 0){
+            return "+" + compare.toFixed(2) + "%"
+          }else{
+            return compare.toFixed(2) + "%"
+          }
+        }else{
+          if(this.lastMonthCon > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
+        }
+      },
+      lastYearCompare(){
+        if(this.thisYearCon > 0){
+          var compare = (this.thisYearCon - this.lastYearCon) / this.thisYearCon * 100
+          if(this.thisYearCon - this.lastYearCon > 0){
+            return "+" + compare.toFixed(2) + "%"
+          }else{
+            return compare.toFixed(2) + "%"
+          }
+        }else{
+          if(this.lastYearCon > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
+        }
+      }
     },
     methods: {
       getEnergyPreview() {  //获取能耗预览内的数据
-        this.axios.get('/api/energyPreview',{
-          params: {
-            energyType: this.previewEnergyValue,
-            compareDate: moment(this.CompareDate).format('YYYY-MM-DD')
-          }
-        }).then(res => {
-          console.log(res);
-          var data = res.data
-          //this.todayCon = data.
-          this.compareDateCon = data.compareDateCon
-          this.comparePerState = data.comparePerState
-          this.comparePer = data.comparePer
-          this.thisMonthCon = data.thisMonthCon
-          this.lastMonthCon = data.lastMonthCon
-          this.lastMonthCompare = data.lastMonthCompare
-          this.lastMonthCompareState = data.lastMonthCompareState
-          this.contrastMonthChartData.rows = data.lastMonthRow
-          this.realtimeChartData.rows = data.compareTodayRow
-          this.thisYearCon = data.thisYearCon
-          this.lastYearCon = data.lastYearCon
-          this.lastYearCompare = data.lastYearCompare
-          this.lastYearCompareState = data.lastYearCompareState
-        }).catch(function (error) {
-          console.log(error);
-        });
+        this.ChartsLoading = true
+        var api = ""
+        var that = this
+        if(this.previewEnergyValue == "电"){
+          api = "/api/energyelectric"
+        }else if(this.previewEnergyValue == "水"){
+          api = "/api/energywater"
+        }else if(this.previewEnergyValue == "汽"){
+          api = "/api/energysteam"
+        }
+        var nowTime = moment().format('HH:mm').substring(0,4) + "0"
+        var nowDate = moment().format('MM-DD') + " " + nowTime
+        var thisDate = moment().format('DD')
+        var thisMonth = moment().format('MM-DD')
+        var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
+        var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
+        var compareDateStartTime = moment(this.CompareDate).format('YYYY-MM-DD') + " 00:00"
+        var compareDateEndTime = moment(this.CompareDate).format('YYYY-MM-DD') + " " + nowTime
+        var thisStartMonth = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm')
+        var lastStartMonth = moment().month(moment().month() - 1).startOf('month').format('YYYY-MM-DD HH:mm')
+        var lastEndMonth = moment().month(moment().month() - 1).endOf('month').format('YYYY-MM-DD').substring(0,7) + "-" + thisDate + " " + nowTime
+        var thisStartYear = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD')
+        var lastStartYear = moment().year(moment().year() - 1).startOf('year').format('YYYY-MM-DD HH:mm')
+        var lastEndYear = moment().year(moment().year() - 1).endOf('year').format('YYYY-MM-DD').substring(0,4) + "-" + thisMonth + " " + nowTime
+        if(!moment(lastEndMonth)._isValid){  //判断上月结束日期是否合法，否则赋值为上月最后一天的23：59
+          lastEndMonth = moment().month(moment().month() - 1).endOf('month').format('YYYY-MM-DD HH:mm');
+        }
+        this.nowTime = nowTime
+        this.nowDate = nowDate
+        this.axios.all([
+          this.axios.get(api,{params: {StartTime: todayStartTime,EndTime:todayEndTime}}),//获取今天能耗
+          this.axios.get(api,{params: {StartTime: compareDateStartTime,EndTime:compareDateEndTime}}),//获取对比天能耗
+          this.axios.get(api,{params: {StartTime: thisStartMonth,EndTime:todayEndTime}}),//获取本月能耗
+          this.axios.get(api,{params: {StartTime: lastStartMonth,EndTime:lastEndMonth}}),//获取上月能耗
+          this.axios.get(api,{params: {StartTime: thisStartYear,EndTime:todayEndTime}}),//获取当年能耗
+          this.axios.get(api,{params: {StartTime: lastStartYear,EndTime:lastEndYear}}),//获取上一年能耗
+          this.axios.get('/api/energyall',{
+            params: {ModelFlag: "能耗预览",CompareDate:moment(this.CompareDate).format('YYYY-MM-DD'),EnergyClass:this.previewEnergyValue}
+          })//获取对比图表
+        ]).then(this.axios.spread(function(todayCon,compareDateCon,thisMonthCon,lastMonthCon,thisYearCon,lastYearCon,compareData){
+          that.ChartsLoading = false
+          that.todayCon = JSON.parse(todayCon.data).value
+          that.unit = JSON.parse(todayCon.data).unit
+          that.compareDateCon = JSON.parse(compareDateCon.data).value
+          that.thisMonthCon = JSON.parse(thisMonthCon.data).value
+          that.lastMonthCon = JSON.parse(lastMonthCon.data).value
+          that.thisYearCon = JSON.parse(thisYearCon.data).value
+          that.lastYearCon = JSON.parse(lastYearCon.data).value
+          that.contrastMonthChartData.rows = JSON.parse(compareData.data).lastMonthRow
+          that.realtimeChartData.rows = JSON.parse(compareData.data).compareTodayRow
+        }))
       },
-      getAreaTime() {
-        this.axios.get('/api/areaTimeEnergy',{
-          params: {
-              energyType: this.areaTimeEnergyValue,
+      getAreaTimeEnergy(){
+        this.areaTimeChartsLoading = true
+        var params = {
+          EnergyClass: this.areaTimeEnergyValue,
+          CompareTime:moment().format("YYYY-MM-DD")
+        }
+        this.axios.get("/api/areatimeenergycount",{params:params}).then(res => {
+          this.areaTimeChartsLoading = false
+          var arr = []
+          for(var i=0;i<res.data.rows.length;i++){
+            if(i < 4){
+              arr.push(res.data.rows[i])
+            }
           }
-        }).then(function (response) {
-            console.log(response);
-        }).catch(function (error) {
-            console.log(error);
-        });
+          this.areaChartData.rows = arr
+          this.areaTimeChartExtend.label.formatter =  '{b}: {@score}' + res.data.unit
+        })
+      },
+      getElectricLoadRateTime(){
+        var that = this
+        var dayStartTime = moment().format('YYYY-MM-DD') + " 00:00:00"
+        var dayEndTime = moment().format('YYYY-MM-DD HH:mm:ss')
+        var monthStartTime = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm:ss')
+        var monthEndTime = moment().month(moment().month()).endOf('month').format('YYYY-MM-DD HH:mm:ss')
+        var yearStartTime = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD HH:mm:ss')
+        var yearEndTime = moment().year(moment().year()).endOf('year').format('YYYY-MM-DD HH:mm:ss')
+        var params = {}
+        if(this.electricLoadRateTime === "日"){
+          params.StartTime = dayStartTime
+          params.EndTime = dayEndTime
+          params.TimeClass = this.electricLoadRateTime
+        }else if(this.electricLoadRateTime === "月"){
+          params.StartTime = monthStartTime
+          params.EndTime = monthEndTime
+          params.TimeClass = this.electricLoadRateTime
+        }else if(this.electricLoadRateTime === "年"){
+          params.StartTime = yearStartTime
+          params.EndTime = yearEndTime
+          params.TimeClass = this.electricLoadRateTime
+        }
+        this.axios.get("/api/runefficiency",{params:params}).then(res => {
+          that.electricLoadRateChartData.rows[0].value = res.data.loadRate
+        })
+      },
+      getOnLineEq(){
+        this.axios.get("/api/energyall",{params:{ModelFlag:"在线检测情况"}}).then(res => {
+          this.onlineEquipmentOption = JSON.parse(res.data)
+        })
+        this.axios.get("/api/energyall",{params:{ModelFlag:"实时预警"}}).then(res => {
+          var resData = JSON.parse(res.data)
+          var arr = []
+          for (var i = 0; i < resData.data.length; i++) {
+            if (i < 4 ) {
+              arr.push(resData.data[i]);
+            }
+          }
+          this.ralTimeWarningTableData = arr
+        })
+      },
+      getArea(){
+        let that = this
+        var params = {
+          tableName: "AreaTable",
+          limit:1000,
+          offset:0
+        }
+        this.axios.get("/api/CUID",{params:params}).then(res =>{
+          var resData = JSON.parse(res.data).rows
+          that.areaOptions = resData
+        },res =>{
+          console.log("获取车间时请求错误")
+        })
+      },
+      getBatchEnergy(){
+        var that = this
+        var nowTime = moment().format('HH:mm').substring(0,4) + "0"
+        var nowDate = moment().format('MM-DD') + " " + nowTime
+        var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
+        var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
+        var thisStartMonth = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm')
+        var thisStartYear = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD')
+        var params = {}
+        if(this.lotsEnergyValue === "本日"){
+          params.AreaName = this.areaNameValue
+          params.StartTime = todayStartTime
+          params.EndTime = todayEndTime
+        }else if(this.lotsEnergyValue === "本月"){
+          params.AreaName = this.areaNameValue
+          params.StartTime = thisStartMonth
+          params.EndTime = todayEndTime
+        }else if(this.lotsEnergyValue === "本年"){
+          params.AreaName = this.areaNameValue
+          params.StartTime = thisStartYear
+          params.EndTime = todayEndTime
+        }
+        this.axios.get("/api/batchMaintainEnergy",{params:params}).then(res =>{
+          that.lotsBatchCount = res.data.batchCount
+          that.lotsEnergyTableData[0].Con = res.data.waterCon + res.data.waterUnit
+          that.lotsEnergyTableData[0].EveryBatch = res.data.waterEveryBatch + res.data.waterUnit + "/批"
+          that.lotsEnergyTableData[1].Con = res.data.steamCon + res.data.steamUnit
+          that.lotsEnergyTableData[1].EveryBatch = res.data.steamEveryBatch + res.data.steamUnit + "/批"
+        })
       },
       openSystemCheckupDialog(){ //打开系统体检
         this.systemCheckupDialogVisible = true
@@ -463,14 +697,6 @@
   .card-head-select{
     float: right;
     width: 85px;
-  }
-  .card-head-select .el-input__inner{
-    background-color: #082F4C;
-    border:none;
-    color:#fff;
-  }
-  .card-head-select .el-select__caret{
-    line-height: 48px;
   }
   .home-card-body{
     background: #fff;
@@ -515,20 +741,21 @@
   }
   .colorBar li{
     display: inline-block;
-    margin-right: 20px;
+    margin-right: 10px;
+    margin-bottom: 5px;
   }
   .colorBar li i{
     display: inline-block;
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
     border-radius: 2px;
-    margin-right: 15px;
+    margin-right: 5px;
     vertical-align: middle;
   }
   .colorBar li span{
     display: inline-block;
     color: #082F4C;
-    font-size: 16px;
+    font-size: 14px;
     vertical-align: middle;
   }
   .bg-dead{
@@ -543,13 +770,11 @@
   .bg-tall{
     background-color: #FB3A06;
   }
-  .gradientList li{
-    margin-top: 10px;
+  .bg-fine{
+    background-color: #228AD5;
   }
-  .gradientColorItem{
-    width: 100%;
-    height: 16px;
-    margin-top: 10px;
+  .bg-best{
+    background-color: #15CC48;
   }
   .el-table--mini td, .el-table--mini th{
     padding: 2px 0;
