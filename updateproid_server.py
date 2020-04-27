@@ -10,17 +10,18 @@ from dbset.database.db_operate import engine,conn
 
 def run():
     while True:
-        # time.sleep(60)
+        # time.
+        # (60)
         print("数据开始写入增量数据库")
         try:
             start = time.time()
             steamInitial= list()
             # stekeys = db_session.query(TagDetail).filter(TagDetail.insertFlag == "0").order_by(("ID")).all()
-            Tags = db_session.query(TagDetail).filter(TagDetail.EnergyClass == '汽').order_by(("ID")).all()
+            Tags = db_session.query(TagDetail).filter(TagDetail.EnergyClass == '水').order_by(("ID")).all()
             print(time.time() - start)
             start = time.time()
             for tag in Tags:
-                Inikeys = db_session.query(SteamEnergy).filter(SteamEnergy.TagClassValue == tag.TagClassValue).order_by(desc("ID")).all()
+                Inikeys = db_session.query(WaterEnergy).filter(WaterEnergy.TagClassValue == tag.TagClassValue).order_by(desc("ID")).all()
                 currID = 0
                 preID = 0
                 icount = 0
@@ -41,9 +42,9 @@ def run():
                     if icount == len(Inikeys)-1:
                         currID = key.ID
                         currCollectionDate = key.CollectionDate
-                        prekey = db_session.query(SteamEnergy).filter(
-                            SteamEnergy.TagClassValue == tag.TagClassValue,
-                            SteamEnergy.CollectionDate < currCollectionDate).order_by(desc("ID")).first()
+                        prekey = db_session.query(WaterEnergy).filter(
+                            WaterEnergy.TagClassValue == tag.TagClassValue,
+                            WaterEnergy.CollectionDate < currCollectionDate).order_by(desc("ID")).first()
                         if prekey != None:
                             preID = prekey.ID
                             ss = (preID,currID)
@@ -64,7 +65,7 @@ def run():
                     cursor = conn.cursor()
                     print(datetime.datetime.now())
                     cursor.executemany(
-                        "update SteamEnergy SET prevID=(%d) where id=(%d)", steamInitial)
+                        "update WaterEnergy SET prevID=(%d) where id=(%d)", steamInitial)
                     conn.commit()
                     print(datetime.datetime.now())
                 except Exception as e:

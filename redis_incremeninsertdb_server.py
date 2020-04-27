@@ -25,7 +25,7 @@ from dbset.database.db_operate import engine,conn
 
 def run():
     while True:
-        # time.sleep(60)
+        time.sleep(60)
         print("数据开始写入增量数据库")
         try:
             #汽能插入-----------------------------------------------------------------------------------增量库
