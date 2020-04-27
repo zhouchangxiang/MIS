@@ -30,7 +30,7 @@ export default new Vuex.Store({
         sessionStorage.setItem('UserName', data.rows[0].Name)
         sessionStorage.setItem('UserId', data.rows[0].id)
       },res =>{
-        console.log("请求错误")
+        console.log("获取用户信息时请求错误")
       })
       sessionStorage.setItem('WorkNumber', user)
       sessionStorage.setItem('LoginStatus', true)

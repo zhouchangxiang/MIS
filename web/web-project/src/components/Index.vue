@@ -78,9 +78,15 @@
                 <div style="position: relative;height: 100%;">
                   <el-popover v-for="(item,index) in drawerTopAreaOption" placement="bottom" :title="item.title" width="200" trigger="click" @show="showAreaInfo(item.title)" :key="index">
                     <div slot="reference" class="mapContentItem" :style="{width:item.width, height: item.height,top: item.top,left: item.left}"><div class="mapItemPoint" :style="{marginLeft: item.marginLeft}"></div></div>
-                    <el-radio-group v-model="energyType" fill="#082F4C" size="mini">
+                    <el-radio-group v-model="energyType" fill="#082F4C" size="mini" style="margin-bottom: 10px;">
                       <el-radio-button v-for="(item,index) in energyTypeList" border :key="item.index" :label="item.label" :value="item.value"></el-radio-button>
                     </el-radio-group>
+                    <ul>
+                      <el-popover placement="right" title="标题" width="200" trigger="hover" v-for="i in ThermographEquTableData">
+                        <li slot="reference" class="text-size-small itemMarginBottom"><span style="margin-right: 30px;margin-left: 10px;">{{ i.type }}</span>{{ i.num }}</li>
+                        <div><el-image :src="require('@/assets/imgs/eq1.jpg')" fit="fill"></el-image></div>
+                      </el-popover>
+                    </ul>
                   </el-popover>
                 </div>
               </div>
@@ -182,6 +188,12 @@ export default {
         {label:"电表",value:"电"},
         {label:"水表",value:"水"},
         {label:"汽表",value:"汽"}
+      ],
+      ThermographEquTableData:[
+        {type:"电表",num:"1424kwh"},
+        {type:"电表",num:"1424kwh"},
+        {type:"电表",num:"1424kwh"},
+        {type:"电表",num:"1424kwh"},
       ]
     }
   },
@@ -344,6 +356,7 @@ export default {
     },
     showAreaInfo(AreaName){
       console.log(AreaName)
+
     }
   }
 }
