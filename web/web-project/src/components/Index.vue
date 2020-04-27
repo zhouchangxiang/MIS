@@ -82,8 +82,8 @@
                       <el-radio-button v-for="(item,index) in energyTypeList" border :key="item.index" :label="item.label" :value="item.value"></el-radio-button>
                     </el-radio-group>
                     <ul>
-                      <el-popover placement="right" title="标题" width="200" trigger="hover" v-for="i in ThermographEquTableData">
-                        <li slot="reference" class="text-size-small itemMarginBottom"><span style="margin-right: 30px;margin-left: 10px;">{{ i.type }}</span>{{ i.num }}</li>
+                      <el-popover placement="right" title="标题" width="200" trigger="hover" v-for="(tagItem,tagindex) in ThermographEquTableData" :key="tagindex">
+                        <li slot="reference" class="text-size-small itemMarginBottom"><span style="margin-right: 30px;margin-left: 10px;">{{ tagItem.type }}</span>{{ tagItem.num }}</li>
                         <div><el-image :src="require('@/assets/imgs/eq1.jpg')" fit="fill"></el-image></div>
                       </el-popover>
                     </ul>
@@ -95,7 +95,7 @@
                   <el-popover v-for="(item,index) in drawerBottomAreaOption" placement="bottom" :title="item.title" width="200" trigger="click" @show="showAreaInfo(item.title)" :key="index">
                     <div slot="reference" class="mapContentItem" :style="{width:item.width, height: item.height,top: item.top,left: item.left}"><div class="mapItemPoint" :style="{marginLeft: item.marginLeft}"></div></div>
                     <el-radio-group v-model="energyType" fill="#082F4C" size="mini">
-                      <el-radio-button v-for="(item,index) in energyTypeList" border :key="item.index" :label="item.label" :value="item.value"></el-radio-button>
+                      <el-radio-button v-for="(item,index) in energyTypeList" border :key="index" :label="item.label" :value="item.value"></el-radio-button>
                     </el-radio-group>
                   </el-popover>
                 </div>
@@ -105,10 +105,17 @@
         </el-drawer>
         <!-- 个人信息 -->
         <el-dialog title="个人信息" :visible.sync="dialogUserVisible">
-          <el-form></el-form>
+          <el-form label-width="110px">
+            <el-form-item label="名称：">{{ UserInfo.Name }}</el-form-item>
+            <el-form-item label="工号：">{{ UserInfo.WorkNumber }}</el-form-item>
+            <el-form-item label="所属厂区：">{{ UserInfo.FactoryName }}</el-form-item>
+            <el-form-item label="所属部门：">{{ UserInfo.OrganizationName }}</el-form-item>
+            <el-form-item label="创建人：">{{ UserInfo.Creater }}</el-form-item>
+            <el-form-item label="创建时间：">{{ UserInfo.CreateTime }}</el-form-item>
+            <el-form-item label="最近登录时间：">{{ UserInfo.LastLoginTime }}</el-form-item>
+          </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button @click="dialogUserVisible = false">取 消</el-button>
-            <el-button type="primary" @click="dialogUserVisible = false">确 定</el-button>
           </div>
         </el-dialog>
       </el-header>
@@ -166,6 +173,7 @@ export default {
       areaObj:{
         areaName:""
       },
+      UserInfo:{},
       drawer: false,
       drawerTopAreaOption:[
         {title:"污水站",width: "120px",height:"33%",top:"23%",left:"3%",marginLeft:"70px"},
@@ -216,14 +224,17 @@ export default {
     this.getAreaSubMenu()
     if(sessionStorage.getItem("LoginStatus")) {
       this.$store.commit('setUser',sessionStorage.getItem('WorkNumber'))
-      var params = {
-        tableName: "User",
-        ID:sessionStorage.getItem('UserId'),
-        LastLoginTime:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
-      }
-      this.axios.put("/api/CUID",this.qs.stringify(params)).then(res =>{
-      },res =>{
-        console.log("修改登录时间时请求错误")
+      this.axios.get("/api/CUID",{
+        params: {
+          tableName: "User",
+          field:"WorkNumber",
+          fieldvalue:sessionStorage.getItem('WorkNumber'),
+          limit:1,
+          offset:0
+        }
+      }).then(res =>{
+        var data = JSON.parse(res.data)
+        this.UserInfo =  data.rows[0]
       })
     }else{
       this.$router.push("/login");
