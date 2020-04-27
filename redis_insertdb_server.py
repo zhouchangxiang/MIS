@@ -24,14 +24,14 @@ from dbset.log.BK2TLogger import logger,insertSyslog
 pool = redis.ConnectionPool(host=constant.REDIS_HOST)
 def run():
     while True:
-        # time.sleep(180)
+        time.sleep(180)
         print("Redis数据开始写入数据库")
         # a = arrow.now()
         # currentyear = str(a.shift(years=0))[0:4]
         # currentmonth = str(a.shift(years=0))[0:7]
         # currentday = str(a.shift(days=0))[0:10]
         redis_conn = redis.Redis(connection_pool=pool, password=constant.REDIS_PASSWORD,decode_responses=True)
-        keys = db_session.query(TagDetail).filter(TagDetail.TagClassValue == 'S_Area_YTQ_40_1_502').all()
+        keys = db_session.query(TagDetail).filter(TagDetail.TagClassValue != None).all()
         for key in keys:
             try:
                 k = key.TagClassValue[0:1]
