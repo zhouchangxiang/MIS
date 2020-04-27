@@ -24,14 +24,14 @@ from dbset.log.BK2TLogger import logger,insertSyslog
 pool = redis.ConnectionPool(host=constant.REDIS_HOST)
 def run():
     while True:
-        time.sleep(180)
+        # time.sleep(180)
         print("Redis数据开始写入数据库")
         # a = arrow.now()
         # currentyear = str(a.shift(years=0))[0:4]
         # currentmonth = str(a.shift(years=0))[0:7]
         # currentday = str(a.shift(days=0))[0:10]
         redis_conn = redis.Redis(connection_pool=pool, password=constant.REDIS_PASSWORD,decode_responses=True)
-        keys = db_session.query(TagDetail).filter(TagDetail.TagClassValue != None).all()
+        keys = db_session.query(TagDetail).filter(TagDetail.TagClassValue == 'S_Area_YTQ_40_1_502').all()
         for key in keys:
             try:
                 k = key.TagClassValue[0:1]
@@ -89,7 +89,8 @@ def run():
                         # el.EquipmnetID = equip[0]
                         el.PriceID = PriceID
                         db_session.query(ElectricEnergy)
-                        el.PrevID = ele.ID
+                        if ele:
+                            el.PrevID = ele.ID
                         el.AreaName = key.AreaName
                         el.IncrementFlag = "0"
                         db_session.add(el)
@@ -187,7 +188,8 @@ def run():
                         # sl.EquipmnetID = equip[0]
                         sl.PriceID = PriceID
                         sl.Volume = Volume
-                        sl.PrevID = ste.ID
+                        if ste:
+                            sl.PrevID = ste.ID
                         sl.IncrementFlag = "0"
                         sl.insertVolumeFlag = "0"
                         sl.AreaName = key.AreaName
@@ -226,7 +228,8 @@ def run():
                         wa.SumWUnit = units[0]
                         # wa.EquipmnetID = equip[0]
                         wa.PriceID = PriceID
-                        wa.PrevID = wat.ID
+                        if wat:
+                            wa.PrevID = wat.ID
                         wa.IncrementFlag = "0"
                         wa.AreaName = key.AreaName
                         db_session.add(wa)
