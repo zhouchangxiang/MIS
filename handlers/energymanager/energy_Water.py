@@ -163,12 +163,18 @@ def get_water():
     pagesize = int(request.values.get('limit'))
     area_name = request.values.get('area_name')
     if area_name:
-        rows = db_session.query(IncrementWaterTable).filter(IncrementWaterTable.AreaName == area_name).filter(IncrementWaterTable.CollectionDate.between(start_time, end_time)).all()[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
-        total = len(db_session.query(IncrementWaterTable).filter(IncrementWaterTable.AreaName == area_name).filter(IncrementWaterTable.CollectionDate.between(start_time, end_time)).all())
+        rows = 'select top ' + str(pagesize) + ' CalculationID,TagClassValue,AreaName,IncremenValue,CollectionDate ' + \
+               'from [DB_MICS].[dbo].[IncrementWaterTable] where ID not in ' + '(select top ' + str(current_page * pagesize) + ' ID from ' \
+                '[DB_MICS].[dbo].[IncrementWaterTable] where cast(IncremenValue as float) != 0.0 ' + 'and AreaName=' + "'" + area_name + "'" + ' and CollectionDate between ' + "'" + start_time + "'" + " and " \
+               "'" + end_time + "'" + ' order by CollectionDate asc, ID asc)' + 'and AreaName=' + "'" + area_name + "'" + 'and cast(IncremenValue as float) != 0.0 and CollectionDate between ' + "'" + start_time + "'" + " and " + "'" + end_time + "'" + ' order by CollectionDate asc, ID asc'
+
+        result3 = db_session.execute(rows).fetchall()
+        total = 'select count(ID) as total from [DB_MICS].[dbo].[IncrementWaterTable] where cast(IncremenValue as float) != 0.0 and AreaName=' + "'" + area_name + "'" + ' and CollectionDate between ' + "'" + start_time + "'" + " and" + "'" + end_time + "'"
+        result2 = db_session.execute(total).fetchall()
         tag_list = db_session.query(TagDetail).filter(TagDetail.AreaName == area_name, TagDetail.EnergyClass == '水').all()
         tag_point = [index.TagClassValue for index in tag_list]
         data = []
-        for item in rows:
+        for item in result3:
             query_steam = db_session.query(WaterEnergy).filter(WaterEnergy.ID == item.CalculationID).first()
             query_tagdetai = db_session.query(TagDetail).filter(TagDetail.TagClassValue == item.TagClassValue).first()
             tag_area = query_tagdetai.FEFportIP
@@ -177,29 +183,30 @@ def get_water():
                      'IncremenValue': item.IncremenValue, 'TagClassValue': tag_area}
             data.append(dict1)
         if tag_point:
-            sql = "select sum(cast(t1.IncremenValue as decimal(9,2)))*0.0001*50 as count from [DB_MICS].[dbo].[IncrementWaterTable] t1 where t1.TagClassValue in " + (str(tag_point).replace('[', '(')).replace(']', ')') + " and t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'" + " group by t1.IncremenType"
-            result = db_session.execute(sql).fetchall()
-            price = 0 if len(result) == 0 else str(round(result[0]['count'], 2))
-            return json.dumps({'rows': data, 'total_column': total, 'price': price}, cls=AlchemyEncoder, ensure_ascii=False)
+            price_sql = "select sum(t1.price)*0.0001*1.2 total_price from (select TagClassValue,sum(cast(IncremenValue" \
+                        " as float)) as price from [DB_MICS].[dbo].[IncrementWaterTable] where cast(IncremenValue as" \
+                        " float) != 0.0 and TagClassValue in " + (str(tag_point).replace('[', '(')).replace(']', ')') + " and CollectionDate between " + "'" + start_time + "'" + " and " + "'" + end_time + "'" + "group by TagClassValue) t1"
+            total_price = db_session.execute(price_sql).fetchall()
+            price = 0 if total_price[0]['total_price'] is None else str(round(total_price[0]['total_price'], 2))
+            return json.dumps({'rows': data, 'total_column': result2[0]['total'], 'price': price}, cls=AlchemyEncoder, ensure_ascii=False)
         else:
-            sql = "select sum(cast(t1.IncremenValue as decimal(9,2)))*0.0001*50 as count from [DB_MICS].[dbo].[IncrementWaterTable] t1 where " + "t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'" + " group by t1.IncremenType"
-            result = db_session.execute(sql).fetchall()
-            price = 0 if len(result) == 0 else str(round(result[0]['count'], 2))
-            return json.dumps({'rows': rows, 'total_column': total, 'price': price}, cls=AlchemyEncoder, ensure_ascii=False)
+            sql = "select sum(cast(t1.IncremenValue as decimal(9,2)))*0.0001*1.2 as count from [DB_MICS].[dbo].[IncrementWaterTable] t1 where " + "t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'" + " group by t1.IncremenType"
+            total_price = db_session.execute(sql).fetchall()
+            price = 0 if len(total_price) == 0 else str(round(total_price[0]['total_price'], 2))
+            return json.dumps({'rows': rows, 'total_column': result2[0]['total'], 'price': price}, cls=AlchemyEncoder, ensure_ascii=False)
     else:
-        tag_list = db_session.query(TagDetail).filter(TagDetail.EnergyClass == '水').all()
-        tag_point = [index.TagClassValue for index in tag_list]
-        price_sql = "select sum(cast(t1.IncremenValue as decimal(9,2)))*0.0001*50 as total_price from [DB_MICS].[dbo].[IncrementWaterTable] t1 where t1.TagClassValue in " + (str(tag_point).replace('[', '(')).replace(']', ')') + "and t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'"
+        price_sql = "select sum(t1.price)*0.0001*1.2 total_price from (select TagClassValue,sum(cast(IncremenValue" \
+                    " as float)) as price from [DB_MICS].[dbo].[IncrementWaterTable] where cast(IncremenValue as" \
+                    " float) != 0.0 and CollectionDate between " + "'" + start_time + "'" + " and " + "'" + end_time + "'" + "group by TagClassValue) t1"
         total_price = db_session.execute(price_sql).fetchall()
         price = 0 if total_price[0]['total_price'] is None else str(round(total_price[0]['total_price'], 2))
         rows = 'select top ' + str(pagesize) + ' CalculationID,TagClassValue,AreaName,IncremenValue,CollectionDate ' + 'from [DB_MICS].[dbo].[IncrementWaterTable] where ' \
                'ID not in ' + '(select top ' + str(current_page * pagesize) + ' ID from ' \
-               '[DB_MICS].[dbo].[IncrementWaterTable] where CollectionDate between ' + "'" + start_time + "'" + " and " +\
-               "'" + end_time + "'" + ' order by CollectionDate asc, ID asc)' + 'and CollectionDate between ' + "'" + start_time + "'" + " and " + "'" + end_time + "'" + ' order by CollectionDate asc, ID asc'
+               '[DB_MICS].[dbo].[IncrementWaterTable] where cast(IncremenValue as float) != 0.0 and CollectionDate between ' + "'" + start_time + "'" + " and " +\
+               "'" + end_time + "'" + ' order by CollectionDate asc, ID asc)' + 'and cast(IncremenValue as float) != 0.0 and CollectionDate between ' + "'" + start_time + "'" + " and " + "'" + end_time + "'" + ' order by CollectionDate asc, ID asc'
         result3 = db_session.execute(rows).fetchall()
-        total = 'select count(*) as total from [DB_MICS].[dbo].[IncrementWaterTable] where CollectionDate between ' + "'" + start_time + "'" + " and" + "'" + end_time + "'"
+        total = 'select count(ID) as total from [DB_MICS].[dbo].[IncrementWaterTable] where cast(IncremenValue as float) != 0.0 and CollectionDate between ' + "'" + start_time + "'" + " and" + "'" + end_time + "'"
         result2 = db_session.execute(total).fetchall()
-
         data = []
         for item in result3:
             if item.CalculationID and item.TagClassValue:
