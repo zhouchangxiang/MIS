@@ -24,7 +24,7 @@ from dbset.log.BK2TLogger import logger,insertSyslog
 pool = redis.ConnectionPool(host=constant.REDIS_HOST)
 def run():
     while True:
-        # time.sleep(180)
+        time.sleep(180)
         print("Redis数据开始写入数据库")
         # a = arrow.now()
         # currentyear = str(a.shift(years=0))[0:4]
@@ -38,8 +38,8 @@ def run():
                 if k == "E":
                     ZGL = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_ZGL"))
                     ZGLSamptime = returnb(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_ZGL_Samptime"))
-                    esamptime = db_session.query(ElectricEnergy.CollectionDate).filter().order_by(desc("CollectionDate")).first()[0]
-                    if esamptime != ZGLSamptime and ZGL != 0.0:
+                    esamptime = db_session.query(ElectricEnergy.CollectionDate).filter(ElectricEnergy.TagClassValue == key.TagClassValue, ElectricEnergy.CollectionDate == ZGLSamptime).order_by(desc("CollectionDate")).first()
+                    if esamptime is None and ZGL != 0.0:
                         AU = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_AU"))
                         AI = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_AI"))
                         BU = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_BU"))
@@ -156,9 +156,9 @@ def run():
                     valueF = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "F"))  # 蒸汽瞬时流量
                     valueS = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "S"))  # 蒸汽累计流量
                     Volume = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "V"))  # 蒸汽体积
-                    ssamptime = db_session.query(SteamEnergy.CollectionDate).filter().order_by(desc("CollectionDate")).first()[0]
                     valueSSamptime = returnb(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_Samptime"))  # 蒸汽累计流量采集时间
-                    if ssamptime != valueSSamptime and valueS != 0.0 and Volume != 0.0:
+                    ssamptime = db_session.query(SteamEnergy.CollectionDate).filter(SteamEnergy.TagClassValue == key.TagClassValue, SteamEnergy.CollectionDate == valueSSamptime).order_by(desc("CollectionDate")).first()
+                    if ssamptime is None and valueS != 0.0 and Volume != 0.0:
                         ste = db_session.query(SteamEnergy).filter(SteamEnergy.TagClassValue == key.TagClassValue).order_by(desc("CollectionDate")).first()
                         unitf = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽瞬时流量单位").first()
                         units = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽累计量体积单位").first()
@@ -198,9 +198,9 @@ def run():
                 elif k == "W":
                     valueS = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "S"))  # 水的累计流量
                     valueF = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "F"))  # 水的瞬时流量
-                    wsamptime = db_session.query(SteamEnergy.CollectionDate).filter().order_by(desc("CollectionDate")).first()[0]
                     valueSSamptime = returnb(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_Samptime"))  # 水的累计流量
-                    if valueS != 0.0 and wsamptime != valueSSamptime:
+                    wsamptime = db_session.query(SteamEnergy.CollectionDate).filter(SteamEnergy.CollectionDate == key.TagClassValue, SteamEnergy.CollectionDate == valueSSamptime).order_by(desc("CollectionDate")).first()
+                    if valueS != 0.0 and wsamptime is None:
                         wat = db_session.query(WaterEnergy).filter(WaterEnergy.TagClassValue == key.TagClassValue).order_by(desc("CollectionDate")).first()
                         unitf = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "水瞬时流量单位").first()
                         units = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "水累计量体积单位").first()
