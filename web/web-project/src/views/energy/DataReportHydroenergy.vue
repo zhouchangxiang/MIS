@@ -78,7 +78,7 @@
             return time.getTime() > Date.now();
           }
         },
-        areaValue:"整厂区",
+        areaValue:"",
         areaOptions:[],
         tableData:[],
         total:0,

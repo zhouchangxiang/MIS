@@ -149,6 +149,7 @@ def energyWaterSelect(data):
             insertSyslog("error", "能耗查询报错Error：" + str(e), current_user.Name)
             return json.dumps([{"status": "Error：" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
 
+
 @energyWater.route('/water_report', methods=['GET'])
 def get_water():
     """
@@ -188,18 +189,25 @@ def get_water():
     else:
         tag_list = db_session.query(TagDetail).filter(TagDetail.EnergyClass == '水').all()
         tag_point = [index.TagClassValue for index in tag_list]
-        sql = "select t1.AreaName, sum(cast(t1.IncremenValue as decimal(9,2)))*0.0001*50 as count from [DB_MICS].[dbo].[IncrementWaterTable] t1 where t1.TagClassValue in " + (str(tag_point).replace('[', '(')).replace(']', ')') + "and t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'" + " group by t1.AreaName"
-        rows = db_session.query(IncrementWaterTable).filter(IncrementWaterTable.CollectionDate.between(start_time, end_time)).all()[(current_page - 1) * pagesize + 1:current_page * pagesize + 1]
-        total = len(db_session.query(IncrementWaterTable).filter(IncrementWaterTable.CollectionDate.between(start_time, end_time)).all())
+        price_sql = "select sum(cast(t1.IncremenValue as decimal(9,2)))*0.0001*50 as total_price from [DB_MICS].[dbo].[IncrementWaterTable] t1 where t1.TagClassValue in " + (str(tag_point).replace('[', '(')).replace(']', ')') + "and t1.CollectionDate between " + "'" + start_time + "'" + " and" + "'" + end_time + "'"
+        total_price = db_session.execute(price_sql).fetchall()
+        price = 0 if total_price[0]['total_price'] is None else str(round(total_price[0]['total_price'], 2))
+        rows = 'select top ' + str(pagesize) + ' CalculationID,TagClassValue,AreaName,IncremenValue,CollectionDate ' + 'from [DB_MICS].[dbo].[IncrementWaterTable] where ' \
+               'ID not in ' + '(select top ' + str(current_page * pagesize) + ' ID from ' \
+               '[DB_MICS].[dbo].[IncrementWaterTable] where CollectionDate between ' + "'" + start_time + "'" + " and " +\
+               "'" + end_time + "'" + ' order by CollectionDate asc, ID asc)' + 'and CollectionDate between ' + "'" + start_time + "'" + " and " + "'" + end_time + "'" + ' order by CollectionDate asc, ID asc'
+        result3 = db_session.execute(rows).fetchall()
+        total = 'select count(*) as total from [DB_MICS].[dbo].[IncrementWaterTable] where CollectionDate between ' + "'" + start_time + "'" + " and" + "'" + end_time + "'"
+        result2 = db_session.execute(total).fetchall()
+
         data = []
-        for item in rows:
-            query_water = db_session.query(WaterEnergy).filter(WaterEnergy.ID == item.CalculationID).first()
-            query_tagdetai = db_session.query(TagDetail).filter(TagDetail.TagClassValue == item.TagClassValue).first()
-            tag_area = query_tagdetai.FEFportIP
-            dict1 = {'ID': query_water.ID, 'WaterFlow': query_water.WaterFlow, 'WaterSum': query_water.WaterSum, 'SumWUnit': query_water.SumWUnit,
-                     'AreaName': item.AreaName, 'CollectionDate': str(item.CollectionDate),
-                     'IncremenValue': item.IncremenValue, 'TagClassValue': tag_area}
-            data.append(dict1)
-        result = db_session.execute(sql).fetchall()
-        price = 0 if len(result) == 0 else str(round(result[0]['count'], 2))
-        return json.dumps({'rows': data, 'total_column': total, 'price': price}, cls=AlchemyEncoder, ensure_ascii=False)
+        for item in result3:
+            if item.CalculationID and item.TagClassValue:
+                query_water = db_session.query(WaterEnergy).filter(WaterEnergy.ID == item.CalculationID).first()
+                query_tagdetai = db_session.query(TagDetail).filter(TagDetail.TagClassValue == item.TagClassValue).first()
+                tag_area = query_tagdetai.FEFportIP
+                dict1 = {'ID': query_water.ID, 'WaterFlow': query_water.WaterFlow, 'WaterSum': query_water.WaterSum, 'SumWUnit': query_water.SumWUnit,
+                         'AreaName': item.AreaName, 'CollectionDate': str(item.CollectionDate),
+                         'IncremenValue': item.IncremenValue, 'TagClassValue': tag_area}
+                data.append(dict1)
+        return json.dumps({'rows': data, 'total_column': result2[0]['total'], 'price': price}, cls=AlchemyEncoder, ensure_ascii=False)

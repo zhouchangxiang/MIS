@@ -179,32 +179,41 @@
           }
         })
       },
-      DownDataEven: function (data) {
-        this.tableData.handleForm.forEach(item =>{
-          if(item.hasOwnProperty('childSelect')) {
-            this.tableData.handleForm.forEach(v => {
-              if (v.prop === item.childSelect) {
-                var params = {
-                  tableName: v.Downtable,
-                  field: v.searchField,
-                  fieldvalue: item.value,
-                  limit: 100000000,
-                  offset: 0
+      DownDataEven: function (formData) {
+        if(formData){
+          console.log(formData)
+          this.tableData.handleForm.forEach(item =>{
+            if(item.hasOwnProperty('childSelect')) {
+              this.tableData.handleForm.forEach(v => {
+                if (v.prop === item.childSelect) {
+                  console.log(v.Downtable)
+                  console.log(v.searchField)
+                  console.log(item.value)
+                  var params = {
+                    tableName: v.Downtable,
+                    field: v.searchField,
+                    fieldvalue: item.value,
+                    limit: 100000000,
+                    offset: 0
+                  }
+                  this.axios.get("/api/CUID", {
+                    params: params
+                  }).then(res => {
+                    var resdata = JSON.parse(res.data)
+                    console.log(resdata)
+                    v.DownData = resdata.rows
+                    v.value = ""
+                    //formData = resdata.rows
+                  }, res => {
+                    console.log("请求错误")
+                  })
                 }
-                this.axios.get("/api/CUID", {
-                  params: params
-                }).then(res => {
-                  var resdata = JSON.parse(res.data)
-                  v.DownData = resdata.rows
-                  return data
-                }, res => {
-                  console.log("请求错误")
-                })
-              }
-            })
-          }
-        })
-        return data
+              })
+              //return formData
+            }
+          })
+          return formData
+        }
       },
       determineSubmitTypeChange(){
         // var that = this
