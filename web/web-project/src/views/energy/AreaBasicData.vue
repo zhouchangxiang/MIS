@@ -18,6 +18,9 @@
     <el-col :span="24" style="margin-bottom:2px;">
       <div class="chartHead text-size-large text-color-info">
         <div class="chartTile">趋势图</div>
+        <div class="chartHeadRight">
+          <span class="text-size-small text-color-primary" @click="$router.push({ path:'/DataReport'})" style="float: right;cursor: pointer;">查看报表</span>
+        </div>
       </div>
     </el-col>
     <el-col :span="24">
@@ -164,7 +167,7 @@
               }
             }else if(that.formParameters.energy === "水"){
               that.chartData = {
-                columns: ['时间', '累计量', '瞬时量'],
+                columns: ['时间', '累计量'],
                 rows: res.data.row
               }
               that.chartSettings = {
@@ -173,7 +176,7 @@
               }
             }else if(that.formParameters.energy === "汽"){
               that.chartData = {
-                columns: ['时间', '累计量', '瞬时量', '体积', '温度'],
+                columns: ['时间', '累计量', '体积', '温度'],
                 rows: res.data.row
               }
               that.chartSettings = {

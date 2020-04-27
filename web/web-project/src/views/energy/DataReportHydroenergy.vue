@@ -3,8 +3,9 @@
     <el-col :span="24">
       <el-form :model="formParameters">
         <el-form-item label="时间：">
-          <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd HH:mm:ss" style="width: 180px;" :clearable="false" @change="searchTime"></el-date-picker> ~
+          <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd HH:mm:ss" style="width: 180px;" :clearable="false"></el-date-picker> ~
           <el-date-picker type="datetime" v-model="formParameters.endDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd HH:mm:ss" style="width: 180px;" :clearable="false" @change="searchTime"></el-date-picker>
+          <span class="text-size-mini text-color-info-shallow">（选择结束时间后刷新数据）</span>
           <el-button type="primary" size="mini" style="float: right;" @click="exportAllExcel">导出统计数据</el-button>
         </el-form-item>
       </el-form>
@@ -52,7 +53,7 @@
           <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
                          :total="total"
                          :current-page="currentPage"
-                         :page-sizes="[5,10,20]"
+                         :page-sizes="[10,20,30]"
                          :page-size="pagesize"
                          @size-change="handleSizeChange"
                          @current-change="handleCurrentChange">
@@ -82,7 +83,7 @@
         areaOptions:[],
         tableData:[],
         total:0,
-        pagesize:5,
+        pagesize:10,
         currentPage:1,
         loading:false
       }

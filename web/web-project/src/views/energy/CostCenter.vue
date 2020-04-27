@@ -199,7 +199,7 @@
           ]
         },
         waterAndSteamCostChartSettings:{
-          axisSite: { right: ['成本'] },
+          axisSite: { right: ['元'] },
           yAxisName: []
         },
         waterAndSteamCostChartData:{

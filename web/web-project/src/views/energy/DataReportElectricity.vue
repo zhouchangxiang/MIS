@@ -36,7 +36,7 @@
           <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
                          :total="total"
                          :current-page="currentPage"
-                         :page-sizes="[5,10,20]"
+                         :page-sizes="[10,20,30]"
                          :page-size="pagesize"
                          @size-change="handleSizeChange"
                          @current-change="handleCurrentChange">
@@ -66,7 +66,7 @@
         areaOptions:[],
         tableData:[],
         total:0,
-        pagesize:5,
+        pagesize:10,
         currentPage:1,
         loading:false
       }
