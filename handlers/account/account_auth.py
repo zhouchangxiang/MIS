@@ -169,7 +169,7 @@ def userloginauthentication():
             if user and (user.confirm_password(password) or user.Password == password):
                 login_user(user)  # login_user(user)调用user_loader()把用户设置到db_session中
                 user.session_id = str(time.time())
-                user.LastLoginTime = datetime.datetime.now().strptime('%Y-%m-%d %H:%M:%S')
+                user.LastLoginTime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 db_session.commit()
                 return 'OK'
             else:
