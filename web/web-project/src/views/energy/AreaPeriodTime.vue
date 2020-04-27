@@ -44,62 +44,16 @@
             <div class="chartTile">尖峰平谷分析</div>
           </div>
           <div class="platformContainer">
-            <el-row :gutter="20" style="margin-bottom: 10px;">
-              <el-col :span="9">
-                <p class="text-size-normol">尖时段</p>
-                <el-row>
-                  <el-col :span="14">
-                    <el-progress :text-inside="true" :stroke-width="16" :percentage="electricAnalyze.sharp" color="#FB3A06"></el-progress>
-                  </el-col>
-                  <el-col :span="10">
-                    <p class="text-color-info" style="padding-left: 10px;">耗能：253kwh</p>
-                  </el-col>
-                </el-row>
+            <el-col :span="12" v-for="(item,index) in electricAnalyze" :key="index" class="itemMarginBottom">
+              <p class="text-size-normol itemMarginBottom">{{ item.title }}</p>
+              <el-col :span="10">
+                <el-progress :text-inside="true" :stroke-width="16" :percentage="item.Ratio" :color="item.color"></el-progress>
               </el-col>
-              <el-col :span="9">
-                <p class="text-size-normol">峰时段</p>
-                <el-row>
-                  <el-col :span="14">
-                    <el-progress :text-inside="true" :stroke-width="16" :percentage="electricAnalyze.peak" color="#FB8A06"></el-progress>
-                  </el-col>
-                  <el-col :span="10">
-                    <p class="text-color-info" style="padding-left: 10px;">耗能：253kwh</p>
-                  </el-col>
-                </el-row>
+              <el-col :span="14">
+                <span class="text-color-info" style="padding-left: 10px;">耗能：{{ item.expendEnergy }}{{ item.unit }}</span>
+                <span class="text-color-info" style="padding-left: 10px;">价格：{{ item.expendPrice }}元</span>
               </el-col>
-              <el-col :span="6">
-                <p class="text-color-info-shallow" style="margin-bottom: 15px;">总电费：</p>
-                <p>{{ electricAnalyze.total }}元</p>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20" style="margin-bottom: 10px;">
-              <el-col :span="9">
-                <p class="text-size-normol">平时段</p>
-                <el-row>
-                  <el-col :span="14">
-                    <el-progress :text-inside="true" :stroke-width="16" :percentage="electricAnalyze.poise" color="#F8E71C"></el-progress>
-                  </el-col>
-                  <el-col :span="10">
-                    <p class="text-color-info" style="padding-left: 10px;">耗能：253kwh</p>
-                  </el-col>
-                </el-row>
-              </el-col>
-              <el-col :span="9">
-                <p class="text-size-normol">谷时段</p>
-                <el-row>
-                  <el-col :span="14">
-                    <el-progress :text-inside="true" :stroke-width="16" :percentage="electricAnalyze.ebb" color="#15CC48"></el-progress>
-                  </el-col>
-                  <el-col :span="10">
-                    <p class="text-color-info" style="padding-left: 10px;">耗能：253kwh</p>
-                  </el-col>
-                </el-row>
-              </el-col>
-              <el-col :span="6">
-                <p class="text-color-info-shallow" style="margin-bottom: 15px;">平均电价：</p>
-                <p>{{ electricAnalyze.average }}元</p>
-              </el-col>
-            </el-row>
+            </el-col>
           </div>
         </el-col>
       </el-col>
@@ -228,14 +182,7 @@
           columns:["时间","能耗量"],
           rows:[]
         },
-        electricAnalyze:{
-          sharp:100,
-          peak:87.5,
-          total:553524.5,
-          poise:33.3,
-          ebb:12.5,
-          average:0.89,
-        },
+        electricAnalyze:[],
         colorBarOption:[]
       }
     },
@@ -330,15 +277,13 @@
           areaName = this.newAreaName.areaName
         }
         var params = {
-          EnergyClass: this.formParameters.energy,
           StartTime:moment(this.formParameters.date).day(moment(this.formParameters.date).day()).startOf('day').format('YYYY-MM-DD HH:mm'),
           EndTime:moment(this.formParameters.date).day(moment(this.formParameters.date).day()).endOf('day').format('YYYY-MM-DD HH:mm'),
           TimeClass:"日",
           AreaName:areaName
         }
-        console.log(params)
-        this.axios.get("/api/energycost",{params:params}).then(res => {
-          console.log(res.data)
+        this.axios.get("/api/electricnergycost",{params:params}).then(res => {
+          that.electricAnalyze = res.data.periodTimeTypeItem
         })
       },
     }

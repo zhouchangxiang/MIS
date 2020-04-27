@@ -556,8 +556,8 @@
           that.WaterUnit = todayWaterData.unit
           that.waterCost = todayWaterData.cost + "元"
           that.waterHistogram.rows = [
-            { '时间': "昨日", '累计流量': that.yesterdayElectricityValue},
-            { '时间': "本日", '累计流量': that.todayElectricity},
+            { '时间': "昨日", '累计流量': that.yesterdayWaterValue},
+            { '时间': "本日", '累计流量': that.todayWater},
             { '时间': "月均", '累计流量': (thisMonthWaterValue / thisMonthDay).toFixed(2)}
           ]
           //汽
@@ -565,8 +565,8 @@
           that.SteamUnit = todaySteamData.unit
           that.steamCost = todaySteamData.cost + "元"
           that.steamHistogram.rows = [
-            { '时间': "昨日", '累计流量': that.yesterdayElectricityValue},
-            { '时间': "本日", '累计流量': that.todayElectricity},
+            { '时间': "昨日", '累计流量': that.yesterdaySteamValue},
+            { '时间': "本日", '累计流量': that.todaySteam},
             { '时间': "月均", '累计流量': (thisMonthSteamValue / thisMonthDay).toFixed(2)}
           ]
           that.electricRing.rows = todayAreaData.data.erow
