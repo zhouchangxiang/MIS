@@ -627,7 +627,7 @@ class User(Base):
     __tablename__ = "User"
 
     # id:
-    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
 
     # 用户名:
     Name = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
@@ -698,7 +698,7 @@ class User(Base):
         return False
 
     def get_id(self):
-        return str(self.id)  # python 3
+        return str(self.ID)  # python 3
 
 
 # User_END:

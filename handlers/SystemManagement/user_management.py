@@ -32,3 +32,29 @@ def userpage():
     #     roleName = {'RoleID': id, 'RoleName': name}
     #     dataRoleName.append(roleName)
     return render_template('./user.html')#, departments=data, roleNames=dataRoleName
+
+@user_manage.route('/user_manage/userselect')
+def userselect(data):#table, page, rows, fieid, param
+    '''
+    :param tablename: 查询表
+    :param pages: 页数
+    :param rowsnumber: 一页多少行
+    :param fieid: 查询字段
+    :param param: 查询条件
+    :return:用户查询
+    '''
+    try:
+        pages = int(data.get("offset"))
+        rowsnumber = int(data.get("limit"))
+        param = data.get("field")
+        tableName = data.get("tableName")
+        paramvalue = data.get("fieldvalue")
+        if (paramvalue == "" or paramvalue == None):
+            oclass = db_session.query(User).filter(User.WorkNumber == paramvalue).all()
+            total = db_session.query(User).filter(User.WorkNumber == paramvalue).count()
+        jsonoclass = '{"total"' + ":" + str(total) + ',"rows"' + ":\n" + oclass + "}"
+        return jsonoclass
+    except Exception as e:
+        print(e)
+        logger.error(e)
+        insertSyslog("error", "用户查询报错Error：" + str(e), current_user.Name)

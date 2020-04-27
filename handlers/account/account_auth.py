@@ -27,7 +27,7 @@ login_auth = Blueprint('login_auth', __name__, template_folder='templates')
 
 @login_manager.user_loader
 def load_user(user_id):
-    return db_session.query(User).filter_by(id=int(user_id)).first()
+    return db_session.query(User).filter_by(ID=int(user_id)).first()
 
 
 @login_auth.route('/account/login', methods=['GET', 'POST'])
