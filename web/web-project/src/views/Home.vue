@@ -39,7 +39,7 @@
                       <span class="text-size-mini text-color-info">{{ lastMonthCon }}</span>
                     </li>
                     <li>
-                      <span class="text-size-mini text-color-info-shallow">上月同期</span>
+                      <span class="text-size-mini text-color-info-shallow">同期对比</span>
                       <span class="text-size-mini" :class="thisMonthCon-lastMonthCon>0?'text-color-danger':'text-color-success'">{{ lastMonthCompare }}</span>
                     </li>
                   </ul>
@@ -85,7 +85,8 @@
               </el-select>
             </div>
             <div class="home-card-body" style="height:280px;">
-              <ve-bar :data="areaChartData" :extend="areaTimeChartExtend" v-loading="areaTimeChartsLoading" height="260px" :legend-visible="false"></ve-bar>
+              <ve-bar :data="areaChartData" :extend="areaTimeChartExtend" v-loading="areaTimeChartsLoading" height="230px" :legend-visible="false"></ve-bar>
+              <span class="text-size-small text-color-primary" @click="$router.push({ path:'/Areas?areaName=整厂区&navOptionsCurrent=2'})" style="float: right;cursor: pointer;">查看更多<i class="el-icon-d-arrow-right el-icon--right"></i></span>
             </div>
           </el-col>
           <el-col :span="7">
@@ -111,9 +112,9 @@
             </div>
             <div class="home-card-body" style="height:280px;">
               <ul>
-                <li v-for="item in onlineEquipmentOption" style="margin-bottom: 5px;">
-                  <p class="text-size-normol text-color-info">{{ item.name }}</p>
-                  <p class="text-size-mini text-color-info-shallow" style="margin-top: 5px;"><span>上线数/总数</span><span style="float: right;">{{ item.online }}/{{ item.total }}</span></p>
+                <li v-for="item in onlineEquipmentOption" class="itemMarginBottom">
+                  <p class="text-size-normol text-color-info itemMarginBottom">{{ item.name }}</p>
+                  <p class="text-size-mini text-color-info-shallow itemMarginBottom" style="margin-top: 5px;"><span>上线数/总数</span><span style="float: right;">{{ item.online }}/{{ item.total }}</span></p>
                   <el-progress :text-inside="true" :stroke-width="16" strokeLinecap="square" :percentage="item.rate"></el-progress>
                 </li>
               </ul>

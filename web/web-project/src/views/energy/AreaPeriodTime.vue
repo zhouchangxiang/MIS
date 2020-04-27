@@ -3,10 +3,10 @@
       <el-col :span="24">
         <el-form :inline="true" :model="formParameters">
           <el-form-item label="时间：">
-            <el-date-picker type="date" v-model="formParameters.date" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false" @change="getChartData(),getAreaTimeEnergy()"></el-date-picker>
+            <el-date-picker type="date" v-model="formParameters.date" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false" @change="getChartData(),getAreaTimeEnergy(),getEnergycost()"></el-date-picker>
           </el-form-item>
           <el-form-item style="float: right;">
-            <el-radio-group v-model="formParameters.energy" fill="#082F4C" size="small" @change="getDayEnergy(),getChartData(),getAreaTimeEnergy()">
+            <el-radio-group v-model="formParameters.energy" fill="#082F4C" size="small" @change="getDayEnergy(),getChartData(),getAreaTimeEnergy(),getEnergycost()">
               <el-radio-button v-for="(item,index) in energyList" :key="item.index" :label="item.label"></el-radio-button>
             </el-radio-group>
           </el-form-item>
@@ -15,72 +15,7 @@
       <el-col :span="24" v-if="newAreaName.areaName != '整厂区'">
         <el-col :span="18">
           <div class="energyDataCard">
-            <ve-line :data="chartData" :settings="chartSettings" :extend="ChartExtend" v-loading="ChartsLoading"></ve-line>
-          </div>
-          <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
-            <div class="chartTile">尖峰平谷分析</div>
-          </div>
-          <div class="platformContainer">
-            <el-row :gutter="20" style="margin-bottom: 10px;">
-              <el-col :span="9">
-                <p class="text-size-normol">尖时段</p>
-                <span class="text-size-mini text-color-info-shallow">共{{ electricAnalyze.sharpTime }}小时</span>
-                <el-row>
-                  <el-col :span="14">
-                    <el-progress :text-inside="true" :stroke-width="16" :percentage="electricAnalyze.sharp" color="#FB3A06"></el-progress>
-                  </el-col>
-                  <el-col :span="10">
-                    <p class="text-color-info" style="padding-left: 10px;">耗能：253kwh</p>
-                  </el-col>
-                </el-row>
-              </el-col>
-              <el-col :span="9">
-                <p class="text-size-normol">峰时段</p>
-                <span class="text-size-mini text-color-info-shallow">共{{ electricAnalyze.peakTime }}小时</span>
-                <el-row>
-                  <el-col :span="14">
-                    <el-progress :text-inside="true" :stroke-width="16" :percentage="electricAnalyze.peak" color="#FB8A06"></el-progress>
-                  </el-col>
-                  <el-col :span="10">
-                    <p class="text-color-info" style="padding-left: 10px;">耗能：253kwh</p>
-                  </el-col>
-                </el-row>
-              </el-col>
-              <el-col :span="6">
-                <p class="text-color-info-shallow" style="margin-bottom: 15px;">总电费：</p>
-                <p>{{ electricAnalyze.total }}元</p>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20" style="margin-bottom: 10px;">
-              <el-col :span="9">
-                <p class="text-size-normol">平时段</p>
-                <span class="text-size-mini text-color-info-shallow">共{{ electricAnalyze.poiseTime }}小时</span>
-                <el-row>
-                  <el-col :span="14">
-                    <el-progress :text-inside="true" :stroke-width="16" :percentage="electricAnalyze.poise" color="#F8E71C"></el-progress>
-                  </el-col>
-                  <el-col :span="10">
-                    <p class="text-color-info" style="padding-left: 10px;">耗能：253kwh</p>
-                  </el-col>
-                </el-row>
-              </el-col>
-              <el-col :span="9">
-                <p class="text-size-normol">谷时段</p>
-                <span class="text-size-mini text-color-info-shallow">共{{ electricAnalyze.ebbTime }}小时</span>
-                <el-row>
-                  <el-col :span="14">
-                    <el-progress :text-inside="true" :stroke-width="16" :percentage="electricAnalyze.ebb" color="#15CC48"></el-progress>
-                  </el-col>
-                  <el-col :span="10">
-                    <p class="text-color-info" style="padding-left: 10px;">耗能：253kwh</p>
-                  </el-col>
-                </el-row>
-              </el-col>
-              <el-col :span="6">
-                <p class="text-color-info-shallow" style="margin-bottom: 15px;">平均电价：</p>
-                <p>{{ electricAnalyze.average }}元</p>
-              </el-col>
-            </el-row>
+            <ve-line :data="chartData" :settings="chartSettings" :extend="ChartExtend" v-loading="ChartsLoading" height="300px"></ve-line>
           </div>
         </el-col>
         <el-col :span="6">
@@ -89,7 +24,7 @@
             <div class="realTimeData itemMarginBottom text-color-primary" v-html="todayHtml">{{ todayCon }}</div>
           </div>
           <div class="energyDataCard">
-            <div class="energyDataItem">
+            <div class="energyDataItem" style="margin-top: 8px">
               <div class="energyDataItemTitle">
                 <el-date-picker type="date" v-model="CompareDate" :picker-options="pickerOptions" size="mini" style="width: 130px;" :clearable="false"></el-date-picker>
               </div>
@@ -103,29 +38,21 @@
               <div class="energyDataItemData">{{ compareRatio }}</div>
             </div>
           </div>
-          <div class="energyDataCard">
-            <div class="realTimeCardTitle" style="margin-bottom: 10px;">避峰用谷分析（参考）</div>
-            <el-col :span="14">
-              <p class="text-size-normol">尖时段</p>
-              <span class="text-size-mini text-color-info-shallow">共{{ rationalAnalyze.sharpTime }}小时</span>
-              <p><el-progress :text-inside="true" :stroke-width="16" :percentage="electricAnalyze.sharp" color="#FB3A06"></el-progress></p>
-              <p class="text-size-normol" style="margin-top: 10px;">峰时段</p>
-              <span class="text-size-mini text-color-info-shallow">共{{ rationalAnalyze.peakTime }}小时</span>
-              <p><el-progress :text-inside="true" :stroke-width="16" :percentage="electricAnalyze.peak" color="#FB8A06"></el-progress></p>
-              <p class="text-size-normol" style="margin-top: 10px;">平时段</p>
-              <span class="text-size-mini text-color-info-shallow">共{{ rationalAnalyze.poiseTime }}小时</span>
-              <p><el-progress :text-inside="true" :stroke-width="16" :percentage="electricAnalyze.poise" color="#F8E71C"></el-progress></p>
-              <p class="text-size-normol" style="margin-top: 10px;">谷时段</p>
-              <span class="text-size-mini text-color-info-shallow">共{{ rationalAnalyze.ebbTime }}小时</span>
-              <p><el-progress :text-inside="true" :stroke-width="16" :percentage="electricAnalyze.ebb" color="#15CC48"></el-progress></p>
-            </el-col>
-            <el-col :span="10">
-              <p class="text-size-normol text-color-info-shallow" style="margin-bottom: 15px;">总电费：</p>
-              <p class="text-size-normol text-color-info" style="margin-bottom: 20px;">553545.5 元</p>
-              <p class="text-size-normol text-color-info-shallow" style="margin-bottom: 15px;">平均电价：</p>
-              <p class="text-size-normol text-color-info" style="margin-bottom: 20px;">0.89 元</p>
-              <p class="text-size-normol text-color-info-shallow" style="margin-bottom: 15px;">建议：</p>
-              <p class="text-size-mini text-color-danger">设备尽量在峰段（高电价）时刻检修，在平或谷（低电价）生产，可以降低能耗成本</p>
+        </el-col>
+        <el-col :span="24">
+          <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
+            <div class="chartTile">尖峰平谷分析</div>
+          </div>
+          <div class="platformContainer">
+            <el-col :span="12" v-for="(item,index) in electricAnalyze" :key="index" class="itemMarginBottom">
+              <p class="text-size-normol itemMarginBottom">{{ item.title }}</p>
+              <el-col :span="10">
+                <el-progress :text-inside="true" :stroke-width="16" :percentage="item.Ratio" :color="item.color"></el-progress>
+              </el-col>
+              <el-col :span="14">
+                <span class="text-color-info" style="padding-left: 10px;">耗能：{{ item.expendEnergy }}{{ item.unit }}</span>
+                <span class="text-color-info" style="padding-left: 10px;">价格：{{ item.expendPrice }}元</span>
+              </el-col>
             </el-col>
           </div>
         </el-col>
@@ -255,30 +182,7 @@
           columns:["时间","能耗量"],
           rows:[]
         },
-        electricAnalyze:{
-          sharpTime:3,
-          sharp:100,
-          peakTime:7,
-          peak:87.5,
-          total:553524.5,
-          poiseTime:6,
-          poise:33.3,
-          ebbTime:8,
-          ebb:12.5,
-          average:0.89,
-        },
-        rationalAnalyze:{
-          sharpTime:3,
-          sharp:100,
-          peakTime:7,
-          peak:87.5,
-          poiseTime:6,
-          poise:33.3,
-          ebbTime:8,
-          ebb:12.5,
-          total:553524.5,
-          average:0.89
-        },
+        electricAnalyze:[],
         colorBarOption:[]
       }
     },
@@ -286,6 +190,7 @@
       this.getDayEnergy()
       this.getAreaTimeEnergy()
       this.getChartData()
+      this.getEnergycost()
       this.$watch("todayCon", function (newValue, oldValue) {
         if(newValue > 0){
           var thisYearConStr = newValue.toString().split("")
@@ -363,6 +268,24 @@
           this.colorBarOption = res.data
         })
       },
+      getEnergycost(){
+        var that = this
+        var areaName = ""
+        if(this.newAreaName.areaName === "整厂区"){
+          areaName = ""
+        }else{
+          areaName = this.newAreaName.areaName
+        }
+        var params = {
+          StartTime:moment(this.formParameters.date).day(moment(this.formParameters.date).day()).startOf('day').format('YYYY-MM-DD HH:mm'),
+          EndTime:moment(this.formParameters.date).day(moment(this.formParameters.date).day()).endOf('day').format('YYYY-MM-DD HH:mm'),
+          TimeClass:"日",
+          AreaName:areaName
+        }
+        this.axios.get("/api/electricnergycost",{params:params}).then(res => {
+          that.electricAnalyze = res.data.periodTimeTypeItem
+        })
+      },
     }
   }
 </script>
@@ -410,7 +333,7 @@
   }
   .energyDataItem{
     display: table;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     font-size: 18px;
   }
   .energyDataItemTitle{

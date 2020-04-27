@@ -29,7 +29,7 @@
         </el-col>
         <el-col :span="6">
           <div class="platformItem">
-            <p style="margin-bottom: 10px;">输入汽量<span class="float-right text-size-mini text-color-info-shallow"></span></p>
+            <p style="margin-bottom: 10px;">输出总汽量<span class="float-right text-size-mini text-color-info-shallow"></span></p>
             <p><label class="text-size-big text-color-primary">{{ outputSteam }}</label><span class="float-right"></span></p>
           </div>
         </el-col>
@@ -41,7 +41,7 @@
         </el-col>
       </div>
       <div class="energyDataContainer">
-        <ve-line :data="runEfficiencyChartData" :extend="ChartExtend" v-loading="chartsLoading"></ve-line>
+        <ve-histogram :data="runEfficiencyChartData" :extend="ChartExtend" v-loading="chartsLoading"></ve-histogram>
       </div>
     </el-col>
   </el-row>

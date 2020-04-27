@@ -85,7 +85,7 @@
           <div class="platformContainer" style="margin-bottom:10px;" v-if="EnergyClass === '水'">
             <el-col :span="12">
               <div class="faultItemHead">
-                <span>损失量</span>
+                <span>瞬时量</span>
               </div>
               <div class="faultItemBody">
                 <p style="padding: 29px 0;"><span>{{ forEqParameters.WaterF }}</span></p>
@@ -109,7 +109,7 @@
           <div class="platformContainer" style="margin-bottom:10px;" v-if="EnergyClass === '汽'">
             <el-col :span="6">
               <div class="faultItemHead">
-                <span>损失量</span>
+                <span>瞬时量</span>
               </div>
               <div class="faultItemBody">
                 <p style="padding: 29px 0;"><span>{{ forEqParameters.SteamF }}</span></p>
