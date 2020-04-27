@@ -30,12 +30,12 @@
        @current-change="handleCurrentChange">
       </el-pagination>
     </div>
-    <el-dialog :title="tableData.dialogTitle" :visible.sync="tableData.dialogVisible" :close-on-click-modal="false" width="40%">
+    <el-dialog v-if="tableData.hasOwnProperty('handleForm')" :title="tableData.dialogTitle" :visible.sync="tableData.dialogVisible" :close-on-click-modal="false" width="40%">
       <el-form :model="tableData.submitForm" label-width="110px">
         <el-form-item v-for="(item,index) in tableData.handleForm" :key="index" :label="item.label" :prop="item.prop">
           <el-input v-if="item.type === 'input'" v-model="item.value" :disabled="item.disabled"></el-input>
           <el-select v-if="item.type === 'select'" v-model="item.value" placeholder="请选择">
-            <el-option v-for="(i,d) in DownDataEven(item.DownData)" :key="d" :label="i[item.showDownField]" :value="i[item.showDownField]"></el-option>
+            <el-option v-for="(i,d) in item.DownData" :key="d" :label="i[item.showDownField]" :value="i[item.showDownField]"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -57,7 +57,7 @@
       }
     },
     created(){
-      this.determineSubmitType()
+
     },
     methods:{
       handleSizeChange(limit){ //每页条数切换
@@ -99,11 +99,13 @@
       tableClickHandleButton(label,event){
         this.tableData.dialogTitle = label
         if(label === "添加"){
+          this.determineSubmitType()
           this.tableData.dialogVisible = true
           this.tableData.handleForm.forEach(item =>{
             item.value = ""
           })
         }else if(label === "修改"){
+          this.determineSubmitType()
           if(this.tableData.multipleSelection.length == 1){
             this.tableData.dialogVisible = true
             this.tableData.handleForm.forEach(item =>{
@@ -178,71 +180,6 @@
             })
           }
         })
-      },
-      DownDataEven: function (formData) {
-        if(formData){
-          console.log(formData)
-          this.tableData.handleForm.forEach(item =>{
-            if(item.hasOwnProperty('childSelect')) {
-              this.tableData.handleForm.forEach(v => {
-                if (v.prop === item.childSelect) {
-                  console.log(v.Downtable)
-                  console.log(v.searchField)
-                  console.log(item.value)
-                  var params = {
-                    tableName: v.Downtable,
-                    field: v.searchField,
-                    fieldvalue: item.value,
-                    limit: 100000000,
-                    offset: 0
-                  }
-                  this.axios.get("/api/CUID", {
-                    params: params
-                  }).then(res => {
-                    var resdata = JSON.parse(res.data)
-                    console.log(resdata)
-                    v.DownData = resdata.rows
-                    v.value = ""
-                    //formData = resdata.rows
-                  }, res => {
-                    console.log("请求错误")
-                  })
-                }
-              })
-              //return formData
-            }
-          })
-          return formData
-        }
-      },
-      determineSubmitTypeChange(){
-        // var that = this
-        // this.tableData.handleForm.forEach(item =>{
-        //   if(item.hasOwnProperty('childSelect')){
-        //     this.tableData.handleForm.forEach(v =>{
-        //       if(v.prop === item.childSelect){
-        //         var params = {
-        //           tableName: v.Downtable,
-        //           field:v.searchField,
-        //           fieldvalue:item.value,
-        //           limit:100000000,
-        //           offset:0
-        //         }
-        //         this.axios.get("/api/CUID",{
-        //           params: params
-        //         }).then(res =>{
-        //           var data = JSON.parse(res.data)
-        //           that.$set(that.tableData.handleForm)
-        //           v.DownData = data.rows
-        //         },res =>{
-        //           console.log("请求错误")
-        //         })
-        //       }
-        //     })
-        //   }else if(item.hasOwnProperty('searchField')){
-        //
-        //   }
-        // })
       },
       save(){
         if(this.tableData.dialogTitle === "添加"){

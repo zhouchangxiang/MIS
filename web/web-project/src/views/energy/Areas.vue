@@ -23,6 +23,7 @@
   import AreaEqDetails from '@/views/energy/AreaEqDetails'
   import AreaBasicData from '@/views/energy/AreaBasicData'
   import CostCenter from '@/views/energy/CostCenter'
+  var moment = require('moment');
   export default {
     name: "Areas",
     components:{
@@ -30,11 +31,7 @@
     },
     inject:['newAreaName'],
     mounted(){
-      if(this.$route.query.navOptionsCurrent === undefined){
-        this.navOptionsCurrent = 1
-      }else{
-        this.navOptionsCurrent = this.$route.query.navOptionsCurrent
-      }
+      this.getNavOptionsCurrent()
     },
     data(){
       return {
@@ -52,6 +49,17 @@
     methods: {
       showPage(index) {
         this.navOptionsCurrent = index
+        // this.$router.push({
+        //   query:{'areaName':this.newAreaName.areaName,'navOptionsCurrent':index,'t':Date.now()}
+        // })
+        //this.getNavOptionsCurrent()
+      },
+      getNavOptionsCurrent(){
+        if(this.$route.query.navOptionsCurrent === undefined){
+          this.navOptionsCurrent = 1
+        }else{
+          this.navOptionsCurrent = this.$route.query.navOptionsCurrent
+        }
       }
     }
   }
