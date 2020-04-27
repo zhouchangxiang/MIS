@@ -89,7 +89,8 @@ def run():
                         # el.EquipmnetID = equip[0]
                         el.PriceID = PriceID
                         db_session.query(ElectricEnergy)
-                        el.PrevID = ele.ID
+                        if ele:
+                            el.PrevID = ele.ID
                         el.AreaName = key.AreaName
                         el.IncrementFlag = "0"
                         db_session.add(el)
@@ -187,7 +188,8 @@ def run():
                         # sl.EquipmnetID = equip[0]
                         sl.PriceID = PriceID
                         sl.Volume = Volume
-                        sl.PrevID = ste.ID
+                        if ste:
+                            sl.PrevID = ste.ID
                         sl.IncrementFlag = "0"
                         sl.insertVolumeFlag = "0"
                         sl.AreaName = key.AreaName
@@ -226,7 +228,8 @@ def run():
                         wa.SumWUnit = units[0]
                         # wa.EquipmnetID = equip[0]
                         wa.PriceID = PriceID
-                        wa.PrevID = wat.ID
+                        if wat:
+                            wa.PrevID = wat.ID
                         wa.IncrementFlag = "0"
                         wa.AreaName = key.AreaName
                         db_session.add(wa)
