@@ -100,8 +100,6 @@ def delete(data):
             for key in jsonnumber:
                 try:
                     sql = "delete from "+"[DB_MICS].[dbo].["+tableName+"] where ID = '"+key+"'"
-                    if tableName == "User":
-                        sql = "delete from " + "[DB_MICS].[dbo].[" + tableName + "] where id = '" + key + "'"
                     db_session.execute(sql)
                     aud = AuditTrace()
                     aud.TableName = tableName
@@ -134,11 +132,7 @@ def update(data):
             obj = Base.classes.get(tableName)
             ss = obj()
             ID = data.get('ID')
-            if tableName == "User":
-                ID = data.get('id')
-                oclass = db_session.query(obj).filter_by(id=int(data.get('id'))).first()
-            else:
-                oclass = db_session.query(obj).filter_by(ID=int(data.get('ID'))).first()
+            oclass = db_session.query(obj).filter_by(ID=int(data.get('ID'))).first()
             if oclass:
                 for key in data:
                     if hasattr(oclass, key) and key != 'ID' and key != 'tableName' and key != "id" and key != "Creater":
