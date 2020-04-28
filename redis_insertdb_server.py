@@ -243,6 +243,7 @@ def run():
                 print("报错tag："+key.TagClassValue+" |报错IP："+key.IP+"  |报错端口："+key.COMNum+"  |错误："+str(e))
                 logger.error(e)
                 insertSyslog("error", "实时数据写入DB报错Error：" + str(e),"")
+                redis_conn.hset(constant.REDIS_TABLENAME, "redis_insertdb_server_status", "执行失败")
                 failcount = failcount + 1
             finally:
                 pass

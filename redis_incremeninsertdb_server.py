@@ -27,7 +27,7 @@ def run():
     runcount = 0
     failcount = 0
     while True:
-        # time.sleep(60)
+        time.sleep(60)
         print("数据开始写入增量数据库")
         redis_conn = redis.Redis(connection_pool=pool, password=constant.REDIS_PASSWORD, decode_responses=True)
         redis_conn.hset(constant.REDIS_TABLENAME, "redis_incremeninsertdb_server_start",
@@ -215,6 +215,7 @@ def run():
             print("写入增量库报错：" + str(e))
             insertSyslog("error", "写入增量库报错Error：" + str(e), "")
             failcount = failcount + 1
+            redis_conn.hset(constant.REDIS_TABLENAME, "redis_incremeninsertdb_server_status", "执行失败")
         finally:
             pass
         print("数据开始写入增量库结束")

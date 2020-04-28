@@ -111,8 +111,14 @@ def handler_accept(sock):
 def handler_msg(conn):
     with conn as c:
         data_recv = c.recv(1024)
+        runcount = 0
+        failcount = 0
         while True:
             try:
+                pool = redis.ConnectionPool(host=constant.REDIS_HOST)
+                redis_conn = redis.Redis(connection_pool=pool)
+                redis_conn.hset(constant.REDIS_TABLENAME, "websocket_start",
+                                datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
                 AreaName = ""
                 time.sleep(2)
                 if data_recv[0:1] == b"\x81":
@@ -120,8 +126,6 @@ def handler_msg(conn):
                     AreaName = str(data_parse)
                 data_dict = {}
                 dir = {}
-                pool = redis.ConnectionPool(host=constant.REDIS_HOST)
-                redis_conn = redis.Redis(connection_pool=pool)
                 areas = db_session.query(AreaTable).filter().all()
                 area_list = []
                 Tags = db_session.query(TagDetail).filter().all()
@@ -296,9 +300,17 @@ def handler_msg(conn):
                 bytemsg = bytes(json_data,encoding="utf-8")
                 send_msg(conn, bytemsg)
             except Exception as e:
-                print(e)
+                print("websocket报错：" + str(e))
+                insertSyslog("error", "websocket报错Error：" + str(e), "")
+                failcount = failcount + 1
+                redis_conn.hset(constant.REDIS_TABLENAME, "websocket_status", "执行失败")
             finally:
                 pass
+            redis_conn.hset(constant.REDIS_TABLENAME, "websocket_end",
+                            datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            redis_conn.hset(constant.REDIS_TABLENAME, "websocket_runcount", str(runcount))
+            redis_conn.hset(constant.REDIS_TABLENAME, "websocket_failcount", str(failcount))
+            redis_conn.hset(constant.REDIS_TABLENAME, "websocket_status", "执行成功")
 def strtofloat(f):
     if f == None or f == "" or f == b'':
         return 0.0
