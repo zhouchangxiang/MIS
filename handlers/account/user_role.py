@@ -16,10 +16,10 @@ def get_user():
     factory = db_session.query(AreaMaintain).first()
     queryset = []
     for department in departments:
-        role_query = db_session.query(Role).filter(Role.ParentNode == department.DepartName).all()
+        role_query = db_session.query(Role).filter(Role.ParentNode == department.DepartCode).all()
         role_list = []
         for data in role_query:
-            d1 = db_session.query(DepartmentManager).filter(DepartmentManager.DepartName == data.ParentNode).first()
+            d1 = db_session.query(DepartmentManager).filter(DepartmentManager.DepartCode == data.ParentNode).first()
             user_list = {'name': data.RoleName, 'value': data.RoleCode, 'role_description': data.Description, 'type': 'role', 'rid': data.ID, 'did': d1.ID, 'department_name': department.DepartName, 'children': []}
             user_query = db_session.query(User).filter(User.RoleName == data.RoleName).all()
             for user in user_query:
@@ -54,7 +54,7 @@ def add_department():
 def delete_department():
     code = request.headers.get('department_code')
     department = db_session.query(DepartmentManager).filter(DepartmentManager.DepartCode == code).first()
-    role_query = db_session.query(Role).filter(Role.ParentNode == department.DepartName).all()
+    role_query = db_session.query(Role).filter(Role.ParentNode == department.DepartCode).all()
     for item in role_query:
         item.ParentNode = ''
     db_session.commit()
@@ -73,7 +73,7 @@ def update_department():
     code = request.json.get('department_code')
     department_name = request.json.get('department_name')
     department = db_session.query(DepartmentManager).filter(DepartmentManager.ID == int(did)).first()
-    role_query = db_session.query(Role).filter(Role.ParentNode == department.DepartName).all()
+    role_query = db_session.query(Role).filter(Role.ParentNode == department.DepartCode).all()
     for item in role_query:
         item.ParentNode = code
     department.DepartCode = code
@@ -89,7 +89,7 @@ def add_role():
     rname = request.json.get('role_name')
     rdes = request.json.get('role_description')
     department = db_session.query(DepartmentManager).filter(DepartmentManager.ID == int(did)).first()
-    role = Role(RoleCode=rcode, RoleName=rname, Description=rdes, ParentNode=department.DepartName)
+    role = Role(RoleCode=rcode, RoleName=rname, Description=rdes, ParentNode=department.DepartCode)
     db_session.add(role)
     db_session.commit()
     return json.dumps({'code': 10003, 'msg': '新增成功', 'data': {'rid': role.ID}})
