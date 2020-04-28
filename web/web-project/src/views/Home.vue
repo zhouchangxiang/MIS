@@ -174,20 +174,22 @@
         <div class="home-card-body" style="height: 130px;text-align: center;">
           <p class="text-size-big text-color-primary">系统体检</p>
           <a href="javascript:;" class="systemCheckup" @click="openSystemCheckupDialog">立即体检</a>
-          <el-dialog title="系统体检" :close-on-press-escape="false" :close-on-click-modal="false" :show-close="false" :visible.sync="systemCheckupDialogVisible" width="75%" center>
-            <el-col :span="6" v-for="item in systemCheckupList" :key="item.item.name" class="itemMarginBottom">
-              <el-card class="box-card" shadow="hover">
-                <el-form>
-                  <el-form-item label="执行任务"><span class="text-color-primary text-size-normol">{{ item.item.name }}</span></el-form-item>
-                  <el-form-item label="执行成功次数"><span class="text-color-info text-size-normol">{{ item.item.successNumber }}</span></el-form-item>
-                  <el-form-item label="执行失败次数"><span class="text-color-info text-size-normol">{{ item.item.errorNumber }}</span></el-form-item>
-                  <el-form-item label="总共执行次数"><span class="text-color-info text-size-normol">{{ item.item.totalNumber }}</span></el-form-item>
-                  <el-form-item label="开始执行时间"><span class="text-color-info text-size-normol">{{ item.item.startTime }}</span></el-form-item>
-                  <el-form-item label="最后刷新时间"><span class="text-color-info text-size-normol">{{ item.item.endTime }}</span></el-form-item>
-                  <el-form-item label="执行状态"><p style="display: grid;padding: 0 10px;" :style="item.item.state == '执行成功'?'background:rgb(125, 247, 159)':'background:#FB8A06'">{{ item.item.state }}</p></el-form-item>
-                </el-form>
-              </el-card>
-            </el-col>
+          <el-dialog title="系统体检" :close-on-press-escape="false" :close-on-click-modal="false" :show-close="false" :visible.sync="systemCheckupDialogVisible" width="80%" center>
+            <el-row :gutter="15">
+              <el-col :span="6" v-for="item in systemCheckupList" :key="item.item.name" class="itemMarginBottom">
+                <el-card class="box-card" shadow="hover">
+                  <el-form>
+                    <el-form-item label="执行任务"><span class="text-color-primary text-size-normol">{{ item.item.name }}</span></el-form-item>
+                    <el-form-item label="执行成功次数"><span class="text-color-info text-size-normol">{{ item.item.successNumber }}</span></el-form-item>
+                    <el-form-item label="执行失败次数"><span class="text-color-info text-size-normol">{{ item.item.errorNumber }}</span></el-form-item>
+                    <el-form-item label="总共执行次数"><span class="text-color-info text-size-normol">{{ item.item.totalNumber }}</span></el-form-item>
+                    <el-form-item label="开始执行时间"><span class="text-color-info text-size-normol">{{ item.item.startTime }}</span></el-form-item>
+                    <el-form-item label="最后刷新时间"><span class="text-color-info text-size-normol">{{ item.item.endTime }}</span></el-form-item>
+                    <el-form-item label="执行状态"><p style="display: grid;padding: 0 10px;" :style="item.item.state == '执行成功'?'background:rgb(125, 247, 159)':'background:#FB8A06'">{{ item.item.state }}</p></el-form-item>
+                  </el-form>
+                </el-card>
+              </el-col>
+            </el-row>
             <span slot="footer" class="dialog-footer">
               <el-button @click="systemCheckupDialogVisible = false">取 消</el-button>
               <el-button type="primary" @click="startSystemCheckup">开 始 体 检</el-button>
@@ -462,7 +464,7 @@
             startTime: "",
             endTime: "",
             state: ""
-          }},
+          }}
         ],
       }
     },
@@ -728,6 +730,15 @@
             endTime: "",
             state: ""
           }},
+          {item: {
+            name: "实时数据服务（websocket）",
+            successNumber: "",
+            errorNumber: "",
+            totalNumber: "",
+            startTime: "",
+            endTime: "",
+            state: ""
+          }}
         ]
         this.axios.get("/api/systemcollecting").then(res => {
          this.systemCheckupList[0].item = res.data
@@ -739,6 +750,7 @@
          this.systemCheckupList[2].item = res.data
         })
         this.axios.get("/api/systemwebsocket").then(res => {
+          console.log(res.data)
          this.systemCheckupList[3].item = res.data
         })
       }
