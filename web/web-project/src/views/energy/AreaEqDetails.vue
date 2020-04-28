@@ -19,13 +19,12 @@
             <div class="chartTile">设备</div>
           </div>
           <div class="platformContainer" style="margin-bottom: 10px;">
-            <el-table :data="TagDetailTableData" highlight-current-row ref="multipleTable" @selection-change="handleSelectionChange" @row-click="handleRowClick" size="mini" height="246px" max-height="246px" style="width: 100%">
-              <el-table-column type="selection"></el-table-column>
+            <el-table :data="TagDetailTableData" highlight-current-row ref="multipleTable" @selection-change="handleSelectionChange" @row-click="handleRowClick" v-loading="TagEqTableLoading" size="mini" height="246px" max-height="246px" style="width: 100%">
               <el-table-column prop="AreaName" label="区域名称"></el-table-column>
               <el-table-column prop="FEFportIP" label="站点地址"></el-table-column>
-              <el-table-column prop="DeviceNum" label="器件号"></el-table-column>
               <el-table-column prop="EnergyClass" label="分类"></el-table-column>
-              <el-table-column prop="TagClassValue" label="Tag点"></el-table-column>
+              <el-table-column prop="IP" label="IP"></el-table-column>
+              <el-table-column prop="COMNum" label="端口"></el-table-column>
             </el-table>
           </div>
         </el-col>
@@ -33,10 +32,6 @@
           <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
             <div class="chartTile">
               设备信息
-            </div>
-            <div class="chartHeadRight">
-              <!--<el-button size="mini">档案</el-button>-->
-              <!--<el-button size="mini">历史事件</el-button>-->
             </div>
           </div>
           <div class="platformContainer" style="margin-bottom:10px;" v-if="EnergyClass === '电'">
@@ -232,34 +227,53 @@
         </el-col>
       </el-col>
       <el-col :span="24" v-if="formParameters.eqComponentValue == '电能质量'">
-        <el-col :span="24" style="margin-bottom: 10px;">
-          <div class="platformContainer">
-            <el-col :span="8">
-              <div class="equirunInfoItem">
-                <label>三项电流不平衡度</label>
-                <p><span class="text-size-mini text-color-info-shallow">正常值</span><span class="text-size-mini text-color-info-shallow float-right">最近30天一场次数</span></p>
-                <p><span><15%</span><span class="float-right">6次</span></p>
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <div class="equirunInfoItem">
-                <label>最近一次异常数据</label>
-                <p><span class="text-size-mini text-color-info-shallow">三相不平衡度</span><span class="text-size-mini text-color-info-shallow float-right">异常时间</span></p>
-                <p><span>23.8%</span><span class="float-right">17:00-19:00</span></p>
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <div class="equirunInfoItem">
-                <label>提示</label>
-                <p style="margin-bottom: 10px;"><span class="text-size-mini text-color-info-shallow">三相电流不平衡度连续出现异常，可能是三相线路负载不平衡导致， 需及时调整变压器负载</span></p>
-              </div>
-            </el-col>
-            <div class="energyDataContainer">
-              <ve-line :data="threeCurrentImbalanceChartData" :extend="ChartExtend"></ve-line>
+        <el-col :span="8">
+          <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
+            <div class="chartTile">设备</div>
+          </div>
+          <div class="platformContainer" style="margin-bottom: 10px;">
+            <el-table :data="ElectricTagDetailTableData" highlight-current-row ref="ElectricMultipleTable" @selection-change="ElectricHandleSelectionChange" @row-click="ElectricHandleRowClick" v-loading="TagEqTableLoading" size="mini" height="246px" max-height="246px">
+              <el-table-column prop="AreaName" label="区域名称"></el-table-column>
+              <el-table-column prop="FEFportIP" label="站点地址"></el-table-column>
+              <el-table-column prop="EnergyClass" label="分类"></el-table-column>
+              <el-table-column prop="IP" label="IP"></el-table-column>
+              <el-table-column prop="COMNum" label="端口"></el-table-column>
+            </el-table>
+          </div>
+        </el-col>
+        <el-col :span="16" style="margin-bottom: 10px;">
+          <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
+            <div class="chartTile">
+              设备信息
             </div>
           </div>
+          <div class="platformContainer">
+            <el-col :span="12">
+              <div class="faultItemHead">
+                <span>三项电流不平衡度</span>
+              </div>
+              <div class="faultItemBody">
+                <p style="padding: 22px 0;">正常值<span>{{  }}</span></p>
+                <p style="padding: 22px 0;">最近30天异常次数<span>{{  }}</span></p>
+              </div>
+            </el-col>
+            <el-col :span="12">
+              <div class="faultItemHead">
+                <span>最近一次异常数据</span>
+              </div>
+              <div class="faultItemBody">
+                <p style="padding: 22px 0;">三相不平衡度<span>{{  }}</span></p>
+                <p style="padding: 22px 0;">异常时间<span>{{  }}</span></p>
+              </div>
+            </el-col>
+          </div>
          </el-col>
-         <el-col :span="24">
+        <el-col :span="24">
+          <div class="energyDataContainer">
+            <ve-line :data="threeCurrentImbalanceChartData" :extend="ChartExtend"></ve-line>
+          </div>
+        </el-col>
+        <el-col :span="24">
           <div class="chartHead text-size-large text-color-info" style="margin-bottom: 2px;">
             <div class="chartTile">实时数据</div>
           </div>
@@ -301,8 +315,11 @@
             return time.getTime() > Date.now();
           }
         },
+        TagEqTableLoading:false,
         multipleSelection:[],
+        ElectricMultipleSelection:[],
         TagDetailTableData:[],
+        ElectricTagDetailTableData:[],
         forEqParameters:{},
         EnergyClass:"电",
         ralTimeWarningTableData:[],
@@ -359,7 +376,11 @@
       handleSelectionChange(val){
         this.multipleSelection = val;
       },
+      ElectricHandleSelectionChange(val){
+        this.ElectricMultipleSelection = val;
+      },
       getEq(){
+        this.TagEqTableLoading = true
         let that = this
         var params = {
           tableName:"TagDetail",
@@ -369,8 +390,14 @@
           offset:0
         }
         this.axios.get("/api/CUID",{params:params}).then(res =>{
+          that.TagEqTableLoading = false
           var resData = JSON.parse(res.data).rows
           that.TagDetailTableData = resData
+          that.TagDetailTableData.forEach(item =>{
+            if(item.EnergyClass === "电"){
+              that.ElectricTagDetailTableData.push(item)
+            }
+          })
           that.$refs.multipleTable.setCurrentRow(that.TagDetailTableData[0])
           that.handleRowClick(that.TagDetailTableData[0])
         },res =>{
@@ -389,14 +416,30 @@
         this.axios.get("/api/EquipmentDetail",{params:params}).then(res =>{
           that.forEqParameters = res.data
           that.faultChartData.rows = res.data.row
-          console.log(res.data)
         })
+      },
+      getEqElectricData(){
+        var that = this
+        var params = {
+          TagClassValue:this.ElectricMultipleSelection[0].TagClassValue,
+          StartTime:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm"),
+          EndTime:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm")
+        }
+        // this.axios.get("/api/EquipmentDetail",{params:params}).then(res =>{
+        //   that.forEqParameters = res.data
+        //   that.faultChartData.rows = res.data.row
+        // })
       },
       handleRowClick(row){
         this.$refs.multipleTable.clearSelection();
         this.$refs.multipleTable.toggleRowSelection(row)
         this.getEqData()
-      }
+      },
+      ElectricHandleRowClick(row){
+        this.$refs.ElectricMultipleTable.clearSelection();
+        this.$refs.ElectricMultipleTable.toggleRowSelection(row)
+        this.getEqElectricData()
+      },
     }
   }
 </script>

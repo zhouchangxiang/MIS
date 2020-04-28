@@ -11,17 +11,16 @@
 <script>
   import tableView from '@/views/SystemManage/CommonTable'
   export default {
-    name: "SchedulingRules",
+    name: "SteamTotal",
     components:{tableView},
     data(){
       return {
         TableData:{
-          tableName:"Shifts",
+          tableName:"SteamTotal",
           column:[
-            {prop:"ShiftsName",label:"班次名称"},
-            {prop:"ShiftsCode",label:"班次编码"},
-            {prop:"BeginTime",label:"班次开始时间"},
-            {prop:"EndTime",label:"班次结束时间"},
+            {prop:"TotalSumValue",label:"汽能总量值"},
+            {prop:"MaintainTime",label:"时间(按天维护）"},
+            {prop:"CreateDate",label:"创建日期"},
           ],
           data:[],
           limit:5,
@@ -29,7 +28,7 @@
           total:0,
           searchProp:"",
           searchPropList:[
-            {label:"班次名称",prop:"ShiftsName"}
+            {label:"时间",prop:"MaintainTime"}
           ],
           tableSelection:true, //是否需要选择框
           tableSelectionRadio:false, //是否需要单选
@@ -44,10 +43,8 @@
           ],
           handleForm:[
             {label:"ID",prop:"ID",type:"input",value:"",disabled:true},
-            {label:"班次名称",prop:"ShiftsName",type:"input",value:""},
-            {label:"班次编码",prop:"ShiftsCode",type:"input",value:""},
-            {label:"班次开始时间",prop:"BeginTime",type:"input",value:""},
-            {label:"班次结束时间",prop:"EndTime",type:"input",value:""},
+            {label:"汽能总量值",prop:"TotalSumValue",type:"input",value:""},
+            {label:"时间(按天维护）",prop:"MaintainTime",type:"input",value:""}
           ],
         },
       }

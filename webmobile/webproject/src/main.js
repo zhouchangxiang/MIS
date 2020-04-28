@@ -15,7 +15,7 @@ Vue.prototype.$qs=qs
 
 import './assets/css/base.css'
 
-
+import 'lib-flexible/flexible'
 
 
 /* eslint-disable no-new */
