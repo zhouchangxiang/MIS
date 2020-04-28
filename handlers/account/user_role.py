@@ -54,7 +54,7 @@ def add_department():
 def delete_department():
     code = request.headers.get('department_code')
     department = db_session.query(DepartmentManager).filter(DepartmentManager.DepartCode == code).first()
-    role_query = db_session.query(Role).filter(Role.ParentNode == department.DepartCode).all()
+    role_query = db_session.query(Role).filter(Role.ParentNode == department.DepartName).all()
     for item in role_query:
         item.ParentNode = ''
     db_session.commit()
@@ -73,7 +73,7 @@ def update_department():
     code = request.json.get('department_code')
     department_name = request.json.get('department_name')
     department = db_session.query(DepartmentManager).filter(DepartmentManager.ID == int(did)).first()
-    role_query = db_session.query(Role).filter(Role.ParentNode == department.DepartCode).all()
+    role_query = db_session.query(Role).filter(Role.ParentNode == department.DepartName).all()
     for item in role_query:
         item.ParentNode = code
     department.DepartCode = code
@@ -89,7 +89,7 @@ def add_role():
     rname = request.json.get('role_name')
     rdes = request.json.get('role_description')
     department = db_session.query(DepartmentManager).filter(DepartmentManager.ID == int(did)).first()
-    role = Role(RoleCode=rcode, RoleName=rname, Description=rdes, ParentNode=department.DepartCode)
+    role = Role(RoleCode=rcode, RoleName=rname, Description=rdes, ParentNode=department.DepartName)
     db_session.add(role)
     db_session.commit()
     return json.dumps({'code': 10003, 'msg': '新增成功', 'data': {'rid': role.ID}})
