@@ -174,25 +174,20 @@
         <div class="home-card-body" style="height: 130px;text-align: center;">
           <p class="text-size-big text-color-primary">系统体检</p>
           <a href="javascript:;" class="systemCheckup" @click="openSystemCheckupDialog">立即体检</a>
-          <el-dialog
-            title="系统体检"
-            :close-on-press-escape="false"
-            :close-on-click-modal="false"
-            :show-close="false"
-            :visible.sync="systemCheckupDialogVisible"
-            width="30%"
-            center>
-            <el-timeline>
-              <el-timeline-item
-                v-for="(activity, index) in timelineData"
-                :key="index"
-                :icon="activity.icon"
-                size="large"
-                :type="activity.type">
-                <p>{{activity.content}}</p>
-                <p>{{activity.result}}</p>
-              </el-timeline-item>
-            </el-timeline>
+          <el-dialog class="clearfix" title="系统体检" :close-on-press-escape="false" :close-on-click-modal="false" :show-close="false" :visible.sync="systemCheckupDialogVisible" width="60%" center>
+            <el-col :span="8" v-for="item in systemCheckupList" :key="item.item[0].name" class="itemMarginBottom">
+              <el-card class="box-card" shadow="hover">
+                <el-form>
+                  <el-form-item label="执行任务">{{ item.item[0].name }}</el-form-item>
+                  <el-form-item label="执行成功次数">{{ item.item[0].successNumber }}</el-form-item>
+                  <el-form-item label="执行失败次数">{{ item.item[0].errorNumber }}</el-form-item>
+                  <el-form-item label="总执行次数">{{ item.item[0].totalNumber }}</el-form-item>
+                  <el-form-item label="开始执行时间">{{ item.item[0].startTime }}</el-form-item>
+                  <el-form-item label="最后刷新时间">{{ item.item[0].endTime }}</el-form-item>
+                  <el-form-item label="执行状态">{{ item.item[0].state }}</el-form-item>
+                </el-form>
+              </el-card>
+            </el-col>
             <span slot="footer" class="dialog-footer">
               <el-button @click="systemCheckupDialogVisible = false">取 消</el-button>
               <el-button type="primary" @click="startSystemCheckup">开 始 体 检</el-button>
@@ -431,7 +426,35 @@
           {type:"汽能",Con:"",EveryBatch:""}
         ],
         systemCheckupDialogVisible:false, //是否展开系统体检对话框
-        timelineData:[],
+        systemCheckupList:[
+          {item: [{
+            name: "采集服务",
+            successNumber: 64655,
+            errorNumber: 16,
+            totalNumber: 64664,
+            startTime: "2020-04-05 14:12:30",
+            endTime: "2020-04-15 15:20:14",
+            state: "执行成功"
+          }]},
+          {item: [{
+            name: "写入历史数据库服务",
+            successNumber: 64655,
+            errorNumber: 16,
+            totalNumber: 64664,
+            startTime: "2020-04-05 14:12:30",
+            endTime: "2020-04-15 15:20:14",
+            state: "执行成功"
+          }]},
+          {item: [{
+            name: "写入增量服务",
+            successNumber: 64655,
+            errorNumber: 16,
+            totalNumber: 64664,
+            startTime: "2020-04-05 14:12:30",
+            endTime: "2020-04-15 15:20:14",
+            state: "执行成功"
+          }]},
+        ],
       }
     },
     created(){
@@ -665,17 +688,10 @@
       },
       openSystemCheckupDialog(){ //打开系统体检
         this.systemCheckupDialogVisible = true
-        this.timelineData = [
-          {content:"检查服务端是否正常"},
-          {content:"采集设备是否正常"},
-          {content:"网络是否正常"},
-        ]
+
       },
       startSystemCheckup(){ //点击开始系统体检
-        this.$set(this.timelineData[0],'icon',"el-icon-check")
-        this.$set(this.timelineData[0],'type',"success")
-        this.$set(this.timelineData[1],'icon',"el-icon-loading")
-        this.$set(this.timelineData[1],'type',"primary")
+
       }
     }
   }

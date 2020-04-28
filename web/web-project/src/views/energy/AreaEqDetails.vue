@@ -48,23 +48,15 @@
               <div class="faultItemBody">
                 <p style="padding: 29px 0;">有功功率/kwh <span>{{ forEqParameters.ZGL }}</span></p>
               </div>
-              <div class="faultWarn">
-                <p class="text-color-success" style="line-height: 60px;">未发现异常</p>
-              </div>
             </el-col>
             <el-col :span="8">
               <div class="faultItemHead">
                 <span>电流</span>
-                <!--<p>额定电流/A <span>{{  }}</span></p>-->
               </div>
               <div class="faultItemBody">
                 <p>A项电流 <span>{{ forEqParameters.AI }}</span></p>
                 <p>B项电流 <span>{{ forEqParameters.BI }}</span></p>
                 <p>C项电流 <span>{{ forEqParameters.CI }}</span></p>
-              </div>
-              <div class="faultWarn">
-                <span>2020-02-04 17:56</span>
-                <p class="text-color-danger">B项断项</p>
               </div>
             </el-col>
             <el-col :span="8">
@@ -77,9 +69,6 @@
                 <p>B项电压 <span>{{ forEqParameters.BU }}</span></p>
                 <p>C项电压 <span>{{ forEqParameters.CU }}</span></p>
               </div>
-              <div class="faultWarn">
-                <p class="text-color-success" style="line-height: 60px;">未发现异常</p>
-              </div>
             </el-col>
           </div>
           <div class="platformContainer" style="margin-bottom:10px;" v-if="EnergyClass === '水'">
@@ -88,10 +77,7 @@
                 <span>瞬时量</span>
               </div>
               <div class="faultItemBody">
-                <p style="padding: 29px 0;"><span>{{ forEqParameters.WaterF }}</span></p>
-              </div>
-              <div class="faultWarn">
-
+                <p style="padding: 29px 0;">瞬时量<span>{{ forEqParameters.WaterF }}</span></p>
               </div>
             </el-col>
             <el-col :span="12">
@@ -99,10 +85,7 @@
                 <span>累计量</span>
               </div>
               <div class="faultItemBody">
-                <p style="padding: 29px 0;"><span>{{ forEqParameters.WaterS }}</span></p>
-              </div>
-              <div class="faultWarn">
-
+                <p style="padding: 29px 0;">累计量<span>{{ forEqParameters.WaterS }}</span></p>
               </div>
             </el-col>
           </div>
@@ -112,10 +95,7 @@
                 <span>瞬时量</span>
               </div>
               <div class="faultItemBody">
-                <p style="padding: 29px 0;"><span>{{ forEqParameters.SteamF }}</span></p>
-              </div>
-              <div class="faultWarn">
-
+                <p style="padding: 29px 0;">瞬时量<span>{{ forEqParameters.SteamF }}</span></p>
               </div>
             </el-col>
             <el-col :span="6">
@@ -123,10 +103,7 @@
                 <span>累计量</span>
               </div>
               <div class="faultItemBody">
-                <p style="padding: 29px 0;"><span>{{ forEqParameters.SteamS }}</span></p>
-              </div>
-              <div class="faultWarn">
-
+                <p style="padding: 29px 0;">累计量<span>{{ forEqParameters.SteamS }}</span></p>
               </div>
             </el-col>
             <el-col :span="6">
@@ -134,10 +111,7 @@
                 <span>体积</span>
               </div>
               <div class="faultItemBody">
-                <p style="padding: 29px 0;"><span>{{ forEqParameters.SteamV }}</span></p>
-              </div>
-              <div class="faultWarn">
-
+                <p style="padding: 29px 0;">体积<span>{{ forEqParameters.SteamV }}</span></p>
               </div>
             </el-col>
             <el-col :span="6">
@@ -145,12 +119,13 @@
                 <span>温度</span>
               </div>
               <div class="faultItemBody">
-                <p style="padding: 29px 0;"><span>{{ forEqParameters.SteamWD }}</span></p>
-              </div>
-              <div class="faultWarn">
-
+                <p style="padding: 29px 0;">温度<span>{{ forEqParameters.SteamWD }}</span></p>
               </div>
             </el-col>
+          </div>
+          <div class="faultWarn">
+            <span>2020-02-04 17:56</span>
+            <p class="text-color-danger">B项断项</p>
           </div>
         </el-col>
         <el-col :span="24" style="margin-bottom: 2px;">
@@ -457,9 +432,9 @@
   }
   .faultWarn{
     border-radius:4px;
-    border:1px solid #B9B9B9;
     text-align: center;
-    height: 60px;
+    height: 50px;
+    background: #ffffff;
   }
   .faultWarn span{
     color: #9B9B9B;

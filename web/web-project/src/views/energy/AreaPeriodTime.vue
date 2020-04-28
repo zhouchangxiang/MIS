@@ -12,7 +12,7 @@
           </el-form-item>
         </el-form>
       </el-col>
-      <el-col :span="24" v-if="newAreaName.areaName != '整厂区'">
+      <el-col :span="24" v-if="$route.query.areaName != '整厂区'">
         <el-col :span="18">
           <div class="energyDataCard">
             <ve-line :data="chartData" :settings="chartSettings" :extend="ChartExtend" v-loading="ChartsLoading" height="300px"></ve-line>
@@ -26,7 +26,7 @@
           <div class="energyDataCard">
             <div class="energyDataItem" style="margin-top: 8px">
               <div class="energyDataItemTitle">
-                <el-date-picker type="date" v-model="CompareDate" :picker-options="pickerOptions" size="mini" style="width: 130px;" :clearable="false"></el-date-picker>
+                <el-date-picker type="date" v-model="CompareDate" :picker-options="pickerOptions" size="mini" style="width: 130px;" :clearable="false" @change="getDayEnergy"></el-date-picker>
               </div>
             </div>
             <div class="energyDataItem">
@@ -57,7 +57,7 @@
           </div>
         </el-col>
       </el-col>
-      <el-col :span="24" v-if="newAreaName.areaName == '整厂区'">
+      <el-col :span="24" v-if="$route.query.areaName === '整厂区'">
         <el-col :span="18">
           <div class="energyDataCard">
             <ve-line :data="chartData" :settings="chartSettings" :extend="ChartExtend" v-loading="ChartsLoading" height="300px"></ve-line>
@@ -237,14 +237,20 @@
         }else if(this.formParameters.energy == "汽"){
           api = "/api/energysteam"
         }
+        var areaName = ''
+        if(this.newAreaName.areaName === "整厂区"){
+          areaName = ""
+        }else{
+          areaName = this.newAreaName.areaName
+        }
         var nowTime = moment().format('HH:mm').substring(0,4) + "0"
         var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
         var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
         var compareDateStartTime = moment(this.CompareDate).format('YYYY-MM-DD') + " 00:00"
         var compareDateEndTime = moment(this.CompareDate).format('YYYY-MM-DD') + " " + nowTime
         this.axios.all([
-          this.axios.get(api,{params: {StartTime: todayStartTime,EndTime:todayEndTime}}),//获取今天能耗
-          this.axios.get(api,{params: {StartTime: compareDateStartTime,EndTime:compareDateEndTime}})//获取对比天能耗
+          this.axios.get(api,{params: {StartTime: todayStartTime,EndTime:todayEndTime,AreaName:areaName}}),//获取今天能耗
+          this.axios.get(api,{params: {StartTime: compareDateStartTime,EndTime:compareDateEndTime,AreaName:areaName}})//获取对比天能耗
         ]).then(this.axios.spread(function(todayCon,CompareDateCon){
           that.todayCon = JSON.parse(todayCon.data).value
           that.todayConUnit = JSON.parse(todayCon.data).unit
@@ -254,7 +260,13 @@
       getChartData(){
         this.ChartsLoading = true
         var selectDate = moment(this.formParameters.date).format("YYYY-MM-DD")
-        this.axios.get("/api/trendlookboard",{params: {EnergyClass: this.formParameters.energy,CompareTime:selectDate}}).then(res =>{
+        var areaName = ''
+        if(this.newAreaName.areaName === "整厂区"){
+          areaName = ""
+        }else{
+          areaName = this.newAreaName.areaName
+        }
+        this.axios.get("/api/trendlookboard",{params: {EnergyClass: this.formParameters.energy,CompareTime:selectDate,AreaName:areaName}}).then(res =>{
           this.ChartsLoading = false
           this.chartData.rows = res.data.rows
         })
