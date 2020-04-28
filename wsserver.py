@@ -299,6 +299,7 @@ def handler_msg(conn):
                 # send_msg(c, bytes("recv: {}".format(data_parse), encoding="utf-8"))
                 bytemsg = bytes(json_data,encoding="utf-8")
                 send_msg(conn, bytemsg)
+                runcount = runcount + 1
             except Exception as e:
                 print("websocket报错：" + str(e))
                 insertSyslog("error", "websocket报错Error：" + str(e), "")
