@@ -322,13 +322,18 @@ export default {
             height: 21.15px;
           &.electric{
             background-image: url('../../assets/png/flashlight_1.png');
+            width:18px;
+            background-size: cover;
           }
           &.water{
-            background-image: url('../../assets/png/water.png')
+            background-image: url('../../assets/png/water.png');
+            width:16px;
+            background-size: cover;
           }
           &.steam{
             background-image: url('../../assets/png/steam.png');
-            width:22px;
+            background-size: cover;
+            width:21px;
           }
           }
           .dw{

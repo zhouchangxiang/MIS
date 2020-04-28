@@ -20,7 +20,7 @@
                   </div>
           </div>
           <div class="piclist">
-               <ve-histogram :data="chartData" :settings="chartSettings" width="340px" height="240px"></ve-histogram>
+               <ve-histogram :data="chartData" :settings="chartSettings" width="350px" height="240px"></ve-histogram>
           </div>
           <div class="compare">
               <div class="left-box">
@@ -277,6 +277,7 @@ export default {
       .piclist{
           margin-top: 15px;
           height: 190px;
+          overflow: hidden;
           background-color:rgba(255,255,255,.5);
       }
       .compare{

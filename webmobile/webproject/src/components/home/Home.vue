@@ -3,9 +3,9 @@
         <div class="show-top">
                <div class="tips">
                    <van-tabs type="card" title-active-color="#1E222B" title-inactive-color="#fff" v-model="choosedate" @click="ChooseDate"> 
-                        <van-tab title="年"></van-tab>
-                        <van-tab title="月"></van-tab>
                         <van-tab title="日"></van-tab>
+                        <van-tab title="月"></van-tab>
+                        <van-tab title="年"></van-tab>
                     </van-tabs>
                 </div>
                <div class="tips">
@@ -19,11 +19,11 @@
         <van-loading size="24px" vertical v-if="loading" color="lightgreen" type="spinner">加载中...</van-loading>
         <div class="show-banner">
                   <div class="sb-name">厂区能耗</div>
-                  <div class="sb-number">{{this.$store.state.sbnumber.value}}</div>
+                  <div class="sb-number">{{$store.state.sbnumber.value}}</div>
                   <div class="sb-compare">较上期</div>
                   <div class="sb-l-n">+1.345%</div>
                   <div class="sb-dw">单位</div>
-                  <div class="sb-t">{{this.$store.state.sbnumber.unit}}</div>
+                  <div class="sb-t">{{$store.state.sbnumber.unit}}</div>
                   <div class="tabbar">
                       <ve-bar :data="chartData" width="150px" height="150px" :legend-visible="false" :extend="areaTimeChartExtend"></ve-bar>
                    </div>
@@ -84,7 +84,7 @@ export default {
                 }
                 },
             myapi:'',
-            area:[],
+            area:['原提取车间','GMP车间','固体制剂车间','中试车间'],
             StartTime:'2020-04-07 12:22:59',
             numberbox:[],
             loading:false,
@@ -162,7 +162,7 @@ export default {
         this.loading=true
         this.$http.all([
             this.$http.get('/api/energywater',{params:{
-            StartTime:'2020-04-01 12:22:59',
+            StartTime:'2020-04-25 12:22:59',
             EndTime:str1,
             AreaName:'前处理车间'
             }}),
@@ -178,6 +178,7 @@ export default {
             this.loading=false
             this.chartData.rows=res3.data.rows.slice(0, 4)
             let arr=res3.data.rows
+            this.area=[]
             for(var i=0;i<arr.length;i++){
                this.area.push(arr[i]['区域'])
             }
@@ -284,6 +285,7 @@ export default {
             position: relative;
             width:350px;
             height:173px;
+            overflow: hidden;
             font-family:PingFang SC;
             box-sizing: border-box;
             background:rgba(126,127,132,1);
