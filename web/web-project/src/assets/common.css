@@ -171,6 +171,14 @@
   border:none;
   color:#082F4C;
 }
+/*  */
+.clearfix:before,.clearfix:after {
+  display: table;
+  content: "";
+}
+.clearfix:after {
+  clear: both
+}
 /* 卡片标题头部切换菜单 */
 .subsectionList{
   float: left;

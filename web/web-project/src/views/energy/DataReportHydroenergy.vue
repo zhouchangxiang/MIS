@@ -4,7 +4,7 @@
       <el-form :model="formParameters">
         <el-form-item label="时间：">
           <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd HH:mm:ss" style="width: 180px;" :clearable="false"></el-date-picker> ~
-          <el-date-picker type="datetime" v-model="formParameters.endDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd HH:mm:ss" style="width: 180px;" :clearable="false" @change="searchTime"></el-date-picker>
+          <el-date-picker type="datetime" v-model="formParameters.endDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd HH:mm:ss" style="width: 180px;" :clearable="false" @blur="searchTime"></el-date-picker>
           <span class="text-size-mini text-color-info-shallow">（选择结束时间后刷新数据）</span>
           <el-button type="primary" size="mini" style="float: right;" @click="exportAllExcel">导出统计数据</el-button>
         </el-form-item>
