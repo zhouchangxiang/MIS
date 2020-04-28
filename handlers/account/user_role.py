@@ -16,10 +16,10 @@ def get_user():
     factory = db_session.query(AreaMaintain).first()
     queryset = []
     for department in departments:
-        role_query = db_session.query(Role).filter(Role.ParentNode == department.DepartCode).all()
+        role_query = db_session.query(Role).filter(Role.ParentNode == department.DepartName).all()
         role_list = []
         for data in role_query:
-            d1 = db_session.query(DepartmentManager).filter(DepartmentManager.DepartCode == data.ParentNode).first()
+            d1 = db_session.query(DepartmentManager).filter(DepartmentManager.DepartName == data.ParentNode).first()
             user_list = {'name': data.RoleName, 'value': data.RoleCode, 'role_description': data.Description, 'type': 'role', 'rid': data.ID, 'did': d1.ID, 'department_name': department.DepartName, 'children': []}
             user_query = db_session.query(User).filter(User.RoleName == data.RoleName).all()
             for user in user_query:
@@ -30,8 +30,10 @@ def get_user():
                     user_data = {'name': user.Name, 'value': user.WorkNumber, 'type': 'user', 'rid': data.ID, 'did': ''}
                 user_list['children'].append(user_data)
             role_list.append(user_list)
+        department_data = {'name': department.DepartName, 'value': department.DepartCode, 'type': 'department', 'did': department.ID, 'factory_name': factory.FactoryName, 'children': role_list}
         area = db_session.query(AreaMaintain).filter(AreaMaintain.FactoryName == department.DepartLoad).first()
-        department_data = {'name': department.DepartName, 'value': department.DepartCode, 'type': 'department', 'did': department.ID, 'fid': area.ID, 'factory_name': factory.FactoryName, 'children': role_list}
+        if area:
+            department_data['fid'] = area.ID
         queryset.append(department_data)
     data = {'name': factory.FactoryName, 'value': factory.AreaCode, 'type': 'factory', 'fid': factory.ID, 'children': queryset}
     return json.dumps(data, cls=AlchemyEncoder, ensure_ascii=False)
