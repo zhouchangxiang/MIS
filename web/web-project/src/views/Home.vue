@@ -113,9 +113,9 @@
             <div class="home-card-body" style="height:280px;">
               <ul>
                 <li v-for="item in onlineEquipmentOption" class="itemMarginBottom">
-                  <p class="text-size-normol text-color-info itemMarginBottom">{{ item.name }}</p>
-                  <p class="text-size-mini text-color-info-shallow itemMarginBottom" style="margin-top: 5px;"><span>上线数/总数</span><span style="float: right;">{{ item.online }}/{{ item.total }}</span></p>
-                  <el-progress :text-inside="true" :stroke-width="16" strokeLinecap="square" :percentage="item.rate"></el-progress>
+                  <p class="text-size-normol text-color-info" style="margin-bottom: 5px;">{{ item.name }}</p>
+                  <p class="text-size-mini text-color-info-shallow" style="margin-bottom: 5px;"><span>上线数/总数</span><span style="float: right;">{{ item.online }}/{{ item.total }}</span></p>
+                  <el-progress :text-inside="true" :stroke-width="16" strokeLinecap="square" :color="item.rate == 100?'#15CC48':'#FB8A06'" :percentage="item.rate"></el-progress>
                 </li>
               </ul>
             </div>

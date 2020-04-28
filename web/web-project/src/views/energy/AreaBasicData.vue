@@ -62,13 +62,7 @@
           {name:"汽"},
         ],
         subsectionActive:1,
-        dataZoom: [
-          {
-            type: 'slider',
-            start: 0,
-            end: 20
-          }
-        ],
+        dataZoom: [],
         ChartExtend: {
           grid:{
             left:'10px',
@@ -77,6 +71,7 @@
             top:'40px'
           },
           series:{
+            type:"line",
             smooth: false
           }
         },
@@ -104,10 +99,12 @@
       getChartData(){
         if(this.formParameters.resourceTime === "实时"){
           this.chartsLoading = true
+          this.dataZoom = []
           this.initWebSocket()
         }else{
           this.websock.close()
           this.chartsLoading = true
+          this.dataZoom = [{type: 'slider',start: 0,end: 20}]
           var that = this
           var nowTime = moment().format('HH:mm').substring(0,4) + "0"
           var dayStartTime = moment(this.formParameters.date).format('YYYY-MM-DD') + " 00:00"
@@ -154,7 +151,6 @@
             params.EnergyClass = this.formParameters.energy
           }
           this.axios.get("/api/energydetail",{params:params}).then(res => {
-            console.log(res.data)
             this.chartsLoading = false
             if(that.formParameters.energy === "电"){
               that.chartData = {
@@ -211,14 +207,32 @@
         this.chartsLoading = false
         const resdata = JSON.parse(e.data);
         console.log(resdata)
-        // for(var i=0;i<resdata.length;i++){
-        //   if(resdata[i].AreaName === "" || resdata[i].AreaName === "整厂区"){
-        //     this.chartData.rows.push({
-        //       "时间": moment(new Date()).format("HH:mm:ss"),
-        //       "总功率": this.electricChartValue
-        //     })
-        //   }
-        // }
+        resdata.forEach(item =>{
+          if(item.AreaName === ""){
+            if(this.formParameters.energy === "电"){
+              this.chartData.columns = ["时间","总功率"]
+              this.chartData.rows.push({
+                "时间": moment(new Date()).format("HH:mm:ss"),
+                "总功率": item.areaEZGL
+              })
+              this.chartData.rows.shift()
+            }else if(this.formParameters.energy === "水"){
+              this.chartData.columns = ["时间","累计流量"]
+              this.chartData.rows.push({
+                "时间": moment(new Date()).format("HH:mm:ss"),
+                "累计流量": item.areaWSum
+              })
+              this.chartData.rows.shift()
+            }else if(this.formParameters.energy === "汽"){
+              this.chartData.columns = ["时间","累计流量"]
+              this.chartData.rows.push({
+                '时间': moment(new Date()).format("HH:mm:ss"),
+                '累计流量': item.areaSSum
+              })
+              this.chartData.rows.shift()
+            }
+          }
+        })
       },
       websocketsend(Data){//数据发送
         this.websock.send(Data);

@@ -35,7 +35,7 @@
         </el-col>
       </div>
       <div class="energyDataContainer">
-        <ve-line :data="runEfficiencyChartData" :extend="ChartExtend" v-loading="chartsLoading"></ve-line>
+        <ve-histogram :data="runEfficiencyChartData" :extend="ChartExtend" v-loading="chartsLoading"></ve-histogram>
       </div>
     </el-col>
   </el-row>

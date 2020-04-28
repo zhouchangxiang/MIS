@@ -382,10 +382,16 @@
       getEq(){
         this.TagEqTableLoading = true
         let that = this
+        var areaName = ''
+        if(this.newAreaName.areaName === "整厂区"){
+          areaName = ""
+        }else{
+          areaName = this.newAreaName.areaName
+        }
         var params = {
           tableName:"TagDetail",
           field:"AreaName",
-          fieldvalue:this.newAreaName.areaName,
+          fieldvalue:areaName,
           limit:100000,
           offset:0
         }

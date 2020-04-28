@@ -371,26 +371,26 @@
         steamChartData:{
           columns: ['时间', '累计流量'],
           rows: [
-            { '时间': "", '累计流量': ""},
-            { '时间': "", '累计流量': ""},
-            { '时间': "", '累计流量': ""},
-            { '时间': "", '累计流量': ""},
-            { '时间': "", '累计流量': ""},
-            { '时间': "", '累计流量': ""},
-            { '时间': "", '累计流量': ""},
-            { '时间': "", '累计流量': ""},
-            { '时间': "", '累计流量': ""},
-            { '时间': "", '累计流量': ""},
-            { '时间': "", '累计流量': ""},
-            { '时间': "", '累计流量': ""},
-            { '时间': "", '累计流量': ""},
-            { '时间': "", '累计流量': ""},
-            { '时间': "", '累计流量': ""},
-            { '时间': "", '累计流量': ""},
-            { '时间': "", '累计流量': ""},
-            { '时间': "", '累计流量': ""},
-            { '时间': "", '累计流量': ""},
-            { '时间': "", '累计流量': ""},
+            { '时间': "", '累计流量': null},
+            { '时间': "", '累计流量': null},
+            { '时间': "", '累计流量': null},
+            { '时间': "", '累计流量': null},
+            { '时间': "", '累计流量': null},
+            { '时间': "", '累计流量': null},
+            { '时间': "", '累计流量': null},
+            { '时间': "", '累计流量': null},
+            { '时间': "", '累计流量': null},
+            { '时间': "", '累计流量': null},
+            { '时间': "", '累计流量': null},
+            { '时间': "", '累计流量': null},
+            { '时间': "", '累计流量': null},
+            { '时间': "", '累计流量': null},
+            { '时间': "", '累计流量': null},
+            { '时间': "", '累计流量': null},
+            { '时间': "", '累计流量': null},
+            { '时间': "", '累计流量': null},
+            { '时间': "", '累计流量': null},
+            { '时间': "", '累计流量': null},
           ]
         },
         steamHistogram:{
@@ -430,12 +430,16 @@
       this.getEnergyPreview()
       this.getBrandName()
       this.getBrandData()
-      this.initWebSocket()
+      if(this.$route.query.areaName === "整厂区"){
+        this.initWebSocket()
+      }
       this.getBatchTable()
       this.getOnLineEq()
     },
     destroyed() {
-      this.websock.close() //离开路由之后断开websocket连接
+      if(this.$route.query.areaName == "整厂区" && this.newAreaName.AreaName === "整厂区"){
+        this.websock.close() //离开路由之后断开websocket连接
+      }
     },
     computed:{
       ElectricityCompare(){
@@ -664,12 +668,11 @@
       websocketonmessage(e){ //数据接收
         this.socketLoading = false
         const resdata = JSON.parse(e.data);
-        console.log(resdata)
-        for(var i=0;i<resdata.length;i++){
-          if(resdata[i].AreaName === "" || resdata[i].AreaName === "整厂区"){
-            this.electricChartValue = resdata[i].areaEZGL
-            this.waterChartValue = resdata[i].areaWSum
-            this.steamChartValue = resdata[i].areaSSum
+        resdata.forEach(item =>{
+          if(item.AreaName === ""){
+            this.electricChartValue = item.areaEZGL
+            this.waterChartValue = item.areaWSum
+            this.steamChartValue = item.areaSSum
             //电
             this.electricChartData.rows.push({
               "时间": moment(new Date()).format("HH:mm:ss"),
@@ -689,7 +692,7 @@
             })
             this.steamChartData.rows.shift()
           }
-        }
+        })
       },
       websocketsend(Data){//数据发送
         this.websock.send(Data);
