@@ -23,6 +23,8 @@ from dbset.log.BK2TLogger import logger,insertSyslog
 
 pool = redis.ConnectionPool(host=constant.REDIS_HOST)
 def run():
+    runcount = 0
+    failcount = 0
     while True:
         time.sleep(180)
         print("Redis数据开始写入数据库")
@@ -31,6 +33,8 @@ def run():
         # currentmonth = str(a.shift(years=0))[0:7]
         # currentday = str(a.shift(days=0))[0:10]
         redis_conn = redis.Redis(connection_pool=pool, password=constant.REDIS_PASSWORD,decode_responses=True)
+        redis_conn.hset(constant.REDIS_TABLENAME, "redis_insertdb_server_start",
+                        datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         keys = db_session.query(TagDetail).filter(TagDetail.TagClassValue != None).all()
         for key in keys:
             try:
@@ -234,13 +238,20 @@ def run():
                         wa.AreaName = key.AreaName
                         db_session.add(wa)
                         db_session.commit()
+                runcount = runcount + 1
             except Exception as e:
                 print("报错tag："+key.TagClassValue+" |报错IP："+key.IP+"  |报错端口："+key.COMNum+"  |错误："+str(e))
                 logger.error(e)
                 insertSyslog("error", "实时数据写入DB报错Error：" + str(e),"")
+                failcount = failcount + 1
             finally:
                 pass
         print("Redis数据开始写入数据库结束")
+        redis_conn.hset(constant.REDIS_TABLENAME, "redis_insertdb_server_end",
+                        datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        redis_conn.hset(constant.REDIS_TABLENAME, "redis_insertdb_server_runcount", str(runcount))
+        redis_conn.hset(constant.REDIS_TABLENAME, "redis_insertdb_server_failcount", str(failcount))
+        redis_conn.hset(constant.REDIS_TABLENAME, "redis_insertdb_server_status", "执行成功")
 
 def roundtwo(rod):
     if rod == None or rod == "" or rod == b'':

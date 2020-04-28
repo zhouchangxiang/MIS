@@ -22,11 +22,16 @@ from tools.common import insert, delete, update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger, insertSyslog
 from dbset.database.db_operate import engine,conn
-
+pool = redis.ConnectionPool(host=constant.REDIS_HOST)
 def run():
+    runcount = 0
+    failcount = 0
     while True:
-        time.sleep(60)
+        # time.sleep(60)
         print("数据开始写入增量数据库")
+        redis_conn = redis.Redis(connection_pool=pool, password=constant.REDIS_PASSWORD, decode_responses=True)
+        redis_conn.hset(constant.REDIS_TABLENAME, "redis_incremeninsertdb_server_start",
+                        datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         try:
             #汽能插入-----------------------------------------------------------------------------------增量库
             steam_value = list()
@@ -205,12 +210,19 @@ def run():
                     conn.commit()
                 except Exception as e:
                     print(e)
+            runcount = runcount + 1
         except Exception as e:
             print("写入增量库报错：" + str(e))
             insertSyslog("error", "写入增量库报错Error：" + str(e), "")
+            failcount = failcount + 1
         finally:
             pass
         print("数据开始写入增量库结束")
+        redis_conn.hset(constant.REDIS_TABLENAME, "redis_incremeninsertdb_server_end",
+                        datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        redis_conn.hset(constant.REDIS_TABLENAME, "redis_incremeninsertdb_server_runcount", str(runcount))
+        redis_conn.hset(constant.REDIS_TABLENAME, "redis_incremeninsertdb_server_failcount", str(failcount))
+        redis_conn.hset(constant.REDIS_TABLENAME, "redis_incremeninsertdb_server_status", "执行成功")
 
 if __name__ == '__main__':
     run()

@@ -1275,6 +1275,20 @@ class RatedPowerMaintain(Base):
     # 创建日期:
     CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+# 班次
+class Shifts(Base):
+    __tablename__ = "Shifts"
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+    # 班次编码
+    ShiftsCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 班次名称
+    ShiftsName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    #班次开始时间
+    BeginTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 班次结束时间
+    EndTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 
 
 # 生成表单的执行语句
