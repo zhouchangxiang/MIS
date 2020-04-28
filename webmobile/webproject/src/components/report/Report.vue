@@ -25,7 +25,7 @@
                 </ve-histogram></div>
             </div>
             <div class="list-banner">
-                <div class="header">前处理车间</div>
+                <div class="header">{{currentArea}}</div>
                 <div class="body">
                     <div class='today-water'>本{{currentdate}}耗{{currentkind}}量:</div>
                     <div class='today-water-max'>本{{currentdate}}耗{{currentkind}}峰值:</div>
@@ -34,8 +34,8 @@
                     <div class='today-time1'>时间:</div>
                     <div class='today-time2'>时间:</div>
                     <div class='today-num1'>00.00</div>
-                    <div class='today-num2'>00.00</div>
-                    <div class='today-num3'>00.00</div>
+                    <div class='today-num2'>{{highvalue}}</div>
+                    <div class='today-num3'>{{lowvalue}}</div>
                     <div class='today-rank-num'>00.00</div>
                     <div class='today-time1-num'>00:00:00</div>
                     <div class='today-time2-num'>00:00:00</div>
@@ -48,7 +48,7 @@ var moment=require('moment')
 export default {
     data () {
         return {
-        mychoice:'',
+        myArea:'',
         piechartExtend:{
                 label:{
                     show:true,
@@ -57,7 +57,7 @@ export default {
         }},
         chartSettings:{
             dataType: 'KMB',
-            radius: [50,70],
+            radius: [40,70],
             offsetY:"90px",
             label:{
                 show:false
@@ -68,7 +68,7 @@ export default {
         },
         chartEvents:{
                   click:function(e){
-                   localStorage.setItem('mychoice',e.data.name)
+                   localStorage.setItem('myArea',e.data.name)
                   }
               },
         ChartExtend: {
@@ -94,10 +94,12 @@ export default {
         kind:['水','电','汽'],
         currentkind:'水',
         currentdate:'年',
-        currentArea:'',
+        currentArea:'综合车间',
         StartTime:'',
         EndTime:'',
-        resposvalue:[],
+        highvalue:1,
+        lowvalue:1,
+        flag:false,
         chartData: {
           columns: ['region', 'value'],
           rows: []
@@ -115,37 +117,44 @@ export default {
         ChooseDate(e){
             this.currentdate=this.date[e]
             if(this.currentdate=='年'){
-                this.StartTime='2020-04-10 00:00:00'
+                this.StartTime='2020-04-14 00:00:00'
             }else if(this.currentdate=='月'){
                 this.StartTime='2020-04-20 00:00:00'
             }else{
                 this.StartTime='2020-04-23 00:00:00'
             }
             this.EndTime=moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
-            this.currentArea=localStorage.getItem('mychoice')
+            this.currentArea=localStorage.getItem('myArea')
             this.$http.get('/api/electricnergycost',{params:{
                 StartTime:this.StartTime,
                 EndTime:this.EndTime,
                 TimeClass:this.currentkind,
-                AreaName:localStorage.getItem('mychoice')
+                AreaName:this.currentArea
             }}).then((value) => {
-                this.resposvalue=value.data.periodTimeTypeItem
-                console.log(this.resposvalue)
+                this.highvalue=value.data.periodTimeTypeItem[1].expendEnergy
+                this.lowvalue=value.data.periodTimeTypeItem[3].expendEnergy
             })
         },
         ChooseKind(e){
-            this.currentkind=this.kind[e]
-            this.$http.get('/api/energycost',{params:{
-                StartTime:'2020-04-10 00:00:00',
-                EndTime:'2020-04-15 00:00:00',
-                TimeClass:'月',
-                AreaName:'前提取车间'
-            }}).then((value) => {
-                console.log(value)
-            })
+           this.chartData.rows=[]
+           this.listchartData.rows=[]
+           this.currentkind=this.kind[e]
+           var params={EnergyClass:this.currentkind,CompareTime:'2020-04-10'}
+           if(!this.flag){
+           this.flag=true
+           this.$http.get('/api/areatimeenergycount',{params}).then((value) => {
+               var arr=value.data.rows
+               for(var i=0;i<arr.length;i++){
+                   if(arr[i]['能耗量']){
+                       this.chartData.rows.push({region:arr[i]['区域'],value:arr[i]['能耗量']})
+                       this.listchartData.rows.push({region:arr[i]['区域'],value:arr[i]['能耗量']})
+                   }
+               }
+            this.flag=false
+            })}
         },
         initOperation(){
-            var params={EnergyClass:'电',CompareTime:'2020-04-10'}
+            var params={EnergyClass:'水',CompareTime:'2020-04-10'}
             this.$http.get('/api/areatimeenergycount',{params}).then((value) => {
                var arr=value.data.rows
                for(var i=0;i<arr.length;i++){
@@ -197,9 +206,10 @@ export default {
             top:10px;
             width: 100%;
             height: 150px;
+            overflow: hidden;
             margin-top: 17px;
             border-radius: 4px;
-            background-color: #ccc;
+            background-color:#ccc;
             }
         }
         .list-banner{
@@ -208,7 +218,7 @@ export default {
             width: 350px;
             height: 120px;
             border-radius: 4px;
-            background: #666;
+            background: #1E222B;
             .header{
                 width: 100%;
                 height:17px;

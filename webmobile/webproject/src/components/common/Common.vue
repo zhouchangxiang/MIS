@@ -61,13 +61,14 @@ export default {
         }
         span{
            position: absolute;
-           width: 22px;
-           height: 22px;
-           background-color:@bgca;
+           width: 20px;
+           height: 20px;
            top:48px;
            left:318px;
            border: 1px dashed #fff;
            background-image: url('../../assets/png/delete_fill.png');
+           background-color:@bgca;
+           background-size: contain;
         }
     }
     .foot{
