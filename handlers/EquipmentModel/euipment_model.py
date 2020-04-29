@@ -17,6 +17,7 @@ from dbset.main.BSFramwork import AlchemyEncoder
 from dbset.database import db_operate
 from dbset.log.BK2TLogger import logger,insertSyslog
 from handlers.energymanager.energy_manager import energyStatistics, energyStatisticsFlowSumWD
+from models.SystemManagement.system import EarlyWarning
 from tools.common import insert,delete,update
 from dbset.database.db_operate import db_session
 from models.SystemManagement.core import Equipment, Instrumentation, TagDetail
@@ -117,6 +118,25 @@ def EquipmentDetail():
                     dir_list_i["体积"] = roundtwo(steams[0][1])
                     dir_list_i["温度"] = roundtwo(steams[0][2])
                 dir_list.append(dir_list_i)
+            DeviceNum = db_session.query(TagDetail.DeviceNum).filter(TagDetail.TagClassValue == TagClassValue).first()
+            if DeviceNum:
+                earlywarn = db_session.query(EarlyWarning).filter(EarlyWarning.EQPName == DeviceNum).order_by(desc("WarningDate")).first()
+                if earlywarn:
+                    dir["Situation"] = earlywarn.WarningType
+                    dir["SituationTime"] = earlywarn.WarningDate
+            else:
+                dir["Situation"] = "未发现异常"
+                dir["SituationTime"] = ""
+            energys = energyStatisticsFlowSumWD(oc_list, StartTime, EndTime, EnergyClass)
+            if EnergyClass == "电":
+                dir["MaxValue"] = roundtwo(energys[0][0])
+                dir["MinValue"] = roundtwo(energys[0][1])
+            elif EnergyClass == "水":
+                dir["MaxValue"] = roundtwo(energys[0][1])
+                dir["MinValue"] = roundtwo(energys[0][2])
+            elif EnergyClass == "汽":
+                dir["MaxValue"] = roundtwo(energys[0][3])
+                dir["MinValue"] = roundtwo(energys[0][4])
             # print(dir_list)
             # if EnergyClass == "汽":
             #     objects = sorted(dir_list_i, key=lambda obj: obj["volum"])

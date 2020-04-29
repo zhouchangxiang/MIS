@@ -269,15 +269,15 @@ def energyStatisticsFlowSumWD(oc_list, StartTime, EndTime, energy):
     propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
     pro = float(propor.Proportion)
     if energy == "水":
-        sql = "SELECT SUM(Cast(t.WaterFlow as float)) as WaterFlow  FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_WaterEnergy)  WHERE t.TagClassValue in (" + str(
+        sql = "SELECT SUM(Cast(t.WaterFlow as float)) as WaterFlow,MAX(Cast(t.IncremenValue as float)),MIN(Cast(t.IncremenValue as float))  FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_WaterEnergy)  WHERE t.TagClassValue in (" + str(
             oc_list)[
                                                                                                                                                                            1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
     elif energy == "电":
-        sql = "SELECT SUM(Cast(t.ZGL as float)) as ZGL  FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricEnergy)  WHERE t.TagClassValue in (" + str(
+        sql = "SELECT MAX(Cast(t.IncremenValue as float)),MIN(Cast(t.IncremenValue as float))  FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricEnergy)  WHERE t.TagClassValue in (" + str(
             oc_list)[
                                                                                                                                                                            1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
     elif energy == "汽":
-        sql = "SELECT SUM(Cast(t.FlowValue as float)) as FlowValue,SUM(Cast(t.Volume as float)) as Volume,AVG(Cast(t.WD as float)) AS WD  FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy)  WHERE t.TagClassValue in (" + str(
+        sql = "SELECT SUM(Cast(t.FlowValue as float)) as FlowValue,SUM(Cast(t.Volume as float)) as Volume,AVG(Cast(t.WD as float)) AS WD,MAX(Cast(t.IncremenValue as float)),MIN(Cast(t.IncremenValue as float))  FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy)  WHERE t.TagClassValue in (" + str(
             oc_list)[
                                                                                                                                                                            1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
     re = db_session.execute(sql).fetchall()
