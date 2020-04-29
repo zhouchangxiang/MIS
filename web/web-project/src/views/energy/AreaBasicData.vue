@@ -18,7 +18,7 @@
     <el-col :span="24" style="margin-bottom:2px;">
       <div class="chartHead text-size-large text-color-info">
         <div class="chartTile">趋势图</div>
-        <ul class="subsectionList" v-if="formParameters.energy === '汽'">
+        <ul class="subsectionList" v-if="formParameters.energy === '汽' && formParameters.resourceTime != '实时'">
           <li v-for="(item,index) in subsectionList"><a href="javascript:;" :class="{active:subsectionActive === index}" @click="getSubsection(index)">{{ item.name }}</a></li>
         </ul>
         <div class="chartHeadRight">
@@ -108,7 +108,91 @@
         if(this.formParameters.resourceTime === "实时"){
           this.chartsLoading = true
           this.dataZoom = []
-          this.initWebSocket()
+          if(this.websock){
+            this.websock.close()
+          }
+          if(this.formParameters.energy === "电"){
+            this.chartData = {
+              columns: ["时间","总功率"],
+              rows: [
+                { '时间': moment().subtract(40, 's').format("HH:mm:ss"), '总功率': null},
+                { '时间': moment().subtract(38, 's').format("HH:mm:ss"), '总功率': null},
+                { '时间': moment().subtract(36, 's').format("HH:mm:ss"), '总功率': null},
+                { '时间': moment().subtract(34, 's').format("HH:mm:ss"), '总功率': null},
+                { '时间': moment().subtract(32, 's').format("HH:mm:ss"), '总功率': null},
+                { '时间': moment().subtract(30, 's').format("HH:mm:ss"), '总功率': null},
+                { '时间': moment().subtract(28, 's').format("HH:mm:ss"), '总功率': null},
+                { '时间': moment().subtract(26, 's').format("HH:mm:ss"), '总功率': null},
+                { '时间': moment().subtract(24, 's').format("HH:mm:ss"), '总功率': null},
+                { '时间': moment().subtract(22, 's').format("HH:mm:ss"), '总功率': null},
+                { '时间': moment().subtract(20, 's').format("HH:mm:ss"), '总功率': null},
+                { '时间': moment().subtract(18, 's').format("HH:mm:ss"), '总功率': null},
+                { '时间': moment().subtract(16, 's').format("HH:mm:ss"), '总功率': null},
+                { '时间': moment().subtract(14, 's').format("HH:mm:ss"), '总功率': null},
+                { '时间': moment().subtract(12, 's').format("HH:mm:ss"), '总功率': null},
+                { '时间': moment().subtract(10, 's').format("HH:mm:ss"), '总功率': null},
+                { '时间': moment().subtract(8, 's').format("HH:mm:ss"), '总功率': null},
+                { '时间': moment().subtract(6, 's').format("HH:mm:ss"), '总功率': null},
+                { '时间': moment().subtract(4, 's').format("HH:mm:ss"), '总功率': null},
+                { '时间': moment().subtract(2, 's').format("HH:mm:ss"), '总功率': null}
+              ]
+            }
+            this.initWebSocket()
+          }else if(this.formParameters.energy === "水"){
+            this.chartData = {
+              columns: ['时间', '累计流量'],
+              rows: [
+                { '时间': moment().subtract(40, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(38, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(36, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(34, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(32, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(30, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(28, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(26, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(24, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(22, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(20, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(18, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(16, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(14, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(12, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(10, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(8, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(6, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(4, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(2, 's').format("HH:mm:ss"), '累计流量': null}
+              ]
+            }
+            this.initWebSocket()
+          }else if(this.formParameters.energy === "汽"){
+            this.chartData = {
+              columns: ['时间', '累计流量'],
+              rows: [
+                { '时间': moment().subtract(40, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(38, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(36, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(34, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(32, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(30, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(28, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(26, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(24, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(22, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(20, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(18, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(16, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(14, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(12, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(10, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(8, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(6, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(4, 's').format("HH:mm:ss"), '累计流量': null},
+                { '时间': moment().subtract(2, 's').format("HH:mm:ss"), '累计流量': null}
+              ]
+            }
+            this.initWebSocket()
+          }
         }else{
           this.websock.close()
           this.chartsLoading = true
@@ -204,43 +288,35 @@
         if(this.newAreaName.areaName === "整厂区"){
           this.websocketsend("");
         }else{
+          console.log(this.newAreaName.areaName)
           this.websocketsend(this.newAreaName.areaName);
         }
       },
       websocketonerror(){//连接建立失败
-        this.$notify.info({
-          title: 'websocket连接失败',
-          message: '实时数据的服务连接失败'
-        });
+        console.log("websocket连接失败")
       },
       websocketonmessage(e){ //数据接收
         this.chartsLoading = false
-        const resdata = JSON.parse(e.data);
-        console.log(resdata)
+        var resdata = JSON.parse(e.data);
         resdata.forEach(item =>{
-          if(item.AreaName === ""){
-            if(this.formParameters.energy === "电"){
-              this.chartData.columns = ["时间","总功率"]
-              this.chartData.rows.push({
-                "时间": moment(new Date()).format("HH:mm:ss"),
-                "总功率": item.areaEZGL
-              })
-              this.chartData.rows.shift()
-            }else if(this.formParameters.energy === "水"){
-              this.chartData.columns = ["时间","累计流量"]
-              this.chartData.rows.push({
-                "时间": moment(new Date()).format("HH:mm:ss"),
-                "累计流量": item.areaWSum
-              })
-              this.chartData.rows.shift()
-            }else if(this.formParameters.energy === "汽"){
-              this.chartData.columns = ["时间","累计流量"]
-              this.chartData.rows.push({
-                '时间': moment(new Date()).format("HH:mm:ss"),
-                '累计流量': item.areaSSum
-              })
-              this.chartData.rows.shift()
-            }
+          if(this.formParameters.energy === "电"){
+            this.chartData.rows.push({
+              "时间": moment().format("HH:mm:ss"),
+              "总功率": item.areaEZGL
+            })
+            this.chartData.rows.shift()
+          }else if(this.formParameters.energy === "水"){
+            this.chartData.rows.push({
+              "时间": moment().format("HH:mm:ss"),
+              "累计流量": item.areaWSum
+            })
+            this.chartData.rows.shift()
+          }else if(this.formParameters.energy === "汽"){
+            this.chartData.rows.push({
+              '时间': moment().format("HH:mm:ss"),
+              '累计流量': item.areaSSum
+            })
+            this.chartData.rows.shift()
           }
         })
       },
@@ -248,10 +324,7 @@
         this.websock.send(Data);
       },
       websocketclose(e){  //关闭
-        this.$notify.info({
-          title: 'websocket关闭',
-          message: '实时数据的服务程序已关闭'
-        });
+        console.log("websocket关闭")
       }
     }
   }
