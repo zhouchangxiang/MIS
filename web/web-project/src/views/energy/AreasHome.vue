@@ -695,6 +695,7 @@
         })
       },
       websocketsend(Data){//数据发送
+        console.log(Data)
         this.websock.send(Data);
       },
       websocketclose(e){  //关闭
