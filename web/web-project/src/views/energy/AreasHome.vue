@@ -660,10 +660,7 @@
         this.websocketsend("");
       },
       websocketonerror(){//连接建立失败重连
-        this.$notify.info({
-          title: 'websocket连接失败',
-          message: '实时数据的服务连接失败'
-        });
+        console.log("websocket连接失败")
       },
       websocketonmessage(e){ //数据接收
         this.socketLoading = false
@@ -695,14 +692,10 @@
         })
       },
       websocketsend(Data){//数据发送
-        console.log(Data)
         this.websock.send(Data);
       },
       websocketclose(e){  //关闭
-        this.$notify.info({
-          title: 'websocket关闭',
-          message: '实时数据的服务程序已关闭'
-        });
+        console.log("websocket关闭")
       }
     }
   }
