@@ -124,6 +124,9 @@ def EquipmentDetail():
                 if earlywarn:
                     dir["Situation"] = earlywarn.WarningType
                     dir["SituationTime"] = earlywarn.WarningDate
+                else:
+                    dir["Situation"] = "未发现异常"
+                    dir["SituationTime"] = ""
             else:
                 dir["Situation"] = "未发现异常"
                 dir["SituationTime"] = ""
