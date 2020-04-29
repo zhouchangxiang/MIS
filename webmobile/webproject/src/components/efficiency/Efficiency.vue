@@ -159,7 +159,6 @@ export default {
             position: absolute;
             left: 15px;
             top:60px;
-            width:86px;
             height:11px;
             font-size:8px;
             font-family:PingFang SC;
@@ -172,7 +171,6 @@ export default {
             position: absolute;
             left: 125px;
             top:60px;
-            width:86px;
             height:11px;
             font-size:8px;
             font-family:PingFang SC;
@@ -185,7 +183,6 @@ export default {
             position: absolute;
             left: 235px;
             top:60px;
-            width:86px;
             height:11px;
             font-size:8px;
             font-family:PingFang SC;
@@ -198,7 +195,6 @@ export default {
             position: absolute;
             top:14px;
             left:267px;
-            width:67px;
             height:14px;
             font-size:10px;
             font-family:PingFang SC;
@@ -289,7 +285,6 @@ export default {
                   position: absolute;
                   top:14px;
                   left:13px;
-                  width:88px;
                   height:11px;
                   font-size:8px;
                   font-family:PingFang SC;
