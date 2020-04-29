@@ -245,9 +245,9 @@ def handler_msg(conn):
                 runcount = runcount + 1
             except Exception as e:
                 print("websocket报错：" + str(e))
-                insertSyslog("error", "websocket报错Error：" + str(e), "")
                 failcount = failcount + 1
                 redis_conn.hset(constant.REDIS_TABLENAME, "websocket_status", "执行失败")
+                break
             finally:
                 pass
             redis_conn.hset(constant.REDIS_TABLENAME, "websocket_end",
