@@ -244,9 +244,8 @@ def handler_msg(conn):
                 send_msg(conn, bytemsg)
                 runcount = runcount + 1
             except Exception as e:
-                print("websocket报错：" + str(e))
+                print(e)
                 failcount = failcount + 1
-                redis_conn.hset(constant.REDIS_TABLENAME, "websocket_status", "执行失败")
                 break
             finally:
                 pass
@@ -268,25 +267,29 @@ def returnb(rod):
 
 
 def server_socket():
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    sock.bind(("127.0.0.1", 5002))
-    sock.listen(2)
-    #将所有的tag写入redis
-    Tags = db_session.query(TagDetail).all()
-    tag_all_list = []
-    for tag in Tags:
-        tag_all_list.append(tag.TagClassValue)
-    redis_conn.hset(constant.REDIS_TABLENAME,"all_tags",str(tag_all_list))
-    areas = db_session.query(AreaTable).all()
-    for area in areas:
-        tagareas = db_session.query(TagDetail).filter(TagDetail.AreaName == area.AreaName).all()
-        area_tag_list = []
-        for ta in tagareas:
-            area_tag_list.append(ta.TagClassValue)
-        redis_conn.hset(constant.REDIS_TABLENAME, area.AreaName, str(area_tag_list))
-    t = threading.Thread(target=handler_accept(sock))
-    t.start()
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        sock.bind(("127.0.0.1", 5002))
+        sock.listen(2)
+        #将所有的tag写入redis
+        Tags = db_session.query(TagDetail).all()
+        tag_all_list = []
+        for tag in Tags:
+            tag_all_list.append(tag.TagClassValue)
+        redis_conn.hset(constant.REDIS_TABLENAME,"all_tags",str(tag_all_list))
+        areas = db_session.query(AreaTable).all()
+        for area in areas:
+            tagareas = db_session.query(TagDetail).filter(TagDetail.AreaName == area.AreaName).all()
+            area_tag_list = []
+            for ta in tagareas:
+                area_tag_list.append(ta.TagClassValue)
+            redis_conn.hset(constant.REDIS_TABLENAME, area.AreaName, str(area_tag_list))
+        t = threading.Thread(target=handler_accept(sock))
+        t.start()
+    except Exception as e:
+        print(e)
+        redis_conn.hset(constant.REDIS_TABLENAME, "websocket_status", "执行失败")
 
 
 if __name__ == "__main__":
