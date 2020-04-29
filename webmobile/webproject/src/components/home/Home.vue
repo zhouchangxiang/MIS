@@ -297,7 +297,6 @@ export default {
                position: absolute;
                top:14px;
                left: 15px;
-               width:56px;
                height:20px;
                font-size:14px;
                font-weight:400;
@@ -331,7 +330,6 @@ export default {
                position: absolute;
                left:15px;
                top:142px;
-               width:42px;
                height:17px;
                font-size:12px;
                font-weight:500;
@@ -343,7 +341,6 @@ export default {
             position: absolute;
             top:125px;
             left:91px;
-            width:25px;
             height:11px;
             font-size:8px;
             font-weight:400;
@@ -392,7 +389,7 @@ export default {
                     position: absolute;
                     top:11px;
                     left:15px;
-                    width:50px;
+                    width:60px;
                     height:11px;
                     font-size:8px;
                     font-family:PingFang SC;
