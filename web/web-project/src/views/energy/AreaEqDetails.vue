@@ -119,8 +119,8 @@
             </el-col>
           </div>
           <div class="faultWarn">
-            <span>2020-02-04 17:56</span>
-            <p class="text-color-danger">B项断项</p>
+            <span>{{ forEqParameters.Situation }}</span>
+            <p class="text-color-danger">{{ forEqParameters.SituationTime }}</p>
           </div>
         </el-col>
         <el-col :span="24" style="margin-bottom: 2px;">
@@ -301,7 +301,7 @@
       }
       return {
         formParameters:{
-          startDate:moment().day(moment().day()).startOf('day').format('YYYY-MM-DD HH:mm'),
+          startDate:moment().day(moment().day()).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
           endDate:moment().format("YYYY-MM-DD HH:mm"),
           eqComponentValue:"安全/故障"
         },
@@ -414,10 +414,11 @@
         var params = {
           TagClassValue:this.multipleSelection[0].TagClassValue,
           EnergyClass:this.multipleSelection[0].EnergyClass,
-          StartTime:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm"),
-          EndTime:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm")
+          StartTime:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss"),
+          EndTime:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss")
         }
         this.axios.get("/api/EquipmentDetail",{params:params}).then(res =>{
+          console.log(res.data)
           that.forEqParameters = res.data
           if(this.EnergyClass === "电"){
             that.faultChartData.columns = ["时间","功率"]
@@ -439,8 +440,8 @@
         var that = this
         var params = {
           TagClassValue:this.ElectricMultipleSelection[0].TagClassValue,
-          StartTime:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm"),
-          EndTime:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm")
+          StartTime:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss"),
+          EndTime:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss")
         }
         // this.axios.get("/api/EquipmentDetail",{params:params}).then(res =>{
         //   that.forEqParameters = res.data

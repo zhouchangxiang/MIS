@@ -112,8 +112,8 @@
         this.axios.get("/api/runefficiency",{params:params}).then(res => {
           that.chartsLoading = false
           that.loadRate = res.data.loadRate + "%"
-          that.ratedPower = res.data.ratedPower
-          that.activePower = res.data.activePower
+          that.ratedPower = res.data.ratedPower + res.data.unit
+          that.activePower = res.data.activePower + res.data.unit
           that.runEfficiencyChartData.rows = res.data.row
         })
       }

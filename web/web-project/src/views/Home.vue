@@ -79,7 +79,7 @@
         <el-row :gutter="15">
           <el-col :span="10">
             <div class="home-card-head">
-              <span><i class="el-icon-guide el-icon--left" style="color: #228AD5;"></i>区域时段能耗</span>
+              <span><i class="el-icon-place el-icon--left" style="color: #228AD5;"></i>区域时段能耗</span>
               <el-select class="card-head-select" v-model="areaTimeEnergyValue" placeholder="请选择" @change="getAreaTimeEnergy">
                 <el-option v-for="(item,index) in areaTimeEnergyOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
@@ -563,7 +563,7 @@
         var thisStartMonth = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm')
         var lastStartMonth = moment().month(moment().month() - 1).startOf('month').format('YYYY-MM-DD HH:mm')
         var lastEndMonth = moment().month(moment().month() - 1).endOf('month').format('YYYY-MM-DD').substring(0,7) + "-" + thisDate + " " + nowTime
-        var thisStartYear = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD')
+        var thisStartYear = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD HH:mm')
         var lastStartYear = moment().year(moment().year() - 1).startOf('year').format('YYYY-MM-DD HH:mm')
         var lastEndYear = moment().year(moment().year() - 1).endOf('year').format('YYYY-MM-DD').substring(0,4) + "-" + thisMonth + " " + nowTime
         if(!moment(lastEndMonth)._isValid){  //判断上月结束日期是否合法，否则赋值为上月最后一天的23：59
@@ -750,7 +750,6 @@
          this.systemCheckupList[2].item = res.data
         })
         this.axios.get("/api/systemwebsocket").then(res => {
-          console.log(res.data)
          this.systemCheckupList[3].item = res.data
         })
       }

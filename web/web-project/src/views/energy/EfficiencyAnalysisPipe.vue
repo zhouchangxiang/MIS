@@ -41,7 +41,7 @@
         </el-col>
       </div>
       <div class="energyDataContainer">
-        <ve-histogram :data="runEfficiencyChartData" :extend="ChartExtend" v-loading="chartsLoading"></ve-histogram>
+        <ve-histogram :data="runEfficiencyChartData" :extend="ChartExtend" :mark-line="markLine" v-loading="chartsLoading"></ve-histogram>
       </div>
     </el-col>
   </el-row>
@@ -71,10 +71,19 @@
         PipeDamageRate:"",
         inputSteam:"",
         outputSteam:"",
+        markLine: {
+          data: [
+            {
+              name: '平均线',
+              type: 'average',
+            }
+          ],
+          borderWidth: 6
+        },
         ChartExtend: {
           grid:{
             left:'0',
-            right:'0',
+            right:'40px',
             bottom:'0',
             top:'40px'
           },
