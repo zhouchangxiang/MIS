@@ -334,6 +334,9 @@ def energyselect(data):
                     else:
                         count = 0.0
                         comperacount = 0.0
+                    nowtimehour = datetime.datetime.strptime(lasthour, "%Y-%m-%d %H:%M:%S")
+                    if datetime.datetime.now() < nowtimehour:
+                        count = ""
                     dir_list_dict["今日能耗"] = count
                     dir_list_dict["对比日能耗"] = comperacount
                     dir_list.append(dir_list_dict)

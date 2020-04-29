@@ -567,6 +567,8 @@ def runefficiency():
                 lp = 0.0
             dir["loadRate"] = round(lp, 2)
             dir["ratedPower"] = RatedPower
+            unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == EnergyClass).first()[0]
+            dir["unit"] = unit
             dir_list = []
             if TimeClass == "日":
                 for i in range(int(StartTime[11:13]), int(EndTime[11:13]) + 1):
