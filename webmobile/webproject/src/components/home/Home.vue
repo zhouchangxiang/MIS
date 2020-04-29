@@ -43,12 +43,20 @@
                     <van-picker :columns="area" @change="onChange" :default-index="2"/>
                </div>
            </div>
-           <ShowNumber></ShowNumber>
+          <div class="show-foot">
+               <div class="sf-l">
+                   <div class="hf">耗费成本</div>
+                   <div class="all-money">{{this.$store.state.sbnumber.cost}}<span>元</span></div>
+               </div>
+                <div class="sf-r">
+                   <div class="machine">{{kind}}表在线情况</div>
+                   <div class="tj"><span>{{onlineitem.online}}</span>&nbsp;/&nbsp;<span>{{onlineitem.total}}</span></div>
+               </div>
+        </div>
        </div>
 </template>
 <script>
 var moment=require('moment')
-import ShowNumber from '../common/Shownumber.vue'
 import store from '../../store/index'
 var moment=require('moment')
 export default {
@@ -103,11 +111,10 @@ export default {
             EndTime:'',
             myapi:'',
             myobj:{},
-            kind:''
+            kind:'水',
+            onlinebiaolist:[],
+            onlineitem:{online:0,total:17}
         }
-    },
-    components:{
-        ShowNumber
     },
     mounted(){
         this.initNum()
@@ -173,8 +180,10 @@ export default {
         }}),
          this.$http.get('/api/areatimeenergycount',{params:{
               EnergyClass:'电',CompareTime:'2020-04-14'
-            }})
-        ]).then(this.$http.spread((res1,res2,res3)=>{
+            }}),
+        this.$http.get("/api/energyall",{params:{ModelFlag:"在线检测情况"}})
+        ]).then(this.$http.spread((res1,res2,res3,res4)=>{
+            this.onlinebiaolist=JSON.parse(res4.data)
             this.loading=false
             this.chartData.rows=res3.data.rows.slice(0, 4)
             let arr=res3.data.rows
@@ -244,12 +253,15 @@ export default {
             if(n===0){
                 this.myapi='/energywater',
                 this.kind='水'
+                this.onlineitem=this.onlinebiaolist[1]
             }else if(n===1){
                 this.myapi='/energyelectric',
                 this.kind='电'
+                this.onlineitem=this.onlinebiaolist[0]
             }else{
                 this.myapi='/energysteam',
                 this.kind='汽'
+                this.onlineitem=this.onlinebiaolist[2]
             }
             this.$http.all([
                 this.$http.get('/api'+this.myapi,{params:{
@@ -492,6 +504,74 @@ export default {
                 height: 18px;
             }
         }    
+    .show-foot{
+            position: relative;
+            height:64px;
+            background:@bgca;
+            opacity:1;
+            border-radius:4px;
+            background-color:@bgcc;
+            .sf-l{
+                position: absolute;
+                left:0;
+                top:0;
+                width: 196px;
+                height: 64px;
+                border-radius: 4px;
+                background-color: @bgct;
+                .hf{
+                    position: absolute;
+                    top:8px;
+                    left: 13px;
+                    height:11px;
+                    font-size:8px;
+                    font-weight:400;
+                    line-height:11px;
+                    color:rgba(255,255,255,1);
+                    opacity:1;
+                }
+                .all-money{
+                    position: absolute;
+                    left:16px;
+                    top:28px;
+                    height:23px;
+                    font-size: 23px;
+                    color:rgba(255,255,255,1);
+                    span{
+                        font-size: 12px;
+                        margin-left: 5px;
+                        }
+                }
 
+            }
+            .sf-r{
+                position: absolute;
+                right: 0;
+                top:0;
+                width:141px;
+                height: 64px;
+                border-radius: 4px;
+                background-color:@bgct;
+                .machine{
+                    position: absolute;
+                    top:8px;
+                    left: 12px;
+                    height:11px;
+                    font-size:8px;
+                    font-weight:400;
+                    line-height:11px;
+                    color:rgba(255,255,255,1);
+                }
+                .tj{
+                    position: absolute;
+                    left: 13px;
+                    top: 28px;
+                    font-size: 23px;
+                    font-weight: 500;
+                    color: #fff;
+                    letter-spacing: 5px;
+                }
+            }
+        }
     }
 </style>

@@ -45,8 +45,8 @@
                    <div class="all-money">{{cost}}<span>元</span></div>
                </div>
                 <div class="sf-r">
-                   <div class="machine">设备在线情况</div>
-                   <div class="tj"><span>12</span>&nbsp;/&nbsp;<span>23</span></div>
+                   <div class="machine">{{kind}}表在线情况</div>
+                   <div class="tj"><span>{{onlineitem.online}}</span>&nbsp;/&nbsp;<span>{{onlineitem.total}}</span></div>
                </div>
         </div>
          <div class="bottom-dnh">
@@ -84,6 +84,8 @@ export default {
           kind:'电',
           currentchoice:'',
           kong:null,
+          onlinebiaolist:[],
+          onlineitem:{online:0,total:0},
           electricChartData:{
           columns:['日期', '数值'],
           rows: [
@@ -159,7 +161,7 @@ export default {
       this.initWebSocket()
     },
     mounted(){
-      this.getNavbar()
+      this.initNavbar()
     },
     destroyed(){
       this.websoc.close()
@@ -170,6 +172,7 @@ export default {
        this.bgc2=false
        this.bgc3=false
        this.kind='电'
+       this.onlineitem=this.onlinebiaolist[0]
        if(this.bgc1){
          this.$toast('当前显示电数据')
          this.kong=this.electricChartData
@@ -183,6 +186,7 @@ export default {
        this.bgc1=false
        this.bgc3=false
        this.kind='水'
+      this.onlineitem=this.onlinebiaolist[1]
        if(this.bgc2){
          this.$toast('当前显示水数据')
          this.kong=this.waterChartData
@@ -195,6 +199,7 @@ export default {
        this.bgc1=this.bgc2=false
        this.bgc3=!this.bgc3
        this.kind='汽'
+      this.onlineitem=this.onlinebiaolist[2]
        if(this.bgc3){
          this.$toast('当前显示汽数据')
          this.kong=this.steamChartData
@@ -271,7 +276,7 @@ export default {
                   }))
               },
         //初始化获取navbar数据条
-        getNavbar(){
+        initNavbar(){
         this.loading=true
         this.$http.get('/api/areatimeenergycount',{params:{
               EnergyClass:'电',CompareTime:'2020-04-14'
@@ -281,6 +286,9 @@ export default {
               for(var i=0;i<arr.length;i++){
               this.list.push(arr[i]['区域'])
         }
+      }),
+      this.$http.get("/api/energyall",{params:{ModelFlag:"在线检测情况"}}).then((res) => {
+         this.onlinebiaolist=JSON.parse(res.data)
       })
       }
     }
