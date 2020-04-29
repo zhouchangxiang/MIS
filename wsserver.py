@@ -125,46 +125,47 @@ def handler_msg(conn):
                     data_parse = parse_payload(data_recv)
                     AreaName = str(data_parse)
                 area_list = []
+                areaSFlow = 0.0
+                areaSSum = 0.0
+                areaWFlow = 0.0
+                areaWSum = 0.0
+                areaEZGL = 0.0
+                areaEAI = 0.0
+                areaEAU = 0.0
+                areaEBI = 0.0
+                areaEBU = 0.0
+                areaECI = 0.0
+                areaECU = 0.0
+                area_dir = {}
                 if AreaName == "":
-                    areaSFlowT = 0.0
-                    areaSSumT = 0.0
-                    areaWFlowT = 0.0
-                    areaWSumT = 0.0
-                    areaEZGLT = 0.0
-                    areaEAIT = 0.0
-                    areaEAUT = 0.0
-                    areaEBIT = 0.0
-                    areaEBUT = 0.0
-                    areaECIT = 0.0
-                    areaECUT = 0.0
                     Tags = db_session.query(TagDetail).all()
                     for tag in Tags:
                         try:
                             S = str(tag.TagClassValue)[0:1]
                             if S == "S":
-                                areaSFlowT = areaSFlowT + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                areaSFlow = areaSFlow + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                      tag.TagClassValue + "F"))
-                                areaSSumT = areaSSumT + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                areaSSum = areaSSum + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                    tag.TagClassValue + "S"))
                             elif S == "W":
-                                areaWFlowT = areaWFlowT + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                areaWFlow = areaWFlow + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                      tag.TagClassValue + "F"))
-                                areaWSumT = areaWSumT + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                areaWSum = areaWSum + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                    tag.TagClassValue + "S"))
                             elif S == "E":
-                                areaEZGLT = areaEZGLT + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                areaEZGL = areaEZGL + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                    tag.TagClassValue + "_ZGL"))
-                                areaEAUT = areaEAUT + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                areaEAU = areaEAU + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                  tag.TagClassValue + "_AU"))
-                                areaEAIT = areaEAIT + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                areaEAI = areaEAI + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                  tag.TagClassValue + "_AI"))
-                                areaEBIT = areaEBIT + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                areaEBI = areaEBI + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                  tag.TagClassValue + "_BU"))
-                                areaEBUT = areaEBUT + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                areaEBU = areaEBU + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                  tag.TagClassValue + "_BI"))
-                                areaECIT = areaECIT + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                areaECI = areaECI + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                  tag.TagClassValue + "_CU"))
-                                areaECUT = areaECUT + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                                areaECU = areaECU + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                  tag.TagClassValue + "_CI"))
                         except Exception as ee:
                             print(
@@ -173,31 +174,19 @@ def handler_msg(conn):
                         finally:
                             pass
                     area_dir["AreaName"] = ""
-                    area_dir["areaSFlow"] = strtofloat(areaSFlowT)
-                    area_dir["areaSSum"] = strtofloat(areaSSumT)
-                    area_dir["areaWFlow"] = strtofloat(areaWFlowT)
-                    area_dir["areaWSum"] = strtofloat(areaWSumT)
-                    area_dir["areaEZGL"] = strtofloat(areaEZGLT)
-                    area_dir["areaEAI"] = strtofloat(areaEAIT)
-                    area_dir["areaEAU"] = strtofloat(areaEAUT)
-                    area_dir["areaEBI"] = strtofloat(areaEBIT)
-                    area_dir["areaEBU"] = strtofloat(areaEBUT)
-                    area_dir["areaECI"] = strtofloat(areaEBIT)
-                    area_dir["areaECU"] = strtofloat(areaEBUT)
+                    area_dir["areaSFlow"] = strtofloat(areaSFlow)
+                    area_dir["areaSSum"] = strtofloat(areaSSum)
+                    area_dir["areaWFlow"] = strtofloat(areaWFlow)
+                    area_dir["areaWSum"] = strtofloat(areaWSum)
+                    area_dir["areaEZGL"] = strtofloat(areaEZGL)
+                    area_dir["areaEAI"] = strtofloat(areaEAI)
+                    area_dir["areaEAU"] = strtofloat(areaEAU)
+                    area_dir["areaEBI"] = strtofloat(areaEBI)
+                    area_dir["areaEBU"] = strtofloat(areaEBU)
+                    area_dir["areaECI"] = strtofloat(areaEBI)
+                    area_dir["areaECU"] = strtofloat(areaEBU)
                 else:
                     Tags = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaName).all()
-                    areaSFlow = 0.0
-                    areaSSum = 0.0
-                    areaWFlow = 0.0
-                    areaWSum = 0.0
-                    areaEZGL = 0.0
-                    areaEAI = 0.0
-                    areaEAU = 0.0
-                    areaEBI = 0.0
-                    areaEBU = 0.0
-                    areaECI = 0.0
-                    areaECU = 0.0
-                    area_dir = {}
                     for tag in Tags:
                         try:
                             S = str(tag.TagClassValue)[0:1]
