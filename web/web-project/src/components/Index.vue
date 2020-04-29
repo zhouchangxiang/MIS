@@ -5,7 +5,9 @@
       <el-row>
         <el-col :span="24">
           <div class="aside-head">
-            <router-link :to="{name:'home'}"><i class="fa fa-home"></i></router-link>
+            <el-tooltip content="系统首页" placement="bottom">
+              <router-link :to="{name:'home'}"><i class="fa fa-home"></i></router-link>
+            </el-tooltip>
           </div>
           <div :style="selfHeight" class="aside-menu">
             <el-menu class="menu-ul" default-active="" :collapse="isCollapse">
@@ -76,28 +78,12 @@
             <div class="mapContent">
               <div class="mapContentTop">
                 <div style="position: relative;height: 100%;">
-                  <el-popover v-for="(item,index) in drawerTopAreaOption" placement="bottom" :title="item.title" width="200" trigger="click" @show="showAreaInfo(item.title)" :key="index">
-                    <div slot="reference" class="mapContentItem" :style="{width:item.width, height: item.height,top: item.top,left: item.left}"><div class="mapItemPoint" :style="{marginLeft: item.marginLeft}"></div></div>
-                    <el-radio-group v-model="energyType" fill="#082F4C" size="mini" style="margin-bottom: 10px;">
-                      <el-radio-button v-for="(item,index) in energyTypeList" border :key="item.index" :label="item.label" :value="item.value"></el-radio-button>
-                    </el-radio-group>
-                    <ul>
-                      <el-popover placement="right" title="标题" width="200" trigger="hover" v-for="(tagItem,tagindex) in ThermographEquTableData" :key="tagindex">
-                        <li slot="reference" class="text-size-small itemMarginBottom"><span style="margin-right: 30px;margin-left: 10px;">{{ tagItem.type }}</span>{{ tagItem.num }}</li>
-                        <div><el-image :src="require('@/assets/imgs/eq1.jpg')" fit="fill"></el-image></div>
-                      </el-popover>
-                    </ul>
-                  </el-popover>
+                  <div v-for="(item,index) in drawerTopAreaOption" class="mapContentItem" :style="{width:item.width, height: item.height,top: item.top,left: item.left}" :key="index"><div class="mapItemPoint" :style="{marginLeft: item.marginLeft}"></div></div>
                 </div>
               </div>
               <div class="mapContentBottom">
                 <div style="position: relative;height: 100%;">
-                  <el-popover v-for="(item,index) in drawerBottomAreaOption" placement="bottom" :title="item.title" width="200" trigger="click" @show="showAreaInfo(item.title)" :key="index">
-                    <div slot="reference" class="mapContentItem" :style="{width:item.width, height: item.height,top: item.top,left: item.left}"><div class="mapItemPoint" :style="{marginLeft: item.marginLeft}"></div></div>
-                    <el-radio-group v-model="energyType" fill="#082F4C" size="mini">
-                      <el-radio-button v-for="(item,index) in energyTypeList" border :key="index" :label="item.label" :value="item.value"></el-radio-button>
-                    </el-radio-group>
-                  </el-popover>
+                  <div v-for="(item,index) in drawerBottomAreaOption" class="mapContentItem" :style="{width:item.width, height: item.height,top: item.top,left: item.left}" :key="index"><div class="mapItemPoint" :style="{marginLeft: item.marginLeft}"></div></div>
                 </div>
               </div>
             </div>
@@ -191,18 +177,6 @@ export default {
         {title:"展览室",width: "150px",height:"45%",top:"17%",left:"15%",marginLeft:"70px"},
         {title:"办公楼",width: "360px",height:"48%",top:"10%",left:"25%",marginLeft:"140px"},
       ],
-      energyType:"电表",
-      energyTypeList:[
-        {label:"电表",value:"电"},
-        {label:"水表",value:"水"},
-        {label:"汽表",value:"汽"}
-      ],
-      ThermographEquTableData:[
-        {type:"电表",num:"1424kwh"},
-        {type:"电表",num:"1424kwh"},
-        {type:"电表",num:"1424kwh"},
-        {type:"电表",num:"1424kwh"},
-      ]
     }
   },
   //依赖注入传值
@@ -367,7 +341,6 @@ export default {
     },
     showAreaInfo(AreaName){
       console.log(AreaName)
-
     }
   }
 }
@@ -495,7 +468,7 @@ export default {
     width: 100%;
     height: 100%;
     background: #082F4C;
-    opacity: 0.52;
+    opacity: 0;
   }
   .close-drawer{
     position: absolute;

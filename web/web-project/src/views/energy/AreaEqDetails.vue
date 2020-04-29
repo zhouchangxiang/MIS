@@ -126,9 +126,9 @@
         <el-col :span="24" style="margin-bottom: 2px;">
           <div class="chartHead text-size-large text-color-info">
             <div class="chartTile">参数分析</div>
-            <!--<ul class="subsectionList">-->
-              <!--<li v-for="item in subsectionList"><a href="javascript:;" :class="{active:subsectionActive == item.id}" @click="getSubsection(item.id)">{{ item.name }}</a></li>-->
-            <!--</ul>-->
+            <ul class="subsectionList" v-if="EnergyClass === '汽'">
+              <li v-for="(item,index) in subsectionList"><a href="javascript:;" :class="{active:subsectionActive === index}" @click="getSubsection(index)">{{ item.name }}</a></li>
+            </ul>
           </div>
         </el-col>
         <el-col :span="24">
@@ -324,12 +324,9 @@
         EnergyClass:"电",
         ralTimeWarningTableData:[],
         subsectionList:[
-          {name:"视在功率",id:1},
-          {name:"有功功率",id:2},
-          {name:"无功功率",id:3},
-          {name:"电流",id:4},
-          {name:"电压",id:5},
-          {name:"频率",id:6}
+          {name:"能耗"},
+          {name:"体积"},
+          {name:"温度"}
         ],
         subsectionActive:1,
         faultChartData: {
@@ -372,6 +369,7 @@
     methods:{
       getSubsection(index){
         this.subsectionActive = index;
+        this.getEqData()
       },
       handleSelectionChange(val){
         this.multipleSelection = val;
@@ -421,6 +419,19 @@
         }
         this.axios.get("/api/EquipmentDetail",{params:params}).then(res =>{
           that.forEqParameters = res.data
+          if(this.EnergyClass === "电"){
+            that.faultChartData.columns = ["时间","功率"]
+          }else if(this.EnergyClass === "水"){
+            that.faultChartData.columns = ["时间","瞬时量","累计量"]
+          }else if(this.EnergyClass === "汽"){
+            if(this.subsectionActive === 0){
+              that.faultChartData.columns = ["时间","瞬时量","累计量"]
+            }else if(this.subsectionActive === 1){
+              that.faultChartData.columns = ["时间","体积"]
+            }else if(this.subsectionActive === 2){
+              that.faultChartData.columns = ["时间","温度"]
+            }
+          }
           that.faultChartData.rows = res.data.row
         })
       },

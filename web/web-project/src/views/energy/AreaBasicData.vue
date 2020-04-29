@@ -18,6 +18,9 @@
     <el-col :span="24" style="margin-bottom:2px;">
       <div class="chartHead text-size-large text-color-info">
         <div class="chartTile">趋势图</div>
+        <ul class="subsectionList" v-if="formParameters.energy === '汽'">
+          <li v-for="(item,index) in subsectionList"><a href="javascript:;" :class="{active:subsectionActive === index}" @click="getSubsection(index)">{{ item.name }}</a></li>
+        </ul>
         <div class="chartHeadRight">
           <span class="text-size-small text-color-primary" @click="$router.push({ path:'/DataReport'})" style="float: right;cursor: pointer;">查看报表</span>
         </div>
@@ -61,6 +64,11 @@
           {name:"水"},
           {name:"汽"},
         ],
+        subsectionList:[
+          {name:"能耗"},
+          {name:"体积"},
+          {name:"温度"}
+        ],
         subsectionActive:1,
         dataZoom: [],
         ChartExtend: {
@@ -76,8 +84,7 @@
           }
         },
         chartSettings: {
-          type:"line",
-          yAxisName: ['能耗量']
+          type:"line"
         },
         chartData: {
           columns: [],
@@ -95,6 +102,7 @@
     methods:{
       getSubsection(index){
         this.subsectionActive = index;
+        this.getChartData()
       },
       getChartData(){
         if(this.formParameters.resourceTime === "实时"){
@@ -157,29 +165,27 @@
                 columns: ['时间', '总功率'],
                 rows: res.data.row
               }
-              that.chartSettings = {
-                type:"line",
-                yAxisName: ['能耗量']
-              }
             }else if(that.formParameters.energy === "水"){
               that.chartData = {
                 columns: ['时间', '累计量'],
                 rows: res.data.row
               }
-              that.chartSettings = {
-                type:"line",
-                yAxisName: ['能耗量']
-              }
             }else if(that.formParameters.energy === "汽"){
-              that.chartData = {
-                columns: ['时间', '累计量', '体积', '温度'],
-                rows: res.data.row
-              }
-              that.chartSettings = {
-                type:"histogram",
-                axisSite: { right: ['温度'] },
-                showLine: ['温度','体积'],
-                yAxisName: ['能耗量', '温度','体积']
+              if(this.subsectionActive === 0){
+                that.chartData = {
+                  columns: ['时间', '累计量'],
+                  rows: res.data.row
+                }
+              }else if(this.subsectionActive === 1){
+                that.chartData = {
+                  columns: ['时间', '体积'],
+                  rows: res.data.row
+                }
+              }else if(this.subsectionActive === 2){
+                that.chartData = {
+                  columns: ['时间', '温度'],
+                  rows: res.data.row
+                }
               }
             }
           })
