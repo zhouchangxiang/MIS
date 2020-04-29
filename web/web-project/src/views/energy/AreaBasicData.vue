@@ -195,7 +195,11 @@
         this.websock.onclose = this.websocketclose;
       },
       websocketonopen(){ //连接建立之后执行send方法发送数据
-        this.websocketsend();
+        if(this.newAreaName.AreaName === "整厂区"){
+          this.websocketsend("");
+        }else{
+          this.websocketsend(this.newAreaName.AreaName);
+        }
       },
       websocketonerror(){//连接建立失败
         this.$notify.info({

@@ -191,8 +191,8 @@
               </el-col>
             </el-row>
             <span slot="footer" class="dialog-footer">
-              <el-button @click="systemCheckupDialogVisible = false">取 消</el-button>
               <el-button type="primary" @click="startSystemCheckup">开 始 体 检</el-button>
+              <el-button @click="systemCheckupDialogVisible = false">关 闭</el-button>
             </span>
           </el-dialog>
         </div>
