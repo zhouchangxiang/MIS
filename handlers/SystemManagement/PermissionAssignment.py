@@ -368,6 +368,10 @@ def saverolepermission():
                 permissionIDs = eval(permissionIDs)
             roleclass = db_session.query(Role).filter(Role.ID == int(roleID)).first()
             for pid in permissionIDs:
+                sql = "delete from [DB_MICS].[dbo].[RolePermission] where [RoleID] = "+roleID
+                print(sql)
+                db_session.execute(sql)
+                db_session.commit()
                 permissioncalss = db_session.query(Permission).filter(Permission.ID == int(pid)).first()
                 rpclas = db_session.query(RolePermission).filter(RolePermission.RoleID == roleclass.ID, RolePermission.PermissionID == permissioncalss.ID).first()
                 if not rpclas:
@@ -380,6 +384,7 @@ def saverolepermission():
                     db_session.commit()
             return json.dumps("OK", cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
+            db_session.rollback()
             print(e)
             logger.error(e)
             insertSyslog("error", "角色添加权限Error：" + str(e), current_user.Name)
