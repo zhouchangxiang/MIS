@@ -112,13 +112,11 @@
       savePrivileges(){
         var selectPermissionArr = []
         this.transferValue.forEach(item =>{
-          selectPermissionArr.push({
-            roleID:item
-          })
+          selectPermissionArr.push(item)
         })
         var params = {
           roleID: this.TableData.multipleSelection[0].ID,
-          permissionIDs:selectPermissionArr
+          permissionIDs:JSON.stringify(selectPermissionArr)
         }
         this.axios.post("/api/permission/saverolepermission",this.qs.stringify(params)).then(res =>{
           if(res.data === "OK"){
