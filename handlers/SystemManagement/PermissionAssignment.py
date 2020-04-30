@@ -369,7 +369,7 @@ def saverolepermission():
             roleclass = db_session.query(Role).filter(Role.ID == int(roleID)).first()
             for pid in permissionIDs:
                 permissioncalss = db_session.query(Permission).filter(Permission.ID == int(pid)).first()
-                rpclas = db_session.query(RolePermission).filter(RolePermission.RoleID == roleclass.ID, RolePermission.PermissionID == permissioncalss.PermissionName.ID).first()
+                rpclas = db_session.query(RolePermission).filter(RolePermission.RoleID == roleclass.ID, RolePermission.PermissionID == permissioncalss.ID).first()
                 if not rpclas:
                     rp = RolePermission()
                     rp.RoleID = roleclass.ID
@@ -398,14 +398,14 @@ def selectpermissionbyrole():
             pids = db_session.query(RolePermission).filter(RolePermission.RoleID == int(roleID)).all()
             perids_list = []
             for pid in pids:
-                perids_list.append(pid)
+                perids_list.append(pid.PermissionID)
             if len(perids_list) > 0:
                 existingRows = db_session.query(Permission).filter(Permission.ID.in_(perids_list)).all()
                 dir["existingRows"] = existingRows
                 notHaveRows = db_session.query(Permission).filter(Permission.ID.notin_(perids_list)).all()
                 dir["notHaveRows"] = notHaveRows
             else:
-                dir["existingRows"] = ""
+                dir["existingRows"] = []
                 notHaveRows = db_session.query(Permission).filter().all()
                 dir["notHaveRows"] = notHaveRows
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
