@@ -388,7 +388,7 @@ def selectpermissionbyrole():
     根据角色查询权限
     :return:
     '''
-    if request.method == 'POST':
+    if request.method == 'GET':
         data = request.values
         try:
             dir = {}
