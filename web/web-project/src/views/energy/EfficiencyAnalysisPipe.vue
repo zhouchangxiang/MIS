@@ -78,7 +78,10 @@
               type: 'average',
             }
           ],
-          borderWidth: 6
+          label:{
+            position:"middle",
+            formatter:'{b}：{c}'
+          }
         },
         ChartExtend: {
           grid:{
@@ -88,6 +91,7 @@
             top:'40px'
           },
           series:{
+            barMaxWidth : 30,
             smooth: false
           }
         },

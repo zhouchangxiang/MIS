@@ -598,7 +598,7 @@
         this.areaTimeChartsLoading = true
         var params = {
           EnergyClass: this.areaTimeEnergyValue,
-          CompareTime:moment().format("YYYY-MM-DD")
+          CompareTime:moment().format("YYYY-MM-DD"),
         }
         this.axios.get("/api/areatimeenergycount",{params:params}).then(res => {
           this.areaTimeChartsLoading = false

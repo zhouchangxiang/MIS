@@ -58,10 +58,6 @@
           bottom:'0',
           top:'40px'
         },
-        'series.1.itemStyle.normal.lineStyle': {
-            width:2,
-            type:'dotted'
-        },
         series:{
           barMaxWidth : 30,
           smooth: false

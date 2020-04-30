@@ -19,11 +19,11 @@
             <div class="chartTile">设备</div>
           </div>
           <div class="platformContainer" style="margin-bottom: 10px;">
-            <el-table :data="TagDetailTableData" highlight-current-row ref="multipleTable" @selection-change="handleSelectionChange" @row-click="handleRowClick" v-loading="TagEqTableLoading" size="mini" height="246px" max-height="246px" style="width: 100%">
+            <el-table :data="TagDetailTableData" highlight-current-row ref="multipleTable" @selection-change="handleSelectionChange" @row-click="handleRowClick" v-loading="TagEqTableLoading" size="small" height="246px" max-height="246px" style="width: 100%">
               <el-table-column prop="AreaName" label="区域名称"></el-table-column>
               <el-table-column prop="FEFportIP" label="站点地址"></el-table-column>
               <el-table-column prop="EnergyClass" label="分类"></el-table-column>
-              <el-table-column prop="IP" label="IP"></el-table-column>
+              <el-table-column prop="IP" label="IP" width="100"></el-table-column>
               <el-table-column prop="COMNum" label="端口"></el-table-column>
             </el-table>
           </div>
@@ -118,16 +118,22 @@
               </div>
             </el-col>
           </div>
-          <div class="faultWarn">
+          <div class="faultWarn" v-if="forEqParameters.SituationTime != ''">
             <span>{{ forEqParameters.Situation }}</span>
             <p class="text-color-danger">{{ forEqParameters.SituationTime }}</p>
+          </div>
+          <div class="faultWarn" v-if="forEqParameters.SituationTime === ''">
+            <p class="text-color-success" style="line-height: 50px;">{{ forEqParameters.Situation }}</p>
           </div>
         </el-col>
         <el-col :span="24" style="margin-bottom: 2px;">
           <div class="chartHead text-size-large text-color-info">
             <div class="chartTile">参数分析</div>
+            <ul class="subsectionList" v-if="EnergyClass === '水'">
+              <li v-for="(item,index) in subsectionWaterList"><a href="javascript:;" :class="{active:subsectionWaterActive === index}" @click="getSubsectionWater(index)">{{ item.name }}</a></li>
+            </ul>
             <ul class="subsectionList" v-if="EnergyClass === '汽'">
-              <li v-for="(item,index) in subsectionList"><a href="javascript:;" :class="{active:subsectionActive === index}" @click="getSubsection(index)">{{ item.name }}</a></li>
+              <li v-for="(item,index) in subsectionSteamList"><a href="javascript:;" :class="{active:subsectionSteamActive === index}" @click="getSubsectionSteam(index)">{{ item.name }}</a></li>
             </ul>
           </div>
         </el-col>
@@ -141,12 +147,9 @@
         </el-col>
         <el-col :span="24" style="margin-bottom: 10px;">
           <div class="overview">
-            <el-col :span="4"><p class="text-color-caption">最大值</p>{{ overview.maxValue }}</el-col>
-            <el-col :span="4"><p class="text-color-caption">发生时间</p>{{ overview.maxTime }}</el-col>
-            <el-col :span="4"><p class="text-color-caption">项位</p>{{ overview.maxSite }}</el-col>
-            <el-col :span="4"><p class="text-color-caption">最小值</p>{{ overview.maxValue }}</el-col>
-            <el-col :span="4"><p class="text-color-caption">发生时间</p>{{ overview.maxTime }}</el-col>
-            <el-col :span="4"><p class="text-color-caption">项位</p>{{ overview.maxSite }}</el-col>
+            <el-col :span="8"><p class="text-color-caption">类型</p>{{ overview.type }}</el-col>
+            <el-col :span="8"><p class="text-color-caption">最大值</p>{{ overview.MaxValue }}</el-col>
+            <el-col :span="8"><p class="text-color-caption">最小值</p>{{ overview.MaxValue }}</el-col>
           </div>
         </el-col>
         <el-col :span="24">
@@ -323,21 +326,26 @@
         forEqParameters:{},
         EnergyClass:"电",
         ralTimeWarningTableData:[],
-        subsectionList:[
-          {name:"能耗"},
+        subsectionWaterList:[
+          {name:"累计量"},
+          {name:"瞬时量"}
+        ],
+        subsectionWaterActive:0,
+        subsectionSteamList:[
+          {name:"累计量"},
+          {name:"瞬时量"},
           {name:"体积"},
           {name:"温度"}
         ],
-        subsectionActive:1,
+        subsectionSteamActive:0,
         faultChartData: {
           columns: ['时间', '功率'],
           rows: []
         },
         overview:{
-          maxValue:"",
-          maxTime:"",
-          minValue:"",
-          minTime:""
+          type:"",
+          MaxValue:"",
+          MinValue:""
         },
         equiRunChartData:{
           columns: ['时间', '开机', '关机', '空载','重载'],
@@ -367,8 +375,12 @@
       this.getEq()
     },
     methods:{
-      getSubsection(index){
-        this.subsectionActive = index;
+      getSubsectionWater(index){
+        this.subsectionWaterActive = index;
+        this.getEqData()
+      },
+      getSubsectionSteam(index){
+        this.subsectionSteamActive = index;
         this.getEqData()
       },
       handleSelectionChange(val){
@@ -418,18 +430,38 @@
           EndTime:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss")
         }
         this.axios.get("/api/EquipmentDetail",{params:params}).then(res =>{
-          console.log(res.data)
           that.forEqParameters = res.data
           if(this.EnergyClass === "电"){
             that.faultChartData.columns = ["时间","功率"]
+            that.overview = {
+              type:"总功率",
+              MaxValue: res.data.MaxValue,
+              MinValue: res.data.MinValue,
+            }
           }else if(this.EnergyClass === "水"){
-            that.faultChartData.columns = ["时间","瞬时量","累计量"]
+            that.overview = {
+              type:"累计量",
+              MaxValue: res.data.MaxValue,
+              MinValue: res.data.MinValue,
+            }
+            if(this.subsectionWaterActive === 0){
+              that.faultChartData.columns = ["时间","累计量"]
+            }else if(this.subsectionWaterActive === 1){
+              that.faultChartData.columns = ["时间","瞬时量"]
+            }
           }else if(this.EnergyClass === "汽"){
-            if(this.subsectionActive === 0){
-              that.faultChartData.columns = ["时间","瞬时量","累计量"]
-            }else if(this.subsectionActive === 1){
+            that.overview = {
+              type:"累计量",
+              MaxValue: res.data.MaxValue,
+              MinValue: res.data.MinValue,
+            }
+            if(this.subsectionSteamActive === 0){
+              that.faultChartData.columns = ["时间","累计量"]
+            }else if(this.subsectionSteamActive === 1){
+              that.faultChartData.columns = ["时间","瞬时量"]
+            }else if(this.subsectionSteamActive === 2){
               that.faultChartData.columns = ["时间","体积"]
-            }else if(this.subsectionActive === 2){
+            }else if(this.subsectionSteamActive === 3){
               that.faultChartData.columns = ["时间","温度"]
             }
           }
