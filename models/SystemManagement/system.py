@@ -570,20 +570,14 @@ class Permission(Base):
     # ID
     ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
 
-    # 菜单名字:
-    MenuName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 权限名字:
+    PermissionName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 菜单类型:
-    MenuType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 权限类型:
+    PermissionType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 菜单名字:
-    MenuCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 用户名
-    Name = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
-
-    # 工号
-    WorkNumber = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+    # 描述:
+    Description = Column(Unicode(100), primary_key=False, autoincrement=False, nullable=True)
 
     # 创建时间
     CreateData = Column(DateTime, primary_key=False, autoincrement=False, nullable=True,
@@ -596,30 +590,21 @@ class RolePermission(Base):
     # ID
     ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
 
-    # 菜单名字:
-    MenuName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 角色ID:
+    RoleID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
 
-    # 菜单名字:
-    MenuCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 角色名称:
+    RoleName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 菜单类型:
-    MenuType = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 权限ID:
+    PermissionID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
 
-    # 用户名
-    Name = Column(Unicode(64), primary_key=False, autoincrement=False, nullable=True)
-
-    # 工号
-    WorkNumber = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+    # 权限名字:
+    PermissionName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
     # 创建时间
     CreateDate = Column(DateTime, primary_key=False, autoincrement=False, nullable=True,
                         default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-
-    # 角色编码:
-    RoleCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 角色名称:
-    RoleName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 
 # User_START:
