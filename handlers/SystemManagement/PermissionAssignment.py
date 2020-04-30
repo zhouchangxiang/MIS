@@ -381,3 +381,28 @@ def saverolepermission():
             print(e)
             logger.error(e)
             insertSyslog("error", "角色添加权限Error：" + str(e), current_user.Name)
+
+@permission_distribution.route('/permission/selectpermissionbyrole', methods=['POST', 'GET'])
+def selectpermissionbyrole():
+    '''
+    根据角色查询权限
+    :return:
+    '''
+    if request.method == 'POST':
+        data = request.values
+        try:
+            dir = {}
+            roleID = data.get("roleID")
+            pids = db_session.query(RolePermission).filter(RolePermission.RoleID == int(roleID)).all()
+            perids_list = []
+            for pid in pids:
+                perids_list.append(pid)
+            existingRows = db_session.query(Permission).filter(Permission.ID.in_(perids_list)).all()
+            notHaveRows = db_session.query(Permission).filter(Permission.ID.notin_(perids_list)).all()
+            dir["existingRows"] = existingRows
+            dir["notHaveRows"] = notHaveRows
+            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "根据角色查询权限Error：" + str(e), current_user.Name)
