@@ -367,11 +367,10 @@ def saverolepermission():
             if permissionIDs:
                 permissionIDs = eval(permissionIDs)
             roleclass = db_session.query(Role).filter(Role.ID == int(roleID)).first()
+            sql = "delete from [DB_MICS].[dbo].[RolePermission] where [RoleID] = " + roleID
+            db_session.execute(sql)
+            db_session.commit()
             for pid in permissionIDs:
-                sql = "delete from [DB_MICS].[dbo].[RolePermission] where [RoleID] = "+roleID
-                print(sql)
-                db_session.execute(sql)
-                db_session.commit()
                 permissioncalss = db_session.query(Permission).filter(Permission.ID == int(pid)).first()
                 rpclas = db_session.query(RolePermission).filter(RolePermission.RoleID == roleclass.ID, RolePermission.PermissionID == permissioncalss.ID).first()
                 if not rpclas:
