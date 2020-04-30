@@ -244,6 +244,7 @@
           ]
         },
         DepartmentTableData:{
+          tableName:"DepartmentManager",
           column:[
             {prop:"DepartName",label:"部门名称"},
             {prop:"DepartCode",label:"部门编码"},
@@ -253,8 +254,15 @@
           limit:5,
           offset:1,
           total:0,
+          searchProp:"",
+          searchPropList:[
+            {label:"部门名称",prop:"DepartName"},
+            {label:"部门编码",prop:"DepartCode"}
+          ],
+          searchVal:"",
         },
         RoleTableData:{
+          tableName:"Role",
           column:[
             {prop:"RoleName",label:"角色名称"},
             {prop:"RoleCode",label:"角色编码"},
@@ -265,6 +273,12 @@
           limit:5,
           offset:1,
           total:0,
+          searchProp:"",
+          searchPropList:[
+            {label:"角色名称",prop:"RoleName"},
+            {label:"角色编码",prop:"RoleCode"}
+          ],
+          searchVal:"",
         },
       }
     },

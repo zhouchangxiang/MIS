@@ -280,10 +280,10 @@
             show:false
           },
           grid:{
-            left: '-60px',
+            left: '-20px',
             right: '0',
             bottom: '-10px',
-            top:'0'
+            top:'10px'
           },
           series: {
             smooth: false,

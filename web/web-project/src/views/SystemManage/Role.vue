@@ -7,7 +7,7 @@
       <div class="platformContainer">
         <tableView :tableData="TableData" @getTableData="getRoleTable" @privileges="privileges"></tableView>
       </div>
-      <el-dialog title="提示" :visible.sync="dialogVisible" width="60%">
+      <el-dialog title="提示" :visible.sync="dialogVisible" width="50%">
         <el-transfer :titles="['全部权限', '当前权限']" v-model="transferValue" :data="transferData"></el-transfer>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false">取 消</el-button>
@@ -77,7 +77,7 @@
         this.dialogVisible = true
         var that = this
         var params = {
-          tableName: "Menu",
+          tableName: "RolePermission",
           limit:100000000,
           offset:0
         }

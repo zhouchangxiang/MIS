@@ -299,7 +299,6 @@
         if(this.newAreaName.areaName === "整厂区"){
           this.websocketsend("");
         }else{
-          console.log(this.newAreaName.areaName)
           this.websocketsend(this.newAreaName.areaName);
         }
       },

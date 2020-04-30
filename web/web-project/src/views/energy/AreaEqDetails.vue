@@ -128,7 +128,7 @@
         </el-col>
         <el-col :span="24" style="margin-bottom: 2px;">
           <div class="chartHead text-size-large text-color-info">
-            <div class="chartTile">参数分析</div>
+            <div class="chartTile">能耗分析</div>
             <ul class="subsectionList" v-if="EnergyClass === '水'">
               <li v-for="(item,index) in subsectionWaterList"><a href="javascript:;" :class="{active:subsectionWaterActive === index}" @click="getSubsectionWater(index)">{{ item.name }}</a></li>
             </ul>
@@ -139,7 +139,7 @@
         </el-col>
         <el-col :span="24">
           <div class="energyDataContainer">
-            <ve-line :data="faultChartData" :extend="ChartExtend"></ve-line>
+            <ve-line :data="faultChartData" :extend="chartExtend" :settings="chartSettings"></ve-line>
           </div>
           <div class="chartHead text-size-large text-color-info" style="margin-bottom: 2px;">
             <div class="chartTile">数据概览</div>
@@ -291,17 +291,6 @@
     name: "AreaEqDetails",
     inject:['newAreaName'],
     data(){
-      this.ChartExtend = {
-        grid:{
-          left:'0',
-          right:'0',
-          bottom:'0',
-          top:'40px'
-        },
-        series:{
-          smooth: false
-        }
-      }
       return {
         formParameters:{
           startDate:moment().day(moment().day()).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
@@ -325,6 +314,7 @@
         ElectricTagDetailTableData:[],
         forEqParameters:{},
         EnergyClass:"电",
+        TagClassValue:"",
         ralTimeWarningTableData:[],
         subsectionWaterList:[
           {name:"累计量"},
@@ -338,8 +328,22 @@
           {name:"温度"}
         ],
         subsectionSteamActive:0,
+        chartExtend: {
+          grid:{
+            left:'0',
+            right:'0',
+            bottom:'0',
+            top:'40px'
+          },
+          series:{
+            smooth: false
+          }
+        },
+        chartSettings: {
+          area:true
+        },
         faultChartData: {
-          columns: ['时间', '功率'],
+          columns: ["时间","功率"],
           rows: []
         },
         overview:{
@@ -409,29 +413,31 @@
           that.TagEqTableLoading = false
           var resData = JSON.parse(res.data).rows
           that.TagDetailTableData = resData
-          that.TagDetailTableData.forEach(item =>{
+          that.TagDetailTableData.forEach(item =>{   //循环电的tag点 插入电能质量table
             if(item.EnergyClass === "电"){
               that.ElectricTagDetailTableData.push(item)
             }
           })
-          that.$refs.multipleTable.setCurrentRow(that.TagDetailTableData[0])
+          that.$refs.multipleTable.setCurrentRow(that.TagDetailTableData[0])  //默认获取第一条tag设备 设为选中
           that.handleRowClick(that.TagDetailTableData[0])
+          that.EnergyClass = that.TagDetailTableData[0].EnergyClass
+          that.TagClassValue = that.TagDetailTableData[0].TagClassValue
         },res =>{
           console.log("获取设备时请求错误")
         })
       },
       getEqData(){
         var that = this
-        this.EnergyClass = this.multipleSelection[0].EnergyClass
         var params = {
-          TagClassValue:this.multipleSelection[0].TagClassValue,
-          EnergyClass:this.multipleSelection[0].EnergyClass,
+          TagClassValue:this.TagClassValue,
+          EnergyClass:this.EnergyClass,
           StartTime:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss"),
           EndTime:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss")
         }
         this.axios.get("/api/EquipmentDetail",{params:params}).then(res =>{
           that.forEqParameters = res.data
           if(this.EnergyClass === "电"){
+            that.chartSettings.area = false
             that.faultChartData.columns = ["时间","功率"]
             that.overview = {
               type:"总功率",
@@ -445,8 +451,10 @@
               MinValue: res.data.MinValue,
             }
             if(this.subsectionWaterActive === 0){
+              that.chartSettings.area = false
               that.faultChartData.columns = ["时间","累计量"]
             }else if(this.subsectionWaterActive === 1){
+              that.chartSettings.area = true
               that.faultChartData.columns = ["时间","瞬时量"]
             }
           }else if(this.EnergyClass === "汽"){
@@ -456,12 +464,16 @@
               MinValue: res.data.MinValue,
             }
             if(this.subsectionSteamActive === 0){
+              that.chartSettings.area = false
               that.faultChartData.columns = ["时间","累计量"]
             }else if(this.subsectionSteamActive === 1){
+              that.chartSettings.area = true
               that.faultChartData.columns = ["时间","瞬时量"]
             }else if(this.subsectionSteamActive === 2){
+              that.chartSettings.area = true
               that.faultChartData.columns = ["时间","体积"]
             }else if(this.subsectionSteamActive === 3){
+              that.chartSettings.area = false
               that.faultChartData.columns = ["时间","温度"]
             }
           }
@@ -483,6 +495,8 @@
       handleRowClick(row){
         this.$refs.multipleTable.clearSelection();
         this.$refs.multipleTable.toggleRowSelection(row)
+        this.EnergyClass = this.multipleSelection[0].EnergyClass
+        this.TagClassValue = this.multipleSelection[0].TagClassValue
         this.getEqData()
       },
       ElectricHandleRowClick(row){
