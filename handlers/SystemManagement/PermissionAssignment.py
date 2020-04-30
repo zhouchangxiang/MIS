@@ -363,7 +363,9 @@ def saverolepermission():
         data = request.values
         try:
             roleID = data.get("roleID")
-            permissionIDs = eval(data.get("permissionIDs"))
+            permissionIDs = data.get("permissionIDs")
+            if permissionIDs:
+                permissionIDs = eval(permissionIDs)
             roleclass = db_session.query(Role).filter(Role.ID == int(roleID)).first()
             for pid in permissionIDs:
                 permissioncalss = db_session.query(Permission).filter(Permission.ID == int(pid)).first()
