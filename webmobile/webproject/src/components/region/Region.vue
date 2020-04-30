@@ -29,16 +29,9 @@
           <div class="sn">+1.456%</div>
         </div>
       </div>
-        <div class="show-top singledate">
-               <div class="tips">
-                   <van-tabs type="card" title-active-color="#1E222B" title-inactive-color="#fff">
-                        <van-tab title="日"></van-tab>
-                    </van-tabs>
-                </div>
-        </div>
-         <div class="piclist">
+      <div class="piclist">
            <ve-line :data="kong" :settings="chartSettings" width="350px" height="240px"  :legend-visible="false"></ve-line>
-         </div>
+      </div>
          <div class="show-foot">
                <div class="sf-l">
                    <div class="hf">{{kind}}耗费成本</div>
@@ -522,19 +515,6 @@ export default {
         }
         }
     }
-    .show-top{
-            height:18px;
-            opacity:1;
-            border-radius:4px;
-            color:#fff;
-            font-size: 10px;
-            .tips{
-                float: left;
-                margin-right: 20px;
-                background-color:#1E222B;
-                height: 18px;
-            }
-        }
     .show-foot{
             position: relative;
             height:64px;

@@ -25,29 +25,29 @@
           <div class="compare">
               <div class="left-box">
                   <div class="lt">本日最高负荷率:</div>
-                  <div class="num">00.00</div>
+                  <div class="num">{{maxloadrate}}</div>
                   <div class="percent">%</div>
                   <div class="time">时间:</div>
-                  <div class="time-now">00:00:00</div>
+                  <div class="time-now">{{Maxtime}}</div>
               </div>
               <div class="right-box">
                   <div class="lt">本日最低负荷率:</div>
-                  <div class="num">00.00</div>
+                  <div class="num">{{minloadrate}}</div>
                   <div class="percent">%</div>
                   <div class="time">时间:</div>
-                  <div class="time-now">00:00:00</div>
+                  <div class="time-now">{{Mintime}}</div>
               </div>
           </div>
     </div>
            
 </template>
 <script>
+var moment=require('moment')
 export default {
     data(){
         this.chartSettings = {
-         axisSite: { right: ['下单率'] },
-         yAxisType: ['KMB', 'percent'],
-         yAxisName: ['数值', '比率'],
+         yAxisType: ['KMB'],
+         yAxisName: ['数值'],
       }
         return {
             active: 0,
@@ -59,15 +59,22 @@ export default {
             num1:'00.00',
             num2:'00.00',
             num3:'00.00',
+            maxloadrate:0.8,
+            minloadrate:0.3,
+            Maxtime:'2020-03-16',
+            Mintime:'2020-03-16',
             chartData: {
-                columns: ['日期', '有功功率', '额定功率', '负荷率'],
+                columns: ['日期', '负荷率'],
                 rows: [
-                    { '日期': '1/1', '有功功率': 1393, '额定功率': 1093, '负荷率': 0.9 },
-                    { '日期': '1/2', '有功功率': 3530, '额定功率': 3230, '负荷率': 0.26 },
-                    { '日期': '1/3', '有功功率': 2923, '额定功率': 2623, '负荷率': 0.76 },
-                    { '日期': '1/4', '有功功率': 1723, '额定功率': 1423, '负荷率': 0.49 },
-                    { '日期': '1/5', '有功功率': 3792, '额定功率': 3492, '负荷率': 0.323 },
-                    { '日期': '1/6', '有功功率': 4593, '额定功率': 4293, '负荷率': 0.78 }
+                    { '日期': '01', '负荷率':0.1},
+                    { '日期': '02', '负荷率': 0.2},
+                    { '日期': '03', '负荷率': 0.7},
+                    { '日期': '01', '负荷率':0.7},
+                    { '日期': '02', '负荷率': 0.5},
+                    { '日期': '03', '负荷率': 0.3},
+                    { '日期': '01', '负荷率':0.2},
+                    { '日期': '02', '负荷率': 0.2},
+                    { '日期': '03', '负荷率': 0.9}
                 ]
         }
       }
@@ -80,18 +87,51 @@ export default {
           this.value3='额定功率(kwh):',
           this.value4='当前负荷率:'
           this.value5='功率等级&nbsp;优'
+          this.$http.get('/api/runefficiency',{params:{
+              StartTime:'2020-04-24 09:00:00',
+              EndTime:'2020-04-24 21:23:00',
+              TimeClass:'日'
+          }}).then((res) => {
+               this.num1=res.data.activePower
+               this.num2=res.data.ratedPower
+               this.num3=res.data.loadRate
+               var arr=res.data.row
+               this.chartData.rows=[]
+               var max=arr[0]['负荷率']
+               var min=arr[0]['负荷率']
+               var maxtime=arr[0]['时间']
+               var mintime=arr[0]['时间']
+               for(var i=0;i<arr.length;i++){
+                if(arr[i]['负荷率']>max){
+                    max=arr[i]['负荷率']
+                    maxtime=arr[i]['时间']
+                }
+                if(arr[i]['负荷率']<min){
+                    min=arr[i]['负荷率']
+                    mintime=arr[i]['时间']
+                }
+                this.chartData.rows.push({
+                "日期": arr[i]['时间'].slice(-2),
+                "负荷率": arr[i]['负荷率']
+              })
+               }
+                this.maxloadrate=max
+                this.minloadrate=min
+                this.Maxtime=maxtime
+                this.Mintime=mintime
+          })
       }
       if(e===1){
           this.value1='线损率='
-          this.value2='输入电量(kwh):',
-          this.value3='输出电量(kwh):',
+          this.value2='输入电量(kwh):'
+          this.value3='输出电量(kwh):'
           this.value4='输入电量(kwh):'
           this.value5='1.83%'  
       }
     if(e===2){
         this.value1='管损率='
-        this.value2='输入汽量(T):',
-        this.value3='输出汽量(T):',
+        this.value2='输入汽量(T):'
+        this.value3='输出汽量(T):'
         this.value4='管损:'
         this.value5='1.83%'
         this.$http.get('/api/steamlossanalysis',{params:{
@@ -99,6 +139,7 @@ export default {
             EndTime: "2020-04-20 23:59:59",
             TimeClass: "日"
         }}).then((res) => {
+            console.log(res)
             this.value5=res.data.PipeDamageRate
             this.num1=res.data.inputSteam
             this.num2=res.data.outputSteam
