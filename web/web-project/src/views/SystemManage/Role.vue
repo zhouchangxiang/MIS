@@ -117,12 +117,10 @@
           })
         })
         var params = {
-          roleID: JSON.stringify(this.TableData.multipleSelection[0].ID),
+          roleID: this.TableData.multipleSelection[0].ID,
           permissionIDs:selectPermissionArr
         }
-        this.axios.post("/api/permission/saverolepermission",{
-          params: params
-        }).then(res =>{
+        this.axios.post("/api/permission/saverolepermission",params).then(res =>{
           if(res.data === "OK"){
             this.$message({
               type: 'success',
