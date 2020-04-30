@@ -94,10 +94,7 @@
               })
             })
             res.data.existingRows.forEach(item =>{
-              that.transferValue.push({
-                key:item.ID,
-                label:item.PermissionName
-              })
+              that.transferValue.push(item.ID)
             })
           },res =>{
             console.log("获取权限时请求错误")
