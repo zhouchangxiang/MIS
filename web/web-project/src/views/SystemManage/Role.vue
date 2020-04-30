@@ -78,6 +78,8 @@
       privileges(){
         if(this.TableData.multipleSelection.length === 1){
           this.dialogVisible = true
+          this.transferData = []
+          this.transferValue = []
           var that = this
           var params = {
             roleID:this.TableData.multipleSelection[0].ID
@@ -115,7 +117,7 @@
           })
         })
         var params = {
-          roleID: this.TableData.multipleSelection[0].ID,
+          roleID: JSON.stringify(this.TableData.multipleSelection[0].ID),
           permissionIDs:selectPermissionArr
         }
         this.axios.post("/api/permission/saverolepermission",{
