@@ -124,7 +124,7 @@
               type: 'success',
               message: '分配成功'
             });
-            this.dialogVisible = true
+            this.dialogVisible = false
           }
         },res =>{
           console.log("保存权限时请求错误")
