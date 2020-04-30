@@ -72,6 +72,7 @@
             top:'40px'
           },
           series:{
+            barMaxWidth : 30,
             smooth: false
           }
         },

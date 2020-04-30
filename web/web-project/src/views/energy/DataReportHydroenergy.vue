@@ -20,34 +20,13 @@
       </div>
       <div class="platformContainer">
         <el-table :data="tableData" border tooltip-effect="dark" v-loading="loading">
-          <el-table-column type="expand">
-            <template slot-scope="props">
-              <el-form label-position="left" class="table-expand">
-                <el-form-item label="ID">
-                  <span>{{ props.row.ID }}</span>
-                </el-form-item>
-                <el-form-item label="仪表ID">
-                  <span>{{ props.row.EquipmnetID }}</span>
-                </el-form-item>
-                <el-form-item label="价格ID">
-                  <span>{{ props.row.PriceID }}</span>
-                </el-form-item>
-                <el-form-item label="计算增量更新标识">
-                  <span>{{ props.row.IncrementFlag }}</span>
-                </el-form-item>
-                <el-form-item label="两个相邻采集点上一个采集点ID">
-                  <span>{{ props.row.PrevID }}</span>
-                </el-form-item>
-              </el-form>
-            </template>
-          </el-table-column>
           <el-table-column prop="AreaName" label="区域"></el-table-column>
-          <el-table-column prop="TagClassValue" label="采集点"></el-table-column>
-          <el-table-column prop="CollectionDate" label="采集时间"></el-table-column>
           <el-table-column prop="WaterFlow" label="瞬时流量"></el-table-column>
           <el-table-column prop="WaterSum" label="累计流量"></el-table-column>
           <el-table-column prop="SumWUnit" label="水累计量体积单位"></el-table-column>
           <el-table-column prop="FlowWUnit" label="水瞬时流量单位"></el-table-column>
+          <el-table-column prop="CollectionDate" label="采集时间" width="180"></el-table-column>
+          <el-table-column prop="TagClassValue" label="采集点"></el-table-column>
         </el-table>
         <div class="paginationClass">
           <el-pagination background  layout="total, sizes, prev, pager, next, jumper"

@@ -91,6 +91,7 @@
           rows: []
         },
         chartsLoading:false,
+        source:null,
       }
     },
     created(){
@@ -104,12 +105,18 @@
         this.subsectionActive = index;
         this.getChartData()
       },
+      cancel(){
+        this.source.cancel('关闭axios请求')
+      },
       getChartData(){
         if(this.formParameters.resourceTime === "实时"){
           this.chartsLoading = true
           this.dataZoom = []
           if(this.websock){
             this.websock.close()
+          }
+          if(this.source){
+            this.cancel()
           }
           if(this.formParameters.energy === "电"){
             this.chartData = {
@@ -194,6 +201,10 @@
             this.initWebSocket()
           }
         }else{
+          if(this.source){
+            this.cancel()
+          }
+          this.source = this.axios.CancelToken.source(); // 初始化source对象
           this.websock.close()
           this.chartsLoading = true
           this.dataZoom = [{type: 'slider',start: 0,end: 20}]
@@ -242,7 +253,7 @@
             params.AreaName = areaName
             params.EnergyClass = this.formParameters.energy
           }
-          this.axios.get("/api/energydetail",{params:params}).then(res => {
+          this.axios.get("/api/energydetail",{params:params,cancelToken: this.source.token}).then(res => {
             this.chartsLoading = false
             if(that.formParameters.energy === "电"){
               that.chartData = {

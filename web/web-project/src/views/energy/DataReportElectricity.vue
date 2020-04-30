@@ -20,6 +20,7 @@
       </div>
       <div class="platformContainer">
         <el-table :data="tableData" border tooltip-effect="dark" v-loading="loading">
+          <el-table-column prop="AreaName" label="区域"></el-table-column>
           <el-table-column prop="ZGL" label="总功率"></el-table-column>
           <el-table-column prop="AU" label="A相电压"></el-table-column>
           <el-table-column prop="AI" label="A相电流"></el-table-column>
@@ -28,8 +29,7 @@
           <el-table-column prop="CU" label="C相电压"></el-table-column>
           <el-table-column prop="CI" label="C相电流"></el-table-column>
           <el-table-column prop="Unit" label="单位"></el-table-column>
-          <el-table-column prop="CollectionDate" label="采集时间"></el-table-column>
-          <el-table-column prop="AreaName" label="区域"></el-table-column>
+          <el-table-column prop="CollectionDate" label="采集时间" width="170"></el-table-column>
           <el-table-column prop="TagClassValue" label="采集点"></el-table-column>
         </el-table>
         <div class="paginationClass">

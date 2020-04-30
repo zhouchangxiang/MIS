@@ -20,13 +20,13 @@
       </div>
       <div class="platformContainer">
         <el-table :data="tableData" border tooltip-effect="dark" v-loading="loading">
+          <el-table-column prop="AreaName" label="区域"></el-table-column>
           <el-table-column prop="SumValue" label="累计值"></el-table-column>
           <el-table-column prop="WD" label="温度"></el-table-column>
           <el-table-column prop="IncremenValue" label="增量值"></el-table-column>
           <el-table-column prop="Volume" label="体积"></el-table-column>
           <el-table-column prop="Unit" label="单位"></el-table-column>
-          <el-table-column prop="CollectionDate" label="采集时间"></el-table-column>
-          <el-table-column prop="AreaName" label="区域"></el-table-column>
+          <el-table-column prop="CollectionDate" label="采集时间" width="170"></el-table-column>
           <el-table-column prop="TagClassValue" label="采集点"></el-table-column>
         </el-table>
         <div class="paginationClass">
