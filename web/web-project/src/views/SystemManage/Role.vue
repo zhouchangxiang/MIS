@@ -85,14 +85,18 @@
           this.axios.get("/api/permission/selectpermissionbyrole",{
             params: params
           }).then(res =>{
-            console.log(data)
-            var data = JSON.parse(res.data)
-            // data.rows.forEach(item =>{
-            //   that.transferData.push({
-            //     key:item.ID,
-            //     label:item.PermissionName
-            //   })
-            // })
+            res.data.notHaveRows.forEach(item =>{
+              that.transferData.push({
+                key:item.ID,
+                label:item.PermissionName
+              })
+            })
+            res.data.existingRows.forEach(item =>{
+              that.transferValue.push({
+                key:item.ID,
+                label:item.PermissionName
+              })
+            })
           },res =>{
             console.log("获取权限时请求错误")
           })
@@ -104,7 +108,6 @@
         }
       },
       savePrivileges(){
-        console.log(this.transferValue)
         var selectPermissionArr = []
         this.transferValue.forEach(item =>{
           selectPermissionArr.push({
@@ -118,7 +121,13 @@
         this.axios.post("/api/permission/saverolepermission",{
           params: params
         }).then(res =>{
-          console.log(res.data)
+          if(res.data === "OK"){
+            this.$message({
+              type: 'success',
+              message: '分配成功'
+            });
+            this.dialogVisible = true
+          }
         },res =>{
           console.log("保存权限时请求错误")
         })
