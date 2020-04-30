@@ -606,6 +606,28 @@ class RolePermission(Base):
     CreateDate = Column(DateTime, primary_key=False, autoincrement=False, nullable=True,
                         default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
+# 角色用户表
+class RoleUser(Base):
+    __tablename__ = 'RoleUser'
+    # ID
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 权限ID:
+    UserID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 权限名字:
+    UserName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 角色ID:
+    RoleID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 角色名称:
+    RoleName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 创建时间
+    CreateDate = Column(DateTime, primary_key=False, autoincrement=False, nullable=True,
+                        default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+
 
 # User_START:
 class User(Base):

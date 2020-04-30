@@ -5,7 +5,7 @@ from flask_restful import reqparse
 
 from dbset.database.db_operate import db_session
 from models.SystemManagement.core import Role, Role_Menu, Menu
-from models.SystemManagement.system import Permission, ResourceMenus, ModulMenus, User
+from models.SystemManagement.system import Permission, ResourceMenus, ModulMenus, User, RolePermission
 from flask_login import current_user
 from dbset.log.BK2TLogger import logger,insertSyslog
 from dbset.main.BSFramwork import AlchemyEncoder
@@ -352,3 +352,32 @@ def PermissionsMenus():
             logger.error(e)
             insertSyslog("error", "添加用户报错Error：" + str(e), current_user.Name)
             return json.dumps([{"status": "Error:" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
+
+@permission_distribution.route('/permission/saverolepermission', methods=['POST', 'GET'])
+def saverolepermission():
+    '''
+    角色添加权限
+    :return:
+    '''
+    if request.method == 'POST':
+        data = request.values
+        try:
+            roleID = data.get("roleID")
+            permissionIDs = eval(data.get("permissionIDs"))
+            roleclass = db_session.query(Role).filter(Role.ID == int(roleID)).first()
+            for pid in permissionIDs:
+                permissioncalss = db_session.query(Permission).filter(Permission.ID == int(pid)).first()
+                rpclas = db_session.query(RolePermission).filter(RolePermission.RoleID == roleclass.ID, RolePermission.PermissionID == permissioncalss.PermissionName.ID).first()
+                if not rpclas:
+                    rp = RolePermission()
+                    rp.RoleID = roleclass.ID
+                    rp.RoleName = roleclass.RoleName
+                    rp.PermissionID = permissioncalss.ID
+                    rp.PermissionName = permissioncalss.PermissionName
+                    db_session.add(rp)
+                    db_session.commit()
+            return json.dumps("OK", cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "角色添加权限Error：" + str(e), current_user.Name)
