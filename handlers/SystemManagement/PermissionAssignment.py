@@ -397,10 +397,15 @@ def selectpermissionbyrole():
             perids_list = []
             for pid in pids:
                 perids_list.append(pid)
-            existingRows = db_session.query(Permission).filter(Permission.ID.in_(perids_list)).all()
-            notHaveRows = db_session.query(Permission).filter(Permission.ID.notin_(perids_list)).all()
-            dir["existingRows"] = existingRows
-            dir["notHaveRows"] = notHaveRows
+            if len(perids_list) > 0:
+                existingRows = db_session.query(Permission).filter(Permission.ID.in_(perids_list)).all()
+                dir["existingRows"] = existingRows
+                notHaveRows = db_session.query(Permission).filter(Permission.ID.notin_(perids_list)).all()
+                dir["notHaveRows"] = notHaveRows
+            else:
+                dir["existingRows"] = ""
+                notHaveRows = db_session.query(Permission).filter().all()
+                dir["notHaveRows"] = notHaveRows
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
