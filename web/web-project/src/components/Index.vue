@@ -60,8 +60,10 @@
               </el-tooltip>
             </li>
             <li style="margin-right: 10px;" v-if="weatherDesc === 'OK'">
-              <el-tooltip class="head-menu-item" effect="dark" :content="weatherType" placement="bottom"><i :class="weatherIcon"></i>
-              </el-tooltip></li>
+              <el-tooltip class="head-menu-item" effect="dark" :content="weatherType" placement="bottom">
+                <i :class="weatherIcon"></i>
+              </el-tooltip>
+            </li>
             <li>
             <div>{{ time }}</div></li>
           </ul>

@@ -258,3 +258,7 @@
 .card-head-select .el-select__caret{
   line-height: 48px;
 }
+/*  */
+#baseTabDrawer .el-drawer__body{
+  overflow: auto;
+}

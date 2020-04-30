@@ -16,6 +16,9 @@
           <el-tab-pane label="下拉框选择判断" name="ISFlag">
             <tableView :tableData="ISFlagData" @getTableData="getISFlagTable"></tableView>
           </el-tab-pane>
+          <el-tab-pane label="权限维护" name="Permission">
+            <tableView :tableData="PermissionData" @getTableData="getPermissionTable"></tableView>
+          </el-tab-pane>
         </el-tabs>
       </div>
     </div>
@@ -227,6 +230,40 @@
           dialogVisible: false,
           dialogTitle: '',
         },
+        PermissionData: {
+          tableName: "Permission",
+          column: [
+            {prop: "PermissionName", label: "权限名字"},
+            {prop: "PermissionType", label: "权限类型"},
+            {prop: "Description", label: "描述"},
+            {prop: "CreateData", label: "创建时间"},
+          ],
+          data: [],
+          limit: 5,
+          offset: 1,
+          total: 0,
+          searchProp: "",
+          searchPropList: [
+            {label: "权限名字", prop: "PermissionName"},
+          ],
+          handleType: [
+            {type: "primary", label: "添加"},
+            {type: "warning", label: "修改"},
+            {type: "danger", label: "删除"}
+          ],
+          handleForm: [
+            {label: "ID", prop: "ID", type: "input", value: "", disabled: true},
+            {label: "权限名字", prop: "PermissionName", type: "input", value: ""},
+            {label: "权限类型", prop: "PermissionType", type: "input", value: ""},
+            {label: "描述", prop: "Description", type: "input", value: ""},
+          ],
+          searchVal: "",
+          tableSelection: true, //是否在第一列添加复选框
+          tableSelectionRadio: false, //是否需要单选
+          multipleSelection: [],
+          dialogVisible: false,
+          dialogTitle: '',
+        },
       }
     },
     created(){
@@ -235,6 +272,7 @@
       this.getFieldTypeTable()
       this.getInputTypeTableTable()
       this.getISFlagTable()
+      this.getPermissionTable()
     },
     methods:{
       gettableNameTable(){
@@ -322,6 +360,23 @@
           console.log("请求错误")
         })
       },
+      getPermissionTable(){
+        var that = this
+        var params = {
+          tableName: this.PermissionData.tableName,
+          limit:this.PermissionData.limit,
+          offset:this.PermissionData.offset - 1
+        }
+        this.axios.get("/api/CUID",{
+          params: params
+        }).then(res =>{
+          var data = JSON.parse(res.data)
+          that.PermissionData.data = data.rows
+          that.PermissionData.total = data.total
+        },res =>{
+          console.log("请求错误")
+        })
+      },
     }
   }
 </script>
@@ -329,14 +384,10 @@
 <style scoped>
   .configBody{
     width: 100%;
-    height: 100%;
-    background: #EEEEEE;
     overflow: auto;
   }
   .centerContainer{
     width: 980px;
     margin: 0 auto;
-    height: 100%;
-    background: #fff;
   }
 </style>

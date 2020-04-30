@@ -8,10 +8,10 @@
         <tableView :tableData="TableData" @getTableData="getRoleTable" @privileges="privileges"></tableView>
       </div>
       <el-dialog title="提示" :visible.sync="dialogVisible" width="50%">
-        <el-transfer :titles="['全部权限', '当前权限']" v-model="transferValue" :data="transferData"></el-transfer>
+        <el-transfer :titles="['未拥有权限', '已分配权限']" v-model="transferValue" :data="transferData"></el-transfer>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+          <el-button type="primary" @click="savePrivileges">保存</el-button>
         </span>
       </el-dialog>
     </el-col>
@@ -37,6 +37,8 @@
           limit:5,
           offset:1,
           total:0,
+          multipleSelection:[],
+          tableSelection:true, //是否在第一列添加复选框
           searchProp:"",
           searchPropList:[
             {label:"角色名称",prop:"RoleName"},
@@ -74,20 +76,51 @@
         })
       },
       privileges(){
-        this.dialogVisible = true
-        var that = this
-        var params = {
-          tableName: "RolePermission",
-          limit:100000000,
-          offset:0
+        if(this.TableData.multipleSelection.length === 1){
+          this.dialogVisible = true
+          var that = this
+          var params = {
+            roleID:this.TableData.multipleSelection[0].ID
+          }
+          this.axios.get("/api/permission/selectpermissionbyrole",{
+            params: params
+          }).then(res =>{
+            console.log(data)
+            var data = JSON.parse(res.data)
+            // data.rows.forEach(item =>{
+            //   that.transferData.push({
+            //     key:item.ID,
+            //     label:item.PermissionName
+            //   })
+            // })
+          },res =>{
+            console.log("获取权限时请求错误")
+          })
+        }else{
+          this.$message({
+            type: 'info',
+            message: '请选择一条角色进行分配'
+          });
         }
-        this.axios.get("/api/CUID",{
+      },
+      savePrivileges(){
+        console.log(this.transferValue)
+        var selectPermissionArr = []
+        this.transferValue.forEach(item =>{
+          selectPermissionArr.push({
+            roleID:item
+          })
+        })
+        var params = {
+          roleID: this.TableData.multipleSelection[0].ID,
+          permissionIDs:selectPermissionArr
+        }
+        this.axios.post("/api/permission/saverolepermission",{
           params: params
         }).then(res =>{
-          var data = JSON.parse(res.data)
-          console.log(data)
+          console.log(res.data)
         },res =>{
-          console.log("请求错误")
+          console.log("保存权限时请求错误")
         })
       }
     }
