@@ -632,7 +632,7 @@ def runefficiency():
 
 
 def loadRate(TagClassValue, StartTime, EndTime):
-    sql = "SELECT Sum(Cast(t.ZGL as float))*180/count(t.ZGL) FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricEnergy)  WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+    sql = "SELECT Sum(Cast(t.ZGL as float))*160/count(t.ZGL) FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricEnergy)  WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
     re = db_session.execute(sql).fetchall()
     db_session.close()
     return re

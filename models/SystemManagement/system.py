@@ -612,7 +612,7 @@ class RolePermission(Base):
     WorkNumber = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
 
     # 创建时间
-    CreateData = Column(DateTime, primary_key=False, autoincrement=False, nullable=True,
+    CreateDate = Column(DateTime, primary_key=False, autoincrement=False, nullable=True,
                         default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
 
     # 角色编码:
@@ -1242,6 +1242,67 @@ class ElectricVolumeMaintain(Base):
 
     # 创建日期:
     CreateDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+class SteamTotalMaintain(Base):
+    '''汽能总量维护'''
+    __tablename__ = "SteamTotalMaintain"
+
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    # 瞬时流量单位:
+    FlowUnit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 仪表ID:
+    EquipmnetID = Column(Integer, primary_key=False, autoincrement=False, nullable=True)
+
+    # 价格ID:
+    PriceID = Column(Float(53), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集点:
+    TagClassValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集时间:
+    CollectionDate = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集年:
+    CollectionYear = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集月:
+    CollectionMonth = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 采集天:
+    CollectionDay = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 温度:
+    WD = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 蒸汽瞬时值（单位：kg/h）:
+    FlowValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 蒸汽重量累计值（单位：kg）:
+    SumValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 累计量体积单位:
+    SumUnit = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 体积（单位：m3:
+    Volume = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 计算增量更新标识:
+    IncrementFlag = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 两个相邻采集点上一个采集点ID:
+    PrevID = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 区域:
+    AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 增量库体积插入标识
+    insertVolumeFlag = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 增量库体积插入标识
+    CollectionHour = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 class SteamTotal(Base):
     '''汽能总量'''
