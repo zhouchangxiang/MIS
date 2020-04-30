@@ -113,7 +113,7 @@ export default {
             myobj:{},
             kind:'水',
             onlinebiaolist:[],
-            onlineitem:{online:0,total:17}
+            onlineitem:{online:0,total:0}
         }
     },
     mounted(){
