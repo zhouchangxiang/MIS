@@ -7,8 +7,8 @@
       <div class="platformContainer">
         <tableView :tableData="TableData" @getTableData="getRoleTable" @privileges="privileges"></tableView>
       </div>
-      <el-dialog title="提示" :visible.sync="dialogVisible" width="50%">
-        <el-transfer :titles="['未拥有权限', '已分配权限']" v-model="transferValue" :data="transferData"></el-transfer>
+      <el-dialog :title="selectRoleName" :visible.sync="dialogVisible" width="50%">
+        <el-transfer :titles="['未拥有权限', '已分配权限']" :button-texts="['收回', '分配']" v-model="transferValue" :data="transferData"></el-transfer>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false">取 消</el-button>
           <el-button type="primary" @click="savePrivileges">保存</el-button>
@@ -50,8 +50,9 @@
           ],
         },
         dialogVisible:false,
+        selectRoleName:"",
         transferValue:[],
-        transferData:[]
+        transferData:[],
       }
     },
     created(){
@@ -78,6 +79,7 @@
       privileges(){
         if(this.TableData.multipleSelection.length === 1){
           this.dialogVisible = true
+          this.selectRoleName = '为 '+this.TableData.multipleSelection[0].RoleName+' 分配权限'
           this.transferData = []
           this.transferValue = []
           var that = this

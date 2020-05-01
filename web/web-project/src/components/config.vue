@@ -116,7 +116,7 @@
             {label:"字段名",prop:"FieldName",type:"input",value:""},
             {label:"可添加修改",prop:"Isedit",type:"select",Downtable:"ISFlag",showDownField:"Description",value:""},
             {label:"输入类型",prop:"Edittype",type:"select",Downtable:"InputTypeTable",showDownField:"Type",value:""},
-            {label:"下拉框的数据表",prop:"Downtable",type:"select",Downtable:"CreateTableSet",showDownField:"TableName",childSelect:"Order",value:""},
+            {label:"下拉框的数据表",prop:"Downtable",type:"select",Downtable:"CreateTableSet",showDownField:"TableName",childProp:"Order",value:""},
             {label:"下拉框显示字段",prop:"Order",type:"select",Downtable:"FieldSet",showDownField:"FieldName",searchField:"TableName",value:""},
             {label:"该列是否排序",prop:"Sortable",type:"select",Downtable:"ISFlag",showDownField:"Description",value:""},
             {label:"该列是否可见",prop:"Visible",type:"select",Downtable:"ISFlag",showDownField:"Description",value:""},
@@ -384,10 +384,12 @@
 <style scoped>
   .configBody{
     width: 100%;
+    height: 100%;
     overflow: auto;
   }
   .centerContainer{
     width: 980px;
+    height: 100%;
     margin: 0 auto;
   }
 </style>

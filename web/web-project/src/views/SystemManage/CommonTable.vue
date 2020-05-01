@@ -34,7 +34,7 @@
       <el-form :model="tableData.submitForm" label-width="110px">
         <el-form-item v-for="(item,index) in tableData.handleForm" :key="index" :label="item.label" :prop="item.prop">
           <el-input v-if="item.type === 'input'" v-model="item.value" :disabled="item.disabled"></el-input>
-          <el-select v-if="item.type === 'select'" v-model="item.value" placeholder="请选择">
+          <el-select v-if="item.type === 'select'" v-model="item.value" placeholder="请选择" @change="changeHandleChildSelect(item.value,item.prop)">
             <el-option v-for="(i,d) in item.DownData" :key="d" :label="i[item.showDownField]" :value="i[item.showDownField]"></el-option>
           </el-select>
         </el-form-item>
@@ -57,7 +57,7 @@
       }
     },
     created(){
-
+      this.determineSubmitType()
     },
     methods:{
       handleSizeChange(limit){ //每页条数切换
@@ -159,23 +159,55 @@
         }
       },
       determineSubmitType(){  //判断表单提交的字段类型
-        this.tableData.handleForm.forEach(item =>{
-          if(item.type === "select"){
-            var params = {
-              tableName: item.Downtable,
-              limit:100000000,
-              offset:0
+        if(this.tableData.handleForm){
+          this.tableData.handleForm.forEach(item =>{
+            if(item.type === "select"){
+              var params = {
+                tableName: item.Downtable,
+                limit:100000000,
+                offset:0
+              }
+              this.axios.get("/api/CUID",{
+                params: params
+              }).then(res =>{
+                var data = JSON.parse(res.data)
+                item.DownData = data.rows
+              },res =>{
+                console.log("请求错误")
+              })
             }
-            this.axios.get("/api/CUID",{
-              params: params
-            }).then(res =>{
-              var data = JSON.parse(res.data)
-              item.DownData = data.rows
-            },res =>{
-              console.log("请求错误")
-            })
-          }
-        })
+          })
+        }
+      },
+      changeHandleChildSelect(value,prop){
+        if(this.tableData.handleForm){
+          this.tableData.handleForm.forEach(item =>{
+            if(item.prop === prop){  //判断点击的是当前字段的表单
+              if(item.childProp){  //判断是否有联动的子字段表单
+                this.tableData.handleForm.forEach((childItem,index) =>{
+                  if(childItem.prop === item.childProp){  //判断是否是点击项的子节点表单
+                    this.axios.get("/api/CUID",{
+                      params: {
+                        tableName: childItem.Downtable,
+                        field:childItem.showDownField,
+                        fieldvalue:value,
+                        limit:100000000,
+                        offset:0
+                      }
+                    }).then(res =>{
+                      var data = JSON.parse(res.data)
+                      childItem.DownData = data.rows
+                      var childItemObj = childItem
+                      this.tableData.handleForm.splice(index,1,childItemObj) //将子节点表单按索引替换为修改后的数据
+                    },res =>{
+                      console.log("请求错误")
+                    })
+                  }
+                })
+              }
+            }
+          })
+        }
       },
       save(){
         if(this.tableData.dialogTitle === "添加"){
