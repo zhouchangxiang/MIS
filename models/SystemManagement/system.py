@@ -654,12 +654,6 @@ class User(Base):
     # session_id:
     session_id = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 角色编码:
-    RoleCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
-    # 角色名称:
-    RoleName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
-
     # 所属部门:
     OrganizationName = Column(Unicode(50), primary_key=False, autoincrement=False, nullable=True)
 
