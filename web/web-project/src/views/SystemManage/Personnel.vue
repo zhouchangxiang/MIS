@@ -69,7 +69,7 @@
             {type:"primary",label:"分配权限",clickEvent:"privileges"},
           ],
           handleForm:[
-            {label:"ID",prop:"id",type:"input",value:"",disabled:true},
+            {label:"ID",prop:"ID",type:"input",value:"",disabled:true},
             {label:"用户名",prop:"Name",type:"input",value:""},
             {label:"密码",prop:"Password",type:"input",value:""},
             {label:"工号",prop:"WorkNumber",type:"input",value:"",reg:"/^[0-9]+$/"}
