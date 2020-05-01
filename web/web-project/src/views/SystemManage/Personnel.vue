@@ -5,8 +5,15 @@
         <span style="margin-left: 10px;" class="text-size-normol">人员管理</span>
       </div>
       <div class="platformContainer">
-        <tableView :tableData="TableData" @getTableData="getTableData"></tableView>
+        <tableView :tableData="TableData" @getTableData="getTableData" @privileges="privileges"></tableView>
       </div>
+      <el-dialog :title="selectPersonnelName" :visible.sync="dialogVisible" width="50%">
+        <el-transfer :titles="['未拥有角色', '已分配角色']" :button-texts="['收回', '分配']" v-model="transferValue" :data="transferData"></el-transfer>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="savePrivileges">保存</el-button>
+        </span>
+      </el-dialog>
     </el-col>
   </el-row>
 </template>
@@ -59,6 +66,7 @@
             {type:"primary",label:"添加"},
             {type:"warning",label:"修改"},
             {type:"danger",label:"删除"},
+            {type:"primary",label:"分配权限",clickEvent:"privileges"},
           ],
           handleForm:[
             {label:"ID",prop:"id",type:"input",value:"",disabled:true},
@@ -67,6 +75,10 @@
             {label:"工号",prop:"WorkNumber",type:"input",value:"",reg:"/^[0-9]+$/"}
           ],
         },
+        selectPersonnelName:"",
+        dialogVisible:false,
+        transferValue:[],
+        transferData:[],
       }
     },
     mounted() {
@@ -88,6 +100,59 @@
           this.TableData.total = data.total
         },res =>{
           console.log("请求错误")
+        })
+      },
+      privileges(){
+        if(this.TableData.multipleSelection.length === 1){
+          this.dialogVisible = true
+          this.selectPersonnelName = '为 '+this.TableData.multipleSelection[0].Name+' 分配角色'
+          this.transferData = []
+          this.transferValue = []
+          var that = this
+          var params = {
+            UserID:this.TableData.multipleSelection[0].ID
+          }
+          this.axios.get("/api/role_management/selectrolebyuser",{
+            params: params
+          }).then(res =>{
+            res.data.notHaveRows.forEach(item =>{
+              that.transferData.push({
+                key:item.ID,
+                label:item.RoleName
+              })
+            })
+            res.data.existingRows.forEach(item =>{
+              that.transferValue.push(item.ID)
+            })
+          },res =>{
+            console.log("获取角色时请求错误")
+          })
+        }else{
+          this.$message({
+            type: 'info',
+            message: '请选择一位人员进行分配'
+          });
+        }
+      },
+      savePrivileges(){
+        var selectPermissionArr = []
+        this.transferValue.forEach(item =>{
+          selectPermissionArr.push(item)
+        })
+        var params = {
+          UserID: this.TableData.multipleSelection[0].ID,
+          RoleIDs:JSON.stringify(selectPermissionArr)
+        }
+        this.axios.post("/api/role_management/saveroleuser",this.qs.stringify(params)).then(res =>{
+          if(res.data === "OK"){
+            this.$message({
+              type: 'success',
+              message: '分配成功'
+            });
+            this.dialogVisible = false
+          }
+        },res =>{
+          console.log("保存角色时请求错误")
         })
       }
     }
