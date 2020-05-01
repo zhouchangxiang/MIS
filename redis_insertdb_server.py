@@ -133,7 +133,7 @@ def run():
                                     earw.AreaName = key.AreaName
                                     earw.EQPName = EQPName
                                     earw.WarningType = "三相电流不平衡"
-                                    WarningDate = ZGLSamptime
+                                    earw.WarningDate = ZGLSamptime
                                     db_session.commit()
                     else:
                         continue
