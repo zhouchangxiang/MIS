@@ -45,8 +45,8 @@ def saveroleuser():
                 rpclas = db_session.query(RoleUser).filter(RoleUser.UserID == userclass.ID, RoleUser.RoleID == rolecalss.ID).first()
                 if not rpclas:
                     rp = RoleUser()
-                    rp.UserID = userclass.UserID
-                    rp.UserName = userclass.UserName
+                    rp.UserID = userclass.ID
+                    rp.UserName = userclass.Name
                     rp.RoleID = rolecalss.ID
                     rp.RoleName = rolecalss.RoleName
                     db_session.add(rp)
