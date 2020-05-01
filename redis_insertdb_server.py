@@ -259,7 +259,7 @@ def roundtwo(rod):
         return 0.0
     else:
         if float(rod) < 0:
-            return 0.0
+            return round(abs(float(rod)), 2)
         return round(float(rod), 2)
 def returnb(rod):
     if rod == None or rod == "" or rod == b'':

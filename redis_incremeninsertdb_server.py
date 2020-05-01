@@ -56,6 +56,7 @@ def run():
                     steam_value)
                 conn.commit()
             except Exception as e:
+                conn.rollback()
                 print(e)
             #更新增量库原始数据库
             steam_IDS = list()
@@ -75,53 +76,56 @@ def run():
                         "update SteamEnergy SET IncrementFlag=(%s) where id=(%d)", steamInitial)
                     conn.commit()
                 except Exception as e:
+                    conn.rollback()
                     print(e)
-            # 汽能体积插入-----------------------------------------------------------------增量库
-            steamV_value = list()
-            steVkeys = db_session.query(SteamEnergy).filter(SteamEnergy.insertVolumeFlag == "0",
-                                                           SteamEnergy.Volume != "0.0").order_by(
-                desc("ID")).all()
-            for key in steVkeys:
-                proVolValue = db_session.query(SteamEnergy.Volume).filter(
-                    SteamEnergy.ID == key.PrevID).first()
-                if proVolValue != None:
-                    proVolValue = proVolValue[0]
-                else:
-                    proVolValue = 0
-                volvalue = abs(round(float(key.Volume) - float(proVolValue), 2))
-                ss = (volvalue, "汽", key.ID,
-                      key.PriceID, key.SumUnit, key.EquipmnetID,
-                      key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
-                      key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName, "0")
-                steamV_value.append(ss)
-            try:
-                cursor = conn.cursor()
-                cursor.executemany(
-                    "INSERT INTO IncrementStreamVolume VALUES (%s,%s,%d,%d,%s,%d,%s,%s,%s,%s,%s,%s,%s,%s)",
-                    steamV_value)
-                conn.commit()
-            except Exception as e:
-                print(e)
-            # 更新增量库原始数据库
-            steamV_IDS = list()
-            steamVInitial = list()
-            upsteVkeys = db_session.query(IncrementStreamVolume).filter(
-                IncrementStreamVolume.insertFlag == "0").order_by(desc("CollectionDate")).all()
-            for upskey in upsteVkeys:
-                stV = ("1", upskey.ID)
-                stinV = ("1", upskey.CalculationID)
-                steamV_IDS.append(stV)
-                steamVInitial.append(stinV)
-            if len(steamV_IDS) > 0:
-                try:
-                    cursor = conn.cursor()
-                    cursor.executemany(
-                        "update IncrementStreamVolume SET insertFlag=(%s) where id=(%d)", steamV_IDS)
-                    cursor.executemany(
-                        "update SteamEnergy SET insertVolumeFlag=(%s) where id=(%d)", steamVInitial)
-                    conn.commit()
-                except Exception as e:
-                    print(e)
+            # # 汽能体积插入-----------------------------------------------------------------增量库
+            # steamV_value = list()
+            # steVkeys = db_session.query(SteamEnergy).filter(SteamEnergy.insertVolumeFlag == "0",
+            #                                                SteamEnergy.Volume != "0.0", SteamEnergy.Volume != None).order_by(
+            #     desc("ID")).all()
+            # for key in steVkeys:
+            #     proVolValue = db_session.query(SteamEnergy.Volume).filter(
+            #         SteamEnergy.ID == key.PrevID, SteamEnergy.Volume != None).first()
+            #     if proVolValue != None:
+            #         proVolValue = proVolValue[0]
+            #     else:
+            #         proVolValue = 0
+            #     volvalue = abs(round(float(key.Volume) - float(proVolValue), 2))
+            #     ss = (volvalue, "汽", key.ID,
+            #           key.PriceID, key.SumUnit, key.EquipmnetID,
+            #           key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
+            #           key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName, "0")
+            #     steamV_value.append(ss)
+            # try:
+            #     cursor = conn.cursor()
+            #     cursor.executemany(
+            #         "INSERT INTO IncrementStreamVolume VALUES (%s,%s,%d,%d,%s,%d,%s,%s,%s,%s,%s,%s,%s,%s)",
+            #         steamV_value)
+            #     conn.commit()
+            # except Exception as e:
+            #     conn.rollback()
+            #     print(e)
+            # # 更新增量库原始数据库
+            # steamV_IDS = list()
+            # steamVInitial = list()
+            # upsteVkeys = db_session.query(IncrementStreamVolume).filter(
+            #     IncrementStreamVolume.insertFlag == "0").order_by(desc("CollectionDate")).all()
+            # for upskey in upsteVkeys:
+            #     stV = ("1", upskey.ID)
+            #     stinV = ("1", upskey.CalculationID)
+            #     steamV_IDS.append(stV)
+            #     steamVInitial.append(stinV)
+            # if len(steamV_IDS) > 0:
+            #     try:
+            #         cursor = conn.cursor()
+            #         cursor.executemany(
+            #             "update IncrementStreamVolume SET insertFlag=(%s) where id=(%d)", steamV_IDS)
+            #         cursor.executemany(
+            #             "update SteamEnergy SET insertVolumeFlag=(%s) where id=(%d)", steamVInitial)
+            #         conn.commit()
+            #     except Exception as e:
+            #         conn.rollback()
+            #         print(e)
             #电能----------------------------------------------------------------------------------KU
             electric_value = list()
             elekeys = db_session.query(ElectricEnergy).filter(ElectricEnergy.IncrementFlag == "0",
@@ -145,6 +149,7 @@ def run():
                     electric_value)
                 conn.commit()
             except Exception as e:
+                conn.rollback()
                 print(e)
             # 更新增量库原始数据库
             electric_IDS = list()
@@ -165,6 +170,7 @@ def run():
                         "update ElectricEnergy SET IncrementFlag=(%s) where id=(%d)", electricInitial)
                     conn.commit()
                 except Exception as e:
+                    conn.rollback()
                     print(e)
             #水------------------------------------------------------------------------------------------
             water_value = list()
@@ -189,6 +195,7 @@ def run():
                     water_value)
                 conn.commit()
             except Exception as e:
+                conn.rollback()
                 print(e)
             # 更新增量库原始数据库
             water_IDS = list()
@@ -209,9 +216,11 @@ def run():
                         "update WaterEnergy SET IncrementFlag=(%s) where id=(%d)", waterInitial)
                     conn.commit()
                 except Exception as e:
+                    conn.rollback()
                     print(e)
             runcount = runcount + 1
         except Exception as e:
+            conn.rollback()
             print("写入增量库报错：" + str(e))
             insertSyslog("error", "写入增量库报错Error：" + str(e), "")
             failcount = failcount + 1
