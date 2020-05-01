@@ -4,7 +4,7 @@
       <div class="platformContainer">
         <el-tabs v-model="activeName">
           <el-tab-pane label="数据库建表" name="tableName">
-            <tableView :tableData="tableNameData" @getTableData="gettableNameTable"></tableView>
+            <tableView :tableData="tableNameData" :relatedTableData="FieldSetData" @getTableData="gettableNameTable"></tableView>
             <tableView :tableData="FieldSetData" @getTableData="getFieldSetTable"></tableView>
           </el-tab-pane>
           <el-tab-pane label="字段类型" name="FieldType">
@@ -70,23 +70,24 @@
           ],
           searchVal:"",
           tableSelection:true, //是否在第一列添加复选框
-          tableSelectionRadio:false, //是否需要单选
+          tableSelectionRadio:true, //是否需要单选
           multipleSelection: [],
           dialogVisible: false,
           dialogTitle:'',
+          relatedTableField:"TableName",  //关联子表的字段搜索值
         },
         FieldSetData:{
-          tableName:"FieldSet",
-          column:[
+          tableName:"FieldSet", //表名
+          column:[  //表格列头
             {prop:"TableName",label:"表名"},
             {prop:"TitleName",label:"列头名称"},
             {prop:"FieldName",label:"字段名"},
-            {prop:"Isedit",label:"可添加修改"},
+            {prop:"Isedit",label:"是否可增改"},
             {prop:"Edittype",label:"输入类型"},
-            {prop:"Downtable",label:"下拉框数据表"},
+            {prop:"Downtable",label:"下拉数据表"},
             {prop:"Order",label:"下拉显示字段"},
-            {prop:"Sortable",label:"该列是否排序"},
-            {prop:"Visible",label:"该列是否可见"},
+            {prop:"Sortable",label:"是否排序"},
+            {prop:"Visible",label:"是否显示列头"},
             {prop:"comment",label:"字段注释"},
             {prop:"type",label:"字段类型"},
             {prop:"length",label:"VARCHAR长度"},
@@ -98,28 +99,29 @@
           limit:5,
           offset:1,
           total:0,
-          searchProp:"",
+          searchProp:"",  //按字段搜索的下拉框和下拉值
           searchPropList:[
             {label:"表名",prop:"TableName"},
             {label:"列头名称",prop:"TitleName"},
             {label:"字段名",prop:"FieldName"},
           ],
-          handleType:[
+          searchVal:"", //搜索值
+          handleType:[ //增删改及其他操作表格按钮
             {type:"primary",label:"添加"},
             {type:"warning",label:"修改"},
             {type:"danger",label:"删除"}
           ],
-          handleForm:[
+          handleForm:[  //模态框展示的表单和提交所需的数据
             {label:"ID",prop:"ID",type:"input",value:"",disabled:true},
             {label:"表名",prop:"TableName",type:"input",value:""},
             {label:"列头名称",prop:"TitleName",type:"input",value:""},
             {label:"字段名",prop:"FieldName",type:"input",value:""},
-            {label:"可添加修改",prop:"Isedit",type:"select",Downtable:"ISFlag",showDownField:"Description",value:""},
+            {label:"可增改",prop:"Isedit",type:"select",Downtable:"ISFlag",showDownField:"Description",value:""},
             {label:"输入类型",prop:"Edittype",type:"select",Downtable:"InputTypeTable",showDownField:"Type",value:""},
-            {label:"下拉框的数据表",prop:"Downtable",type:"select",Downtable:"CreateTableSet",showDownField:"TableName",childProp:"Order",value:""},
-            {label:"下拉框显示字段",prop:"Order",type:"select",Downtable:"FieldSet",showDownField:"FieldName",searchField:"TableName",value:""},
-            {label:"该列是否排序",prop:"Sortable",type:"select",Downtable:"ISFlag",showDownField:"Description",value:""},
-            {label:"该列是否可见",prop:"Visible",type:"select",Downtable:"ISFlag",showDownField:"Description",value:""},
+            {label:"下拉数据表",prop:"Downtable",type:"select",Downtable:"CreateTableSet",showDownField:"TableName",childProp:"Order",value:""},
+            {label:"下拉显示字段",prop:"Order",type:"select",Downtable:"FieldSet",showDownField:"FieldName",searchField:"TableName",value:""},
+            {label:"是否排序",prop:"Sortable",type:"select",Downtable:"ISFlag",showDownField:"Description",value:""},
+            {label:"是否显示列头",prop:"Visible",type:"select",Downtable:"ISFlag",showDownField:"Description",value:""},
             {label:"字段注释",prop:"comment",type:"input",value:""},
             {label:"字段类型",prop:"type",type:"select",Downtable:"ISFlag",showDownField:"Description",value:""},
             {label:"VARCHAR长度",prop:"length",type:"input",value:""},
@@ -127,12 +129,12 @@
             {label:"是否自增",prop:"autoincrement",type:"select",Downtable:"ISFlag",showDownField:"Description",value:""},
             {label:"是否为空",prop:"nullable",type:"select",Downtable:"ISFlag",showDownField:"Description",value:""},
           ],
-          searchVal:"",
           tableSelection:true, //是否在第一列添加复选框
           tableSelectionRadio:false, //是否需要单选
-          multipleSelection: [],
-          dialogVisible: false,
-          dialogTitle:'',
+          multipleSelection: [],  //表格选中条的数据
+          dialogVisible: false, //装载表单的模态框 开关
+          dialogTitle:'', //模态框标题
+
         },
         FieldTypeData: {
           tableName: "FieldType",
@@ -296,6 +298,8 @@
         var that = this
         var params = {
           tableName: this.FieldSetData.tableName,
+          field:this.FieldSetData.searchProp,
+          fieldvalue:this.FieldSetData.searchVal,
           limit:this.FieldSetData.limit,
           offset:this.FieldSetData.offset - 1
         }
@@ -388,7 +392,7 @@
     overflow: auto;
   }
   .centerContainer{
-    width: 980px;
+    width: 1200px;
     height: 100%;
     margin: 0 auto;
   }

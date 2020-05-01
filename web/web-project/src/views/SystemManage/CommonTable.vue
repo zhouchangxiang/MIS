@@ -50,7 +50,7 @@
 <script>
   export default {
     name: "CommonTable",
-    props:['tableData'],
+    props:['tableData','relatedTableData'],
     data(){
       return {
 
@@ -70,6 +70,27 @@
       },
       handleSelectionChange(val){ //选择行数
         this.tableData.multipleSelection = val;
+        if(val[0] != undefined){
+          if(this.relatedTableData) {
+            this.relatedTableData.searchProp = this.tableData.relatedTableField
+            this.relatedTableData.searchVal = val[0][this.tableData.relatedTableField]
+            this.axios.get("/api/CUID",{
+              params: {
+                tableName: this.relatedTableData.tableName,
+                field:this.tableData.relatedTableField,
+                fieldvalue:this.relatedTableData.searchVal,
+                limit:this.relatedTableData.limit,
+                offset:this.relatedTableData.offset - 1
+              }
+            }).then(res =>{
+              var data = JSON.parse(res.data)
+              this.relatedTableData.data = data.rows
+              this.relatedTableData.total = data.total
+            },res =>{
+              console.log("请求错误")
+            })
+          }
+        }
       },
       handleRowClick(row){
         if(this.tableData.tableSelectionRadio){
