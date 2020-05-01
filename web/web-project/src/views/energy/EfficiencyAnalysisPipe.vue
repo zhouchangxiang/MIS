@@ -74,19 +74,19 @@
         markLine: {
           data: [
             {
-              name: '平均线',
+              name: '平均值',
               type: 'average',
             }
           ],
           label:{
-            position:"middle",
+            position:"insideEndTop",
             formatter:'{b}：{c}'
           }
         },
         ChartExtend: {
           grid:{
             left:'0',
-            right:'40px',
+            right:'10px',
             bottom:'0',
             top:'40px'
           },

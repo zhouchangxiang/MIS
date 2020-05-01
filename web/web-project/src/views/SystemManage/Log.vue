@@ -1,60 +1,44 @@
 <template>
-  <el-row style="background: #fff;">
-    <el-col :span="24" style="padding: 15px;">
-      <el-row>
-        <el-col :span="24">
-          <el-form :inline="true">
-            <el-form-item>
-              <el-select v-model="region" placeholder="请选择搜索字段" size="small">
-                <el-option v-for="(item,index) in regionList" :label="item.label" :value="item.value" :key="index"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item>
-              <el-input placeholder="请输入搜索内容" size="small" v-model="searchVal"></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="success" icon="el-icon-search" size="small" @click="searchTab">搜索</el-button>
-            </el-form-item>
-          </el-form>
-        </el-col>
-      </el-row>
-      <el-table :data="tableData" border tooltip-effect="dark">
-        <el-table-column prop="IP" label="IP"></el-table-column>
-        <el-table-column prop="ComputerName" label="计算机名称"></el-table-column>
-        <el-table-column prop="UserName" label="操作用户"></el-table-column>
-        <el-table-column prop="OperationDate" label="操作日期"></el-table-column>
-        <el-table-column prop="OperationContent" label="操作内容"></el-table-column>
-        <el-table-column prop="OperationType" label="类型"></el-table-column>
-      </el-table>
-      <div class="paginationClass">
-        <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
-                       :total="total"
-                       :current-page="currentPage"
-                       :page-sizes="[5,10,20]"
-                       :page-size="pagesize"
-                       @size-change="handleSizeChange"
-                       @current-change="handleCurrentChange">
-        </el-pagination>
+  <el-row>
+    <el-col :span="24">
+      <div class="card-head">
+        <span style="margin-left: 10px;" class="text-size-normol">系统日志</span>
+      </div>
+      <div class="platformContainer">
+        <tableView :tableData="TableData" @getTableData="getTableData"></tableView>
       </div>
     </el-col>
   </el-row>
 </template>
 
 <script>
+  import tableView from '@/views/SystemManage/CommonTable'
   export default {
     name: "Log",
+    components:{tableView},
     data(){
       return{
-        tableData:[],
-        total:0,
-        pagesize:5,
-        currentPage:1,
-        region:"",
-        regionList:[
-          {label:"操作用户",value:"UserName"},
-          {label:"操作日期",value:"OperationDate"}
-        ],
-        searchVal:""
+        TableData:{
+          tableName:"SysLog",
+          column:[
+            {prop:"IP",label:"IP"},
+            {prop:"ComputerName",label:"计算机名称"},
+            {prop:"UserName",label:"操作用户"},
+            {prop:"OperationDate",label:"操作日期"},
+            {prop:"OperationContent",label:"操作内容"},
+            {prop:"OperationType",label:"类型"},
+          ],
+          data:[],
+          limit:5,
+          offset:1,
+          total:0,
+          searchProp:"",
+          searchPropList:[
+            {label:"操作用户",value:"UserName"},
+            {label:"操作日期",value:"OperationDate"}
+          ],
+          searchVal:"",
+        },
       }
     },
     mounted() {
@@ -62,45 +46,22 @@
     },
     methods:{
       getTableData(){
+        var that = this
+        var params = {
+          tableName: this.TableData.tableName,
+          limit:this.TableData.limit,
+          offset:this.TableData.offset - 1
+        }
         this.axios.get("/api/CUID",{
-          params: {
-            tableName: "SysLog",
-            limit:this.pagesize,
-            offset:this.currentPage - 1
-          }
+          params: params
         }).then(res =>{
           var data = JSON.parse(res.data)
-          this.tableData = data.rows
-          this.total = data.total
+          that.TableData.data = data.rows
+          that.TableData.total = data.total
         },res =>{
           console.log("请求错误")
         })
       },
-      searchTab(){
-        this.axios.get("/api/CUID",{
-          params: {
-            tableName: "SysLog",
-            field:this.region,
-            fieldvalue:this.searchVal,
-            limit:this.pagesize,
-            offset:this.currentPage - 1
-          }
-        }).then(res =>{
-          var data = JSON.parse(res.data)
-          this.tableData = data.rows
-          this.total = data.total
-        },res =>{
-          console.log("请求错误")
-        })
-      },
-      handleSizeChange(pagesize){ //每页条数切换
-        this.pagesize = pagesize
-        this.getTableData()
-      },
-      handleCurrentChange(currentPage) { // 页码切换
-        this.currentPage = currentPage
-        this.getTableData()
-      }
     }
   }
 </script>

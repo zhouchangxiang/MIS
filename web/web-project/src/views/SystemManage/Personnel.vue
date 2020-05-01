@@ -30,7 +30,6 @@
           tableName:"User",
           column:[
             {prop:"Name",label:"用户名"},
-            {prop:"Password",label:"密码"},
             {prop:"WorkNumber",label:"工号"},
             {prop:"Creater",label:"创建人"},
             {prop:"CreateTime",label:"创建时间"},
@@ -66,7 +65,7 @@
             {type:"primary",label:"添加"},
             {type:"warning",label:"修改"},
             {type:"danger",label:"删除"},
-            {type:"primary",label:"分配权限",clickEvent:"privileges"},
+            {type:"primary",label:"分配角色",clickEvent:"privileges"},
           ],
           handleForm:[
             {label:"ID",prop:"ID",type:"input",value:"",disabled:true},

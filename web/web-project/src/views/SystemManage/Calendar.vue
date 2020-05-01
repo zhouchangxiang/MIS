@@ -1,27 +1,32 @@
 <template>
-  <el-row style="background: #fff;">
-    <el-col :span="24" style="padding: 15px;">
-      <FullCalendar :plugins="calendarPlugins"
-                    locale="zh-cn"
-                    :header="header"
-                    :events="events"
-                    :editable="true"
-                    :selectable="true"
-                    :button-text="buttonText"
-                    @dateClick="handleDateClick"
-                    @eventClick="handleEventClick"
-                    @eventDrop="handleEventDrop"
-                    @eventResize="handleEventResize"
-      />
-      <el-dialog title="添加日程" :visible.sync="dialogTableVisible" width="30%">
-        <el-radio-group v-model="team" size="small">
-          <el-radio-button v-for="(item,index) in teamList" :label="item.label" :value="item.value" :key="index"></el-radio-button>
-        </el-radio-group>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogTableVisible = false">取消</el-button>
-          <el-button type="primary" @click="addSave">确认</el-button>
-        </div>
-      </el-dialog>
+  <el-row>
+    <el-col :span="24">
+      <div class="card-head">
+        <span style="margin-left: 10px;" class="text-size-normol">工厂日历</span>
+      </div>
+      <div class="platformContainer">
+        <FullCalendar :plugins="calendarPlugins"
+                      locale="zh-cn"
+                      :header="header"
+                      :events="events"
+                      :editable="true"
+                      :selectable="true"
+                      :button-text="buttonText"
+                      @dateClick="handleDateClick"
+                      @eventClick="handleEventClick"
+                      @eventDrop="handleEventDrop"
+                      @eventResize="handleEventResize"
+        />
+        <el-dialog title="添加日程" :visible.sync="dialogTableVisible" width="30%">
+          <el-radio-group v-model="team" size="small">
+            <el-radio-button v-for="(item,index) in teamList" :label="item.label" :value="item.value" :key="index"></el-radio-button>
+          </el-radio-group>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogTableVisible = false">取消</el-button>
+            <el-button type="primary" @click="addSave">确认</el-button>
+          </div>
+        </el-dialog>
+      </div>
     </el-col>
   </el-row>
 </template>

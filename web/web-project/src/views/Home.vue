@@ -15,12 +15,11 @@
                 <ul class="card-body-ul">
                   <li><span class="text-size-large text-color-info">本日耗{{ previewEnergyValue }}量</span>
                     <span class="text-size-mini text-color-info-shallow">（截止{{ nowTime }}）</span>
-                    <span class="text-size-normol text-color-warning">{{ unit }}</span></li>
-                  <li class="text-size-big text-color-warning">{{ todayCon }}</li>
+                  <li class="text-size-big text-color-warning">{{ todayCon }}{{ unit }}</li>
                   <li><span class="text-size-mini text-color-info-shallow">对比</span>
                     <el-date-picker v-model="CompareDate" align="right" type="date" placeholder="选择日期" :picker-options="pickerOptions" @change="getEnergyPreview" :clearable="false" size="mini" style="width: 130px"></el-date-picker>
                   </li>
-                  <li><span class="text-size-small text-color-primary">{{ compareDateCon }}</span>
+                  <li><span class="text-size-small text-color-primary">{{ compareDateCon }}{{ unit }}</span>
                     <span class="text-size-mini" :class="todayCon-compareDateCon>0?'text-color-danger':'text-color-success'" style="margin-left: 20px;">{{ comparePer }}</span></li>
                 </ul>
               </el-col>
@@ -28,15 +27,14 @@
                 <el-col :span="24">
                   <span class="text-size-large text-color-info">本月耗{{ previewEnergyValue }}量</span>
                   <span class="text-size-mini text-color-info-shallow">（截止{{ nowDate }}）</span>
-                  <span class="text-size-normol text-color-warning">{{ unit }}</span>
                 </el-col>
                 <el-col :span="12">
                   <ul class="card-body-ul">
                     <li></li>
-                    <li class="text-size-big text-color-warning">{{ thisMonthCon }}</li>
+                    <li class="text-size-big text-color-warning">{{ thisMonthCon }}{{ unit }}</li>
                     <li style="margin-top: 15px;">
                       <span class="text-size-mini text-color-info-shallow">上月同期</span>
-                      <span class="text-size-mini text-color-info">{{ lastMonthCon }}</span>
+                      <span class="text-size-mini text-color-info">{{ lastMonthCon }}{{ unit }}</span>
                     </li>
                     <li>
                       <span class="text-size-mini text-color-info-shallow">同期对比</span>
@@ -52,12 +50,12 @@
                 <ul class="card-body-ul">
                   <li>
                     <span class="text-size-large text-color-info">年累计耗{{ previewEnergyValue }}量</span>
-                    <span class="text-size-normol text-color-warning">{{ unit }}</span>
+                    <span class="text-color-warning text-size-mini">{{ unit }}</span>
                   </li>
                   <li class="text-size-big text-color-primary" v-html="thisYearHtml">{{ thisYearCon }}</li>
                   <li style="margin-top: 15px;">
                     <span class="text-size-mini text-color-info-shallow">上年同期</span>
-                    <span class="text-size-mini text-color-info">{{ lastYearCon }}</span>
+                    <span class="text-size-mini text-color-info">{{ lastYearCon }}{{ unit }}</span>
                     <span style="margin-left: 20px;" class="text-size-mini" :class="thisYearCon-lastYearCon>0?'text-color-danger':'text-color-success'">{{ lastYearCompare }}</span>
                   </li>
                 </ul>
