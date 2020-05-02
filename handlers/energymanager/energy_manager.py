@@ -284,6 +284,99 @@ def energyStatisticsFlowSumWD(oc_list, StartTime, EndTime, energy):
     db_session.close()
     return re
 
+def energyStatisticshour(oc_list, StartTime, EndTime, energy):
+    '''
+    :param oc_list: tag点的List
+    :param StartTime:
+    :param EndTime:
+    :param energy: 水，电 ，气
+    :return:获取水电汽增量值以collecthour分组
+    '''
+    if energy == "水":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionHour FROM [DB_MICS].[dbo].[IncrementWaterTable] t with (INDEX =IX_IncrementWaterTable)  WHERE t.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionHour order by t.CollectionHour"
+    elif energy == "电":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionHour  FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionHour order by t.CollectionHour"
+    elif energy == "汽":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionHour  FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable)  WHERE t.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionHour order by t.CollectionHour"
+    re = db_session.execute(sql).fetchall()
+    db_session.close()
+    return re
+
+def energyStatisticsday(oc_list, StartTime, EndTime, energy):
+    '''
+    :param oc_list: tag点的List
+    :param StartTime:
+    :param EndTime:
+    :param energy: 水，电 ，气
+    :return:获取水电汽增量值以collectday分组
+    '''
+    if energy == "水":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionDay FROM [DB_MICS].[dbo].[IncrementWaterTable] t with (INDEX =IX_IncrementWaterTable)  WHERE t.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionDay order by t.CollectionDay"
+    elif energy == "电":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionDay  FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionDay order by t.CollectionDay"
+    elif energy == "汽":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionDay  FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable)  WHERE t.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionDay order by t.CollectionDay"
+    re = db_session.execute(sql).fetchall()
+    db_session.close()
+    return re
+def energyStatisticsmonth(oc_list, StartTime, EndTime, energy):
+    '''
+    :param oc_list: tag点的List
+    :param StartTime:
+    :param EndTime:
+    :param energy: 水，电 ，气
+    :return:获取水电汽增量值以CollectionMonth分组
+    '''
+    if energy == "水":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionMonth FROM [DB_MICS].[dbo].[IncrementWaterTable] t with (INDEX =IX_IncrementWaterTable)  WHERE t.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionMonth order by t.CollectionMonth"
+    elif energy == "电":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionMonth  FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionMonth order by t.CollectionMonth"
+    elif energy == "汽":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionMonth  FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable)  WHERE t.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionMonth order by t.CollectionMonth"
+    re = db_session.execute(sql).fetchall()
+    db_session.close()
+    return re
+def energyStatisticsyear(oc_list, StartTime, EndTime, energy):
+    '''
+    :param oc_list: tag点的List
+    :param StartTime:
+    :param EndTime:
+    :param energy: 水，电 ，气
+    :return:获取水电汽增量值以CollectionYear分组
+    '''
+    if energy == "水":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionYear FROM [DB_MICS].[dbo].[IncrementWaterTable] t with (INDEX =IX_IncrementWaterTable)  WHERE t.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionYear order by t.CollectionYear"
+    elif energy == "电":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionYear  FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionYear order by t.CollectionYear"
+    elif energy == "汽":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionYear  FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable)  WHERE t.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionYear order by t.CollectionYear"
+    re = db_session.execute(sql).fetchall()
+    db_session.close()
+    return re
 
 def energyselect(data):
     if request.method == 'GET':
@@ -319,61 +412,138 @@ def energyselect(data):
                 for oc in oclass:
                     oc_list.append(oc.TagClassValue)
                 compareday = data.get("CompareDate")
-                for j in range(24):
+                comparehour = str(compareday) + " 23:59:59"
+                lastcomparehour = str(compareday) + " 00:00:00"
+                curr = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
+                    int(currentday)) + " 23:59:59"
+                last = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
+                    int(currentday)) + " 00:00:00"
+                recurr = energyStatisticshour(oc_list, last, curr, EnergyClass)
+                recomper = energyStatisticshour(oc_list, lastcomparehour, comparehour, EnergyClass)
+                dictcurr = {letter: score for score, letters in recurr for letter in letters.split(",")}
+                dictpre  = {letter: score for score, letters in recomper for letter in letters.split(",")}
+                myHours = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14",
+                           "15", "16", "17", "18", "19", "20", "21", "22", "23"]
+                for myHour in myHours:
+                    scurrtime = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(int(currentday)) + " " + myHour
+                    spretime = compareday + " " + myHour
                     dir_list_dict = {}
-                    dir_list_dict["时间"] = str(j)
-                    comparehour = str(compareday) + " " + addzero(j) + ":59:59"
-                    lastcomparehour = str(compareday) + " " + addzero(j) + ":00:00"
-                    currhour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
-                        int(currentday)) + " " + addzero(j) + ":59:59"
-                    lasthour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
-                        int(currentday)) + " " + addzero(j) + ":00:00"
-                    if len(oc_list) > 0:
-                        count = energyStatistics(oc_list, lasthour, currhour, EnergyClass)
-                        comperacount = energyStatistics(oc_list, lastcomparehour, comparehour, EnergyClass)
-                    else:
-                        count = 0.0
-                        comperacount = 0.0
-                    nowtimehour = datetime.datetime.strptime(lasthour, "%Y-%m-%d %H:%M:%S")
-                    if datetime.datetime.now() < nowtimehour:
-                        count = ""
-                    dir_list_dict["今日能耗"] = count
-                    dir_list_dict["对比日能耗"] = comperacount
+                    dir_list_dict["时间"] = scurrtime
+                    currcount = 0
+                    comparecount = 0
+                    if scurrtime in dictcurr.keys():
+                        currcount = round(float(dictcurr[scurrtime]), 2)
+                    if spretime in dictpre.keys():
+                        comparecount = round(float(dictpre[spretime]), 2)
+                    dir_list_dict["今日能耗"] = currcount
+                    dir_list_dict["对比日能耗"] = comparecount
                     dir_list.append(dir_list_dict)
-                curmonthdays = str(getMonthFirstDayAndLastDay(currentyear, currentmonth)[1])[8:10]
-                lasmonthdays = str(
-                    getMonthFirstDayAndLastDay(strlastMonth(str(currentyear) + "-" + addzero(int(currentmonth)))[0:4],
-                                               strlastMonth(str(currentyear) + "-" + addzero(int(currentmonth)))[5:7])[
-                        1])[8:10]
-                for i in range(1, 32):
+                fistendday = getMonthFirstDayAndLastDay(currentyear, currentmonth)
+                lastfistendday = getMonthFirstDayAndLastDay(strlastMonth(str(currentyear) + "-" + addzero(int(currentmonth)))[0:4],
+                                                   strlastMonth(str(currentyear) + "-" + addzero(int(currentmonth)))[5:7])
+                recurrdays = energyStatisticsday(oc_list, fistendday[0].strftime('%Y-%m-%d %H:%M:%S'), fistendday[1].strftime('%Y-%m-%d %H:%M:%S'), EnergyClass)
+                recomperdays = energyStatisticsday(oc_list, lastfistendday[0].strftime('%Y-%m-%d %H:%M:%S'), lastfistendday[1].strftime('%Y-%m-%d %H:%M:%S'), EnergyClass)
+                dictrecurrdays = {letter: score for score, letters in recurrdays for letter in letters.split(",")}
+                dictrecomperdays = {letter: score for score, letters in recomperdays for letter in letters.split(",")}
+                mydays = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14",
+                           "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"]
+                for myday in mydays:
+                    mycurrday = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + myday
+                    mycompareday = strlastMonth(mycurrday[0:7]) + "-"+ myday
                     dirmonth_list_dict = {}
-                    currmonthcurrday = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
-                        int(i)) + " 23:59:59"
-                    currmonthlasday = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
-                        int(i)) + " 00:00:00"
-                    lastmonthcurrday = strlastMonth(
-                        str(currentyear) + "-" + addzero(int(currentmonth))) + "-" + addzero(int(i)) + " 23:59:59"
-                    lastmonthlasday = strlastMonth(
-                        str(currentyear) + "-" + addzero(int(currentmonth))) + "-" + addzero(int(i)) + " 00:0:00"
-                    dirmonth_list_dict["日期"] = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
-                        int(i))
-                    if i <= int(curmonthdays):
-                        if len(oc_list) > 0:
-                            monthcount = energyStatistics(oc_list, currmonthlasday, currmonthcurrday, EnergyClass)
-                        else:
-                            monthcount = 0.0
+                    dirmonth_list_dict["日期"] = mycurrday
+                    if mycurrday in dictrecurrdays.keys():
+                        dirmonth_list_dict["本月能耗"] = round(float(dictrecurrdays[mycurrday]), 2)
                     else:
-                        monthcount = 0.0
-                    if i <= int(lasmonthdays):
-                        if len(oc_list) > 0:
-                            lastmonthcount = energyStatistics(oc_list, lastmonthlasday, lastmonthcurrday, EnergyClass)
-                        else:
-                            lastmonthcount = 0.0
+                        dirmonth_list_dict["本月能耗"] = 0
+                    if mycompareday in dictrecomperdays.keys():
+                        dirmonth_list_dict["上月能耗"] = round(float(dictrecomperdays[mycompareday]), 2)
                     else:
-                        lastmonthcount = 0.0
-                    dirmonth_list_dict["上月能耗"] = lastmonthcount
-                    dirmonth_list_dict["本月能耗"] = monthcount
+                        dirmonth_list_dict["上月能耗"] = 0
                     dir_month_list.append(dirmonth_list_dict)
+                # for i in recomper:
+                #     dir_list_dict = {}
+                #     dir_list_dict["时间"] = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(int(currentday)) + " " + i[1][11:13]
+                #     dir_list_dict["对比日能耗"] = round(float(i[0]), 2)
+                #     currcount = ""
+                #     for j in recurr:
+                #         if int(j[1][11:13]) == int(i[1][11:13]):
+                #             currcount = round(float(j[0]), 2)
+                #             break
+                #         else:
+                #             continue
+                #     dir_list_dict["今日能耗"] = currcount
+                #     dir_list.append(dir_list_dict)
+                # 获取月份数据--------------------------------------------
+                # for i in recomperdays:
+                #     dirmonth_list_dict = {}
+                #     print(i[1][8:10])
+                #     dirmonth_list_dict["日期"] = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + i[1][8:10]
+                #     dirmonth_list_dict["上月能耗"] = round(float(i[0]), 2)
+                #     monthcount = ""
+                #     for j in recurrdays:
+                #         if int(j[1][8:10]) == int(i[1][8:10]):
+                #             monthcount = round(float(j[0]), 2)
+                #             break
+                #         else:
+                #             continue
+                #     dirmonth_list_dict["本月能耗"] = monthcount
+                #     dir_month_list.append(dirmonth_list_dict)
+                # for j in range(24):
+                #     dir_list_dict = {}
+                #     dir_list_dict["时间"] = str(j)
+                #     comparehour = str(compareday) + " " + addzero(j) + ":59:59"
+                #     lastcomparehour = str(compareday) + " " + addzero(j) + ":00:00"
+                #     currhour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
+                #         int(currentday)) + " " + addzero(j) + ":59:59"
+                #     lasthour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
+                #         int(currentday)) + " " + addzero(j) + ":00:00"
+                #     if len(oc_list) > 0:
+                #         count = energyStatistics(oc_list, lasthour, currhour, EnergyClass)
+                #         comperacount = energyStatistics(oc_list, lastcomparehour, comparehour, EnergyClass)
+                #     else:
+                #         count = 0.0
+                #         comperacount = 0.0
+                #     nowtimehour = datetime.datetime.strptime(lasthour, "%Y-%m-%d %H:%M:%S")
+                #     if datetime.datetime.now() < nowtimehour:
+                #         count = ""
+                #     dir_list_dict["今日能耗"] = count
+                #     dir_list_dict["对比日能耗"] = comperacount
+                #     dir_list.append(dir_list_dict)
+                # curmonthdays = str(getMonthFirstDayAndLastDay(currentyear, currentmonth)[1])[8:10]
+                # lasmonthdays = str(
+                #     getMonthFirstDayAndLastDay(strlastMonth(str(currentyear) + "-" + addzero(int(currentmonth)))[0:4],
+                #                                strlastMonth(str(currentyear) + "-" + addzero(int(currentmonth)))[5:7])[
+                #         1])[8:10]
+                # for i in range(1, 32):
+                #     dirmonth_list_dict = {}
+                #     currmonthcurrday = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
+                #         int(i)) + " 23:59:59"
+                #     currmonthlasday = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
+                #         int(i)) + " 00:00:00"
+                #     lastmonthcurrday = strlastMonth(
+                #         str(currentyear) + "-" + addzero(int(currentmonth))) + "-" + addzero(int(i)) + " 23:59:59"
+                #     lastmonthlasday = strlastMonth(
+                #         str(currentyear) + "-" + addzero(int(currentmonth))) + "-" + addzero(int(i)) + " 00:0:00"
+                #     dirmonth_list_dict["日期"] = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
+                #         int(i))
+                #     if i <= int(curmonthdays):
+                #         if len(oc_list) > 0:
+                #             monthcount = energyStatistics(oc_list, currmonthlasday, currmonthcurrday, EnergyClass)
+                #         else:
+                #             monthcount = 0.0
+                #     else:
+                #         monthcount = 0.0
+                #     if i <= int(lasmonthdays):
+                #         if len(oc_list) > 0:
+                #             lastmonthcount = energyStatistics(oc_list, lastmonthlasday, lastmonthcurrday, EnergyClass)
+                #         else:
+                #             lastmonthcount = 0.0
+                #     else:
+                #         lastmonthcount = 0.0
+                #     dirmonth_list_dict["上月能耗"] = lastmonthcount
+                #     dirmonth_list_dict["本月能耗"] = monthcount
+                #     dir_month_list.append(dirmonth_list_dict)
                 dir["compareTodayRow"] = dir_list
                 dir["lastMonthRow"] = dir_month_list
             elif ModelFlag == "电能负荷率":
@@ -448,6 +618,7 @@ def energyselect(data):
                     list_bad.append(i.key)
                 dir["连接通畅数"] = conngoods
                 dir["连接阻塞数"] = connbads
+            print(dir)
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
