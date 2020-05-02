@@ -377,7 +377,6 @@ def energyStatisticsyear(oc_list, StartTime, EndTime, energy):
     re = db_session.execute(sql).fetchall()
     db_session.close()
     return re
-
 def energyselect(data):
     if request.method == 'GET':
         try:
@@ -385,25 +384,10 @@ def energyselect(data):
             currentyear = datetime.datetime.now().year
             currentmonth = datetime.datetime.now().month
             currentday = datetime.datetime.now().day
-            currenthour = datetime.datetime.now().hour
-            currenthour = datetime.datetime.now().hour
-            curryear = str(currentyear)
-            lastyear = str(int(curryear) - 1)
-            currmonth = str(currentyear) + "-" + addzero(int(currentmonth))
-            lastmonth = strlastMonth(currmonth)
-            currday = str(currentyear) + "-" + addzero(currentmonth) + "-" + addzero(currentday)
-            vv = datetime.datetime.strptime(currday, "%Y-%m-%d")
-            lastday = str(vv + datetime.timedelta(days=-1))[0:10]
             data = request.values
-            Area = data.get("Area")
-            datime = data.get("DateTime")
             EnergyClass = data.get("EnergyClass")
             ModelFlag = data.get("ModelFlag")
-            CurrentTime = data.get("CurrentTime")
             TimeClass = data.get("TimeClass")
-            elecount = 0.0
-            watcount = 0.0
-            stecount = 0.0
             if ModelFlag == "能耗预览":
                 dir_list = []
                 dir_month_list = []
@@ -422,9 +406,7 @@ def energyselect(data):
                 recomper = energyStatisticshour(oc_list, lastcomparehour, comparehour, EnergyClass)
                 dictcurr = {letter: score for score, letters in recurr for letter in letters.split(",")}
                 dictpre  = {letter: score for score, letters in recomper for letter in letters.split(",")}
-                myHours = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14",
-                           "15", "16", "17", "18", "19", "20", "21", "22", "23"]
-                for myHour in myHours:
+                for myHour in constant.myHours:
                     scurrtime = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(int(currentday)) + " " + myHour
                     spretime = compareday + " " + myHour
                     dir_list_dict = {}
@@ -445,9 +427,7 @@ def energyselect(data):
                 recomperdays = energyStatisticsday(oc_list, lastfistendday[0].strftime('%Y-%m-%d %H:%M:%S'), lastfistendday[1].strftime('%Y-%m-%d %H:%M:%S'), EnergyClass)
                 dictrecurrdays = {letter: score for score, letters in recurrdays for letter in letters.split(",")}
                 dictrecomperdays = {letter: score for score, letters in recomperdays for letter in letters.split(",")}
-                mydays = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14",
-                           "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"]
-                for myday in mydays:
+                for myday in constant.mydays:
                     mycurrday = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + myday
                     mycompareday = strlastMonth(mycurrday[0:7]) + "-"+ myday
                     dirmonth_list_dict = {}
@@ -461,89 +441,6 @@ def energyselect(data):
                     else:
                         dirmonth_list_dict["上月能耗"] = 0
                     dir_month_list.append(dirmonth_list_dict)
-                # for i in recomper:
-                #     dir_list_dict = {}
-                #     dir_list_dict["时间"] = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(int(currentday)) + " " + i[1][11:13]
-                #     dir_list_dict["对比日能耗"] = round(float(i[0]), 2)
-                #     currcount = ""
-                #     for j in recurr:
-                #         if int(j[1][11:13]) == int(i[1][11:13]):
-                #             currcount = round(float(j[0]), 2)
-                #             break
-                #         else:
-                #             continue
-                #     dir_list_dict["今日能耗"] = currcount
-                #     dir_list.append(dir_list_dict)
-                # 获取月份数据--------------------------------------------
-                # for i in recomperdays:
-                #     dirmonth_list_dict = {}
-                #     print(i[1][8:10])
-                #     dirmonth_list_dict["日期"] = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + i[1][8:10]
-                #     dirmonth_list_dict["上月能耗"] = round(float(i[0]), 2)
-                #     monthcount = ""
-                #     for j in recurrdays:
-                #         if int(j[1][8:10]) == int(i[1][8:10]):
-                #             monthcount = round(float(j[0]), 2)
-                #             break
-                #         else:
-                #             continue
-                #     dirmonth_list_dict["本月能耗"] = monthcount
-                #     dir_month_list.append(dirmonth_list_dict)
-                # for j in range(24):
-                #     dir_list_dict = {}
-                #     dir_list_dict["时间"] = str(j)
-                #     comparehour = str(compareday) + " " + addzero(j) + ":59:59"
-                #     lastcomparehour = str(compareday) + " " + addzero(j) + ":00:00"
-                #     currhour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
-                #         int(currentday)) + " " + addzero(j) + ":59:59"
-                #     lasthour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
-                #         int(currentday)) + " " + addzero(j) + ":00:00"
-                #     if len(oc_list) > 0:
-                #         count = energyStatistics(oc_list, lasthour, currhour, EnergyClass)
-                #         comperacount = energyStatistics(oc_list, lastcomparehour, comparehour, EnergyClass)
-                #     else:
-                #         count = 0.0
-                #         comperacount = 0.0
-                #     nowtimehour = datetime.datetime.strptime(lasthour, "%Y-%m-%d %H:%M:%S")
-                #     if datetime.datetime.now() < nowtimehour:
-                #         count = ""
-                #     dir_list_dict["今日能耗"] = count
-                #     dir_list_dict["对比日能耗"] = comperacount
-                #     dir_list.append(dir_list_dict)
-                # curmonthdays = str(getMonthFirstDayAndLastDay(currentyear, currentmonth)[1])[8:10]
-                # lasmonthdays = str(
-                #     getMonthFirstDayAndLastDay(strlastMonth(str(currentyear) + "-" + addzero(int(currentmonth)))[0:4],
-                #                                strlastMonth(str(currentyear) + "-" + addzero(int(currentmonth)))[5:7])[
-                #         1])[8:10]
-                # for i in range(1, 32):
-                #     dirmonth_list_dict = {}
-                #     currmonthcurrday = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
-                #         int(i)) + " 23:59:59"
-                #     currmonthlasday = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
-                #         int(i)) + " 00:00:00"
-                #     lastmonthcurrday = strlastMonth(
-                #         str(currentyear) + "-" + addzero(int(currentmonth))) + "-" + addzero(int(i)) + " 23:59:59"
-                #     lastmonthlasday = strlastMonth(
-                #         str(currentyear) + "-" + addzero(int(currentmonth))) + "-" + addzero(int(i)) + " 00:0:00"
-                #     dirmonth_list_dict["日期"] = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
-                #         int(i))
-                #     if i <= int(curmonthdays):
-                #         if len(oc_list) > 0:
-                #             monthcount = energyStatistics(oc_list, currmonthlasday, currmonthcurrday, EnergyClass)
-                #         else:
-                #             monthcount = 0.0
-                #     else:
-                #         monthcount = 0.0
-                #     if i <= int(lasmonthdays):
-                #         if len(oc_list) > 0:
-                #             lastmonthcount = energyStatistics(oc_list, lastmonthlasday, lastmonthcurrday, EnergyClass)
-                #         else:
-                #             lastmonthcount = 0.0
-                #     else:
-                #         lastmonthcount = 0.0
-                #     dirmonth_list_dict["上月能耗"] = lastmonthcount
-                #     dirmonth_list_dict["本月能耗"] = monthcount
-                #     dir_month_list.append(dirmonth_list_dict)
                 dir["compareTodayRow"] = dir_list
                 dir["lastMonthRow"] = dir_month_list
             elif ModelFlag == "电能负荷率":
@@ -680,25 +577,27 @@ def areaTimeEnergy():
                             low = co.ColourSum
                             lowColourValue = co.ColourValue
                     colour = ""
-                    for j in range(0, 24):
+                    curr = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
+                        int(currentday)) + " 23:59:59"
+                    last = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
+                        int(currentday)) + " 00:00:00"
+                    recurr = energyStatisticshour(oc_list, last, curr, EnergyClass)
+                    recomper = energyStatisticshour(oc_list, compareday+"00:00:00", compareday+"23:59:59", EnergyClass)
+                    dictcurr = {letter: score for score, letters in recurr for letter in letters.split(",")}
+                    dictpre = {letter: score for score, letters in recomper for letter in letters.split(",")}
+                    for myHour in constant.myHours:
+                        scurrtime = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
+                            int(currentday)) + " " + myHour
+                        vlaue = 0
                         if compareday != None and compareday != "":
-                            comparehour = str(compareday) + " " + addzero(j) + ":59:59"
-                            lastcomparehour = str(compareday) + " " + addzero(j) + ":00:00"
-                            if len(oc_list) > 0:
-                                vlaue = energyStatistics(oc_list, lastcomparehour, comparehour, EnergyClass)
-                            else:
-                                vlaue = 0.0
+                            spretime = compareday + " " + myHour
+                            if spretime in dictpre.keys():
+                                vlaue = round(float(dictpre[spretime]), 2)
                         else:
-                            currhour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
-                                int(currentday)) + " " + addzero(j) + ":59:59"
-                            lasthour = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
-                                int(currentday)) + " " + addzero(j) + ":00:00"
-                            if len(oc_list) > 0:
-                                vlaue = energyStatistics(oc_list, lasthour, currhour, EnergyClass)
-                            else:
-                                vlaue = 0.0
+                            if scurrtime in dictcurr.keys():
+                                vlaue = round(float(dictcurr[scurrtime]), 2)
                         dict_valuelist = {}
-                        dict_valuelist["date"] = str(j)
+                        dict_valuelist["date"] = myHour
                         if vlaue == None or vlaue < 0:
                             colour = colour + "," + wu
                         elif 0 <= vlaue <= float(stop):
@@ -1028,16 +927,16 @@ def trendlookboard():
             for oc in oclass:
                 oc_list.append(oc.TagClassValue)
             rows_list = []
-            for i in range(0,24):
+            recomper = energyStatisticshour(oc_list, CompareTime+"00:00:00", "23:59:59", EnergyClass)
+            dictpre = {letter: score for score, letters in recomper for letter in letters.split(",")}
+            for myHour in constant.myHours:
+                spretime = compareday + " " + myHour
                 dir_rows = {}
-                start = CompareTime +" "+ addzero(i) + ":00:00"
-                dir_rows["时间"] = start
-                end = CompareTime + " " + addzero(i) + ":59:59"
-                if len(oc_list) > 0:
-                    count = energyStatistics(oc_list, start, end, EnergyClass)
-                else:
-                    count = 0.0
-                dir_rows["能耗量"] = count
+                dir_rows["时间"] = spretime
+                comparecount = 0
+                if spretime in dictpre.keys():
+                    comparecount = round(float(dictpre[spretime]), 2)
+                dir_rows["能耗量"] = comparecount
                 rows_list.append(dir_rows)
             dir["rows"] = rows_list
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
