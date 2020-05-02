@@ -215,6 +215,7 @@ def energyStatistics(oc_list, StartTime, EndTime, energy):
         sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable)  WHERE t.TagClassValue in (" + str(
             oc_list)[
                                                                                                                                                                            1:-1] + ") AND t.CollectionYear = " + "'" + StartTime[0:4] + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+    print(db_session.execute(sql).fetchall())
     re = db_session.execute(sql).fetchall()
     db_session.close()
     if len(re) > 0:
@@ -377,6 +378,33 @@ def energyStatisticsyear(oc_list, StartTime, EndTime, energy):
     re = db_session.execute(sql).fetchall()
     db_session.close()
     return re
+
+def energyStatisticsyearde(StartTime, energy):
+    '''
+    :param oc_list: tag点的List
+    :param StartTime:
+    :param EndTime:
+    :param energy: 水，电 ，气
+    :return:获取水电汽增量值
+    '''
+    propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
+    pro = float(propor.Proportion)
+    if energy == "水":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementWaterTable] t with (INDEX =IX_IncrementWaterTable)  WHERE t.CollectionYear = " + "'" + StartTime[0:4] + "'"
+    elif energy == "电":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.CollectionYear = " + "'" + StartTime[0:4] + "'"
+    elif energy == "汽":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable)  WHERE t.CollectionYear = " + "'" + StartTime[0:4] + "'"
+    print(db_session.execute(sql).fetchall())
+    re = db_session.execute(sql).fetchall()
+    db_session.close()
+    if len(re) > 0:
+        if re[0][0] != 0.0 and re[0][0] != None:
+            return round(float(re[0][0]) * pro, 2)
+        else:
+            return 0.0
+    else:
+        return 0.0
 def energyselect(data):
     if request.method == 'GET':
         try:
@@ -1495,3 +1523,25 @@ def energycost():
             print(e)
             logger.error(e)
             insertSyslog("error", "成本中心查询报错Error：" + str(e), current_user.Name)
+
+
+@energy.route('/souyeselectyear', methods=['POST', 'GET'])
+def souyeselectyear():
+    '''
+    首页查询年
+    return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            dir = {}
+            StartTime = data.get("StartTime")
+            EnergyClass = data.get("EnergyClass")
+            dir["value"] = energyStatisticsyearde(StartTime, EnergyClass)
+            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "首页查询年查询报错Error：" + str(e), current_user.Name)
+
+
