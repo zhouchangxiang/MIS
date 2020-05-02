@@ -206,15 +206,15 @@ def energyStatistics(oc_list, StartTime, EndTime, energy):
     if energy == "水":
         sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementWaterTable] t with (INDEX =IX_IncrementWaterTable)  WHERE t.TagClassValue in (" + str(
             oc_list)[
-                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+                                                                                                                                                                           1:-1] + ") AND t.CollectionYear = " + "'" + StartTime[0:4] + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
     elif energy == "电":
         sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(
             oc_list)[
-                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+                                                                                                                                                                           1:-1] + ") AND t.CollectionYear = " + "'" + StartTime[0:4] + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
     elif energy == "汽":
         sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable)  WHERE t.TagClassValue in (" + str(
             oc_list)[
-                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+                                                                                                                                                                           1:-1] + ") AND t.CollectionYear = " + "'" + StartTime[0:4] + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
     re = db_session.execute(sql).fetchall()
     db_session.close()
     if len(re) > 0:
@@ -930,7 +930,7 @@ def trendlookboard():
             recomper = energyStatisticshour(oc_list, CompareTime+"00:00:00", "23:59:59", EnergyClass)
             dictpre = {letter: score for score, letters in recomper for letter in letters.split(",")}
             for myHour in constant.myHours:
-                spretime = compareday + " " + myHour
+                spretime = CompareTime + " " + myHour
                 dir_rows = {}
                 dir_rows["时间"] = spretime
                 comparecount = 0
