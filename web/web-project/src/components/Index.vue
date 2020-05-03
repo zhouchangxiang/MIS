@@ -279,11 +279,6 @@ export default {
         console.log("获取车间时请求错误")
       })
     },
-    beforeDestroy() {  //时间定时器
-      if (this.timer) {
-        clearInterval(this.timer);
-      }
-    },
     getFullCreeen () {  //全屏
       if (screenfull.isEnabled) {
         screenfull.toggle()

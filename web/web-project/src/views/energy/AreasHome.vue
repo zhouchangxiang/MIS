@@ -1,6 +1,6 @@
 <template>
   <el-row>
-    <el-col :span="24" v-if="newAreaName.areaName === '整厂区' || newAreaName.areaName === ''">
+    <el-col :span="24" v-if="newAreaName.areaName === '整厂区' || newAreaName.areaName === '' && $route.query.areaName === '整厂区'">
       <el-row :gutter="30">
         <el-col :span="8">
           <div class="platformContainer" style="clear: none;overflow: initial;display: inline-block">
@@ -430,6 +430,7 @@
       }
     },
     created(){
+      console.log(this.$route.query.areaName)
       this.getEnergyPreview()
       this.getBrandName()
       this.getBrandData()
@@ -440,7 +441,7 @@
       this.getOnLineEq()
     },
     destroyed() {
-      if(this.$route.query.areaName == "整厂区" && this.newAreaName.AreaName === "整厂区"){
+      if(this.$route.query.areaName === "整厂区" && this.newAreaName.AreaName === "整厂区"){
         this.websock.close() //离开路由之后断开websocket连接
       }
     },
@@ -496,17 +497,17 @@
     },
     methods:{
       getEnergyPreview(){
-        var that = this
-        var nowTime = moment().format('HH:mm').substring(0,4) + "0"
-        var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
-        var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
-        var yesterdayStartTime = moment().subtract(1,'day').format('YYYY-MM-DD') + " 00:00"
-        var yesterdayEndTime = moment().subtract(1,'day').format('YYYY-MM-DD') + " " + nowTime
-        var thisStartMonth = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm')
-        var thisMonthDay = moment().format('DD')
-        var params = {}
-        var yesterdayParams ={}
-        var thisMonthParams ={}
+        let that = this,
+          nowTime = moment().format('HH:mm').substring(0,4) + "0",
+          todayStartTime = moment().format('YYYY-MM-DD') + " 00:00",
+          todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime,
+          yesterdayStartTime = moment().subtract(1,'day').format('YYYY-MM-DD') + " 00:00",
+          yesterdayEndTime = moment().subtract(1,'day').format('YYYY-MM-DD') + " " + nowTime,
+          thisStartMonth = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm'),
+          thisMonthDay = moment().format('DD'),
+          params = {},
+          yesterdayParams ={},
+          thisMonthParams ={}
         if(this.newAreaName.areaName === "整厂区"){
           params.StartTime = todayStartTime
           params.EndTime = todayEndTime
@@ -536,16 +537,16 @@
           this.axios.get("/api/energywater",{params: thisMonthParams}),//获取本月水
           this.axios.get("/api/energysteam",{params: thisMonthParams}),//获取本月汽
           this.axios.get("/api/todayAreaRingCharts"),//获取环形图
-        ]).then(this.axios.spread(function(todayElectricity,yesterdayElectricity,todayWater,yesterdayWater,todaySteam,yesterdaySteam,monthElectricity,monthWater,monthSteam,todayAreaData){
-          var todayElectricityData = JSON.parse(todayElectricity.data)
-          var todayWaterData = JSON.parse(todayWater.data)
-          var todaySteamData = JSON.parse(todaySteam.data)
-          var yesterdayElectricityValue = JSON.parse(yesterdayElectricity.data).value
-          var yesterdayWaterValue = JSON.parse(yesterdayWater.data).value
-          var yesterdaySteamValue = JSON.parse(yesterdaySteam.data).value
-          var thisMonthElectricityValue = JSON.parse(monthElectricity.data).value
-          var thisMonthWaterValue = JSON.parse(monthWater.data).value
-          var thisMonthSteamValue = JSON.parse(monthSteam.data).value
+        ]).then(this.axios.spread((todayElectricity,yesterdayElectricity,todayWater,yesterdayWater,todaySteam,yesterdaySteam,monthElectricity,monthWater,monthSteam,todayAreaData) =>{
+          var todayElectricityData = JSON.parse(todayElectricity.data),
+            todayWaterData = JSON.parse(todayWater.data),
+            todaySteamData = JSON.parse(todaySteam.data),
+            yesterdayElectricityValue = JSON.parse(yesterdayElectricity.data).value,
+            yesterdayWaterValue = JSON.parse(yesterdayWater.data).value,
+            yesterdaySteamValue = JSON.parse(yesterdaySteam.data).value,
+            thisMonthElectricityValue = JSON.parse(monthElectricity.data).value,
+            thisMonthWaterValue = JSON.parse(monthWater.data).value,
+            thisMonthSteamValue = JSON.parse(monthSteam.data).value
           that.yesterdayElectricityValue = yesterdayElectricityValue
           that.yesterdayWaterValue = yesterdayWaterValue
           that.yesterdaySteamValue = yesterdaySteamValue
@@ -592,24 +593,22 @@
         }).then(res =>{
           var data = JSON.parse(res.data)
           that.commodityTable = data.rows
-        },res =>{
-          console.log("获取品名时请求错误")
         })
       },
       getBatchTable(){
-        var that = this
-        var nowTime = moment().format('HH:mm').substring(0,4) + "0"
-        var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
-        var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
-        var params = {
-          AreaName:this.newAreaName.areaName,
-          StartTime:todayStartTime,
-          EndTime:todayEndTime,
-          BrandName:"",
-          tableName:"BatchMaintain",
-          limit:this.pagesize,
-          offset:this.currentPage - 1
-        }
+        var that = this,
+          nowTime = moment().format('HH:mm').substring(0,4) + "0",
+          todayStartTime = moment().format('YYYY-MM-DD') + " 00:00",
+          todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime,
+          params = {
+            AreaName:this.newAreaName.areaName,
+            StartTime:todayStartTime,
+            EndTime:todayEndTime,
+            BrandName:"",
+            tableName:"BatchMaintain",
+            limit:this.pagesize,
+            offset:this.currentPage - 1
+          }
         this.axios.get("/api/batchMaintainExcelSelect",{params:params}).then(res => {
           var data = res.data
           that.tableData = data.rows
@@ -617,20 +616,20 @@
         })
       },
       getBrandData(){
-        var that = this
-        var nowTime = moment().format('HH:mm').substring(0,4) + "0"
-        var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
-        var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
-        var areaName = ""
+        var that = this,
+          nowTime = moment().format('HH:mm').substring(0,4) + "0",
+          todayStartTime = moment().format('YYYY-MM-DD') + " 00:00",
+          todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime,
+          areaName = "",
+          params = {
+            AreaName:areaName,
+            StartTime:todayStartTime,
+            EndTime:todayEndTime
+          }
         if(this.newAreaName.areaName === "整厂区"){
           areaName = ""
         }else{
           areaName = this.newAreaName.areaName
-        }
-        var params = {
-          AreaName:areaName,
-          StartTime:todayStartTime,
-          EndTime:todayEndTime
         }
         this.axios.get("/api/batchMaintainEnergy",{params:params}).then(res => {
           that.todayBrandTypeNum = res.data.typeNum

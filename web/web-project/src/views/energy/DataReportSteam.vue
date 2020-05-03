@@ -51,12 +51,12 @@
     data(){
       return {
         formParameters:{
-          startDate:moment().day(moment().day() - 1).format('YYYY-MM-DD') + " 7:00",
+          startDate:moment().day(moment().day() - 1).format('YYYY-MM-DD') + " 07:00",
           endDate:moment().day(moment().day() - 1).format('YYYY-MM-DD') + " 19:00"
         },
         pickerOptions:{
           disabledDate(time) {
-            return time.getTime() > Date.now();
+            return time.getTime() > moment();
           }
         },
         areaValue:"",
@@ -104,14 +104,12 @@
           that.areaOptions.push({
             AreaName:"整厂区",value:""
           })
-          for(var i=0;i < resData.length;i++){
+          resData.forEach(item =>{
             that.areaOptions.push({
-              AreaName:resData[i].AreaName,
-              value:resData[i].AreaName
+              AreaName:item.AreaName,
+              value:item.AreaName
             })
-          }
-        },res =>{
-          console.log("获取车间时请求错误")
+          })
         })
       },
       handleSizeChange(pagesize){ //每页条数切换
@@ -137,8 +135,6 @@
           this.tableData = data.rows
           this.total = data.total_column
           this.loading = false
-        },res =>{
-          console.log("请求错误")
         })
       }
     }

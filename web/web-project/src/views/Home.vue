@@ -473,20 +473,22 @@
       this.getOnLineEq()
       this.getArea()
       this.getBatchEnergy()
-      this.$watch("thisYearCon", function (newValue, oldValue) {
+    },
+    watch:{
+      thisYearCon(newValue){
         if(newValue != ""){
           var thisYearConStr = newValue.toString().split("")
-          var item = ""
-          for(var i=0;i<thisYearConStr.length;i++){
-            if(thisYearConStr[i] === "."){
-              item += `<span style="margin-right: 3px;">${thisYearConStr[i]}</span>`
+          var html = ""
+          thisYearConStr.forEach(item =>{
+            if(item === "."){
+              html += `<span style="margin-right: 3px;">${item}</span>`
             }else{
-              item += `<span class="numBlock">${thisYearConStr[i]}</span>`
+              html += `<span class="numBlock">${item}</span>`
             }
-          }
-          this.thisYearHtml = item
+          })
+          this.thisYearHtml = html
         }
-      })
+      }
     },
     computed:{ //计算属性
       comparePer(){
@@ -540,35 +542,33 @@
     },
     methods: {
       getEnergyPreview() {  //获取能耗预览内的数据
-        this.ChartsLoading = true
-        var api = ""
-        var that = this
-        if(this.previewEnergyValue == "电"){
-          api = "/api/energyelectric"
-        }else if(this.previewEnergyValue == "水"){
-          api = "/api/energywater"
-        }else if(this.previewEnergyValue == "汽"){
-          api = "/api/energysteam"
-        }
-        var nowTime = moment().format('HH:mm').substring(0,4) + "0"
-        var nowDate = moment().format('MM-DD') + " " + nowTime
-        var thisDate = moment().format('DD')
-        var thisMonth = moment().format('MM-DD')
-        var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
-        var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
-        var compareDateStartTime = moment(this.CompareDate).format('YYYY-MM-DD') + " 00:00"
-        var compareDateEndTime = moment(this.CompareDate).format('YYYY-MM-DD') + " " + nowTime
-        var thisStartMonth = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm')
-        var lastStartMonth = moment().month(moment().month() - 1).startOf('month').format('YYYY-MM-DD HH:mm')
-        var lastEndMonth = moment().month(moment().month() - 1).endOf('month').format('YYYY-MM-DD').substring(0,7) + "-" + thisDate + " " + nowTime
-        var thisStartYear = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD HH:mm')
-        var lastStartYear = moment().year(moment().year() - 1).startOf('year').format('YYYY-MM-DD HH:mm')
-        var lastEndYear = moment().year(moment().year() - 1).endOf('year').format('YYYY-MM-DD').substring(0,4) + "-" + thisMonth + " " + nowTime
+        var api = "",
+          that = this,
+          nowTime = moment().format('HH:mm').substring(0,4) + "0",
+          nowDate = moment().format('MM-DD') + " " + nowTime,
+          thisDate = moment().format('DD'),
+          todayStartTime = moment().format('YYYY-MM-DD') + " 00:00",
+          todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime,
+          compareDateStartTime = moment(this.CompareDate).format('YYYY-MM-DD') + " 00:00",
+          compareDateEndTime = moment(this.CompareDate).format('YYYY-MM-DD') + " " + nowTime,
+          thisStartMonth = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm'),
+          lastStartMonth = moment().month(moment().month() - 1).startOf('month').format('YYYY-MM-DD HH:mm'),
+          lastEndMonth = moment().month(moment().month() - 1).endOf('month').format('YYYY-MM-DD').substring(0,7) + "-" + thisDate + " " + nowTime,
+          thisStartYear = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD HH:mm'),
+          lastStartYear = moment().year(moment().year() - 1).startOf('year').format('YYYY-MM-DD HH:mm')
         if(!moment(lastEndMonth)._isValid){  //判断上月结束日期是否合法，否则赋值为上月最后一天的23：59
           lastEndMonth = moment().month(moment().month() - 1).endOf('month').format('YYYY-MM-DD HH:mm');
         }
         this.nowTime = nowTime
         this.nowDate = nowDate
+        if(this.previewEnergyValue === "电"){
+          api = "/api/energyelectric"
+        }else if(this.previewEnergyValue === "水"){
+          api = "/api/energywater"
+        }else if(this.previewEnergyValue === "汽"){
+          api = "/api/energysteam"
+        }
+        this.ChartsLoading = true
         this.axios.all([
           this.axios.get(api,{params: {StartTime: todayStartTime,EndTime:todayEndTime}}),//获取今天能耗
           this.axios.get(api,{params: {StartTime: compareDateStartTime,EndTime:compareDateEndTime}}),//获取对比天能耗
@@ -578,8 +578,8 @@
           this.axios.get("/api/souyeselectyear",{params: {StartTime: lastStartYear,EnergyClass:this.previewEnergyValue}}),//获取上一年能耗
           this.axios.get('/api/energyall',{
             params: {ModelFlag: "能耗预览",CompareDate:moment(this.CompareDate).format('YYYY-MM-DD'),EnergyClass:this.previewEnergyValue}
-          })//获取对比图表
-        ]).then(this.axios.spread(function(todayCon,compareDateCon,thisMonthCon,lastMonthCon,thisYearCon,lastYearCon,compareData){
+          })
+        ]).then(this.axios.spread((todayCon,compareDateCon,thisMonthCon,lastMonthCon,thisYearCon,lastYearCon,compareData) =>{
           that.ChartsLoading = false
           that.todayCon = JSON.parse(todayCon.data).value
           that.unit = JSON.parse(todayCon.data).unit
@@ -601,11 +601,11 @@
         this.axios.get("/api/areatimeenergycount",{params:params}).then(res => {
           this.areaTimeChartsLoading = false
           var arr = []
-          for(var i=0;i<res.data.rows.length;i++){
-            if(i < 4){
-              arr.push(res.data.rows[i])
+          res.data.rows.forEach((item,index) =>{
+            if(index < 4){
+              arr.push(item)
             }
-          }
+          })
           this.areaChartData.rows = arr
           this.areaTimeChartExtend.label.formatter =  '{b}: {@score}' + res.data.unit
         })
@@ -643,11 +643,11 @@
         this.axios.get("/api/energyall",{params:{ModelFlag:"实时预警"}}).then(res => {
           var resData = JSON.parse(res.data)
           var arr = []
-          for (var i = 0; i < resData.data.length; i++) {
-            if (i < 4 ) {
-              arr.push(resData.data[i]);
+          resData.data.forEach((item,index) =>{
+            if (index < 4 ) {
+              arr.push(item);
             }
-          }
+          })
           this.ralTimeWarningTableData = arr
         })
       },
@@ -661,19 +661,16 @@
         this.axios.get("/api/CUID",{params:params}).then(res =>{
           var resData = JSON.parse(res.data).rows
           that.areaOptions = resData
-        },res =>{
-          console.log("获取车间时请求错误")
         })
       },
       getBatchEnergy(){
-        var that = this
-        var nowTime = moment().format('HH:mm').substring(0,4) + "0"
-        var nowDate = moment().format('MM-DD') + " " + nowTime
-        var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
-        var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
-        var thisStartMonth = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm')
-        var thisStartYear = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD')
-        var params = {}
+        var that = this,
+          nowTime = moment().format('HH:mm').substring(0,4) + "0",
+          todayStartTime = moment().format('YYYY-MM-DD') + " 00:00",
+          todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime,
+          thisStartMonth = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm'),
+          thisStartYear = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD'),
+          params = {}
         if(this.lotsEnergyValue === "本日"){
           params.AreaName = this.areaNameValue
           params.StartTime = todayStartTime
