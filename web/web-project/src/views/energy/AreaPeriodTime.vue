@@ -156,7 +156,7 @@
         todayHtml:"",
         pickerOptions:{
           disabledDate(time) {
-            return time.getTime() > Date.now();
+            return time.getTime() > moment();
           }
         },
         AllArea:false,
@@ -191,22 +191,24 @@
       this.getAreaTimeEnergy()
       this.getChartData()
       this.getEnergycost()
-      this.$watch("todayCon", function (newValue, oldValue) {
-        if(newValue > 0){
+    },
+    watch:{
+      todayCon(newValue){
+        if(newValue > 0) {
           var thisYearConStr = newValue.toString().split("")
-          var item = ""
-          for(var i=0;i<thisYearConStr.length;i++){
-            if(thisYearConStr[i] === "."){
-              item += `<span style="margin-right: 3px;">${thisYearConStr[i]}</span>`
-            }else{
-              item += `<span class="numBlock">${thisYearConStr[i]}</span>`
+          var html = ""
+          thisYearConStr.forEach(item => {
+            if (item === ".") {
+              html += `<span style="margin-right: 3px;">${item}</span>`
+            } else {
+              html += `<span class="numBlock">${item}</span>`
             }
-          }
-          this.todayHtml = item
+          })
+          this.todayHtml = html
         }else{
           this.todayHtml = `<span class="numBlock">0</span>`
         }
-      })
+      }
     },
     computed:{
       compareRatio(){
@@ -230,28 +232,28 @@
       getDayEnergy(){
         var api = ""
         var that = this
-        if(this.formParameters.energy == "电"){
-          api = "/api/energyelectric"
-        }else if(this.formParameters.energy == "水"){
-          api = "/api/energywater"
-        }else if(this.formParameters.energy == "汽"){
-          api = "/api/energysteam"
-        }
         var areaName = ''
-        if(this.newAreaName.areaName === "整厂区"){
-          areaName = ""
-        }else{
-          areaName = this.newAreaName.areaName
-        }
         var nowTime = moment().format('HH:mm').substring(0,4) + "0"
         var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
         var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
         var compareDateStartTime = moment(this.CompareDate).format('YYYY-MM-DD') + " 00:00"
         var compareDateEndTime = moment(this.CompareDate).format('YYYY-MM-DD') + " " + nowTime
+        if(this.formParameters.energy === "电"){
+          api = "/api/energyelectric"
+        }else if(this.formParameters.energy === "水"){
+          api = "/api/energywater"
+        }else if(this.formParameters.energy === "汽"){
+          api = "/api/energysteam"
+        }
+        if(this.newAreaName.areaName === "整厂区"){
+          areaName = ""
+        }else{
+          areaName = this.newAreaName.areaName
+        }
         this.axios.all([
           this.axios.get(api,{params: {StartTime: todayStartTime,EndTime:todayEndTime,AreaName:areaName}}),//获取今天能耗
           this.axios.get(api,{params: {StartTime: compareDateStartTime,EndTime:compareDateEndTime,AreaName:areaName}})//获取对比天能耗
-        ]).then(this.axios.spread(function(todayCon,CompareDateCon){
+        ]).then(this.axios.spread((todayCon,CompareDateCon) =>{
           that.todayCon = JSON.parse(todayCon.data).value
           that.todayConUnit = JSON.parse(todayCon.data).unit
           that.CompareDateCon = JSON.parse(CompareDateCon.data).value
