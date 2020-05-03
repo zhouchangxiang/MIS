@@ -8,7 +8,8 @@ from dbset.main.BSFramwork import AlchemyEncoder
 from flask_login import login_required, logout_user, login_user, current_user, LoginManager
 import calendar
 
-from handlers.energymanager.energy_manager import energyStatistics, energyStatisticsCost, energyStatisticshour
+from handlers.energymanager.energy_manager import energyStatistics, energyStatisticsCost, energyStatisticshour, \
+    energyStatisticsday, energyStatisticsmonth
 from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable, Equipment, \
     AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
@@ -321,7 +322,7 @@ def roundtwo(rod):
         if float(rod) < 0:
             return 0.0
         return round(float(rod), 2)
-def energyStatisticsteamtotal(oc_list, StartTime, EndTime, energy):
+def energyStatisticsteamtotal(StartTime, EndTime, energy):
     '''
     :param oc_list: tag点的List
     :param StartTime:
@@ -331,15 +332,16 @@ def energyStatisticsteamtotal(oc_list, StartTime, EndTime, energy):
     '''
     propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
     pro = float(propor.Proportion)
-    db_session.query(SteamTotalMaintain.SumValue).filter(SteamTotalMaintain.CollectionHour == EndTime[0:13]).order_by("CollectionDate").first()
-    db_session.close()
-    if len(re) > 0:
-        if re[0][0] != 0.0 and re[0][0] != None:
-            return round(float(re[0][0]) * pro, 2)
-        else:
-            return 0.0
+    reend = db_session.query(SteamTotalMaintain.SumValue).filter(
+        SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0',
+        SteamTotalMaintain.CollectionDay == EndTime[0:10]).order_by(desc("CollectionDate")).first()
+    restar = db_session.query(SteamTotalMaintain.SumValue).filter(
+        SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0',
+        SteamTotalMaintain.CollectionDay == StartTime[0:10]).order_by(("CollectionDate")).first()
+    if reend != None and restar != None:
+        return round(float(reend[0])*pro - float(restar[0])*pro, 2)
     else:
-        return 0.0
+        return 0
 
 @energySteam.route('/steamlossanalysis', methods=['POST', 'GET'])
 def steamlossanalysis():
@@ -365,20 +367,17 @@ def steamlossanalysis():
             for tag in tags:
                 oc_list.append(tag.TagClassValue)
             reto = energyStatistics(oc_list, StartTime, EndTime, EnergyClass)
-            sts = db_session.query(SteamTotal).filter(SteamTotal.MaintainTime.between(StartTime, EndTime)).all()
-            total = 0.0
-            for st in sts:
-                total = total + float(st.TotalSumValue)
-            dir["inputSteam"] = total
+            totalm = energyStatisticsteamtotal(StartTime, EndTime, EnergyClass)
+            dir["inputSteam"] = totalm
             dir["outputSteam"] = reto
             if reto > 0:
-                losst = total - reto
+                losst = totalm - reto
                 if losst > 0:
-                    lossr = str(round((losst/total)*100, 2)) + "%"
+                    lossr = str(round((losst/totalm)*100, 2)) + "%"
                 else:
                     lossr = "100%"
             else:
-                losst = total
+                losst = totalm
                 lossr = "100%"
             dir["PipeDamageRate"] = lossr
             dir["PipeDamage"] = losst
@@ -388,59 +387,41 @@ def steamlossanalysis():
             if TimeClass == "日":
                 recurr = energyStatisticshour(oc_list, StartTime, EndTime, EnergyClass)
                 dictcurr = {letter: score for score, letters in recurr for letter in letters.split(",")}
-                SteamTotalMaintain
                 for myhour in constant.myHours:
                     dir_list_i = {}
-                    dir_list_i["时间"] = StartTime[0:11]+myhour
-                    totalm = 0.0
-                    for stm in stsm:
-                        totalm = totalm + float(stm.TotalSumValue)
-                    loss = totalm - re
-                    dir_list_i["管损"] = loss
-                    dir_list.append(dir_list_i)
-                for i in range(int(StartTime[11:13]), int(EndTime[11:13]) + 1):
-                    stasH = StartTime[0:11] + addzero(i) + ":00:00"
-                    endsH = StartTime[0:11] + addzero(i) + ":59:59"
-                    dir_list_i = {}
-                    dir_list_i["时间"] = StartTime[0:11] + addzero(i)
-                    re = energyStatistics(oc_list, stasH, endsH, EnergyClass)
-                    stsm = db_session.query(SteamTotal).filter(
-                        SteamTotal.MaintainTime.between(StartTime, EndTime)).all()
-                    totalm = 0.0
-                    for stm in stsm:
-                        totalm = totalm + float(stm.TotalSumValue)
-                    loss = totalm - re
-                    dir_list_i["管损"] = loss
+                    timehou = StartTime[0:11] + myhour
+                    dir_list_i["时间"] = timehou
+                    stem = 0
+                    if timehou in dictcurr.keys():
+                        stem = round(float(dictcurr[timehou]), 2)
+                    lossh = totalm - stem
+                    dir_list_i["管损"] = lossh
                     dir_list.append(dir_list_i)
             elif TimeClass == "月":
-                for i in range(int(StartTime[8:10]), int(EndTime[8:10])+1):
-                    stae = StartTime[0:8] + addzero(i) + " 00:00:00"
-                    ende = StartTime[0:8] + addzero(i) + " 23:59:59"
+                recurry = energyStatisticsday(oc_list, StartTime, EndTime, EnergyClass)
+                dictcurry = {letter: score for score, letters in recurry for letter in letters.split(",")}
+                for myday in constant.mydays:
                     dir_list_i = {}
-                    dir_list_i["时间"] = StartTime[0:8] + addzero(i)
-                    re = energyStatistics(oc_list, stae, ende, EnergyClass)
-                    stsm = db_session.query(SteamTotal).filter(SteamTotal.MaintainTime.between(StartTime, EndTime)).all()
-                    totalm = 0.0
-                    for stm in stsm:
-                        totalm = totalm + float(stm.TotalSumValue)
-                    loss = totalm - re
-                    dir_list_i["管损"] = loss
+                    timeday = StartTime[0:8] + myday
+                    dir_list_i["时间"] = timeday
+                    stemy = 0
+                    if timeday in dictcurry.keys():
+                        stemy = round(float(dictcurry[timeday]), 2)
+                    lossd = totalm - stemy
+                    dir_list_i["管损"] = lossd
                     dir_list.append(dir_list_i)
             elif TimeClass == "年":
-                for i in range(int(StartTime[5:7]), int(EndTime[5:7])+1):
-                    emonth = getMonthFirstDayAndLastDay(StartTime[0:4], i)
-                    staeM = datetime.datetime.strftime(emonth[0], "%Y-%m-%d %H:%M:%S")
-                    endeM = datetime.datetime.strftime(emonth[0], "%Y-%m-%d") + " 23:59:59"
+                recurrm = energyStatisticsmonth(oc_list, StartTime, EndTime, EnergyClass)
+                dictcurrm = {letter: score for score, letters in recurrm for letter in letters.split(",")}
+                for mymonth in constant.mymonths:
                     dir_list_i = {}
-                    dir_list_i["时间"] = StartTime[0:8] + addzero(i)
-                    re = energyStatistics(oc_list, staeM, endeM, EnergyClass)
-                    stsm = db_session.query(SteamTotal).filter(
-                        SteamTotal.MaintainTime.between(StartTime, EndTime)).all()
-                    totalm = 0.0
-                    for stm in stsm:
-                        totalm = totalm + float(stm.TotalSumValue)
-                    loss = totalm - re
-                    dir_list_i["管损"] = loss
+                    timemonth = StartTime[0:5] + mymonth
+                    dir_list_i["时间"] = timemonth
+                    stemm = 0
+                    if timemonth in dictcurrm.keys():
+                        stemm = round(float(dictcurrm[timemonth]), 2)
+                    lossy = totalm - stemm
+                    dir_list_i["管损"] = lossy
                     dir_list.append(dir_list_i)
             dir["row"] = dir_list
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)

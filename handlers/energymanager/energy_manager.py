@@ -378,7 +378,7 @@ def energyStatisticsyear(oc_list, StartTime, EndTime, energy):
     db_session.close()
     return re
 
-def energyStatisticsyearde(StartTime, energy):
+def energyStatisticsyearde(StartTime, EndTime, energy):
     '''
     :param oc_list: tag点的List
     :param StartTime:
@@ -389,12 +389,11 @@ def energyStatisticsyearde(StartTime, energy):
     propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
     pro = float(propor.Proportion)
     if energy == "水":
-        sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementWaterTable] t with (INDEX =IX_IncrementWaterTable)  WHERE t.CollectionYear = " + "'" + StartTime[0:4] + "'"
+        sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementWaterTable] t with (INDEX =IX_IncrementWaterTable)  WHERE t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionYear order by t.CollectionYear"
     elif energy == "电":
-        sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.CollectionYear = " + "'" + StartTime[0:4] + "'"
+        sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionYear order by t.CollectionYear"
     elif energy == "汽":
-        sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable)  WHERE t.CollectionYear = " + "'" + StartTime[0:4] + "'"
-    print(db_session.execute(sql).fetchall())
+        sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable)  WHERE t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionYear order by t.CollectionYear"
     re = db_session.execute(sql).fetchall()
     db_session.close()
     if len(re) > 0:
@@ -1494,8 +1493,9 @@ def souyeselectyear():
         try:
             dir = {}
             StartTime = data.get("StartTime")
+            EndTime = data.get("EndTime")
             EnergyClass = data.get("EnergyClass")
-            dir["value"] = energyStatisticsyearde(StartTime, EnergyClass)
+            dir["value"] = energyStatisticsyearde(StartTime, EndTime, EnergyClass)
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)

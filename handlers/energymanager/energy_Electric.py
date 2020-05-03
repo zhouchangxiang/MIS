@@ -8,7 +8,7 @@ from dbset.main.BSFramwork import AlchemyEncoder
 from flask_login import login_required, logout_user, login_user, current_user, LoginManager
 import calendar
 
-from handlers.energymanager.energy_manager import energyStatistics, energyStatisticsCost
+from handlers.energymanager.energy_manager import energyStatistics, energyStatisticsCost, energyStatisticshour
 from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable, Equipment, \
     AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
@@ -571,6 +571,18 @@ def runefficiency():
             dir["unit"] = unit
             dir_list = []
             if TimeClass == "日":
+                recurr = energyStatisticshour(oc_list, StartTime, EndTime, EnergyClass)
+                dictcurr = {letter: score for score, letters in recurr for letter in letters.split(",")}
+                for myhour in constant.myHours:
+                    dir_list_i = {}
+                    timehou = StartTime[0:11] + myhour
+                    dir_list_i["时间"] = timehou
+                    stem = 0
+                    if timehou in dictcurr.keys():
+                        stem = round(float(dictcurr[timehou]), 2)
+                    lossh = totalm - stem
+                    dir_list_i["管损"] = lossh
+                    dir_list.append(dir_list_i)
                 for i in range(int(StartTime[11:13]), int(EndTime[11:13]) + 1):
                     stasH = StartTime[0:11] + addzero(i) + ":00:00"
                     endsH = StartTime[0:11] + addzero(i) + ":59:59"
@@ -632,7 +644,7 @@ def runefficiency():
 
 
 def loadRate(TagClassValue, StartTime, EndTime):
-    sql = "SELECT Sum(Cast(t.ZGL as float))*160/count(t.ZGL) FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricEnergy)  WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+    sql = "SELECT Sum(Cast(t.ZGL as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"')/count(t.ZGL) FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricEnergy)  WHERE t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
     re = db_session.execute(sql).fetchall()
     db_session.close()
     return re
