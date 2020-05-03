@@ -574,8 +574,8 @@
           this.axios.get(api,{params: {StartTime: compareDateStartTime,EndTime:compareDateEndTime}}),//获取对比天能耗
           this.axios.get(api,{params: {StartTime: thisStartMonth,EndTime:todayEndTime}}),//获取本月能耗
           this.axios.get(api,{params: {StartTime: lastStartMonth,EndTime:lastEndMonth}}),//获取上月能耗
-          this.axios.get(api,{params: {StartTime: thisStartYear,EndTime:todayEndTime}}),//获取当年能耗
-          this.axios.get(api,{params: {StartTime: lastStartYear,EndTime:lastEndYear}}),//获取上一年能耗
+          this.axios.get("/api/souyeselectyear",{params: {StartTime: thisStartYear,EnergyClass:this.previewEnergyValue}}),//获取当年能耗
+          this.axios.get("/api/souyeselectyear",{params: {StartTime: lastStartYear,EnergyClass:this.previewEnergyValue}}),//获取上一年能耗
           this.axios.get('/api/energyall',{
             params: {ModelFlag: "能耗预览",CompareDate:moment(this.CompareDate).format('YYYY-MM-DD'),EnergyClass:this.previewEnergyValue}
           })//获取对比图表
@@ -586,8 +586,8 @@
           that.compareDateCon = JSON.parse(compareDateCon.data).value
           that.thisMonthCon = JSON.parse(thisMonthCon.data).value
           that.lastMonthCon = JSON.parse(lastMonthCon.data).value
-          that.thisYearCon = JSON.parse(thisYearCon.data).value
-          that.lastYearCon = JSON.parse(lastYearCon.data).value
+          that.thisYearCon = thisYearCon.data.value
+          that.lastYearCon = lastYearCon.data.value
           that.contrastMonthChartData.rows = JSON.parse(compareData.data).lastMonthRow
           that.realtimeChartData.rows = JSON.parse(compareData.data).compareTodayRow
         }))

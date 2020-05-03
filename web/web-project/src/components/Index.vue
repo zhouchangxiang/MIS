@@ -10,12 +10,12 @@
             </el-tooltip>
           </div>
           <div :style="selfHeight" class="aside-menu">
-            <el-menu class="menu-ul" default-active="" :collapse="isCollapse">
-              <template v-for="(item,index) in subMenulist">
-                <el-menu-item v-if="!item.children" :index="item.name" :src="item.url" @click="clickSubMenu(item.name,item.url)"><i :class="item.icon"></i><span slot="title">{{ item.name }}</span></el-menu-item>
+            <el-menu class="menu-ul" :default-active="defaultActiveUrl" :collapse="isCollapse" :router="true">
+              <template v-for="item in subMenulist">
+                <el-menu-item v-if="!item.children" :index="item.url"><i :class="item.icon"></i><span slot="title">{{ item.name }}</span></el-menu-item>
                 <el-submenu v-if="!item.url" :index="item.name">
                     <template slot="title"><i :class="item.icon"></i><span>{{ item.name }}</span></template>
-                    <el-menu-item v-for="(child,childIndex) in item.children" :key="childIndex" :index="child.name" :src="child.url" @click="clickSubMenu(child.name,child.url)"><span style="margin-left:10px;">{{child.name}}</span></el-menu-item>
+                    <el-menu-item v-for="(child,childIndex) in item.children" :key="childIndex" :index="child.url" @click="clickSubMenu(child.name)"><span style="margin-left:10px;">{{child.name}}</span></el-menu-item>
                 </el-submenu>
               </template>
             </el-menu>
@@ -112,10 +112,10 @@
         <transition name="move" mode="out-in">
          <!--渲染子页面-->
           <router-view :key="$route.fullPath"></router-view>
-         </transition>
-    </el-main>
+       </transition>
+      </el-main>
+    </el-container>
   </el-container>
-</el-container>
 </template>
 
 <script>
@@ -135,6 +135,7 @@ export default {
       time:"",  //实时显示当前的时间
       dialogUserVisible:false, //是否弹出个人信息
       isactive:"0", //主菜单选中索引值
+      defaultActiveUrl:"",
       mainMenuList:[ //主菜单导航列表
         {text:"能源管理"},
         {text:"系统管理"}
@@ -221,14 +222,8 @@ export default {
     getMenuHeight(){
       this.selfHeight.height = window.innerHeight - 210+'px';
     },
-    clickSubMenu(areaName,url){  //点击左菜单跳转
+    clickSubMenu(areaName){  //点击左菜单传区域给子组件
       this.areaObj.areaName = areaName
-      this.$router.push({
-        path:url,
-        query:{
-          t:Date.now()
-        }
-      })
     },
     handleCommand(command) {  //判断用户下拉点击
       if(command == "a"){
@@ -253,21 +248,11 @@ export default {
       if(index == 0) {
         this.subMenulist = this.energyMenulist
         if(this.isClickElseMenu){
-          this.$router.push({
-            path:this.subMenulist[0].children[0].url,
-            query:{
-              t:Date.now()
-            }
-          })
+          this.defaultActiveUrl = this.subMenulist[0].children[0].url
         }
       }else if(index == 1){
         this.subMenulist = this.systemMenulist
-        this.$router.push({
-          path:this.subMenulist[0].url,
-          query:{
-            t:Date.now()
-          }
-        })
+        this.defaultActiveUrl = this.subMenulist[0].url
       }
     },
     getAreaSubMenu(){ //获取车间加入子菜单
