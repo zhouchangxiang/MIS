@@ -215,7 +215,6 @@ def energyStatistics(oc_list, StartTime, EndTime, energy):
         sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable)  WHERE t.TagClassValue in (" + str(
             oc_list)[
                                                                                                                                                                            1:-1] + ") AND t.CollectionYear = " + "'" + StartTime[0:4] + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
-    print(db_session.execute(sql).fetchall())
     re = db_session.execute(sql).fetchall()
     db_session.close()
     if len(re) > 0:
@@ -471,8 +470,6 @@ def energyselect(data):
                     dir_month_list.append(dirmonth_list_dict)
                 dir["compareTodayRow"] = dir_list
                 dir["lastMonthRow"] = dir_month_list
-            elif ModelFlag == "电能负荷率":
-                dir["a"] = ""
             elif ModelFlag == "在线检测情况":
                 # pipe = redis_conn.pipeline(transaction=False)
                 oclass = db_session.query(TagDetail).filter().all()
@@ -502,48 +499,9 @@ def energyselect(data):
                 data_list.append({"name": "水表", "online": watstatuss, "rate": int(100 * (watstatuss / watstatust)), "total":watstatust})
                 data_list.append({"name": "汽表", "online": stestatuss, "rate": int(100 * (stestatuss / stestatust)), "total":stestatust})
                 return json.dumps(data_list, cls=AlchemyEncoder, ensure_ascii=False)
-            elif ModelFlag == "单位批次能耗":
-                curryear = str(currentyear)
-                lastyear = str(int(curryear) - 1)
-                currmonth = str(currentyear) + "-" + addzero(int(currentmonth))
-                wsbs = db_session.query(WaterSteamBatchMaintain).filter().all()
-                if TimeClass == "本周":
-                    re = getWeekDaysByNum(0, 0)
-                    first_week_day = re[0][0]
-                    end_week_day = re[0][1]
-                    bats = db_session.query(BatchMaintain).filter(
-                        BatchMaintain.ProductionDate.between(first_week_day, end_week_day)).all()
-                    countw = 0.0
-                    counte = 0.0
-                    for bat in bats:
-                        countw = countw + bat.WaterConsumption
-                        counte = counte + bat.ElectricConsumption
-                elif TimeClass == "本月":
-                    currmonth = str(currentyear) + "-" + addzero(int(currentmonth))
-                    BatchMaintain
-                    WaterSteamBatchMaintain
-                elif TimeClass == "本年":
-                    curryear = str(currentyear)
-                    BatchMaintain
-                    WaterSteamBatchMaintain
             elif ModelFlag == "实时预警":
                 oclass = db_session.query(EarlyWarning).filter().order_by(desc("WarningDate")).all()
                 dir["data"] = oclass
-            elif ModelFlag == "电能负荷率":
-                aa = "aa"
-                # 电能负荷率 = 当前视在功率 / 额定功率
-            elif ModelFlag == "系统体检":
-                pipe = redis_conn.pipeline(transaction=False)
-                pipe.hget("hash_key", "leizhu900516")
-                result = pipe.execute()
-                conngoods = pipe.hget("run_status", "1")
-                connbads = pipe.hget("run_status", "0")
-                list_bad = []
-                for i in connbads:
-                    list_bad.append(i.key)
-                dir["连接通畅数"] = conngoods
-                dir["连接阻塞数"] = connbads
-            print(dir)
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
