@@ -29,10 +29,10 @@
             </el-col>
             <el-col :span="24" style="margin-top: 15px;">
               <p class="text-color-info-shallow">日耗量</p>
-              <el-col :span="12">
+              <el-col :span="10">
                 <ve-histogram :data="electricHistogram" height="200px" :extend="chartExtend" :legend-visible="false"></ve-histogram>
               </el-col>
-              <el-col :span="12">
+              <el-col :span="14">
                 <ve-ring :data="electricRing" :settings="ChartSettings" :extend="ChartExtend" width="100%" height="200px"></ve-ring>
               </el-col>
             </el-col>
@@ -65,10 +65,10 @@
             </el-col>
             <el-col :span="24" style="margin-top: 20px;">
               <p class="text-color-info-shallow">日耗量</p>
-              <el-col :span="12">
+              <el-col :span="10">
                 <ve-histogram :data="waterHistogram" height="200px" :extend="chartExtend" :legend-visible="false"></ve-histogram>
               </el-col>
-              <el-col :span="12">
+              <el-col :span="14">
                 <ve-ring :data="waterRing" :settings="ChartSettings" :extend="ChartExtend" width="100%" height="200px"></ve-ring>
               </el-col>
             </el-col>
@@ -101,10 +101,10 @@
             </el-col>
             <el-col :span="24" style="margin-top: 20px;">
               <p class="text-color-info-shallow">日耗量</p>
-              <el-col :span="12">
+              <el-col :span="10">
                 <ve-histogram :data="steamHistogram" height="200px" :extend="chartExtend" :legend-visible="false"></ve-histogram>
               </el-col>
-              <el-col :span="12">
+              <el-col :span="14">
                 <ve-ring :data="steamRing" :settings="ChartSettings" :extend="ChartExtend" width="100%" height="200px"></ve-ring>
               </el-col>
             </el-col>
@@ -403,13 +403,16 @@
         },
         commodityTable:[],
         ChartSettings: {
-          radius: [30,60],
+          radius: [20,40],
           offsetY:"100px",
           label:{
-            show:false
+            show:true,
+            position:'outside'
           },
           labelLine:{
-            show:false
+            show:true,
+            length:5,
+            length2:2,
           }
         },
         ChartExtend: {
