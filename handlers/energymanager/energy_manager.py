@@ -206,15 +206,15 @@ def energyStatistics(oc_list, StartTime, EndTime, energy):
     if energy == "水":
         sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementWaterTable] t with (INDEX =IX_IncrementWaterTable)  WHERE t.TagClassValue in (" + str(
             oc_list)[
-                                                                                                                                                                           1:-1] + ") AND t.CollectionYear = " + "'" + StartTime[0:4] + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
     elif energy == "电":
         sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(
             oc_list)[
-                                                                                                                                                                           1:-1] + ") AND t.CollectionYear = " + "'" + StartTime[0:4] + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
     elif energy == "汽":
         sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable)  WHERE t.TagClassValue in (" + str(
             oc_list)[
-                                                                                                                                                                           1:-1] + ") AND t.CollectionYear = " + "'" + StartTime[0:4] + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
     re = db_session.execute(sql).fetchall()
     db_session.close()
     if len(re) > 0:
@@ -295,15 +295,15 @@ def energyStatisticshour(oc_list, StartTime, EndTime, energy):
     if energy == "水":
         sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionHour FROM [DB_MICS].[dbo].[IncrementWaterTable] t with (INDEX =IX_IncrementWaterTable)  WHERE t.TagClassValue in (" + str(
             oc_list)[
-                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionHour order by t.CollectionHour"
+                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionHour order by t.CollectionHour"
     elif energy == "电":
         sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionHour  FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(
             oc_list)[
-                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionHour order by t.CollectionHour"
+                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionHour order by t.CollectionHour"
     elif energy == "汽":
         sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionHour  FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable)  WHERE t.TagClassValue in (" + str(
             oc_list)[
-                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionHour order by t.CollectionHour"
+                                                                                                                                                                           1:-1] + ") AND AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionHour order by t.CollectionHour"
     re = db_session.execute(sql).fetchall()
     db_session.close()
     return re
@@ -319,15 +319,15 @@ def energyStatisticsday(oc_list, StartTime, EndTime, energy):
     if energy == "水":
         sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionDay FROM [DB_MICS].[dbo].[IncrementWaterTable] t with (INDEX =IX_IncrementWaterTable)  WHERE t.TagClassValue in (" + str(
             oc_list)[
-                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionDay order by t.CollectionDay"
+                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionDay order by t.CollectionDay"
     elif energy == "电":
         sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionDay  FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(
             oc_list)[
-                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionDay order by t.CollectionDay"
+                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionDay order by t.CollectionDay"
     elif energy == "汽":
         sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionDay  FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable)  WHERE t.TagClassValue in (" + str(
             oc_list)[
-                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionDay order by t.CollectionDay"
+                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionDay order by t.CollectionDay"
     re = db_session.execute(sql).fetchall()
     db_session.close()
     return re
@@ -342,15 +342,15 @@ def energyStatisticsmonth(oc_list, StartTime, EndTime, energy):
     if energy == "水":
         sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionMonth FROM [DB_MICS].[dbo].[IncrementWaterTable] t with (INDEX =IX_IncrementWaterTable)  WHERE t.TagClassValue in (" + str(
             oc_list)[
-                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionMonth order by t.CollectionMonth"
+                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionMonth order by t.CollectionMonth"
     elif energy == "电":
         sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionMonth  FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(
             oc_list)[
-                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionMonth order by t.CollectionMonth"
+                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionMonth order by t.CollectionMonth"
     elif energy == "汽":
         sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionMonth  FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable)  WHERE t.TagClassValue in (" + str(
             oc_list)[
-                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionMonth order by t.CollectionMonth"
+                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionMonth order by t.CollectionMonth"
     re = db_session.execute(sql).fetchall()
     db_session.close()
     return re
@@ -365,15 +365,15 @@ def energyStatisticsyear(oc_list, StartTime, EndTime, energy):
     if energy == "水":
         sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionYear FROM [DB_MICS].[dbo].[IncrementWaterTable] t with (INDEX =IX_IncrementWaterTable)  WHERE t.TagClassValue in (" + str(
             oc_list)[
-                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionYear order by t.CollectionYear"
+                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionYear order by t.CollectionYear"
     elif energy == "电":
         sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionYear  FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(
             oc_list)[
-                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionYear order by t.CollectionYear"
+                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionYear order by t.CollectionYear"
     elif energy == "汽":
         sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionYear  FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable)  WHERE t.TagClassValue in (" + str(
             oc_list)[
-                                                                                                                                                                           1:-1] + ") AND t.IncremenType = " + "'" + energy + "'" + " AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionYear order by t.CollectionYear"
+                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionYear order by t.CollectionYear"
     re = db_session.execute(sql).fetchall()
     db_session.close()
     return re
@@ -403,6 +403,24 @@ def energyStatisticsyearde(StartTime, EndTime, energy):
             return 0.0
     else:
         return 0.0
+
+def energyStatisticsbyarea(StartTime, EndTime, energy):
+    '''
+    :param oc_list: tag点的List
+    :param StartTime:
+    :param EndTime:
+    :param energy: 水，电 ，气
+    :return:通过区域分组获取水电汽增量值
+    '''
+    if energy == "水":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.AreaName  FROM [DB_MICS].[dbo].[IncrementWaterTable] t with (INDEX =IX_IncrementWaterTable)  WHERE  t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.AreaName"
+    elif energy == "电":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.AreaName  FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.AreaName"
+    elif energy == "汽":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.AreaName  FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable)  WHERE t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.AreaName"
+    re = db_session.execute(sql).fetchall()
+    db_session.close()
+    return re
 def energyselect(data):
     if request.method == 'GET':
         try:
@@ -1224,12 +1242,17 @@ def todayAreaRingCharts():
     return:
     '''
     if request.method == 'GET':
-        data = request.values
         try:
             dir = {}
             currentdayend = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             currentdayestart = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")[0:10]+" 00:00:00"
             araes = db_session.query(AreaTable).filter().all()
+            water_areas = energyStatisticsbyarea(currentdayestart, currentdayend, "水")
+            dict_water_areas = {letter: score for score, letters in water_areas for letter in letters.split(",")}
+            elect_areas = energyStatisticsbyarea(currentdayestart, currentdayend, "电")
+            dict_elect_areas = {letter: score for score, letters in elect_areas for letter in letters.split(",")}
+            steam_areas = energyStatisticsbyarea(currentdayestart, currentdayend, "汽")
+            dict_steam_areas = {letter: score for score, letters in steam_areas for letter in letters.split(",")}
             wdir_list = []
             edir_list = []
             sdir_list = []
@@ -1237,21 +1260,15 @@ def todayAreaRingCharts():
                 wdir_coll = {}
                 edir_coll = {}
                 sdir_coll = {}
-                wdir_coll["区域"] = area.AreaName
-                edir_coll["区域"] = area.AreaName
-                sdir_coll["区域"] = area.AreaName
-                oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == area.AreaName).all()
-                oc_list = []
-                for oc in oclass:
-                    oc_list.append(oc.TagClassValue)
-                if len(oc_list) > 0:
-                    wdir_coll["能耗量"] = energyStatistics(oc_list, currentdayestart, currentdayend, "水")
-                    edir_coll["能耗量"] = energyStatistics(oc_list, currentdayestart, currentdayend, "电")
-                    sdir_coll["能耗量"] = energyStatistics(oc_list, currentdayestart, currentdayend, "汽")
-                else:
-                    wdir_coll["能耗量"] = 0.0
-                    edir_coll["能耗量"] = 0.0
-                    sdir_coll["能耗量"] = 0.0
+                if area.AreaName in dict_water_areas.keys():
+                    wdir_coll["区域"] = area.AreaName
+                    wdir_coll["能耗量"] = dict_water_areas[area.AreaName]
+                if area.AreaName in dict_elect_areas.keys():
+                    edir_coll["区域"] = area.AreaName
+                    edir_coll["能耗量"] = dict_elect_areas[area.AreaName]
+                if area.AreaName in dict_steam_areas.keys():
+                    sdir_coll["区域"] = area.AreaName
+                    sdir_coll["能耗量"] = dict_steam_areas[area.AreaName]
                 wdir_list.append(wdir_coll)
                 edir_list.append(edir_coll)
                 sdir_list.append(sdir_coll)

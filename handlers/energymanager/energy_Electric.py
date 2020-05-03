@@ -548,92 +548,92 @@ def runefficiency():
             StartTime = data.get("StartTime")
             EndTime = data.get("EndTime")
             TimeClass = data.get("TimeClass")
-            rate = db_session.query(RatedPowerMaintain.RatedPowerValue).filter(
-                RatedPowerMaintain.RatedPowerTime.between(StartTime, EndTime)).first()
-            RatedPower = 0.0
-            if rate:
-                RatedPower = float(rate[0])
+            CurrentTime = data.get("CurrentTime")
+            AreaName = data.get("AreaName")
             EnergyClass = "电"
-            tags = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
-            rune = 0.0  # 有功功率
-            for tag in tags:
-                re = loadRate(tag.TagClassValue, StartTime, EndTime)
-                if re[0][0] != None:
-                    rune = rune + re[0][0]
-            dir["activePower"] = round(rune, 2)
-            if RatedPower != 0.0:
-                lp = 100 * (rune / float(RatedPower))
+            oc_list = []
+            if AreaName == "" or AreaName == None:
+                tags = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
+                rpms = \
+                    db_session.query(RatedPowerMaintain).filter().all()
             else:
-                lp = 0.0
-            dir["loadRate"] = round(lp, 2)
-            dir["ratedPower"] = RatedPower
+                tags = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass,
+                                                          TagDetail.AreaName == AreaName).all()
+                rpms = \
+                    db_session.query(RatedPowerMaintain).filter(RatedPowerMaintain.TagClassValue == AreaName).all()
+            for tag in tags:
+                oc_list.append(tag.TagClassValue)
+            dict_rpms = {}
+            for rpm in rpms:
+                dict_rpms[rpm.TagClassValue] = rpm.RatedPowerValue
+            runes = loadRateTotal(oc_list, CurrentTime[0:11]+"00:00:00", CurrentTime[0:11]+"23:59:59", EnergyClass)
+            if AreaName == "" or AreaName == None:
+                dir["ratedPower"] = dict_rpms["全厂"]
+                rune = (float(runes[0][0])/24)/float(dict_rpms["全厂"])
+            else:
+                dir["ratedPower"] = dict_rpms[AreaName]
+                rune = (float(runes[0][0])/24) / float(dict_rpms[AreaName])
+            dir["activePower"] = round(float(runes[0][0]), 2)
+            dir["loadRate"] = round((rune)*100, 2)
             unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == EnergyClass).first()[0]
             dir["unit"] = unit
             dir_list = []
             if TimeClass == "日":
-                recurr = energyStatisticshour(oc_list, StartTime, EndTime, EnergyClass)
-                dictcurr = {letter: score for score, letters in recurr for letter in letters.split(",")}
+                sql = "SELECT Sum(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '" + EnergyClass + "'),t.CollectionHour FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(
+                    oc_list)[
+                                                                                                                                                                                                                                                                                                                                   1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionHour"
+                rehours = db_session.execute(sql).fetchall()
+                db_session.close()
+                dict_rehours = {letter: score for score, letters in rehours for letter in letters.split(",")}
                 for myhour in constant.myHours:
-                    dir_list_i = {}
-                    timehou = StartTime[0:11] + myhour
-                    dir_list_i["时间"] = timehou
-                    stem = 0
-                    if timehou in dictcurr.keys():
-                        stem = round(float(dictcurr[timehou]), 2)
-                    lossh = totalm - stem
-                    dir_list_i["管损"] = lossh
-                    dir_list.append(dir_list_i)
-                for i in range(int(StartTime[11:13]), int(EndTime[11:13]) + 1):
-                    stasH = StartTime[0:11] + addzero(i) + ":00:00"
-                    endsH = StartTime[0:11] + addzero(i) + ":59:59"
-                    dir_list_i = {}
-                    dir_list_i["时间"] = StartTime[0:11] + addzero(i)
-                    runem = 0.0
-                    for tag in tags:
-                        rem = loadRate(tag.TagClassValue, stasH, endsH)
-                        if rem[0][0] != None:
-                            runem = runem + rem[0][0]
-                    if RatedPower != 0.0:
-                        lpd = 100 * (runem / float(RatedPower))
+                    myhourcurr = StartTime[0:11] + myhour
+                    if AreaName == None or AreaName == "":
+                        if myhourcurr in dict_rehours.keys():
+                            runehou = float(dict_rehours[myhourcurr]) / float(dict_rpms["全厂"])
                     else:
-                        lpd = 0.0
-                    dir_list_i["负荷率"] = round(lpd, 2)
+                        if myhourcurr in dict_rehours.keys():
+                            runehou = float(dict_rehours[myhourcurr]) / float(dict_rpms[AreaName])
+                    dir_list_i = {}
+                    dir_list_i["时间"] = myhourcurr
+                    dir_list_i["负荷率"] = round(100*runehou, 2)
                     dir_list.append(dir_list_i)
             elif TimeClass == "月":
-                for i in range(int(StartTime[5:7]), int(EndTime[5:7]) + 1):
-                    emonth = getMonthFirstDayAndLastDay(StartTime[0:4], i)
-                    staeM = datetime.datetime.strftime(emonth[0], "%Y-%m-%d %H:%M:%S")
-                    endeM = datetime.datetime.strftime(emonth[0], "%Y-%m-%d") + " 23:59:59"
-                    dir_list_i = {}
-                    dir_list_i["时间"] = StartTime[0:8] + addzero(i)
-                    runem = 0.0
-                    for tag in tags:
-                        rem = loadRate(tag.TagClassValue, staeM, endeM)
-                        if rem[0][0] != None:
-                            runem = runem + rem[0][0]
-                    if RatedPower != 0.0:
-                        lpd = 100 * (runem / float(RatedPower))
+                sql = "SELECT Sum(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '" + EnergyClass + "'),t.CollectionDay FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(
+                    oc_list)[
+                                                                                                                                                                                                                                                                                                                                   1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionDay"
+                redays = db_session.execute(sql).fetchall()
+                db_session.close()
+                dict_redays = {letter: score for score, letters in redays for letter in letters.split(",")}
+                for myday in constant.mydays:
+                    mydaycurr = StartTime[0:8] + myday
+                    if AreaName == None or AreaName == "":
+                        if mydaycurr in dict_redays.keys():
+                            runeday = (float(dict_redays[mydaycurr])/24) / float(dict_rpms["全厂"])
                     else:
-                        lpd = 0.0
-                    dir_list_i["负荷率"] = round(lpd, 2)
+                        if mydaycurr in dict_redays.keys():
+                            runeday = (float(dict_redays[mydaycurr]) / 24) / float(dict_rpms[AreaName])
+                    dir_list_i = {}
+                    dir_list_i["时间"] = mydaycurr
+                    dir_list_i["负荷率"] = round(100 * runeday, 2)
                     dir_list.append(dir_list_i)
             elif TimeClass == "年":
-                for i in range(int(StartTime[0:4]), int(EndTime[0:4]) + 1):
-                    staeY = str(i) + "-01-01 00:00:00"
-                    eyear = getMonthFirstDayAndLastDay(i, 12)
-                    endeY = datetime.datetime.strftime(eyear[1], "%Y-%m-%d") + " 23:59:59"
-                    dir_list_i = {}
-                    dir_list_i["时间"] = str(i)
-                    runem = 0.0
-                    for tag in tags:
-                        rem = loadRate(tag.TagClassValue, staeY, endeY)
-                        if rem[0][0] != None:
-                            runem = runem + rem[0][0]
-                    if RatedPower != 0.0:
-                        lpd = 100 * (runem / float(RatedPower))
+                sql = "SELECT Sum(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '" + EnergyClass + "'),t.CollectionMonth FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(
+                    oc_list)[
+                                                                                                                                                                                                                                                                                                                                   1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionMonth"
+                remonths = db_session.execute(sql).fetchall()
+                db_session.close()
+                dict_remonths = {letter: score for score, letters in remonths for letter in letters.split(",")}
+                for myonth in constant.mymonths:
+                    myonthcurr = StartTime[0:5] + myonth
+                    if AreaName == None or AreaName == "":
+                        if myonthcurr in dict_remonths.keys():
+                            runemonth = (float(dict_remonths[myonthcurr]) / (30*24)) / float(dict_rpms["全厂"])
                     else:
-                        lpd = 0.0
-                    dir_list_i["负荷率"] = round(lpd, 2)
+                        if myonthcurr in dict_remonths.keys():
+                            runemonth = (float(dict_remonths[myonthcurr]) / (30*24)) / float(dict_rpms[AreaName])
+                    dir_list_i = {}
+                    dir_list_i["时间"] = myonthcurr
+                    dir_list_i["负荷率"] = round(100 * runemonth, 2)
                     dir_list.append(dir_list_i)
             dir["row"] = dir_list
             return json.dumps(dir)
@@ -642,9 +642,8 @@ def runefficiency():
             logger.error(e)
             insertSyslog("error", "运行效率查询报错Error：" + str(e), current_user.Name)
 
-
-def loadRate(TagClassValue, StartTime, EndTime):
-    sql = "SELECT Sum(Cast(t.ZGL as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"')/count(t.ZGL) FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricEnergy)  WHERE t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+def loadRateTotal(oc_list, StartTime, EndTime, energy):
+    sql = "SELECT Sum(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"') FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(oc_list)[1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
     re = db_session.execute(sql).fetchall()
     db_session.close()
     return re
