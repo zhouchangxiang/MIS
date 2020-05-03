@@ -8,11 +8,11 @@ from dbset.main.BSFramwork import AlchemyEncoder
 from flask_login import login_required, logout_user, login_user, current_user, LoginManager
 import calendar
 
-from handlers.energymanager.energy_manager import energyStatistics, energyStatisticsCost
+from handlers.energymanager.energy_manager import energyStatistics, energyStatisticsCost, energyStatisticshour
 from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable, Equipment, \
     AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
-    AreaTimeEnergyColour, ElectricProportion, IncrementStreamTable, SteamTotal
+    AreaTimeEnergyColour, ElectricProportion, IncrementStreamTable, SteamTotal, SteamTotalMaintain
 from tools.common import insert, delete, update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger, insertSyslog
@@ -321,6 +321,25 @@ def roundtwo(rod):
         if float(rod) < 0:
             return 0.0
         return round(float(rod), 2)
+def energyStatisticsteamtotal(oc_list, StartTime, EndTime, energy):
+    '''
+    :param oc_list: tag点的List
+    :param StartTime:
+    :param EndTime:
+    :param energy:
+    :return:获取某段时间汽能总值
+    '''
+    propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
+    pro = float(propor.Proportion)
+    db_session.query(SteamTotalMaintain.SumValue).filter(SteamTotalMaintain.CollectionHour == EndTime[0:13]).order_by("CollectionDate").first()
+    db_session.close()
+    if len(re) > 0:
+        if re[0][0] != 0.0 and re[0][0] != None:
+            return round(float(re[0][0]) * pro, 2)
+        else:
+            return 0.0
+    else:
+        return 0.0
 
 @energySteam.route('/steamlossanalysis', methods=['POST', 'GET'])
 def steamlossanalysis():
@@ -367,6 +386,18 @@ def steamlossanalysis():
             dir["Unit"] = unit
             dir_list = []
             if TimeClass == "日":
+                recurr = energyStatisticshour(oc_list, StartTime, EndTime, EnergyClass)
+                dictcurr = {letter: score for score, letters in recurr for letter in letters.split(",")}
+                SteamTotalMaintain
+                for myhour in constant.myHours:
+                    dir_list_i = {}
+                    dir_list_i["时间"] = StartTime[0:11]+myhour
+                    totalm = 0.0
+                    for stm in stsm:
+                        totalm = totalm + float(stm.TotalSumValue)
+                    loss = totalm - re
+                    dir_list_i["管损"] = loss
+                    dir_list.append(dir_list_i)
                 for i in range(int(StartTime[11:13]), int(EndTime[11:13]) + 1):
                     stasH = StartTime[0:11] + addzero(i) + ":00:00"
                     endsH = StartTime[0:11] + addzero(i) + ":59:59"
