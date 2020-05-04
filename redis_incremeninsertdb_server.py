@@ -27,12 +27,58 @@ def run():
     runcount = 0
     failcount = 0
     while True:
-        time.sleep(60)
+        # time.sleep(60)
         print("数据开始写入增量数据库")
         redis_conn = redis.Redis(connection_pool=pool, password=constant.REDIS_PASSWORD, decode_responses=True)
         redis_conn.hset(constant.REDIS_TABLENAME, "redis_incremeninsertdb_server_start",
                         datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         try:
+            #水------------------------------------------------------------------------------------------
+            water_value = list()
+            elekeys = db_session.query(WaterEnergy).filter(WaterEnergy.IncrementFlag == "0",
+                                                           WaterEnergy.WaterSum != "0.0").order_by(desc("CollectionDate")).all()
+            for key in elekeys:
+                proWsumValue = db_session.query(WaterEnergy.WaterSum).filter(WaterEnergy.ID == key.PrevID).first()
+                if proWsumValue != None:
+                    proWsumValue = proWsumValue[0]
+                else:
+                    proWsumValue = 0
+                wsumvalue = abs(round(float(key.WaterSum) - float(proWsumValue), 2))
+                wt = (wsumvalue, "水", key.ID,
+                      key.PriceID, key.SumWUnit, key.EquipmnetID,
+                      key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
+                      key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName, "0")
+                water_value.append(wt)
+            try:
+                cursor = conn.cursor()
+                cursor.executemany(
+                    "INSERT INTO IncrementWaterTable VALUES (%s,%s,%d,%d,%s,%d,%s,%s,%s,%s,%s,%s,%s,%s)",
+                    water_value)
+                conn.commit()
+            except Exception as e:
+                conn.rollback()
+                print(e)
+            # 更新增量库原始数据库
+            water_IDS = list()
+            waterInitial = list()
+            upwatskeys = db_session.query(IncrementWaterTable).filter(
+                IncrementWaterTable.insertFlag == "0").order_by(desc("CollectionDate")).all()
+            for upwkey in upwatskeys:
+                wat = ("1", upwkey.ID)
+                watin = ("1", upwkey.CalculationID)
+                water_IDS.append(wat)
+                waterInitial.append(watin)
+            if len(water_IDS) > 0:
+                try:
+                    cursor = conn.cursor()
+                    cursor.executemany(
+                        "update IncrementWaterTable SET insertFlag=(%s) where id=(%d)", water_IDS)
+                    cursor.executemany(
+                        "update WaterEnergy SET IncrementFlag=(%s) where id=(%d)", waterInitial)
+                    conn.commit()
+                except Exception as e:
+                    conn.rollback()
+                    print(e)
             #汽能插入-----------------------------------------------------------------------------------增量库
             steam_value = list()
             stekeys = db_session.query(SteamEnergy).filter(SteamEnergy.IncrementFlag == "0",
@@ -172,52 +218,7 @@ def run():
                 except Exception as e:
                     conn.rollback()
                     print(e)
-            #水------------------------------------------------------------------------------------------
-            water_value = list()
-            elekeys = db_session.query(WaterEnergy).filter(WaterEnergy.IncrementFlag == "0",
-                                                           WaterEnergy.WaterSum != "0.0").order_by(desc("CollectionDate")).all()
-            for key in elekeys:
-                proWsumValue = db_session.query(WaterEnergy.WaterSum).filter(WaterEnergy.ID == key.PrevID).first()
-                if proWsumValue != None:
-                    proWsumValue = proWsumValue[0]
-                else:
-                    proWsumValue = 0
-                wsumvalue = abs(round(float(key.WaterSum) - float(proWsumValue), 2))
-                wt = (wsumvalue, "水", key.ID,
-                      key.PriceID, key.SumWUnit, key.EquipmnetID,
-                      key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
-                      key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName, "0")
-                water_value.append(wt)
-            try:
-                cursor = conn.cursor()
-                cursor.executemany(
-                    "INSERT INTO IncrementWaterTable VALUES (%s,%s,%d,%d,%s,%d,%s,%s,%s,%s,%s,%s,%s,%s)",
-                    water_value)
-                conn.commit()
-            except Exception as e:
-                conn.rollback()
-                print(e)
-            # 更新增量库原始数据库
-            water_IDS = list()
-            waterInitial = list()
-            upwatskeys = db_session.query(IncrementWaterTable).filter(
-                IncrementElectricTable.insertFlag == "0").order_by(desc("CollectionDate")).all()
-            for upwkey in upwatskeys:
-                wat = ("1", upwkey.ID)
-                watin = ("1", upwkey.CalculationID)
-                water_IDS.append(wat)
-                waterInitial.append(watin)
-            if len(water_IDS) > 0:
-                try:
-                    cursor = conn.cursor()
-                    cursor.executemany(
-                        "update IncrementWaterTable SET insertFlag=(%s) where id=(%d)", water_IDS)
-                    cursor.executemany(
-                        "update WaterEnergy SET IncrementFlag=(%s) where id=(%d)", waterInitial)
-                    conn.commit()
-                except Exception as e:
-                    conn.rollback()
-                    print(e)
+
             runcount = runcount + 1
         except Exception as e:
             conn.rollback()
