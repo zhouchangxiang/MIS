@@ -255,6 +255,7 @@
           var yearStartTime = moment(this.formParameters.date).year(moment(this.formParameters.date).year()).startOf('year').format('YYYY-MM-DD HH:mm')
           var yearEndTime = moment(this.formParameters.date).year(moment(this.formParameters.date).year()).endOf('year').format('YYYY-MM-DD HH:mm')
           var params = {}
+          var areaName = ""
           var TagClassValue = ""
           if(this.formParameters.energy === "电"){
             TagClassValue = this.ElectricEqActive
@@ -263,38 +264,54 @@
           }else if(this.formParameters.energy === "汽"){
             TagClassValue = this.SteamEqActive
           }
+          if(this.newAreaName.areaName === "整厂区"){
+            areaName = ""
+          }else{
+            areaName = this.newAreaName.areaName
+          }
           if(this.formParameters.resourceTime === "日"){
             params.StartTime = dayStartTime
             params.EndTime = dayEndTime
             params.TagClassValue = TagClassValue
             params.EnergyClass = this.formParameters.energy
+            params.AreaName = areaName
           }else if(this.formParameters.resourceTime === "周"){
             params.StartTime = weekStartTime
             params.EndTime = weekEndTime
             params.TagClassValue = TagClassValue
             params.EnergyClass = this.formParameters.energy
+            params.AreaName = areaName
           }else if(this.formParameters.resourceTime === "月"){
             params.StartTime = monthStartTime
             params.EndTime = monthEndTime
             params.TagClassValue = TagClassValue
             params.EnergyClass = this.formParameters.energy
+            params.AreaName = areaName
           }else if(this.formParameters.resourceTime === "季"){
             params.StartTime = quarterStartTime
             params.EndTime = quarterEndTime
             params.TagClassValue = TagClassValue
             params.EnergyClass = this.formParameters.energy
+            params.AreaName = areaName
           }else if(this.formParameters.resourceTime === "年"){
             params.StartTime = yearStartTime
             params.EndTime = yearEndTime
             params.TagClassValue = TagClassValue
             params.EnergyClass = this.formParameters.energy
+            params.AreaName = areaName
           }
           this.axios.get("/api/energydetail",{params:params,cancelToken: this.source.token}).then(res => {
             this.chartsLoading = false
-            console.log(res.data)
-            that.chartData = {
-              columns: ['时间', '能耗量'],
-              rows: res.data.row
+            if(areaName === ""){
+              that.chartData = {
+                columns: ['车间', '能耗量'],
+                rows: res.data.row
+              }
+            }else{
+              that.chartData = {
+                columns: ['时间', '能耗量'],
+                rows: res.data.row
+              }
             }
           })
         }
