@@ -146,6 +146,7 @@
         if(this.formParameters.resourceTime === "实时"){
           this.chartsLoading = true
           this.dataZoom = []
+          this.chartSettings.type = "line"
           if(this.websock){
             this.websock.close()
           }
@@ -241,7 +242,6 @@
           this.source = this.axios.CancelToken.source(); // 初始化source对象
           this.websock.close()
           this.chartsLoading = true
-          this.dataZoom = [{type: 'slider',start: 0,end: 20}]
           var that = this
           var nowTime = moment().format('HH:mm').substring(0,4) + "0"
           var dayStartTime = moment(this.formParameters.date).format('YYYY-MM-DD') + " 00:00"
@@ -303,11 +303,15 @@
           this.axios.get("/api/energydetail",{params:params,cancelToken: this.source.token}).then(res => {
             this.chartsLoading = false
             if(areaName === ""){
+              this.dataZoom = []
+              this.chartSettings.type = "histogram"
               that.chartData = {
                 columns: ['车间', '能耗量'],
                 rows: res.data.row
               }
             }else{
+              this.dataZoom = [{type: 'slider',start: 0,end: 20}]
+              this.chartSettings.type = "line"
               that.chartData = {
                 columns: ['时间', '能耗量'],
                 rows: res.data.row
