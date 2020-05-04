@@ -310,29 +310,31 @@ def energydetail():
                     tag_dict["能耗量"] = tagvalue[0]
                     dic_lisct.append(tag_dict)
             else:
-                energy_areas = energyStatisticsbyarea(StartTime, EndTime, EnergyClass)
-                dict_energy_areas = {letter: score for score, letters in energy_areas for letter in letters.split(",")}
-                areas = db_session.query(AreaTable).filter().all()
-                dic_lisct_i = {}
-                for area in areas:
-                    dic_lisct_i["车间"] = area.AreaName
-                    if area.AreaName in dict_energy_areas.keys():
-                        dic_lisct_i["能耗量"] = dict_energy_areas[area.AreaName]
-                    else:
-                        dic_lisct_i["能耗量"] = ""
-                dic_lisct.append(dic_lisct_i)
-                # oc_list = []
-                # oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaName).all()
-                # for oc in oclass:
-                #     oc_list.append(oc.TagClassValue)
-                # energy_tags = energydetailStatistics(oc_list, StartTime, EndTime, EnergyClass)
-                # dict_energy_areas = {letter: score for score, letters in energy_tags for letter in letters.split(",")}
-                # dic_lisct_i = {}
-                # for oc in oclass:
-                #     if oc.TagClassValue in dict_energy_areas.keys():
-                #         dic_lisct_i[oc.TagClassValue] = dict_energy_areas[oc.TagClassValue]
-                #     else:
-                #         dic_lisct_i[oc.TagClassValue] = ""
+                if AreaName == "" or AreaName == None:
+                    energy_areas = energyStatisticsbyarea(StartTime, EndTime, EnergyClass)
+                    dict_energy_areas = {letter: score for score, letters in energy_areas for letter in letters.split(",")}
+                    areas = db_session.query(AreaTable).filter().all()
+                    dic_lisct_i = {}
+                    for area in areas:
+                        dic_lisct_i["车间"] = area.AreaName
+                        if area.AreaName in dict_energy_areas.keys():
+                            dic_lisct_i["能耗量"] = dict_energy_areas[area.AreaName]
+                        else:
+                            dic_lisct_i["能耗量"] = ""
+                    dic_lisct.append(dic_lisct_i)
+                # else:
+                #     oc_list = []
+                #     oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaName).all()
+                #     for oc in oclass:
+                #         oc_list.append(oc.TagClassValue)
+                #     energy_tags = energydetailStatistics(oc_list, StartTime, EndTime, EnergyClass)
+                #     dict_energy_areas = {letter: score for score, letters in energy_tags for letter in letters.split(",")}
+                #     dic_lisct_i = {}
+                #     for oc in oclass:
+                #         if oc.TagClassValue in dict_energy_areas.keys():
+                #             dic_lisct_i[oc.TagClassValue] = dict_energy_areas[oc.TagClassValue]
+                #         else:
+                #             dic_lisct_i[oc.TagClassValue] = ""
             dir["row"] = dic_lisct
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
