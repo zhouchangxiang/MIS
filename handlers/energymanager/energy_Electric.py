@@ -525,8 +525,6 @@ def timeelectricprice(oc_list, StartTime, EndTime, energy):
 
 
 def timeelectric(oc_list, StartTime, EndTime, energy):
-    propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
-    pro = float(propor.Proportion)
     sql = "select t2.PriceName,SUM(Cast(t1.IncremenValue as float)) FROM [DB_MICS].[dbo].[IncrementElectricTable] t1 with (INDEX =IX_IncrementElectricTable) INNER JOIN [DB_MICS].[dbo].[ElectricPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
         oc_list)[
                                                                                                                                                                                                                                                                  1:-1] + ") and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue, t2.PriceName"
