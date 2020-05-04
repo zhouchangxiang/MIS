@@ -9,7 +9,7 @@ from flask_login import login_required, logout_user, login_user, current_user, L
 import calendar
 
 from handlers.energymanager.energy_manager import energyStatistics, energyStatisticsCost, energyStatisticshour, \
-    energyStatisticsday, energyStatisticsmonth
+    energyStatisticsday, energyStatisticsmonth, energyStatisticsbyarea
 from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable, Equipment, \
     AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
@@ -246,7 +246,29 @@ def get_steam():
         insertSyslog("error", "能耗查询报错Error：" + str(e), current_user.Name)
         return json.dumps([{"status": "Error：" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
 
-
+def energydetailStatistics(oc_list, StartTime, EndTime, energy):
+    '''
+    :param oc_list: tag点的List
+    :param StartTime:
+    :param EndTime:
+    :param energy: 水，电 ，气
+    :return:获取水电汽增量值以TagClassValue分组
+    '''
+    if energy == "水":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.TagClassValue FROM [DB_MICS].[dbo].[IncrementWaterTable] t with (INDEX =IX_IncrementWaterTable)  WHERE t.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.TagClassValue"
+    elif energy == "电":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.TagClassValue  FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.TagClassValue"
+    elif energy == "汽":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.TagClassValue  FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable)  WHERE t.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.TagClassValue"
+    re = db_session.execute(sql).fetchall()
+    db_session.close()
+    return re
 @energySteam.route('/energydetail', methods=['POST', 'GET'])
 def energydetail():
     '''
@@ -261,53 +283,31 @@ def energydetail():
             EndTime = data.get("EndTime")
             EnergyClass = data.get("EnergyClass")
             AreaName = data.get("AreaName")
-            oc_list = []
-            if AreaName == "" or AreaName == None:
-                tags = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
-            else:
-                tags = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass,
-                                                          TagDetail.AreaName == AreaName).all()
-            for tag in tags:
-                oc_list.append(tag.TagClassValue)
             dic_lisct = []
-            if EnergyClass == "水":
-                sql = "SELECT distinct(t.CollectionDate),t.WaterSum,t.WaterFlow FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_WaterEnergy)  WHERE t.TagClassValue in (" + str(
-                    oc_list)[
-                                                                                                                                                                             1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' order by t.CollectionDate"
-                re = db_session.execute(sql).fetchall()
-                db_session.close()
-                for i in re:
-                    dic_lisct_i = {}
-                    dic_lisct_i["时间"] = i[0]
-                    dic_lisct_i["累计量"] = roundtwo(i[1])
-                    dic_lisct_i["瞬时量"] = roundtwo(i[2])
-                    dic_lisct.append(dic_lisct_i)
-            elif EnergyClass == "电":
-                sql = "SELECT distinct(t.CollectionDate),t.ZGL FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricEnergy)  WHERE t.TagClassValue in (" + str(
-                    oc_list)[
-                                                                                                                                                                       1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' order by t.CollectionDate"
-
-                re = db_session.execute(sql).fetchall()
-                db_session.close()
-                for i in re:
-                    dic_lisct_i = {}
-                    dic_lisct_i["时间"] = i[0]
-                    dic_lisct_i["总功率"] = roundtwo(i[1])
-                    dic_lisct.append(dic_lisct_i)
-            elif EnergyClass == "汽":
-                sql = "SELECT distinct(t.CollectionDate),t.SumValue,t.FlowValue,t.Volume,t.WD  FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy)  WHERE t.TagClassValue in (" + str(
-                    oc_list)[
-                                                                                                                                                                                                                                                   1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' order by t.CollectionDate"
-                re = db_session.execute(sql).fetchall()
-                db_session.close()
-                for i in re:
-                    dic_lisct_i = {}
-                    dic_lisct_i["时间"] = i[0]
-                    dic_lisct_i["累计量"] = roundtwo(i[1])
-                    dic_lisct_i["瞬时量"] = roundtwo(i[2])
-                    dic_lisct_i["体积"] = roundtwo(i[3])
-                    dic_lisct_i["温度"] = roundtwo(i[4])
-                    dic_lisct.append(dic_lisct_i)
+            if AreaName == None or AreaName == "":
+                energy_areas = energyStatisticsbyarea(StartTime, EndTime, EnergyClass)
+                dict_energy_areas = {letter: score for score, letters in energy_areas for letter in letters.split(",")}
+                areas = db_session.query(AreaTable).filter().all()
+                dic_lisct_i = {}
+                for area in areas:
+                    if area.AreaName in dict_energy_areas.keys():
+                        dic_lisct_i[area.AreaName] = dict_energy_areas[area.AreaName]
+                    else:
+                        dic_lisct_i[area.AreaName] = ""
+            else:
+                oc_list = []
+                oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaName).all()
+                for oc in oclass:
+                    oc_list.append(oc.TagClassValue)
+                energy_tags = energydetailStatistics(oc_list, StartTime, EndTime, EnergyClass)
+                dict_energy_areas = {letter: score for score, letters in energy_tags for letter in letters.split(",")}
+                dic_lisct_i = {}
+                for oc in oclass:
+                    if oc.TagClassValue in dict_energy_areas.keys():
+                        dic_lisct_i[oc.TagClassValue] = dict_energy_areas[oc.TagClassValue]
+                    else:
+                        dic_lisct_i[oc.TagClassValue] = ""
+            dic_lisct.append(dic_lisct_i)
             dir["row"] = dic_lisct
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:

@@ -1261,14 +1261,17 @@ def todayAreaRingCharts():
                 edir_coll = {}
                 sdir_coll = {}
                 if area.AreaName in dict_water_areas.keys():
-                    wdir_coll["区域"] = area.AreaName
-                    wdir_coll["能耗量"] = dict_water_areas[area.AreaName]
+                    if dict_water_areas[area.AreaName] != None and dict_water_areas[area.AreaName] != 0:
+                        wdir_coll["区域"] = area.AreaName
+                        wdir_coll["能耗量"] = dict_water_areas[area.AreaName]
                 if area.AreaName in dict_elect_areas.keys():
-                    edir_coll["区域"] = area.AreaName
-                    edir_coll["能耗量"] = dict_elect_areas[area.AreaName]
+                    if dict_elect_areas[area.AreaName] != None and dict_elect_areas[area.AreaName] != 0:
+                        edir_coll["区域"] = area.AreaName
+                        edir_coll["能耗量"] = dict_elect_areas[area.AreaName]
                 if area.AreaName in dict_steam_areas.keys():
-                    sdir_coll["区域"] = area.AreaName
-                    sdir_coll["能耗量"] = dict_steam_areas[area.AreaName]
+                    if dict_steam_areas[area.AreaName] != None and dict_steam_areas[area.AreaName] != 0:
+                        sdir_coll["区域"] = area.AreaName
+                        sdir_coll["能耗量"] = dict_steam_areas[area.AreaName]
                 wdir_list.append(wdir_coll)
                 edir_list.append(edir_coll)
                 sdir_list.append(sdir_coll)
