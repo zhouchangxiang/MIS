@@ -314,14 +314,14 @@ def energydetail():
                     energy_areas = energyStatisticsbyarea(StartTime, EndTime, EnergyClass)
                     dict_energy_areas = {letter: score for score, letters in energy_areas for letter in letters.split(",")}
                     areas = db_session.query(AreaTable).filter().all()
-                    dic_lisct_i = {}
                     for area in areas:
+                        dic_lisct_i = {}
                         dic_lisct_i["车间"] = area.AreaName
                         if area.AreaName in dict_energy_areas.keys():
                             dic_lisct_i["能耗量"] = dict_energy_areas[area.AreaName]
                         else:
                             dic_lisct_i["能耗量"] = ""
-                    dic_lisct.append(dic_lisct_i)
+                        dic_lisct.append(dic_lisct_i)
                 # else:
                 #     oc_list = []
                 #     oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaName).all()
