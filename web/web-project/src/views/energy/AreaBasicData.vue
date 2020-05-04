@@ -18,9 +18,15 @@
     <el-col :span="24" style="margin-bottom:2px;">
       <div class="chartHead text-size-large text-color-info">
         <div class="chartTile">趋势图</div>
-        <ul class="subsectionList" v-if="formParameters.energy === '汽' && formParameters.resourceTime != '实时'">
-          <li v-for="(item,index) in subsectionList"><a href="javascript:;" :class="{active:subsectionActive === index}" @click="getSubsection(index)">{{ item.name }}</a></li>
-        </ul>
+        <el-select v-model="ElectricEqActive" size="mini" @change="getChartData" v-if="newAreaName.areaName != '整厂区' && formParameters.resourceTime != '实时' && formParameters.energy ==='电'">
+          <el-option v-for="(item,index) in ElectricEqList" :key="index" :label="item.FEFportIP" :value="item.TagClassValue"></el-option>
+        </el-select>
+        <el-select v-model="WaterEqActive" size="mini" @change="getChartData" v-if="newAreaName.areaName != '整厂区' && formParameters.resourceTime != '实时' && formParameters.energy ==='水'">
+          <el-option v-for="(item,index) in WaterEqList" :key="index" :label="item.FEFportIP" :value="item.TagClassValue"></el-option>
+        </el-select>
+        <el-select v-model="SteamEqActive" size="mini" @change="getChartData" v-if="newAreaName.areaName != '整厂区' && formParameters.resourceTime != '实时' && formParameters.energy ==='汽'">
+          <el-option v-for="(item,index) in SteamEqList" :key="index" :label="item.FEFportIP" :value="item.TagClassValue"></el-option>
+        </el-select>
         <div class="chartHeadRight">
           <span class="text-size-small text-color-primary" @click="$router.push({ path:'/DataReport'})" style="float: right;cursor: pointer;">查看报表</span>
         </div>
@@ -64,12 +70,12 @@
           {name:"水"},
           {name:"汽"},
         ],
-        subsectionList:[
-          {name:"能耗"},
-          {name:"体积"},
-          {name:"温度"}
-        ],
-        subsectionActive:1,
+        ElectricEqList:[],
+        ElectricEqActive:"",
+        WaterEqList:[],
+        WaterEqActive:"",
+        SteamEqList:[],
+        SteamEqActive:"",
         dataZoom: [],
         ChartExtend: {
           grid:{
@@ -95,15 +101,43 @@
       }
     },
     created(){
+      this.getEq()
       this.getChartData();
     },
     destroyed() {
       this.websock.close() //离开路由之后断开websocket连接
     },
     methods:{
-      getSubsection(index){
-        this.subsectionActive = index;
-        this.getChartData()
+      getEq(){
+        let that = this
+        var areaName = ''
+        if(this.newAreaName.areaName === "整厂区"){
+          areaName = ""
+        }else{
+          areaName = this.newAreaName.areaName
+        }
+        var params = {
+          tableName:"TagDetail",
+          field:"AreaName",
+          fieldvalue:areaName,
+          limit:100000,
+          offset:0
+        }
+        this.axios.get("/api/CUID",{params:params}).then(res =>{
+          that.ElectricEqList = []
+          that.WaterEqList = []
+          that.SteamEqList = []
+          var rows = JSON.parse(res.data).rows
+          rows.forEach(item =>{
+            if(item.EnergyClass === "电"){
+              that.ElectricEqList.push(item)
+            }else if(item.EnergyClass === "水"){
+              that.WaterEqList.push(item)
+            }else if(item.EnergyClass === "汽"){
+              that.SteamEqList.push(item)
+            }
+          })
+        })
       },
       cancel(){
         this.source.cancel('关闭axios请求')
@@ -221,67 +255,41 @@
           var yearStartTime = moment(this.formParameters.date).year(moment(this.formParameters.date).year()).startOf('year').format('YYYY-MM-DD HH:mm')
           var yearEndTime = moment(this.formParameters.date).year(moment(this.formParameters.date).year()).endOf('year').format('YYYY-MM-DD HH:mm')
           var params = {}
-          var areaName = ""
-          if(this.newAreaName.areaName === "整厂区"){
-            areaName = ""
-          }else{
-            areaName = this.newAreaName.areaName
+          var TagClassValue = ""
+          if(this.formParameters.energy === "电"){
+            TagClassValue = this.ElectricEqActive
+          }else if(this.formParameters.energy === "水"){
+            TagClassValue = this.WaterEqActive
+          }else if(this.formParameters.energy === "汽"){
+            TagClassValue = this.SteamEqActive
           }
           if(this.formParameters.resourceTime === "日"){
             params.StartTime = dayStartTime
             params.EndTime = dayEndTime
-            params.AreaName = areaName
-            params.EnergyClass = this.formParameters.energy
+            params.TagClassValue = TagClassValue
           }else if(this.formParameters.resourceTime === "周"){
             params.StartTime = weekStartTime
             params.EndTime = weekEndTime
-            params.AreaName = areaName
-            params.EnergyClass = this.formParameters.energy
+            params.TagClassValue = TagClassValue
           }else if(this.formParameters.resourceTime === "月"){
             params.StartTime = monthStartTime
             params.EndTime = monthEndTime
-            params.AreaName = areaName
-            params.EnergyClass = this.formParameters.energy
+            params.TagClassValue = TagClassValue
           }else if(this.formParameters.resourceTime === "季"){
             params.StartTime = quarterStartTime
             params.EndTime = quarterEndTime
-            params.AreaName = areaName
-            params.EnergyClass = this.formParameters.energy
+            params.TagClassValue = TagClassValue
           }else if(this.formParameters.resourceTime === "年"){
             params.StartTime = yearStartTime
             params.EndTime = yearEndTime
-            params.AreaName = areaName
-            params.EnergyClass = this.formParameters.energy
+            params.TagClassValue = TagClassValue
           }
           this.axios.get("/api/energydetail",{params:params,cancelToken: this.source.token}).then(res => {
             this.chartsLoading = false
-            if(that.formParameters.energy === "电"){
-              that.chartData = {
-                columns: ['时间', '总功率'],
-                rows: res.data.row
-              }
-            }else if(that.formParameters.energy === "水"){
-              that.chartData = {
-                columns: ['时间', '累计量'],
-                rows: res.data.row
-              }
-            }else if(that.formParameters.energy === "汽"){
-              if(this.subsectionActive === 0){
-                that.chartData = {
-                  columns: ['时间', '累计量'],
-                  rows: res.data.row
-                }
-              }else if(this.subsectionActive === 1){
-                that.chartData = {
-                  columns: ['时间', '体积'],
-                  rows: res.data.row
-                }
-              }else if(this.subsectionActive === 2){
-                that.chartData = {
-                  columns: ['时间', '温度'],
-                  rows: res.data.row
-                }
-              }
+            console.log(res.data)
+            that.chartData = {
+              columns: ['时间', '能耗量'],
+              rows: res.data.row
             }
           })
         }

@@ -11,16 +11,18 @@
 <script>
   import tableView from '@/views/SystemManage/CommonTable'
   export default {
-    name: "SteamTotal",
+    name: "electricityBalance",
     components:{tableView},
     data(){
       return {
         TableData:{
-          tableName:"SteamTotal",
+          tableName:"EarlyWarningPercentMaintain",
           column:[
-            {prop:"TotalSumValue",label:"汽能总量值"},
-            {prop:"MaintainTime",label:"时间(按天维护）"},
-            {prop:"CreateDate",label:"创建日期"},
+            {prop:"AreaName",label:"区域"},
+            {prop:"EQPName",label:"设备名称"},
+            {prop:"Percent",label:"三相电流不平衡百分比"},
+            {prop:"Descrption",label:"描述"},
+            {prop:"CreateDate",label:"时间"},
           ],
           data:[],
           limit:5,
@@ -28,7 +30,8 @@
           total:0,
           searchProp:"",
           searchPropList:[
-            {label:"时间",prop:"MaintainTime"}
+            {label:"区域",prop:"AreaName"},
+            {label:"设备名称",prop:"EQPName"}
           ],
           tableSelection:true, //是否需要选择框
           tableSelectionRadio:false, //是否需要单选
@@ -43,13 +46,15 @@
           ],
           handleForm:[
             {label:"ID",prop:"ID",type:"input",value:"",disabled:true},
-            {label:"汽能总量值",prop:"TotalSumValue",type:"input",value:""},
-            {label:"时间(按天维护）",prop:"MaintainTime",type:"input",value:""}
+            {label:"区域",prop:"AreaName",type:"input",value:""},
+            {label:"设备名称",prop:"EQPName",type:"input",value:""},
+            {label:"三相电流不平衡百分比",prop:"Percent",type:"input",value:""},
+            {label:"描述",prop:"Descrption",type:"input",value:""}
           ],
         },
       }
     },
-     mounted() {
+    mounted() {
       this.getTableData()
     },
     methods:{

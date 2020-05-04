@@ -430,7 +430,6 @@
       }
     },
     created(){
-      console.log(this.$route.query.areaName)
       this.getEnergyPreview()
       this.getBrandName()
       this.getBrandData()

@@ -628,19 +628,19 @@
           params.StartTime = dayStartTime
           params.EndTime = dayEndTime
           params.TimeClass = this.electricLoadRateTime
-          params.CurrentTime = moment(this.formParameters.startDate).format('YYYY-MM-DD HH:mm:ss')
+          params.CurrentTime = moment().format('YYYY-MM-DD HH:mm:ss')
           params.AreaName = ""
         }else if(this.electricLoadRateTime === "月"){
           params.StartTime = monthStartTime
           params.EndTime = monthEndTime
           params.TimeClass = this.electricLoadRateTime
-          params.CurrentTime = moment(this.formParameters.startDate).format('YYYY-MM-DD HH:mm:ss')
+          params.CurrentTime = moment().format('YYYY-MM-DD HH:mm:ss')
           params.AreaName = ""
         }else if(this.electricLoadRateTime === "年"){
           params.StartTime = yearStartTime
           params.EndTime = yearEndTime
           params.TimeClass = this.electricLoadRateTime
-          params.CurrentTime = moment(this.formParameters.startDate).format('YYYY-MM-DD HH:mm:ss')
+          params.CurrentTime = moment().format('YYYY-MM-DD HH:mm:ss')
           params.AreaName = ""
         }
         this.axios.get("/api/runefficiency",{params:params}).then(res => {

@@ -219,7 +219,7 @@
               </el-col>
             </el-row>
             <div class="energyDataContainer">
-              <ve-line :data="equiRunChartData" :extend="ChartExtend"></ve-line>
+              <ve-line :data="equiRunChartData" :extend="chartExtend"></ve-line>
             </div>
           </div>
         </el-col>
@@ -253,32 +253,35 @@
           <div class="platformContainer">
             <el-col :span="12">
               <div class="faultItemHead">
-                <span>三项电流不平衡度</span>
+                <span>最近30天异常次数</span>
               </div>
               <div class="faultItemBody">
-                <p style="padding: 22px 0;">正常值<span>{{  }}</span></p>
-                <p style="padding: 22px 0;">最近30天异常次数<span>{{  }}</span></p>
+                <p style="padding: 44px 0;"><span>{{ thredaycount  }}</span></p>
               </div>
             </el-col>
             <el-col :span="12">
               <div class="faultItemHead">
                 <span>最近一次异常数据</span>
+                <p>{{ WarningRow }}</p>
               </div>
               <div class="faultItemBody">
-                <p style="padding: 22px 0;">三相不平衡度<span>{{  }}</span></p>
-                <p style="padding: 22px 0;">异常时间<span>{{  }}</span></p>
+                <p style="padding: 22px 0;">故障类型<span>{{ WarningType }}</span></p>
+                <p style="padding: 22px 0;">异常时间<span>{{ WarningDate }}</span></p>
               </div>
             </el-col>
           </div>
          </el-col>
-        <el-col :span="24">
-          <div class="energyDataContainer">
-            <ve-line :data="threeCurrentImbalanceChartData" :extend="ChartExtend"></ve-line>
+        <el-col :span="24" style="margin-bottom: 2px;">
+          <div class="chartHead text-size-large text-color-info">
+            <div class="chartTile">电能项位</div>
+            <ul class="subsectionList">
+              <li v-for="(item,index) in ElectricItemList"><a href="javascript:;" :class="{active:ElectricItemActive === index}" @click="getSubsectionElectricItem(index)">{{ item.name }}</a></li>
+            </ul>
           </div>
         </el-col>
         <el-col :span="24">
-          <div class="chartHead text-size-large text-color-info" style="margin-bottom: 2px;">
-            <div class="chartTile">实时数据</div>
+          <div class="energyDataContainer">
+            <ve-line :data="threeCurrentImbalanceChartData" :extend="threeCurrentChartExtend" :data-zoom="dataZoom"></ve-line>
           </div>
         </el-col>
       </el-col>
@@ -362,16 +365,36 @@
             { '时间': '05:00', '开机': 688, '关机': 423, '空载': 648 ,'重载':948}
           ]
         },
+        thredaycount:"",
+        WarningDate:"",
+        WarningType:"",
+        WarningRow:"",
+        ElectricItemList:[
+          {name:"电流"},
+          {name:"电压"},
+        ],
+        ElectricItemActive:0,
+        threeCurrentChartExtend:{
+          grid:{
+            left:'0',
+            right:'0',
+            bottom:'0',
+            top:'40px'
+          },
+          series:{
+            smooth: false
+          }
+        },
+        dataZoom: [
+          {
+            type: 'slider',
+            start: 0,
+            end: 20
+          }
+        ],
         threeCurrentImbalanceChartData:{
-          columns: ['时间', 'A项', 'B项','C项'],
-          rows: [
-            { '时间': '00:00', 'A项': 647, 'B项': 193, 'C项': 454 },
-            { '时间': '01:00', 'A项': 457, 'B项': 320, 'C项': 546 },
-            { '时间': '02:00', 'A项': 875, 'B项': 223, 'C项': 454 },
-            { '时间': '03:00', 'A项': 955, 'B项': 143, 'C项': 247 },
-            { '时间': '04:00', 'A项': 745, 'B项': 342, 'C项': 844 },
-            { '时间': '05:00', 'A项': 688, 'B项': 423, 'C项': 648 }
-          ]
+          columns: ['时间', 'A项电流', 'B项电流','C项电流'],
+          rows: []
         }
       }
     },
@@ -480,6 +503,10 @@
           that.faultChartData.rows = res.data.row
         })
       },
+      getSubsectionElectricItem(index){
+        this.ElectricItemActive = index;
+        this.getEqElectricData()
+      },
       getEqElectricData(){
         var that = this
         var params = {
@@ -487,10 +514,20 @@
           StartTime:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss"),
           EndTime:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss")
         }
-        // this.axios.get("/api/EquipmentDetail",{params:params}).then(res =>{
-        //   that.forEqParameters = res.data
-        //   that.faultChartData.rows = res.data.row
-        // })
+        this.axios.get("/api/powerquality",{params:params}).then(res =>{
+          console.log(res.data)
+          that.thredaycount  = res.data.thredaycount
+          that.WarningType  = res.data.WarningType
+          that.WarningDate  = res.data.WarningDate
+          that.WarningRow  = res.data.row
+          if(this.ElectricItemActive === 0){
+            that.threeCurrentImbalanceChartData.columns = ['时间', 'A项电流', 'B项电流','C项电流']
+            that.threeCurrentImbalanceChartData.rows = res.data.dir_list
+          }else if(this.ElectricItemActive === 1){
+            that.threeCurrentImbalanceChartData.columns = ['时间', 'A项电压', 'B项电压','C项电压']
+            that.threeCurrentImbalanceChartData.rows = res.data.dir_list
+          }
+        })
       },
       handleRowClick(row){
         this.$refs.multipleTable.clearSelection();
