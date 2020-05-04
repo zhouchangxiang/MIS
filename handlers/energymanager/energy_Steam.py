@@ -278,11 +278,11 @@ def energydetailStatisticsbytag(TagClassValue, StartTime, EndTime, energy):
     :return:获取水电汽增量值以TagClassValue分组
     '''
     if energy == "水":
-        sql = "SELECT (Cast(t.WaterSum as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionDate FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_WaterEnergy)  WHERE t.TagClassValue in '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionDate"
+        sql = "SELECT (Cast(t.WaterSum as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionDate FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_WaterEnergy)  WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionDate,t.WaterSum order by t.CollectionDate"
     elif energy == "电":
-        sql = "SELECT (Cast(t.ZGL as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionDate  FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricEnergy)  WHERE t.TagClassValue in '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionDate"
+        sql = "SELECT (Cast(t.ZGL as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionDate  FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricEnergy)  WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionDate,t.ZGL order by t.CollectionDate"
     elif energy == "汽":
-        sql = "SELECT (Cast(t.SumValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionDate  FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy)  WHERE t.TagClassValue in '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionDate"
+        sql = "SELECT (Cast(t.SumValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionDate  FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy)  WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionDate,t.SumValue order by t.CollectionDate"
     re = db_session.execute(sql).fetchall()
     db_session.close()
     return re
@@ -302,41 +302,38 @@ def energydetail():
             AreaName = data.get("AreaName")
             TagClassValue = data.get("TagClassValue")
             dic_lisct = []
-            tag_list = []
-            if AreaName == None or AreaName == "":
+            if TagClassValue != None and TagClassValue != "":
+                tagsoclass = energydetailStatisticsbytag(TagClassValue, StartTime, EndTime, EnergyClass)
+                for tagvalue in tagsoclass:
+                    tag_dict = {}
+                    tag_dict["时间"] = tagvalue[1]
+                    tag_dict["能耗量"] = tagvalue[0]
+                    dic_lisct.append(tag_dict)
+            else:
                 energy_areas = energyStatisticsbyarea(StartTime, EndTime, EnergyClass)
                 dict_energy_areas = {letter: score for score, letters in energy_areas for letter in letters.split(",")}
                 areas = db_session.query(AreaTable).filter().all()
                 dic_lisct_i = {}
                 for area in areas:
+                    dic_lisct_i["车间"] = area.AreaName
                     if area.AreaName in dict_energy_areas.keys():
-                        dic_lisct_i[area.AreaName] = dict_energy_areas[area.AreaName]
+                        dic_lisct_i["能耗量"] = dict_energy_areas[area.AreaName]
                     else:
-                        dic_lisct_i[area.AreaName] = ""
-            else:
-                oc_list = []
-                oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaName).all()
-                for oc in oclass:
-                    oc_list.append(oc.TagClassValue)
-                energy_tags = energydetailStatistics(oc_list, StartTime, EndTime, EnergyClass)
-                dict_energy_areas = {letter: score for score, letters in energy_tags for letter in letters.split(",")}
-                dic_lisct_i = {}
-                for oc in oclass:
-                    if oc.TagClassValue in dict_energy_areas.keys():
-                        dic_lisct_i[oc.TagClassValue] = dict_energy_areas[oc.TagClassValue]
-                    else:
-                        dic_lisct_i[oc.TagClassValue] = ""
-            if TagClassValue != None and TagClassValue != "":
-                tagsoclass = energydetailStatisticsbytag(TagClassValue, StartTime, EndTime, TagClassValue)
-                if tagsoclass:
-                    for tagvalue in tagsoclass:
-                        tag_dict = {}
-                        tag_dict["时间"] = tagvalue[1]
-                        tag_dict["能耗量"] = tagvalue[0]
-                        tag_list.append(tag_dict)
-            dic_lisct.append(dic_lisct_i)
+                        dic_lisct_i["能耗量"] = ""
+                dic_lisct.append(dic_lisct_i)
+                # oc_list = []
+                # oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaName).all()
+                # for oc in oclass:
+                #     oc_list.append(oc.TagClassValue)
+                # energy_tags = energydetailStatistics(oc_list, StartTime, EndTime, EnergyClass)
+                # dict_energy_areas = {letter: score for score, letters in energy_tags for letter in letters.split(",")}
+                # dic_lisct_i = {}
+                # for oc in oclass:
+                #     if oc.TagClassValue in dict_energy_areas.keys():
+                #         dic_lisct_i[oc.TagClassValue] = dict_energy_areas[oc.TagClassValue]
+                #     else:
+                #         dic_lisct_i[oc.TagClassValue] = ""
             dir["row"] = dic_lisct
-            dir["row1"] = tag_list
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
