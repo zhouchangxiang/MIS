@@ -267,22 +267,27 @@
             params.StartTime = dayStartTime
             params.EndTime = dayEndTime
             params.TagClassValue = TagClassValue
+            params.EnergyClass = this.formParameters.energy
           }else if(this.formParameters.resourceTime === "周"){
             params.StartTime = weekStartTime
             params.EndTime = weekEndTime
             params.TagClassValue = TagClassValue
+            params.EnergyClass = this.formParameters.energy
           }else if(this.formParameters.resourceTime === "月"){
             params.StartTime = monthStartTime
             params.EndTime = monthEndTime
             params.TagClassValue = TagClassValue
+            params.EnergyClass = this.formParameters.energy
           }else if(this.formParameters.resourceTime === "季"){
             params.StartTime = quarterStartTime
             params.EndTime = quarterEndTime
             params.TagClassValue = TagClassValue
+            params.EnergyClass = this.formParameters.energy
           }else if(this.formParameters.resourceTime === "年"){
             params.StartTime = yearStartTime
             params.EndTime = yearEndTime
             params.TagClassValue = TagClassValue
+            params.EnergyClass = this.formParameters.energy
           }
           this.axios.get("/api/energydetail",{params:params,cancelToken: this.source.token}).then(res => {
             this.chartsLoading = false
