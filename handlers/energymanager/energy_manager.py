@@ -421,6 +421,82 @@ def energyStatisticsbyarea(StartTime, EndTime, energy):
     re = db_session.execute(sql).fetchall()
     db_session.close()
     return re
+
+def energyStatisticsCostbyhour(oc_list, StartTime, EndTime, energy):
+    '''
+    获取某段时间水电汽的成本
+    :param oc_list:
+    :param StartTime:
+    :param EndTime:
+    :param energy:
+    :return:
+    '''
+    if energy == "水":
+        sql = "select SUM(Cast(t1.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"') * Cast(t2.PriceValue as float) FROM [DB_MICS].[dbo].[IncrementWaterTable] t1 with (INDEX =IX_IncrementWaterTable) INNER JOIN [DB_MICS].[dbo].[WaterSteamPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                                        1:-1] + ") and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue, t1.CollectionHour"
+    elif energy == "电":
+        sql = "select SUM(Cast(t1.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"') * Cast(t2.PriceValue as float) FROM [DB_MICS].[dbo].[IncrementElectricTable] t1 with (INDEX =IX_IncrementElectricTable) INNER JOIN [DB_MICS].[dbo].[ElectricPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                                        1:-1] + ") and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue, t1.CollectionHour"
+    elif energy == "汽":
+        sql = "select SUM(Cast(t1.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"') * Cast(t2.PriceValue as float) FROM [DB_MICS].[dbo].[IncrementStreamTable] t1 with (INDEX =IX_IncrementStreamTable) INNER JOIN [DB_MICS].[dbo].[WaterSteamPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                                        1:-1] + ") and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue, t1.CollectionHour"
+    re = db_session.execute(sql).fetchall()
+    db_session.close()
+    return re
+def energyStatisticsCostbyday(oc_list, StartTime, EndTime, energy):
+    '''
+    获取某段时间水电汽的成本
+    :param oc_list:
+    :param StartTime:
+    :param EndTime:
+    :param energy:
+    :return:
+    '''
+    if energy == "水":
+        sql = "select SUM(Cast(t1.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"') * Cast(t2.PriceValue as float), t1.CollectionDay FROM [DB_MICS].[dbo].[IncrementWaterTable] t1 with (INDEX =IX_IncrementWaterTable) INNER JOIN [DB_MICS].[dbo].[WaterSteamPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                                        1:-1] + ") and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue, t1.CollectionDay"
+    elif energy == "电":
+        sql = "select SUM(Cast(t1.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"') * Cast(t2.PriceValue as float), t1.CollectionDay FROM [DB_MICS].[dbo].[IncrementElectricTable] t1 with (INDEX =IX_IncrementElectricTable) INNER JOIN [DB_MICS].[dbo].[ElectricPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                                        1:-1] + ") and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue, t1.CollectionDay"
+    elif energy == "汽":
+        sql = "select SUM(Cast(t1.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"') * Cast(t2.PriceValue as float), t1.CollectionDay FROM [DB_MICS].[dbo].[IncrementStreamTable] t1 with (INDEX =IX_IncrementStreamTable) INNER JOIN [DB_MICS].[dbo].[WaterSteamPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                                        1:-1] + ") and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue, t1.CollectionDay"
+    re = db_session.execute(sql).fetchall()
+    db_session.close()
+    return re
+def energyStatisticsCostbymonth(oc_list, StartTime, EndTime, energy):
+    '''
+    获取某段时间水电汽的成本
+    :param oc_list:
+    :param StartTime:
+    :param EndTime:
+    :param energy:
+    :return:
+    '''
+    if energy == "水":
+        sql = "select SUM(Cast(t1.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"') * Cast(t2.PriceValue as float), t1.CollectionMonth FROM [DB_MICS].[dbo].[IncrementWaterTable] t1 with (INDEX =IX_IncrementWaterTable) INNER JOIN [DB_MICS].[dbo].[WaterSteamPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                                        1:-1] + ") and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue, t1.CollectionMonth"
+    elif energy == "电":
+        sql = "select SUM(Cast(t1.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"') * Cast(t2.PriceValue as float), t1.CollectionMonth FROM [DB_MICS].[dbo].[IncrementElectricTable] t1 with (INDEX =IX_IncrementElectricTable) INNER JOIN [DB_MICS].[dbo].[ElectricPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                                        1:-1] + ") and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue, t1.CollectionMonth"
+    elif energy == "汽":
+        sql = "select SUM(Cast(t1.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"') * Cast(t2.PriceValue as float), t1.CollectionMonth FROM [DB_MICS].[dbo].[IncrementStreamTable] t1 with (INDEX =IX_IncrementStreamTable) INNER JOIN [DB_MICS].[dbo].[WaterSteamPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
+            oc_list)[
+                                                                                                                                                                                        1:-1] + ") and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue, t1.CollectionMonth"
+    re = db_session.execute(sql).fetchall()
+    db_session.close()
+    return re
+
+
+
 def energyselect(data):
     if request.method == 'GET':
         try:
@@ -1308,192 +1384,65 @@ def energycost():
                                                           TagDetail.AreaName == AreaName).all()
             for tag in tags:
                 oc_list.append(tag.TagClassValue)
-            if EnergyClass == "电":
-                volum = db_session.query(ElectricVolumeMaintain).filter(ElectricVolumeMaintain.IsEnabled == "是").first()
-                zgltotal = 0.0
-                costtotal = 0.0
-                if TimeClass == "日":
-                    for i in range(int(StartTime[8:10]), int(EndTime[8:10])+1):
-                        stae = StartTime[0:8] + addzero(i) + " 00:00:00"
-                        ende = StartTime[0:8] + addzero(i) + " 23:59:59"
-                        dir_list_i = {}
-                        dir_list_i["时间"] = StartTime[0:8] + addzero(i)
-                        dir_list_i["容量"] = round(float(volum.Volume), 2)
-                        zgl = energyStatistics(oc_list, stae, ende, EnergyClass)
-                        zgltotal = zgltotal + zgl
-                        cost = energyStatisticsCost(oc_list, stae, ende, EnergyClass)
-                        costtotal = costtotal + cost
-                        dir_list_i["耗量"] = round(zgl, 2)
-                        dir_list_i["成本"] = round(cost, 2)
-                        dir_list.append(dir_list_i)
-                elif TimeClass == "月":
-                    for i in range(int(StartTime[5:7]), int(EndTime[5:7])+1):
-                        emonth = getMonthFirstDayAndLastDay(StartTime[0:4], i)
-                        staeM = datetime.datetime.strftime(emonth[0], "%Y-%m-%d %H:%M:%S")
-                        endeM = datetime.datetime.strftime(emonth[0], "%Y-%m-%d") + " 23:59:59"
-                        dir_list_i = {}
-                        dir_list_i["时间"] = StartTime[0:8] + addzero(i)
-                        dir_list_i["容量"] = round(float(volum.Volume)*30, 2)
-                        zgl = energyStatistics(oc_list, staeM, endeM, EnergyClass)
-                        zgltotal = zgltotal + zgl
-                        cost = energyStatisticsCost(oc_list, staeM, endeM, EnergyClass)
-                        costtotal = costtotal + cost
-                        dir_list_i["耗量"] = round(zgl, 2)
-                        dir_list_i["成本"] = round(cost, 2)
-                        dir_list.append(dir_list_i)
-                elif TimeClass == "年":
-                    for i in range(int(StartTime[0:4]), int(EndTime[0:4])+1):
-                        staeY = str(i) + "-01-01 00:00:00"
-                        eyear = getMonthFirstDayAndLastDay(i, 12)
-                        endeY = datetime.datetime.strftime(eyear[1], "%Y-%m-%d") + " 23:59:59"
-                        dir_list_i = {}
-                        dir_list_i["时间"] = str(i)
-                        dir_list_i["容量"] = round(float(volum.Volume)*365, 2)
-                        zgl = energyStatistics(oc_list, staeY, endeY, EnergyClass)
-                        zgltotal = zgltotal + zgl
-                        cost = energyStatisticsCost(oc_list, staeY, endeY, EnergyClass)
-                        costtotal = costtotal + cost
-                        dir_list_i["耗量"] = round(zgl, 2)
-                        dir_list_i["成本"] = round(cost, 2)
-                        dir_list.append(dir_list_i)
-                elif TimeClass == "时":
-                    for i in range(int(StartTime[11:13]), int(EndTime[11:13])+1):
-                        staeH = StartTime[0:11] + addzero(i) + ":00:00"
-                        endeH = StartTime[0:11] + addzero(i) + ":59:59"
-                        dir_list_i = {}
-                        dir_list_i["时间"] = StartTime[0:11] + addzero(i)
-                        dir_list_i["容量"] = round(float(volum.Volume)/24, 2)
-                        zgl = energyStatistics(oc_list, staeH, endeH, EnergyClass)
-                        zgltotal = zgltotal + zgl
-                        cost = energyStatisticsCost(oc_list, staeH, endeH, EnergyClass)
-                        costtotal = costtotal + cost
-                        dir_list_i["耗量"] = round(zgl, 2)
-                        dir_list_i["成本"] = round(cost, 2)
-                        dir_list.append(dir_list_i)
-                dir["expend"] = round(zgltotal, 2)
-                dir["expendCost"] = round(costtotal, 2)
-                dir["expendUnit"] = volum.Unit
-                dir["transformerStorage"] = round(float(volum.Volume), 2)
-                dir["transformerUnit"] = volum.Unit
-                dir["storageCost"] = round(float(volum.UnitPrice) * float(volum.Volume), 2)
-            elif EnergyClass == "水":
-                wsumtotal = 0.0
-                wsumcosttotal = 0.0
-                if TimeClass == "日":
-                    for i in range(int(StartTime[8:10]), int(EndTime[8:10]) + 1):
-                        staw = StartTime[0:8] + addzero(i) + " 00:00:00"
-                        endw = StartTime[0:8] + addzero(i) + " 23:59:59"
-                        dir_list_i = {}
-                        dir_list_i["时间"] = StartTime[0:8] + addzero(i)
-                        wsum = energyStatistics(oc_list, staw, endw, EnergyClass)
-                        wsumtotal = wsumtotal + wsum
-                        wsumcost = energyStatisticsCost(oc_list, staw, endw, EnergyClass)
-                        costtotal = wsumcosttotal + wsumcost
-                        dir_list_i["耗量"] = round(wsum, 2)
-                        dir_list_i["成本"] = round(wsumcost, 2)
-                        dir_list.append(dir_list_i)
-                elif TimeClass == "月":
-                    for i in range(int(StartTime[5:7]), int(EndTime[5:7]) + 1):
-                        wmonth = getMonthFirstDayAndLastDay(StartTime[0:4], i)
-                        stawM = datetime.datetime.strftime(wmonth[0], "%Y-%m-%d %H:%M:%S")
-                        endwM = datetime.datetime.strftime(wmonth[0], "%Y-%m-%d") + " 23:59:59"
-                        dir_list_i = {}
-                        dir_list_i["时间"] = StartTime[0:8] + addzero(i)
-                        wsum = energyStatistics(oc_list, stawM, endwM, EnergyClass)
-                        wsumtotal = wsumtotal + wsum
-                        wsumcost = energyStatisticsCost(oc_list, stawM, endwM, EnergyClass)
-                        wsumcosttotal = wsumcosttotal + wsumcost
-                        dir_list_i["耗量"] = round(wsum, 2)
-                        dir_list_i["成本"] = round(wsumcost, 2)
-                        dir_list.append(dir_list_i)
-                elif TimeClass == "年":
-                    for i in range(int(StartTime[0:4]), int(EndTime[0:4]) + 1):
-                        stawY = str(i) + "-01-01 00:00:00"
-                        wyear = getMonthFirstDayAndLastDay(i, 12)
-                        wndeY = datetime.datetime.strftime(wyear[1], "%Y-%m-%d") + " 23:59:59"
-                        dir_list_i = {}
-                        dir_list_i["时间"] = str(i)
-                        wsum = energyStatistics(oc_list, stawY, wndeY, EnergyClass)
-                        wsumtotal = wsumtotal + wsum
-                        wsumcost = energyStatisticsCost(oc_list, stawY, wndeY, EnergyClass)
-                        wsumcosttotal = wsumcosttotal + wsumcost
-                        dir_list_i["耗量"] = round(wsum, 2)
-                        dir_list_i["成本"] = round(wsumcost, 2)
-                        dir_list.append(dir_list_i)
-                elif TimeClass == "时":
-                    for i in range(int(StartTime[11:13]), int(EndTime[11:13]) + 1):
-                        stawH = StartTime[0:11] + addzero(i) + ":00:00"
-                        endwH = StartTime[0:11] + addzero(i) + ":59:59"
-                        dir_list_i = {}
-                        dir_list_i["时间"] = StartTime[0:11] + addzero(i)
-                        wsum = energyStatistics(oc_list, stawH, endwH, EnergyClass)
-                        wsumtotal = wsumtotal + wsum
-                        wsumcost = energyStatisticsCost(oc_list, stawH, endwH, EnergyClass)
-                        wsumcosttotal = wsumcosttotal + wsumcost
-                        dir_list_i["耗量"] = round(wsum, 2)
-                        dir_list_i["成本"] = round(wsumcost, 2)
-                        dir_list.append(dir_list_i)
-                wunit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "水").first()[0]
-                dir["unit"] = wunit
-            elif EnergyClass == "汽":
-                ssumtotal = 0.0
-                ssumcosttotal = 0.0
-                if TimeClass == "日":
-                    for i in range(int(StartTime[8:10]), int(EndTime[8:10]) + 1):
-                        stas = StartTime[0:8] + addzero(i) + " 00:00:00"
-                        ends = StartTime[0:8] + addzero(i) + " 23:59:59"
-                        dir_list_i = {}
-                        dir_list_i["时间"] = StartTime[0:8] + addzero(i)
-                        ssum = energyStatistics(oc_list, stas, ends, EnergyClass)
-                        ssumtotal = ssumtotal + ssum
-                        ssumcost = energyStatisticsCost(oc_list, stas, ends, EnergyClass)
-                        ssumcosttotal = ssumcosttotal + ssumcost
-                        dir_list_i["耗量"] = round(ssum, 2)
-                        dir_list_i["成本"] = round(ssumcost, 2)
-                        dir_list.append(dir_list_i)
-                elif TimeClass == "月":
-                    for i in range(int(StartTime[5:7]), int(EndTime[5:7]) + 1):
-                        smonth = getMonthFirstDayAndLastDay(StartTime[0:4], i)
-                        stasM = datetime.datetime.strftime(smonth[0], "%Y-%m-%d %H:%M:%S")
-                        endsM = datetime.datetime.strftime(smonth[0], "%Y-%m-%d") + " 23:59:59"
-                        dir_list_i = {}
-                        dir_list_i["时间"] = StartTime[0:8] + addzero(i)
-                        ssum = energyStatistics(oc_list, stasM, endsM, EnergyClass)
-                        ssumtotal = ssumtotal + ssum
-                        ssumcost = energyStatisticsCost(oc_list, stasM, endsM, EnergyClass)
-                        ssumcosttotal = ssumcosttotal + ssumcost
-                        dir_list_i["耗量"] = round(ssum, 2)
-                        dir_list_i["成本"] = round(ssumcost, 2)
-                        dir_list.append(dir_list_i)
-                elif TimeClass == "年":
-                    for i in range(int(StartTime[0:4]), int(EndTime[0:4]) + 1):
-                        stawY = str(i) + "-01-01 00:00:00"
-                        syear = getMonthFirstDayAndLastDay(i, 12)
-                        sndeY = datetime.datetime.strftime(syear[1], "%Y-%m-%d") + " 23:59:59"
-                        dir_list_i = {}
-                        dir_list_i["时间"] = str(i)
-                        ssum = energyStatistics(oc_list, stawY, sndeY, EnergyClass)
-                        ssumtotal = ssumtotal + ssum
-                        ssumcost = energyStatisticsCost(oc_list, stawY, sndeY, EnergyClass)
-                        ssumcosttotal = ssumcosttotal + ssumcost
-                        dir_list_i["耗量"] = round(ssum, 2)
-                        dir_list_i["成本"] = round(ssumcost, 2)
-                        dir_list.append(dir_list_i)
-                elif TimeClass == "时":
-                    for i in range(int(StartTime[11:13]), int(EndTime[11:13]) + 1):
-                        stasH = StartTime[0:11] + addzero(i) + ":00:00"
-                        endsH = StartTime[0:11] + addzero(i) + ":59:59"
-                        dir_list_i = {}
-                        dir_list_i["时间"] = StartTime[0:11] + addzero(i)
-                        ssum = energyStatistics(oc_list, stasH, endsH, EnergyClass)
-                        ssumtotal = ssumtotal + ssum
-                        ssumcost = energyStatisticsCost(oc_list, stasH, endsH, EnergyClass)
-                        ssumcosttotal = ssumcosttotal + ssumcost
-                        dir_list_i["耗量"] = round(ssum, 2)
-                        dir_list_i["成本"] = round(ssumcost, 2)
-                        dir_list.append(dir_list_i)
-                wunit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽").first()[0]
-                dir["unit"] = wunit
+            if TimeClass == "日":
+                hours = energyStatisticshour(oc_list, StartTime, EndTime, EnergyClass)
+                cost_hours = energyStatisticsCostbyhour(oc_list, StartTime, EndTime, energy)
+                dict_hours = {letter: score for score, letters in hours for letter in letters.split(",")}
+                dict_cost_hours = {letter: score for score, letters in cost_hours for letter in
+                                   letters.split(",")}
+                for myHour in constant.myHours:
+                    dir_list_i = {}
+                    scurrtime = StartTime[0:11] + myHour
+                    dir_list_i["时间"] = scurrtime
+                    hcount = 0
+                    hcostcount = 0
+                    if scurrtime in dict_hours.keys():
+                        hcount = round(float(dict_hours[scurrtime]), 2)
+                    if scurrtime in dict_cost_hours.keys():
+                        hcostcount = round(float(dict_cost_hours[scurrtime]), 2)
+                    dir_list_i["耗量"] = hcount
+                    dir_list_i["成本"] = hcostcount
+                    dir_list.append(dir_list_i)
+            elif TimeClass == "月":
+                days = energyStatisticsday(oc_list, StartTime, EndTime, EnergyClass)
+                cost_days = energyStatisticsCostbyday(oc_list, StartTime, EndTime, energy)
+                dict_days = {letter: score for score, letters in days for letter in letters.split(",")}
+                dict_cost_days = {letter: score for score, letters in cost_days for letter in
+                                   letters.split(",")}
+                for myday in constant.mydays:
+                    dir_list_i = {}
+                    daytime = StartTime[0:8] + myday
+                    dir_list_i["时间"] = daytime
+                    daycount = 0
+                    daycostcount = 0
+                    if daytime in dict_days.keys():
+                        daycount = round(float(dict_days[daytime]), 2)
+                    if daytime in dict_cost_days.keys():
+                        daycostcount = round(float(dict_cost_days[daytime]), 2)
+                    dir_list_i["耗量"] = daycount
+                    dir_list_i["成本"] = daycostcount
+                    dir_list.append(dir_list_i)
+            elif TimeClass == "年":
+                monts = energyStatisticsmonth(oc_list, StartTime, EndTime, EnergyClass)
+                cost_months = energyStatisticsCostbymonth(oc_list, StartTime, EndTime, energy)
+                dict_monts = {letter: score for score, letters in monts for letter in letters.split(",")}
+                dict_cost_months = {letter: score for score, letters in cost_months for letter in
+                                   letters.split(",")}
+                for mymonth in constant.mymonths:
+                    dir_list_i = {}
+                    monthtime = StartTime[0:11] + mymonth
+                    dir_list_i["时间"] = monthtime
+                    monthcount = 0
+                    monthcostcount = 0
+                    if monthtime in dict_monts.keys():
+                        monthcount = round(float(dict_monts[monthtime]), 2)
+                    if monthtime in dict_cost_months.keys():
+                        monthcostcount = round(float(dict_cost_months[monthtime]), 2)
+                    dir_list_i["耗量"] = monthcount
+                    dir_list_i["成本"] = monthcostcount
+                    dir_list.append(dir_list_i)
+            wunit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == EnergyClass).first()[0]
+            dir["unit"] = wunit
             dir["rows"] = dir_list
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
