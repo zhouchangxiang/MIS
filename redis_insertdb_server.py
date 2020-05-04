@@ -102,6 +102,7 @@ def run():
                         # 实时预电压电流故障
                         if AU == 0.0 or BU == 0.0 or CU == 0.0:
                             earw = EarlyWarning()
+                            earw.TagClassValue = key.TagClassValue
                             earw.AreaName = key.AreaName
                             EQPName = db_session.query(TagClassType).filter(
                                 TagClassType.TagClassValue == key.TagClassValue).first()
@@ -130,6 +131,7 @@ def run():
                                 percent = percent[0]
                                 if percentI > percent:
                                     earw = EarlyWarning()
+                                    earw.TagClassValue = key.TagClassValue
                                     earw.AreaName = key.AreaName
                                     earw.EQPName = EQPName
                                     earw.WarningType = "三相电流不平衡"
@@ -145,6 +147,7 @@ def run():
                     if warn is not None:
                         if valueWD < warn.LowerLimit or valueWD > warn.UpperLimit:
                             earw = EarlyWarning()
+                            earw.TagClassValue = key.TagClassValue
                             earw.AreaName = key.AreaName
                             EQPName = db_session.query(TagClassType).filter(TagClassType.TagClassValue == key.TagClassValue).first()
                             if EQPName != None:

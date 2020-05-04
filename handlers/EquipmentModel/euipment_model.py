@@ -1,5 +1,5 @@
 import redis
-import xlwt
+import arrow
 from flask import Blueprint, render_template
 from sqlalchemy.orm import Session, relationship, sessionmaker
 from sqlalchemy import create_engine
@@ -20,7 +20,7 @@ from handlers.energymanager.energy_manager import energyStatistics, energyStatis
 from models.SystemManagement.system import EarlyWarning
 from tools.common import insert,delete,update
 from dbset.database.db_operate import db_session
-from models.SystemManagement.core import Equipment, Instrumentation, TagDetail
+from models.SystemManagement.core import Equipment, Instrumentation, TagDetail, ElectricEnergy
 from dbset.database import constant
 
 # 创建蓝图 第一个参数为蓝图的名字
@@ -170,3 +170,43 @@ def addzero(j):
         return "0" + str(j)
     else:
         return str(j)
+
+
+@equip.route('/powerquality', methods=['POST', 'GET'])
+def powerquality():
+    '''
+    电能质量
+    return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            dir = {}
+            StartTime = data.get("StartTime")
+            EndTime = data.get("EndTime")
+            TagClassValue = data.get("TagClassValue")
+            a = arrow.now()
+            warfirst = db_session.query(EarlyWarning).filter(EarlyWarning.TagClassValue == TagClassValue).order_by(desc("WarningDate")).first()
+            thredaycount = db_session.query(EarlyWarning).filter(EarlyWarning.TagClassValue == TagClassValue, EarlyWarning.WarningDate.between(str(a.shift(days=-30)), str(a.shift(days=0)))).order_by(desc("WarningDate")).count()
+            dir["thredaycount"] = thredaycount
+            dir["row"] = thredaycount
+            if warfirst:
+                dir["WarningType"] = warfirst.WarningType
+                dir["WarningDate"] = warfirst.WarningDate
+            dir_list = []
+            oclass = db_session.query(ElectricEnergy).filter(ElectricEnergy.CollectionDate.between(StartTime,EndTime)).all()
+            for oc in oclass:
+                oc_dict = {}
+                oc_dict["A项电流"] = oc.AI
+                oc_dict["A项电压"] = oc.AU
+                oc_dict["B项电流"] = oc.BI
+                oc_dict["B项电压"] = oc.BU
+                oc_dict["C项电流"] = oc.CI
+                oc_dict["C项电压"] = oc.CU
+                dir_list.append(oc_dict)
+            dir["dir_list"] = dir_list
+            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "电能质量查询报错Error：" + str(e), current_user.Name)

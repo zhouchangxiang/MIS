@@ -810,6 +810,9 @@ class EarlyWarning(Base):
     # ID:
     ID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
 
+    # 采集点:
+    TagClassValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
     # 区域:
     AreaName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 

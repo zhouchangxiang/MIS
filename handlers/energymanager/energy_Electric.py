@@ -587,6 +587,7 @@ def runefficiency():
                 dict_rehours = {letter: score for score, letters in rehours for letter in letters.split(",")}
                 for myhour in constant.myHours:
                     myhourcurr = StartTime[0:11] + myhour
+                    runehou = 0
                     if AreaName == None or AreaName == "":
                         if myhourcurr in dict_rehours.keys():
                             runehou = float(dict_rehours[myhourcurr]) / float(dict_rpms["全厂"])
@@ -606,6 +607,7 @@ def runefficiency():
                 dict_redays = {letter: score for score, letters in redays for letter in letters.split(",")}
                 for myday in constant.mydays:
                     mydaycurr = StartTime[0:8] + myday
+                    runeday = 0
                     if AreaName == None or AreaName == "":
                         if mydaycurr in dict_redays.keys():
                             runeday = (float(dict_redays[mydaycurr])/24) / float(dict_rpms["全厂"])
@@ -625,6 +627,7 @@ def runefficiency():
                 dict_remonths = {letter: score for score, letters in remonths for letter in letters.split(",")}
                 for myonth in constant.mymonths:
                     myonthcurr = StartTime[0:5] + myonth
+                    runemonth = 0
                     if AreaName == None or AreaName == "":
                         if myonthcurr in dict_remonths.keys():
                             runemonth = (float(dict_remonths[myonthcurr]) / (30*24)) / float(dict_rpms["全厂"])
@@ -647,3 +650,4 @@ def loadRateTotal(oc_list, StartTime, EndTime, energy):
     re = db_session.execute(sql).fetchall()
     db_session.close()
     return re
+

@@ -585,7 +585,7 @@ def areaTimeEnergy():
                     last = str(currentyear) + "-" + addzero(int(currentmonth)) + "-" + addzero(
                         int(currentday)) + " 00:00:00"
                     recurr = energyStatisticshour(oc_list, last, curr, EnergyClass)
-                    recomper = energyStatisticshour(oc_list, compareday+"00:00:00", compareday+"23:59:59", EnergyClass)
+                    recomper = energyStatisticshour(oc_list, compareday+" 00:00:00", compareday+" 23:59:59", EnergyClass)
                     dictcurr = {letter: score for score, letters in recurr for letter in letters.split(",")}
                     dictpre = {letter: score for score, letters in recomper for letter in letters.split(",")}
                     for myHour in constant.myHours:
@@ -930,7 +930,7 @@ def trendlookboard():
             for oc in oclass:
                 oc_list.append(oc.TagClassValue)
             rows_list = []
-            recomper = energyStatisticshour(oc_list, CompareTime+"00:00:00", "23:59:59", EnergyClass)
+            recomper = energyStatisticshour(oc_list, CompareTime+" 00:00:00", CompareTime+" 23:59:59", EnergyClass)
             dictpre = {letter: score for score, letters in recomper for letter in letters.split(",")}
             for myHour in constant.myHours:
                 spretime = CompareTime + " " + myHour
