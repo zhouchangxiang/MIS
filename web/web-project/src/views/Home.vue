@@ -555,7 +555,8 @@
           lastStartMonth = moment().month(moment().month() - 1).startOf('month').format('YYYY-MM-DD HH:mm'),
           lastEndMonth = moment().month(moment().month() - 1).endOf('month').format('YYYY-MM-DD').substring(0,7) + "-" + thisDate + " " + nowTime,
           thisStartYear = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD HH:mm'),
-          lastStartYear = moment().year(moment().year() - 1).startOf('year').format('YYYY-MM-DD HH:mm')
+          lastStartYear = moment().year(moment().year() - 1).startOf('year').format('YYYY-MM-DD HH:mm'),
+          lastEndYear = moment().year(moment().year() - 1).endOf('year').format('YYYY-MM-DD HH:mm')
         if(!moment(lastEndMonth)._isValid){  //判断上月结束日期是否合法，否则赋值为上月最后一天的23：59
           lastEndMonth = moment().month(moment().month() - 1).endOf('month').format('YYYY-MM-DD HH:mm');
         }
@@ -574,23 +575,27 @@
           this.axios.get(api,{params: {StartTime: compareDateStartTime,EndTime:compareDateEndTime}}),//获取对比天能耗
           this.axios.get(api,{params: {StartTime: thisStartMonth,EndTime:todayEndTime}}),//获取本月能耗
           this.axios.get(api,{params: {StartTime: lastStartMonth,EndTime:lastEndMonth}}),//获取上月能耗
-          this.axios.get("/api/souyeselectyear",{params: {StartTime: thisStartYear,EnergyClass:this.previewEnergyValue}}),//获取当年能耗
-          this.axios.get("/api/souyeselectyear",{params: {StartTime: lastStartYear,EnergyClass:this.previewEnergyValue}}),//获取上一年能耗
           this.axios.get('/api/energyall',{
             params: {ModelFlag: "能耗预览",CompareDate:moment(this.CompareDate).format('YYYY-MM-DD'),EnergyClass:this.previewEnergyValue}
           })
-        ]).then(this.axios.spread((todayCon,compareDateCon,thisMonthCon,lastMonthCon,thisYearCon,lastYearCon,compareData) =>{
+        ]).then(this.axios.spread((todayCon,compareDateCon,thisMonthCon,lastMonthCon,compareData) =>{
           that.ChartsLoading = false
           that.todayCon = JSON.parse(todayCon.data).value
           that.unit = JSON.parse(todayCon.data).unit
           that.compareDateCon = JSON.parse(compareDateCon.data).value
           that.thisMonthCon = JSON.parse(thisMonthCon.data).value
           that.lastMonthCon = JSON.parse(lastMonthCon.data).value
-          that.thisYearCon = thisYearCon.data.value
-          that.lastYearCon = lastYearCon.data.value
           that.contrastMonthChartData.rows = JSON.parse(compareData.data).lastMonthRow
           that.realtimeChartData.rows = JSON.parse(compareData.data).compareTodayRow
         }))
+        //获取当年能耗
+        this.axios.get("/api/souyeselectyear",{params:{StartTime: thisStartYear,EndTime:todayEndTime,EnergyClass:this.previewEnergyValue}}).then(thisYearCon => {
+          that.thisYearCon = thisYearCon.data.value
+        })
+        //获取上一年能耗
+        this.axios.get("/api/souyeselectyear",{params:{StartTime: lastStartYear,EndTime:lastEndYear,EnergyClass:this.previewEnergyValue}}).then(lastYearCon => {
+          that.lastYearCon = lastYearCon.data.value
+        })
       },
       getAreaTimeEnergy(){
         this.areaTimeChartsLoading = true
@@ -623,14 +628,20 @@
           params.StartTime = dayStartTime
           params.EndTime = dayEndTime
           params.TimeClass = this.electricLoadRateTime
+          params.CurrentTime = moment(this.formParameters.startDate).format('YYYY-MM-DD HH:mm:ss')
+          params.AreaName = ""
         }else if(this.electricLoadRateTime === "月"){
           params.StartTime = monthStartTime
           params.EndTime = monthEndTime
           params.TimeClass = this.electricLoadRateTime
+          params.CurrentTime = moment(this.formParameters.startDate).format('YYYY-MM-DD HH:mm:ss')
+          params.AreaName = ""
         }else if(this.electricLoadRateTime === "年"){
           params.StartTime = yearStartTime
           params.EndTime = yearEndTime
           params.TimeClass = this.electricLoadRateTime
+          params.CurrentTime = moment(this.formParameters.startDate).format('YYYY-MM-DD HH:mm:ss')
+          params.AreaName = ""
         }
         this.axios.get("/api/runefficiency",{params:params}).then(res => {
           that.electricLoadRateChartData.rows[0].value = res.data.loadRate

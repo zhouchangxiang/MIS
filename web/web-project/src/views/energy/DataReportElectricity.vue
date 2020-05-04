@@ -14,7 +14,7 @@
       <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
         <div class="chartTile">电能报表</div>
         <el-select v-model="areaValue" size="mini" @change="searchTime">
-          <el-option v-for="(item,index) in areaOptions" :key="item.index" :label="item.AreaName" :value="item.value"></el-option>
+          <el-option v-for="(item,index) in areaOptions" :key="index" :label="item.AreaName" :value="item.value"></el-option>
         </el-select>
         <el-button type="primary" size="mini" style="float: right;margin: 9px 0;" @click="exportExcel">导出详细数据</el-button>
       </div>

@@ -13,6 +13,9 @@
     <el-col :span="24">
       <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
         <div class="chartTile">运行效率</div>
+        <el-select v-model="areaValue" size="mini" @change="searchTime">
+          <el-option v-for="(item,index) in areaOptions" :key="index" :label="item.AreaName" :value="item.value"></el-option>
+        </el-select>
       </div>
       <div class="platformContainer">
         <el-col :span="8">
@@ -64,6 +67,8 @@
         loadRate:"",
         ratedPower:"",
         activePower:"",
+        areaValue:"",
+        areaOptions:[],
         ChartExtend: {
           grid:{
             left:'0',
@@ -101,14 +106,20 @@
           params.StartTime = dayStartTime
           params.EndTime = dayEndTime
           params.TimeClass = this.formParameters.resourceTime
+          params.CurrentTime = moment(this.formParameters.startDate).format('YYYY-MM-DD HH:mm:ss')
+          params.AreaName = this.areaValue
         }else if(this.formParameters.resourceTime === "月"){
           params.StartTime = monthStartTime
           params.EndTime = monthEndTime
           params.TimeClass = this.formParameters.resourceTime
+          params.CurrentTime = moment(this.formParameters.startDate).format('YYYY-MM-DD HH:mm:ss')
+          params.AreaName = this.areaValue
         }else if(this.formParameters.resourceTime === "年"){
           params.StartTime = yearStartTime
           params.EndTime = yearEndTime
           params.TimeClass = this.formParameters.resourceTime
+          params.CurrentTime = moment(this.formParameters.startDate).format('YYYY-MM-DD HH:mm:ss')
+          params.AreaName = this.areaValue
         }
         this.axios.get("/api/runefficiency",{params:params}).then(res => {
           that.chartsLoading = false
@@ -117,7 +128,27 @@
           that.activePower = res.data.activePower + res.data.unit
           that.runEfficiencyChartData.rows = res.data.row
         })
-      }
+      },
+      getArea(){
+        var params = {
+          tableName: "AreaTable",
+          limit:1000,
+          offset:0
+        }
+        var that = this
+        this.axios.get("/api/CUID",{params:params}).then(res =>{
+          var resData = JSON.parse(res.data).rows
+          that.areaOptions.push({
+            AreaName:"整厂区",value:""
+          })
+          resData.forEach(item =>{
+            that.areaOptions.push({
+              AreaName:item.AreaName,
+              value:item.AreaName
+            })
+          })
+        })
+      },
     }
   }
 </script>
