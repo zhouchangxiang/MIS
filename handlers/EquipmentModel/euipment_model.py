@@ -193,10 +193,14 @@ def powerquality():
             if warfirst:
                 dir["WarningType"] = warfirst.WarningType
                 dir["WarningDate"] = warfirst.WarningDate
+            else:
+                dir["WarningType"] = ""
+                dir["WarningDate"] = ""
             dir_list = []
             oclass = db_session.query(ElectricEnergy).filter(ElectricEnergy.CollectionDate.between(StartTime,EndTime)).all()
             for oc in oclass:
                 oc_dict = {}
+                oc_dict["时间"] = oc.CollectionDate
                 oc_dict["A项电流"] = oc.AI
                 oc_dict["A项电压"] = oc.AU
                 oc_dict["B项电流"] = oc.BI
