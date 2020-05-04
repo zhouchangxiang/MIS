@@ -332,7 +332,7 @@ def energydetail():
                     for tagvalue in tagsoclass:
                         tag_dict = {}
                         tag_dict["时间"] = tagvalue[1]
-                        tag_dict[""] = tagvalue[0]
+                        tag_dict["能耗量"] = tagvalue[0]
                         tag_list.append(tag_dict)
             dic_lisct.append(dic_lisct_i)
             dir["row"] = dic_lisct
