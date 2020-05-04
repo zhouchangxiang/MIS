@@ -515,7 +515,6 @@
           EndTime:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss")
         }
         this.axios.get("/api/powerquality",{params:params}).then(res =>{
-          console.log(res.data)
           that.thredaycount  = res.data.thredaycount
           that.WarningType  = res.data.WarningType
           that.WarningDate  = res.data.WarningDate

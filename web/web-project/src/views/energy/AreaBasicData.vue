@@ -85,13 +85,10 @@
             top:'40px'
           },
           series:{
-            type:"line",
             smooth: false
           }
         },
-        chartSettings: {
-          type:"line"
-        },
+        chartSettings: {type:""},
         chartData: {
           columns: [],
           rows: []
@@ -264,7 +261,7 @@
           }else if(this.formParameters.energy === "汽"){
             TagClassValue = this.SteamEqActive
           }
-          if(this.newAreaName.areaName === "整厂区"){
+          if(this.newAreaName.areaName === "整厂区" || this.newAreaName.areaName === ""){
             areaName = ""
           }else{
             areaName = this.newAreaName.areaName
@@ -303,15 +300,15 @@
           this.axios.get("/api/energydetail",{params:params,cancelToken: this.source.token}).then(res => {
             this.chartsLoading = false
             if(areaName === ""){
-              this.dataZoom = []
-              this.chartSettings.type = "histogram"
+              that.dataZoom = []
+              that.chartSettings.type = "histogram"
               that.chartData = {
                 columns: ['车间', '能耗量'],
                 rows: res.data.row
               }
             }else{
-              this.dataZoom = [{type: 'slider',start: 0,end: 20}]
-              this.chartSettings.type = "line"
+              that.dataZoom = [{type: 'slider',start: 0,end: 20}]
+              that.chartSettings.type = "line"
               that.chartData = {
                 columns: ['时间', '能耗量'],
                 rows: res.data.row

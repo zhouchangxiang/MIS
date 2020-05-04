@@ -164,7 +164,7 @@
           yAxisName: []
         },
         basicElectricityChartData: {
-          columns: ['时间', '容量', '耗量','成本'],
+          columns: ['时间', '耗量','成本'],
           rows: []
         },
         totalPrice:"",
