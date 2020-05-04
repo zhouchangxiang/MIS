@@ -432,15 +432,15 @@ def energyStatisticsCostbyhour(oc_list, StartTime, EndTime, energy):
     :return:
     '''
     if energy == "水":
-        sql = "select SUM(Cast(t1.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"') * Cast(t2.PriceValue as float) FROM [DB_MICS].[dbo].[IncrementWaterTable] t1 with (INDEX =IX_IncrementWaterTable) INNER JOIN [DB_MICS].[dbo].[WaterSteamPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
+        sql = "select SUM(Cast(t1.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"') * Cast(t2.PriceValue as float), t1.CollectionHour FROM [DB_MICS].[dbo].[IncrementWaterTable] t1 with (INDEX =IX_IncrementWaterTable) INNER JOIN [DB_MICS].[dbo].[WaterSteamPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
             oc_list)[
                                                                                                                                                                                         1:-1] + ") and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue, t1.CollectionHour"
     elif energy == "电":
-        sql = "select SUM(Cast(t1.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"') * Cast(t2.PriceValue as float) FROM [DB_MICS].[dbo].[IncrementElectricTable] t1 with (INDEX =IX_IncrementElectricTable) INNER JOIN [DB_MICS].[dbo].[ElectricPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
+        sql = "select SUM(Cast(t1.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"') * Cast(t2.PriceValue as float), t1.CollectionHour FROM [DB_MICS].[dbo].[IncrementElectricTable] t1 with (INDEX =IX_IncrementElectricTable) INNER JOIN [DB_MICS].[dbo].[ElectricPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
             oc_list)[
                                                                                                                                                                                         1:-1] + ") and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue, t1.CollectionHour"
     elif energy == "汽":
-        sql = "select SUM(Cast(t1.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"') * Cast(t2.PriceValue as float) FROM [DB_MICS].[dbo].[IncrementStreamTable] t1 with (INDEX =IX_IncrementStreamTable) INNER JOIN [DB_MICS].[dbo].[WaterSteamPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
+        sql = "select SUM(Cast(t1.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"') * Cast(t2.PriceValue as float), t1.CollectionHour FROM [DB_MICS].[dbo].[IncrementStreamTable] t1 with (INDEX =IX_IncrementStreamTable) INNER JOIN [DB_MICS].[dbo].[WaterSteamPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
             oc_list)[
                                                                                                                                                                                         1:-1] + ") and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue, t1.CollectionHour"
     re = db_session.execute(sql).fetchall()
@@ -1386,7 +1386,7 @@ def energycost():
                 oc_list.append(tag.TagClassValue)
             if TimeClass == "日":
                 hours = energyStatisticshour(oc_list, StartTime, EndTime, EnergyClass)
-                cost_hours = energyStatisticsCostbyhour(oc_list, StartTime, EndTime, energy)
+                cost_hours = energyStatisticsCostbyhour(oc_list, StartTime, EndTime, EnergyClass)
                 dict_hours = {letter: score for score, letters in hours for letter in letters.split(",")}
                 dict_cost_hours = {letter: score for score, letters in cost_hours for letter in
                                    letters.split(",")}
@@ -1405,7 +1405,7 @@ def energycost():
                     dir_list.append(dir_list_i)
             elif TimeClass == "月":
                 days = energyStatisticsday(oc_list, StartTime, EndTime, EnergyClass)
-                cost_days = energyStatisticsCostbyday(oc_list, StartTime, EndTime, energy)
+                cost_days = energyStatisticsCostbyday(oc_list, StartTime, EndTime, EnergyClass)
                 dict_days = {letter: score for score, letters in days for letter in letters.split(",")}
                 dict_cost_days = {letter: score for score, letters in cost_days for letter in
                                    letters.split(",")}
@@ -1424,7 +1424,7 @@ def energycost():
                     dir_list.append(dir_list_i)
             elif TimeClass == "年":
                 monts = energyStatisticsmonth(oc_list, StartTime, EndTime, EnergyClass)
-                cost_months = energyStatisticsCostbymonth(oc_list, StartTime, EndTime, energy)
+                cost_months = energyStatisticsCostbymonth(oc_list, StartTime, EndTime, EnergyClass)
                 dict_monts = {letter: score for score, letters in monts for letter in letters.split(",")}
                 dict_cost_months = {letter: score for score, letters in cost_months for letter in
                                    letters.split(",")}
