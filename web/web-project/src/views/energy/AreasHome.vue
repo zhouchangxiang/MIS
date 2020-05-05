@@ -440,7 +440,7 @@
       this.getOnLineEq()
     },
     destroyed() {
-      if(this.$route.query.areaName === "整厂区" && this.newAreaName.AreaName === "整厂区"){
+      if(this.$route.query.areaName === "整厂区" || this.newAreaName.AreaName === "整厂区"){
         this.websock.close() //离开路由之后断开websocket连接
       }
     },
@@ -666,31 +666,29 @@
       websocketonmessage(e){ //数据接收
         this.socketLoading = false
         var resdata = JSON.parse(e.data);
-        resdata.forEach(item =>{
-          if(item.AreaName === ""){
-            this.electricChartValue = item.areaEZGL
-            this.waterChartValue = item.areaWSum
-            this.steamChartValue = item.areaSSum
-            //电
-            this.electricChartData.rows.push({
-              "时间": moment().format("HH:mm:ss"),
-              "总功率": this.electricChartValue
-            })
-            this.electricChartData.rows.shift()
-            //水
-            this.waterChartData.rows.push({
-              "时间": moment().format("HH:mm:ss"),
-              "累计流量": this.waterChartValue
-            })
-            this.waterChartData.rows.shift()
-            //汽
-            this.steamChartData.rows.push({
-              '时间': moment().format("HH:mm:ss"),
-              '累计流量': this.steamChartValue
-            })
-            this.steamChartData.rows.shift()
-          }
-        })
+        if(resdata[1].AreaName === ""){
+          this.electricChartValue = resdata[1].areaEZGL
+          this.waterChartValue = resdata[1].areaWSum
+          this.steamChartValue = resdata[1].areaSSum
+          //电
+          this.electricChartData.rows.push({
+            "时间": moment().format("HH:mm:ss"),
+            "总功率": this.electricChartValue
+          })
+          this.electricChartData.rows.shift()
+          //水
+          this.waterChartData.rows.push({
+            "时间": moment().format("HH:mm:ss"),
+            "累计流量": this.waterChartValue
+          })
+          this.waterChartData.rows.shift()
+          //汽
+          this.steamChartData.rows.push({
+            '时间': moment().format("HH:mm:ss"),
+            '累计流量': this.steamChartValue
+          })
+          this.steamChartData.rows.shift()
+        }
       },
       websocketsend(Data){//数据发送
         this.websock.send(Data);

@@ -73,24 +73,261 @@
             <li v-for="(item,index) in mainMenuList" :key="index" @click="clickMainMenu(index)" v-bind:class="{active:index==isactive}">{{ item.text }}</li>
           </ul>
         </div>
-        <el-drawer :visible.sync="drawer" :with-header="false" size="91%">
+        <el-drawer :visible.sync="drawer" :with-header="false" size="91%" @close="closesocket">
           <div class="drawerContent">
             <div class="drawerMaskBg"></div>
             <i class="close-drawer el-icon-close text-size-large" @click="drawer=false"></i>
             <div class="mapContent">
               <div class="mapContentTop">
                 <div style="position: relative;height: 100%;">
-                  <div v-for="(item,index) in drawerTopAreaOption" class="mapContentItem" :style="{width:item.width, height: item.height,top: item.top,left: item.left}" :key="index"><div class="mapItemPoint" :style="{marginLeft: item.marginLeft}"></div></div>
+                  <div v-for="(item,index) in drawerTopAreaOption" class="mapContentItem" :style="{width:item.width, height: item.height,top: item.top,left: item.left}" :key="index" @click="showAreaInfo(item.title,item.img,item.img2)">
+                    <div class="mapItemPoint" :style="{marginLeft: item.marginLeft}"></div>
+                  </div>
                 </div>
               </div>
               <div class="mapContentBottom">
                 <div style="position: relative;height: 100%;">
-                  <div v-for="(item,index) in drawerBottomAreaOption" class="mapContentItem" :style="{width:item.width, height: item.height,top: item.top,left: item.left}" :key="index"><div class="mapItemPoint" :style="{marginLeft: item.marginLeft}"></div></div>
+                  <div v-for="(item,index) in drawerBottomAreaOption" class="mapContentItem" :style="{width:item.width, height: item.height,top: item.top,left: item.left}" :key="index">
+                    <div class="mapItemPoint" :style="{marginLeft: item.marginLeft}"></div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </el-drawer>
+        <el-dialog :title="areaOverallgDialogTitle" :visible.sync="areaOverallgDialog" :modal="false" width="840px">
+          <div v-if="areaOverallgDialogSrc2" style="position: relative">
+            <el-image style="width: 100%;" :src="areaOverallgDialogSrc2"></el-image>
+            <div v-if="areaOverallgDialogTitle === '提取二车间'">
+              <div class="steamTagLabel" style="left:-10px;top: -15px;min-width: 155px;width: 155px;">
+                <div class="steamTagTitle">锅炉流量计DN400</div>
+                <div class="steamTagValue">
+                  <p>{{ steamGlTag.sumValue }}</p>
+                  <p>{{ steamGlTag.flowValue }}</p>
+                  <p>{{ steamGlTag.SteamWD }}°C</p>
+                </div>
+              </div>
+              <div class="steamTagLabel" style="left:210px;top: -54px;min-width: 155px;width: 155px;">
+                <div class="steamTagTitle" style="line-height: 45px;">一楼灭菌柜DN80</div>
+                <div class="steamTagValue">
+                  <p>{{ steamTagList.S_Area_TQR_20_1_502.sumValue }}</p>
+                  <p>{{ steamTagList.S_Area_TQR_20_1_502.flowValue }}</p>
+                  <p>{{ steamTagList.S_Area_TQR_20_1_502.SteamWD }}°C</p>
+                </div>
+              </div>
+              <div class="steamTagLabel" style="left:152px;top: 82px;min-width: 140px;width: 140px;">
+                <div class="steamTagTitle" style="line-height: 22px;">单效/双效浓缩DN20</div>
+                <div class="steamTagValue">
+                  <p>{{ steamTagList.S_Area_TQR_19_3_502.sumValue }}</p>
+                  <p>{{ steamTagList.S_Area_TQR_19_3_502.flowValue }}</p>
+                  <p>{{ steamTagList.S_Area_TQR_19_3_502.SteamWD }}°C</p>
+                </div>
+              </div>
+              <div class="steamTagLabel" style="left:700px;top: 95px;;min-width: 95px;width: 95px;">
+                <div class="steamTagTitle" style="line-height: 22px;">喷干两台/CIP DN20</div>
+                <div class="steamTagValue">
+                  <p>{{ steamTagList.S_Area_TQR_20_2_502.sumValue }}</p>
+                  <p>{{ steamTagList.S_Area_TQR_20_2_502.flowValue }}</p>
+                  <p>{{ steamTagList.S_Area_TQR_20_2_502.SteamWD }}°C</p>
+                </div>
+              </div>
+              <div class="steamTagLabel" style="left:440px;top: 120px;min-width: 140px;width: 140px;">
+                <div class="steamTagTitle">提取单号DN150</div>
+                <div class="steamTagValue">
+                  <p>{{ steamTagList.S_Area_TQR_19_1_502.sumValue }}</p>
+                  <p>{{ steamTagList.S_Area_TQR_19_1_502.flowValue }}</p>
+                  <p>{{ steamTagList.S_Area_TQR_19_1_502.SteamWD }}°C</p>
+                </div>
+              </div>
+              <div class="steamTagLabel" style="left:373px;top: 320px;">
+                <div class="steamTagTitle">提取双号DN150</div>
+                <div class="steamTagValue">
+                  <p>{{ steamTagList.S_Area_TQR_19_2_502.sumValue }}</p>
+                  <p>{{ steamTagList.S_Area_TQR_19_2_502.flowValue }}</p>
+                  <p>{{ steamTagList.S_Area_TQR_19_2_502.SteamWD }}°C</p>
+                </div>
+              </div>
+              <div class="steamTagLabel" style="left:-18px;top: 340px;min-width: 85px;width: 85px;">
+                <div class="steamTagTitle" style="line-height: 22px;">管式灭菌DN80</div>
+                <div class="steamTagValue">
+                  <p>{{ steamTagList.S_Area_TQR_20_3_502.sumValue }}</p>
+                  <p>{{ steamTagList.S_Area_TQR_20_3_502.flowValue }}</p>
+                  <p>{{ steamTagList.S_Area_TQR_20_3_502.SteamWD }}°C</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="position: relative">
+            <el-image style="width: 100%;" :src="areaOverallgDialogSrc"></el-image>
+            <div v-if="areaOverallgDialogTitle === '锅炉房'">
+              <div class="steamTagLabel" style="left:-10px;top: 345px;">
+                <div class="steamTagTitle">锅炉总流量计DN400</div>
+                <div class="steamTagValue">
+                  <p>{{ steamGlTag.sumValue }}</p>
+                  <p>{{ steamGlTag.flowValue }}</p>
+                  <p>{{ steamGlTag.SteamWD }}°C</p>
+                </div>
+              </div>
+              <div class="steamTagLabel" style="left:490px;top: 20px;">
+                <div class="steamTagTitle">老醇提/前处理DN100</div>
+                <div class="steamTagValue">
+                  <p>{{ steamTagList.S_Area_YTQ_40_2_502.sumValue }}</p>
+                  <p>{{ steamTagList.S_Area_YTQ_40_2_502.flowValue }}</p>
+                  <p>{{ steamTagList.S_Area_YTQ_40_2_502.SteamWD }}°C</p>
+                </div>
+              </div>
+              <div class="steamTagLabel" style="left:495px;top: 100px;">
+                <div class="steamTagTitle">GMP/生物科技DN80</div>
+                <div class="steamTagValue">
+                  <p>{{ steamTagList.S_Area_JK_27_1_502.sumValue }}</p>
+                  <p>{{ steamTagList.S_Area_JK_27_1_502.flowValue }}</p>
+                  <p>{{ steamTagList.S_Area_JK_27_1_502.SteamWD }}°C</p>
+                </div>
+              </div>
+              <div class="steamTagLabel" style="left:495px;top: 188px;">
+                <div class="steamTagTitle">老水提/原提取DN100</div>
+                <div class="steamTagValue">
+                  <p>{{ steamTagList.S_Area_YTQ_40_1_502.sumValue }}</p>
+                  <p>{{ steamTagList.S_Area_YTQ_40_1_502.flowValue }}</p>
+                  <p>{{ steamTagList.S_Area_YTQ_40_1_502.SteamWD }}°C</p>
+                </div>
+              </div>
+              <div class="steamTagLabel" style="left:490px;top: 280px;">
+                <div class="steamTagTitle">化验室/中试DN100</div>
+                <div class="steamTagValue">
+                  <p>{{ steamTagList.S_Area_YF_25_1_502.sumValue }}</p>
+                  <p>{{ steamTagList.S_Area_YF_25_1_502.flowValue }}</p>
+                  <p>{{ steamTagList.S_Area_YF_25_1_502.SteamWD }}°C</p>
+                </div>
+              </div>
+              <div class="steamTagLabel" style="left:512px;top: 370px;">
+                <div class="steamTagTitle">供暖DN150</div>
+                <div class="steamTagValue">
+                  <p>{{ steamTagList.S_Area_GLF_45_3_502.sumValue }}</p>
+                  <p>{{ steamTagList.S_Area_GLF_45_3_502.flowValue }}</p>
+                  <p>{{ steamTagList.S_Area_GLF_45_3_502.SteamWD }}°C</p>
+                </div>
+              </div>
+              <div class="steamTagLabel" style="left:500px;top: 450px;">
+                <div class="steamTagTitle">食堂DN25</div>
+                <div class="steamTagValue">
+                  <p>{{ steamTagList.S_Area_BGL_35_1_502.sumValue }}</p>
+                  <p>{{ steamTagList.S_Area_BGL_35_1_502.flowValue }}</p>
+                  <p>{{ steamTagList.S_Area_BGL_35_1_502.SteamWD }}°C</p>
+                </div>
+              </div>
+            </div>
+            <div v-if="areaOverallgDialogTitle === '提取二车间'">
+              <!--<div class="steamTagLabel" style="left:195px;top: 83px;">-->
+                <!--<div class="steamTagTitle">制粒DN80</div>-->
+                <!--<div class="steamTagValue">-->
+                <!--</div>-->
+              <!--</div>-->
+              <!--<div class="steamTagLabel" style="left:180px;top: 175px;">-->
+                <!--<div class="steamTagTitle">60带干/刮板浓缩/空调DN100</div>-->
+                <!--<div class="steamTagValue">-->
+                <!--</div>-->
+              <!--</div>-->
+              <div class="steamTagLabel" style="left:6px;top: 350px;min-width: 155px;width: 155px;">
+                <div class="steamTagTitle">锅炉流量计DN400</div>
+                <div class="steamTagValue">
+                  <p>{{ steamGlTag.sumValue }}</p>
+                  <p>{{ steamGlTag.flowValue }}</p>
+                  <p>{{ steamGlTag.SteamWD }}°C</p>
+                </div>
+              </div>
+            </div>
+            <div v-if="areaOverallgDialogTitle === '综合车间'">
+              <div class="steamTagLabel" style="left:0;top: 50px;min-width: 130px;width: 130px;">
+                <div class="steamTagTitle" style="line-height: 22px;">120带干DN32</div>
+                <div class="steamTagValue">
+                  <p>{{ steamTagList.S_Area_ZH_21_2_502.sumValue }}</p>
+                  <p>{{ steamTagList.S_Area_ZH_21_2_502.flowValue }}</p>
+                  <p>{{ steamTagList.S_Area_ZH_21_2_502.SteamWD }}°C</p>
+                </div>
+              </div>
+              <div class="steamTagLabel" style="left:0;top: 220px;min-width: 175px;width: 175px;">
+                <div class="steamTagTitle" style="line-height: 22px;">流化床制粒DN50</div>
+                <div class="steamTagValue">
+                  <p>{{ steamTagList.S_Area_ZH_21_1_502.sumValue }}</p>
+                  <p>{{ steamTagList.S_Area_ZH_21_1_502.flowValue }}</p>
+                  <p>{{ steamTagList.S_Area_ZH_21_1_502.SteamWD }}°C</p>
+                </div>
+              </div>
+              <div class="steamTagLabel" style="left:22px;top: 315px;">
+                <div class="steamTagTitle" style="line-height: 22px;">锅炉流量计DN400</div>
+                <div class="steamTagValue">
+                  <p>{{ steamGlTag.sumValue }}</p>
+                  <p>{{ steamGlTag.flowValue }}</p>
+                  <p>{{ steamGlTag.SteamWD }}°C</p>
+                </div>
+              </div>
+              <div class="steamTagLabel" style="left:474px;top: -10px;min-width: 100px;width: 100px;">
+                <div class="steamTagTitle" style="line-height: 22px;">二次浓缩DN100</div>
+                <div class="steamTagValue">
+                  <p>{{ steamTagList.S_Area_ZH_46_1_502.sumValue }}</p>
+                  <p>{{ steamTagList.S_Area_ZH_46_1_502.flowValue }}</p>
+                  <p>{{ steamTagList.S_Area_ZH_46_1_502.SteamWD }}°C</p>
+                </div>
+              </div>
+              <div class="steamTagLabel" style="left:285px;top: 105px;">
+                <div class="steamTagTitle">醇提+浓缩DN150</div>
+                <div class="steamTagValue">
+                  <p>{{ steamTagList.S_Area_ZH_46_2_502.sumValue }}</p>
+                  <p>{{ steamTagList.S_Area_ZH_46_2_502.flowValue }}</p>
+                  <p>{{ steamTagList.S_Area_ZH_46_2_502.SteamWD }}°C</p>
+                </div>
+              </div>
+              <div class="steamTagLabel" style="left:362px;top: 176px;min-width: 110px;width: 110px;">
+                <div class="steamTagTitle" style="line-height: 22px;">双效浓缩/CIP DN200</div>
+                <div class="steamTagValue">
+                  <p>{{ steamTagList.S_Area_ZH_46_3_502.sumValue }}</p>
+                  <p>{{ steamTagList.S_Area_ZH_46_3_502.flowValue }}</p>
+                  <p>{{ steamTagList.S_Area_ZH_46_3_502.SteamWD }}°C</p>
+                </div>
+              </div>
+              <div class="steamTagLabel" style="left:210px;top: 170px;min-width: 110px;width: 110px;">
+                <div class="steamTagTitle" style="line-height: 22px;">提取双号DN150</div>
+                <div class="steamTagValue">
+                  <p>{{ steamTagList.S_Area_ZH_22_1_502.sumValue }}</p>
+                  <p>{{ steamTagList.S_Area_ZH_22_1_502.flowValue }}</p>
+                  <p>{{ steamTagList.S_Area_ZH_22_1_502.SteamWD }}°C</p>
+                </div>
+              </div>
+              <div class="steamTagLabel" style="left:170px;top: 288px;min-width: 95px;width: 95px;">
+                <div class="steamTagTitle" style="line-height: 22px;">提取单号DN150</div>
+                <div class="steamTagValue">
+                  <p>{{ steamTagList.S_Area_ZH_21_3_502.sumValue }}</p>
+                  <p>{{ steamTagList.S_Area_ZH_21_3_502.flowValue }}</p>
+                  <p>{{ steamTagList.S_Area_ZH_21_3_502.SteamWD }}°C</p>
+                </div>
+              </div>
+            </div>
+            <div v-if="areaOverallgDialogTitle === '新建综合制剂车间'">
+              <div class="steamTagLabel" style="left:20px;top: 300px;">
+                <div class="steamTagTitle">新制剂分汽缸DN200</div>
+                <div class="steamTagValue">
+                  <p>{{ steamTagList.S_Area_XJZ_13_1_7_502.sumValue }}</p>
+                  <p>{{ steamTagList.S_Area_XJZ_13_1_7_502.flowValue }}</p>
+                  <p>{{ steamTagList.S_Area_XJZ_13_1_7_502.SteamWD }}°C</p>
+                </div>
+              </div>
+            </div>
+            <div v-if="areaOverallgDialogTitle === '固体制剂车间'">
+              <div class="steamTagLabel" style="left:20px;top: 320px;">
+                <div class="steamTagTitle">固体分汽缸流量计DN100</div>
+                <div class="steamTagValue">
+                  <p>{{ steamTagList.S_Area_GT_31_1_502.sumValue }}</p>
+                  <p>{{ steamTagList.S_Area_GT_31_1_502.flowValue }}</p>
+                  <p>{{ steamTagList.S_Area_GT_31_1_502.SteamWD }}°C</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="areaOverallgDialog = false">取 消</el-button>
+          </div>
+        </el-dialog>
         <!-- 个人信息 -->
         <el-dialog title="个人信息" :visible.sync="dialogUserVisible">
           <el-form label-width="110px">
@@ -165,21 +402,28 @@ export default {
       UserInfo:{},
       drawer: false,
       drawerTopAreaOption:[
-        {title:"污水站",width: "120px",height:"33%",top:"23%",left:"3%",marginLeft:"70px"},
-        {title:"锅炉房",width: "220px",height:"23%",top:"17%",left:"15%",marginLeft:"140px"},
-        {title:"提取二车间",width: "220px",height:"17%",top:"40%",left:"15%",marginLeft:"100px"},
-        {title:"综合车间",width: "250px",height:"28%",top:"60%",left:"10%",marginLeft:"100px"},
-        {title:"新建综合制剂车间",width: "100px",height:"45%",top:"18%",left:"34%",marginLeft:"30px"},
-        {title:"研发中心",width: "60px",height:"43%",top:"18%",left:"44%",marginLeft:"30px"},
-        {title:"原提取车间",width: "90px",height:"15%",top:"33%",left:"50%",marginLeft:"30px"},
-        {title:"前处理车间",width: "90px",height:"17%",top:"45%",left:"58%",marginLeft:"40px"},
-        {title:"好护士健康科技车间",width: "220px",height:"17%",top:"57%",left:"46%",marginLeft:"80px"},
-        {title:"固体制剂车间",width: "280px",height:"28%",top:"74%",left:"48%",marginLeft:"60px"},
+        //{title:"污水站",width: "120px",height:"30%",top:"26%",left:"5%",marginLeft:"80px"},
+        {title:"锅炉房",width: "220px",height:"20%",top:"26%",left:"15%",marginLeft:"120px",img:require("@/assets/imgs/guolu.jpg")},
+        {title:"提取二车间",width: "220px",height:"15%",top:"42%",left:"15%",marginLeft:"100px",img:require("@/assets/imgs/tiquer.jpg"),img2:require("@/assets/imgs/tiquer2.jpg")},
+        {title:"综合车间",width: "250px",height:"28%",top:"60%",left:"10%",marginLeft:"100px",img:require("@/assets/imgs/zonghe.jpg")},
+        {title:"新建综合制剂车间",width: "100px",height:"45%",top:"18%",left:"34%",marginLeft:"30px",img:require("@/assets/imgs/xinzhiji.jpg")},
+        //{title:"中试车间",width: "60px",height:"43%",top:"18%",left:"45%",marginLeft:"35px"},
+        //{title:"原提取车间",width: "90px",height:"15%",top:"33%",left:"50%",marginLeft:"30px"},
+        //{title:"前处理车间",width: "90px",height:"17%",top:"45%",left:"58%",marginLeft:"40px"},
+        //{title:"GMP车间",width: "220px",height:"17%",top:"55%",left:"46%",marginLeft:"80px"},
+        {title:"固体制剂车间",width: "280px",height:"28%",top:"74%",left:"48%",marginLeft:"160px",img:require("@/assets/imgs/gutizhiji.jpg")},
       ],
       drawerBottomAreaOption:[
-        {title:"展览室",width: "150px",height:"45%",top:"17%",left:"15%",marginLeft:"70px"},
-        {title:"办公楼",width: "360px",height:"48%",top:"10%",left:"25%",marginLeft:"140px"},
+        //{title:"展览室",width: "150px",height:"45%",top:"17%",left:"15%",marginLeft:"70px"},
+        //{title:"办公楼＼食堂",width: "360px",height:"48%",top:"10%",left:"25%",marginLeft:"140px"},
       ],
+      areaOverallgDialog:false,
+      areaOverallgDialogTitle:"",
+      areaOverallgDialogSrc:"",
+      areaOverallgDialogSrc2:"",
+      steamTagList:{},
+      steamGlTag:"",
+      websock:null,
     }
   },
   //依赖注入传值
@@ -217,6 +461,9 @@ export default {
       this.$router.push("/login");
     }
     this.getWeather()
+  },
+  destroyed() {
+    this.websock.close() //离开路由之后断开websocket连接
   },
   methods:{
     getMenuHeight(){
@@ -320,9 +567,56 @@ export default {
     },
     scattergram(){
       this.drawer = true
+      this.getGlSteamLabel()
+      this.initWebSocket()
     },
-    showAreaInfo(AreaName){
-      console.log(AreaName)
+    showAreaInfo(AreaName,img,img2){
+      if(img){
+        if(img2){
+          this.areaOverallgDialog = true
+          this.areaOverallgDialogTitle = AreaName
+          this.areaOverallgDialogSrc = img
+          this.areaOverallgDialogSrc2 = img2
+        }else{
+          this.areaOverallgDialog = true
+          this.areaOverallgDialogTitle = AreaName
+          this.areaOverallgDialogSrc = img
+          this.areaOverallgDialogSrc2 = ""
+        }
+      }
+    },
+    getGlSteamLabel(){
+      this.axios.get("/api/steamtotal").then(res =>{
+        this.steamGlTag = res.data.S_AllArea_Value
+      })
+    },
+    initWebSocket(){ //初始化weosocket
+      const wsuri = "ws://127.0.0.1:5002";
+      this.websock = new WebSocket(wsuri);
+      this.websock.onmessage = this.websocketonmessage;
+      this.websock.onopen = this.websocketonopen;
+      this.websock.onerror = this.websocketonerror;
+      this.websock.onclose = this.websocketclose;
+    },
+    websocketonopen(){ //连接建立之后执行send方法发送数据
+      this.websocketsend("");
+    },
+    websocketonerror(){//连接建立失败重连
+      console.log("websocket连接失败")
+    },
+    websocketonmessage(e){ //数据接收
+      var resdata = JSON.parse(e.data);
+      this.steamTagList = resdata[0].steam
+    },
+    websocketsend(Data){//数据发送
+      this.websock.send(Data);
+    },
+    websocketclose(e){  //关闭
+      console.log("websocket关闭")
+    },
+    closesocket(){
+      this.websock.close()
+      console.log(1)
     }
   }
 }
@@ -492,5 +786,27 @@ export default {
   .mapContentItem:hover .mapItemPoint{
     box-shadow: 0 0 10px 10px rgba(251,58,6,1);
 	  transition: box-shadow 0.5s;
+  }
+  .steamTagLabel{
+    position: absolute;
+    padding: 5px 10px 2px;
+    background: #fff;
+    border: 1px solid #e1e1e1;
+    border-radius: 4px;
+    min-width: 235px;
+  }
+  .steamTagTitle{
+    float: left;
+    padding-right: 15px;
+    line-height: 64px;
+  }
+  .steamTagValue{
+    float: right;
+  }
+  .steamTagValue p{
+    background: #333;
+    padding: 0 5px;
+    color: #15CC48;
+    margin-bottom: 3px;
   }
 </style>
