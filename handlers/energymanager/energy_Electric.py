@@ -453,7 +453,7 @@ def electricnergycost():
                 elif priceunit.PriceName == "平时刻":
                     puint = float(priceunit.PriceValue)
                 elif priceunit.PriceName == "谷时刻":
-                    ratio = guint = float(priceunit.PriceValue)
+                    guint = float(priceunit.PriceValue)
             totalprice = jtimeprice
             periodTimeTypeItem = []
             if totalprice != 0.0:

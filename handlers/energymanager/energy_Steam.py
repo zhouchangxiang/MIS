@@ -349,7 +349,7 @@ def roundtwo(rod):
         if float(rod) < 0:
             return 0.0
         return round(float(rod), 2)
-def energyStatisticsteamtotal(StartTime, EndTime, energy):
+def energyStatisticsteamtotal(StartTime, EndTime, TimeClass):
     '''
     :param oc_list: tag点的List
     :param StartTime:
@@ -357,16 +357,29 @@ def energyStatisticsteamtotal(StartTime, EndTime, energy):
     :param energy:
     :return:获取某段时间汽能总值
     '''
-    propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
-    pro = float(propor.Proportion)
-    reend = db_session.query(SteamTotalMaintain.SumValue).filter(
-        SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0',
-        SteamTotalMaintain.CollectionDay == EndTime[0:10]).order_by(desc("CollectionDate")).first()
-    restar = db_session.query(SteamTotalMaintain.SumValue).filter(
-        SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0',
-        SteamTotalMaintain.CollectionDay == StartTime[0:10]).order_by(("CollectionDate")).first()
+    if TimeClass == "日":
+        reend = db_session.query(SteamTotalMaintain.SumValue).filter(
+            SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0',
+            SteamTotalMaintain.CollectionDay == EndTime[0:10]).order_by(desc("CollectionDate")).first()
+        restar = db_session.query(SteamTotalMaintain.SumValue).filter(
+            SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0',
+            SteamTotalMaintain.CollectionDay == StartTime[0:10]).order_by(("CollectionDate")).first()
+    elif TimeClass == "月":
+        reend = db_session.query(SteamTotalMaintain.SumValue).filter(
+            SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0',
+            SteamTotalMaintain.CollectionMonth == EndTime[0:7]).order_by(desc("CollectionDate")).first()
+        restar = db_session.query(SteamTotalMaintain.SumValue).filter(
+            SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0',
+            SteamTotalMaintain.CollectionMonth == StartTime[0:7]).order_by(("CollectionDate")).first()
+    else:
+        reend = db_session.query(SteamTotalMaintain.SumValue).filter(
+            SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0',
+            SteamTotalMaintain.CollectionYear == EndTime[0:4]).order_by(desc("CollectionDate")).first()
+        restar = db_session.query(SteamTotalMaintain.SumValue).filter(
+            SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0',
+            SteamTotalMaintain.CollectionYear == StartTime[0:4]).order_by(("CollectionDate")).first()
     if reend != None and restar != None:
-        return round(float(reend[0])*pro - float(restar[0])*pro, 2)
+        return round(float(reend[0]) - float(restar[0]), 2)
     else:
         return 0
 
@@ -394,7 +407,7 @@ def steamlossanalysis():
             for tag in tags:
                 oc_list.append(tag.TagClassValue)
             reto = energyStatistics(oc_list, StartTime, EndTime, EnergyClass)
-            totalm = energyStatisticsteamtotal(StartTime, EndTime, EnergyClass)
+            totalm = energyStatisticsteamtotal(StartTime, EndTime, TimeClass)
             dir["inputSteam"] = totalm
             dir["outputSteam"] = reto
             if reto > 0:
@@ -407,7 +420,7 @@ def steamlossanalysis():
                 losst = totalm
                 lossr = "100%"
             dir["PipeDamageRate"] = lossr
-            dir["PipeDamage"] = losst
+            dir["PipeDamage"] = round(float(losst), 2)
             unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == EnergyClass).first()[0]
             dir["Unit"] = unit
             dir_list = []
