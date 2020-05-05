@@ -234,17 +234,14 @@
         if(this.tableData.dialogTitle === "添加"){
           var params = {tableName:this.tableData.tableName}
           this.tableData.handleForm.forEach(item =>{
-            // var numRe = new RegExp(item.reg)
-            // if (!numRe.test(item.value)) {
-            //   this.$message({
-            //      type: 'error',
-            //      message: '请输入数字 '
-            //   })
-            // }
             params[item.prop] = item.value
           })
           this.axios.post("/api/CUID",this.qs.stringify(params)).then(res =>{
             if(res.data == "OK"){
+              this.$message({
+                type: 'success',
+                message: '添加成功'
+              });
               this.$emit('getTableData')
             }else{
               this.$message({
@@ -263,6 +260,10 @@
           })
           this.axios.put("/api/CUID",this.qs.stringify(params)).then(res =>{
             if(res.data == "OK"){
+              this.$message({
+                type: 'success',
+                message: '修改成功'
+              });
               this.$emit('getTableData')
             }else{
               this.$message({

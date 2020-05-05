@@ -85,7 +85,11 @@
             top:'40px'
           },
           series:{
-            smooth: false
+            smooth: false,
+            label:{
+              show: true,
+              position: "top"
+            }
           }
         },
         chartSettings: {type:""},
@@ -299,6 +303,7 @@
           }
           this.axios.get("/api/energydetail",{params:params,cancelToken: this.source.token}).then(res => {
             this.chartsLoading = false
+            console.log(res.data.row)
             if(areaName === ""){
               that.dataZoom = []
               that.chartSettings.type = "histogram"
