@@ -85,6 +85,7 @@
             top:'40px'
           },
           series:{
+            barMaxWidth : 50,
             smooth: false,
             label:{
               show: true,
@@ -344,27 +345,25 @@
       websocketonmessage(e){ //数据接收
         this.chartsLoading = false
         var resdata = JSON.parse(e.data);
-        resdata.forEach(item =>{
-          if(this.formParameters.energy === "电"){
-            this.chartData.rows.push({
-              "时间": moment().format("HH:mm:ss"),
-              "总功率": item.areaEZGL
-            })
-            this.chartData.rows.shift()
-          }else if(this.formParameters.energy === "水"){
-            this.chartData.rows.push({
-              "时间": moment().format("HH:mm:ss"),
-              "累计流量": item.areaWSum
-            })
-            this.chartData.rows.shift()
-          }else if(this.formParameters.energy === "汽"){
-            this.chartData.rows.push({
-              '时间': moment().format("HH:mm:ss"),
-              '累计流量': item.areaSSum
-            })
-            this.chartData.rows.shift()
-          }
-        })
+        if(this.formParameters.energy === "电"){
+          this.chartData.rows.push({
+            "时间": moment().format("HH:mm:ss"),
+            "总功率": resdata[1].areaEZGL
+          })
+          this.chartData.rows.shift()
+        }else if(this.formParameters.energy === "水"){
+          this.chartData.rows.push({
+            "时间": moment().format("HH:mm:ss"),
+            "累计流量": resdata[1].areaWSum
+          })
+          this.chartData.rows.shift()
+        }else if(this.formParameters.energy === "汽"){
+          this.chartData.rows.push({
+            '时间': moment().format("HH:mm:ss"),
+            '累计流量': resdata[1].areaSSum
+          })
+          this.chartData.rows.shift()
+        }
       },
       websocketsend(Data){//数据发送
         this.websock.send(Data);

@@ -615,7 +615,7 @@
           this.areaTimeChartExtend.label.formatter =  '{b}: {@score}' + res.data.unit
         })
       },
-      getElectricLoadRateTime(){
+      getElectricLoadRateTime(){  //电能负荷率
         var that = this
         var dayStartTime = moment().format('YYYY-MM-DD') + " 00:00:00"
         var dayEndTime = moment().format('YYYY-MM-DD HH:mm:ss')
@@ -643,6 +643,7 @@
           params.CurrentTime = moment().format('YYYY-MM-DD HH:mm:ss')
           params.AreaName = ""
         }
+        that.electricLoadRateChartData.rows[0].value = 0
         this.axios.get("/api/runefficiency",{params:params}).then(res => {
           that.electricLoadRateChartData.rows[0].value = res.data.loadRate
         })
