@@ -1396,63 +1396,64 @@ def energycost():
                                                           TagDetail.AreaName == AreaName).all()
             for tag in tags:
                 oc_list.append(tag.TagClassValue)
-            if TimeClass == "日":
-                hours = energyStatisticshour(oc_list, StartTime, EndTime, EnergyClass)
-                cost_hours = energyStatisticsCostbyhour(oc_list, StartTime, EndTime, EnergyClass)
-                dict_hours = {letter: score for score, letters in hours for letter in letters.split(",")}
-                dict_cost_hours = {letter: score for score, letters in cost_hours for letter in
-                                   letters.split(",")}
-                for myHour in constant.myHours:
-                    dir_list_i = {}
-                    scurrtime = StartTime[0:11] + myHour
-                    dir_list_i["时间"] = scurrtime
-                    hcount = 0
-                    hcostcount = 0
-                    if scurrtime in dict_hours.keys():
-                        hcount = round(float(dict_hours[scurrtime]), 2)
-                    if scurrtime in dict_cost_hours.keys():
-                        hcostcount = round(float(dict_cost_hours[scurrtime]), 2)
-                    dir_list_i["耗量"] = hcount
-                    dir_list_i["成本"] = hcostcount
-                    dir_list.append(dir_list_i)
-            elif TimeClass == "月":
-                days = energyStatisticsday(oc_list, StartTime, EndTime, EnergyClass)
-                cost_days = energyStatisticsCostbyday(oc_list, StartTime, EndTime, EnergyClass)
-                dict_days = {letter: score for score, letters in days for letter in letters.split(",")}
-                dict_cost_days = {letter: score for score, letters in cost_days for letter in
-                                   letters.split(",")}
-                for myday in constant.mydays:
-                    dir_list_i = {}
-                    daytime = StartTime[0:8] + myday
-                    dir_list_i["时间"] = daytime
-                    daycount = 0
-                    daycostcount = 0
-                    if daytime in dict_days.keys():
-                        daycount = round(float(dict_days[daytime]), 2)
-                    if daytime in dict_cost_days.keys():
-                        daycostcount = round(float(dict_cost_days[daytime]), 2)
-                    dir_list_i["耗量"] = daycount
-                    dir_list_i["成本"] = daycostcount
-                    dir_list.append(dir_list_i)
-            elif TimeClass == "年":
-                monts = energyStatisticsmonth(oc_list, StartTime, EndTime, EnergyClass)
-                cost_months = energyStatisticsCostbymonth(oc_list, StartTime, EndTime, EnergyClass)
-                dict_monts = {letter: score for score, letters in monts for letter in letters.split(",")}
-                dict_cost_months = {letter: score for score, letters in cost_months for letter in
-                                   letters.split(",")}
-                for mymonth in constant.mymonths:
-                    dir_list_i = {}
-                    monthtime = StartTime[0:11] + mymonth
-                    dir_list_i["时间"] = monthtime
-                    monthcount = 0
-                    monthcostcount = 0
-                    if monthtime in dict_monts.keys():
-                        monthcount = round(float(dict_monts[monthtime]), 2)
-                    if monthtime in dict_cost_months.keys():
-                        monthcostcount = round(float(dict_cost_months[monthtime]), 2)
-                    dir_list_i["耗量"] = monthcount
-                    dir_list_i["成本"] = monthcostcount
-                    dir_list.append(dir_list_i)
+            if oc_list:
+                if TimeClass == "日":
+                    hours = energyStatisticshour(oc_list, StartTime, EndTime, EnergyClass)
+                    cost_hours = energyStatisticsCostbyhour(oc_list, StartTime, EndTime, EnergyClass)
+                    dict_hours = {letter: score for score, letters in hours for letter in letters.split(",")}
+                    dict_cost_hours = {letter: score for score, letters in cost_hours for letter in
+                                       letters.split(",")}
+                    for myHour in constant.myHours:
+                        dir_list_i = {}
+                        scurrtime = StartTime[0:11] + myHour
+                        dir_list_i["时间"] = scurrtime
+                        hcount = 0
+                        hcostcount = 0
+                        if scurrtime in dict_hours.keys():
+                            hcount = round(float(dict_hours[scurrtime]), 2)
+                        if scurrtime in dict_cost_hours.keys():
+                            hcostcount = round(float(dict_cost_hours[scurrtime]), 2)
+                        dir_list_i["耗量"] = hcount
+                        dir_list_i["成本"] = hcostcount
+                        dir_list.append(dir_list_i)
+                elif TimeClass == "月":
+                    days = energyStatisticsday(oc_list, StartTime, EndTime, EnergyClass)
+                    cost_days = energyStatisticsCostbyday(oc_list, StartTime, EndTime, EnergyClass)
+                    dict_days = {letter: score for score, letters in days for letter in letters.split(",")}
+                    dict_cost_days = {letter: score for score, letters in cost_days for letter in
+                                       letters.split(",")}
+                    for myday in constant.mydays:
+                        dir_list_i = {}
+                        daytime = StartTime[0:8] + myday
+                        dir_list_i["时间"] = daytime
+                        daycount = 0
+                        daycostcount = 0
+                        if daytime in dict_days.keys():
+                            daycount = round(float(dict_days[daytime]), 2)
+                        if daytime in dict_cost_days.keys():
+                            daycostcount = round(float(dict_cost_days[daytime]), 2)
+                        dir_list_i["耗量"] = daycount
+                        dir_list_i["成本"] = daycostcount
+                        dir_list.append(dir_list_i)
+                elif TimeClass == "年":
+                    monts = energyStatisticsmonth(oc_list, StartTime, EndTime, EnergyClass)
+                    cost_months = energyStatisticsCostbymonth(oc_list, StartTime, EndTime, EnergyClass)
+                    dict_monts = {letter: score for score, letters in monts for letter in letters.split(",")}
+                    dict_cost_months = {letter: score for score, letters in cost_months for letter in
+                                       letters.split(",")}
+                    for mymonth in constant.mymonths:
+                        dir_list_i = {}
+                        monthtime = StartTime[0:11] + mymonth
+                        dir_list_i["时间"] = monthtime
+                        monthcount = 0
+                        monthcostcount = 0
+                        if monthtime in dict_monts.keys():
+                            monthcount = round(float(dict_monts[monthtime]), 2)
+                        if monthtime in dict_cost_months.keys():
+                            monthcostcount = round(float(dict_cost_months[monthtime]), 2)
+                        dir_list_i["耗量"] = monthcount
+                        dir_list_i["成本"] = monthcostcount
+                        dir_list.append(dir_list_i)
             wunit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == EnergyClass).first()[0]
             dir["unit"] = wunit
             dir["rows"] = dir_list

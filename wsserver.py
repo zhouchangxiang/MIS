@@ -183,7 +183,7 @@ def handler_msg(conn):
                             area_dir["areaECU"] = strtofloat(areaECU)
                     except Exception as ee:
                         print(
-                            "报错tag：" + TagClassValue +  "  |错误：" + str(ee))
+                            "报错tag：" + TagClassValue + "  |错误：" + str(ee))
                     finally:
                         pass
                     # area_dir["AreaName"] = ""
