@@ -67,7 +67,7 @@ def run():
                             endtimeArray = time.strptime(endstr, '%Y-%m-%d %H:%M')
                             sttime = int(time.mktime(sttimeArray))
                             endtime = int(time.mktime(endtimeArray))
-                            if endtime < sttime:
+                            if timeprice.EndTime == "00:00":
                                 # 如果结束时间小于开始时间，说明已经跨天，往后加一天再比大小
                                 sampday = datetime.datetime.strptime(ZGLSamptime, '%Y-%m-%d %H:%M:%S')
                                 cuday = str(sampday + datetime.timedelta(days=1))[0:10]
