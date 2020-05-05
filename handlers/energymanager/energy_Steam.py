@@ -469,3 +469,23 @@ def steamlossanalysis():
             print(e)
             logger.error(e)
             insertSyslog("error", "管损分析查询报错Error：" + str(e), current_user.Name)
+
+@energySteam.route('/steamtotal', methods=['POST', 'GET'])
+def steamtotal():
+    '''
+    return:
+    '''
+    if request.method == 'GET':
+        try:
+            dir = {}
+            oclass = db_session.query(SteamTotalMaintain).filter(SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0').order_by(desc("ID")).first()
+            dir_oc = {}
+            dir_oc["flowValue"] = oclass.FlowValue
+            dir_oc["sumValue"] = oclass.SumValue
+            dir_oc["SteamWD"] = oclass.WD
+            dir[oclass.TagClassValue] = dir_oc
+            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "SteamTotalMaintain查询报错Error：" + str(e), current_user.Name)
