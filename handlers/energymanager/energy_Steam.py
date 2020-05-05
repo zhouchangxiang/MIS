@@ -307,7 +307,7 @@ def energydetail():
                 for tagvalue in tagsoclass:
                     tag_dict = {}
                     tag_dict["时间"] = tagvalue[1]
-                    tag_dict["能耗量"] = tagvalue[0]
+                    tag_dict["能耗量"] = roundtwo(tagvalue[0])
                     dic_lisct.append(tag_dict)
             else:
                 if AreaName == "" or AreaName == None:
@@ -318,7 +318,7 @@ def energydetail():
                         dic_lisct_i = {}
                         dic_lisct_i["车间"] = area.AreaName
                         if area.AreaName in dict_energy_areas.keys():
-                            dic_lisct_i["能耗量"] = dict_energy_areas[area.AreaName]
+                            dic_lisct_i["能耗量"] = roundtwo(dict_energy_areas[area.AreaName])
                         else:
                             dic_lisct_i["能耗量"] = ""
                         dic_lisct.append(dic_lisct_i)
