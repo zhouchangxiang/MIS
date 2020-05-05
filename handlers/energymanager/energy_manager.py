@@ -535,6 +535,9 @@ def energyselect(data):
                     comparecount = 0
                     if scurrtime in dictcurr.keys():
                         currcount = round(float(dictcurr[scurrtime]), 2)
+                    else:
+                        if datetime.datetime.strptime(scurrtime, '%Y-%m-%d %H') > datetime.datetime.now():
+                            currcount = ""
                     if spretime in dictpre.keys():
                         comparecount = round(float(dictpre[spretime]), 2)
                     dir_list_dict["今日能耗"] = currcount
@@ -555,7 +558,10 @@ def energyselect(data):
                     if mycurrday in dictrecurrdays.keys():
                         dirmonth_list_dict["本月能耗"] = round(float(dictrecurrdays[mycurrday]), 2)
                     else:
-                        dirmonth_list_dict["本月能耗"] = 0
+                        if datetime.datetime.strptime(mycurrday, '%Y-%m-%d') > datetime.datetime.now():
+                            dirmonth_list_dict["本月能耗"] = ""
+                        else:
+                            dirmonth_list_dict["本月能耗"] = 0
                     if mycompareday in dictrecomperdays.keys():
                         dirmonth_list_dict["上月能耗"] = round(float(dictrecomperdays[mycompareday]), 2)
                     else:

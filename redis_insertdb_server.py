@@ -165,7 +165,7 @@ def run():
                     Volume = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "V"))  # 蒸汽体积
                     valueSSamptime = returnb(redis_conn.hget(constant.REDIS_TABLENAME, key.TagClassValue + "_Samptime"))  # 蒸汽累计流量采集时间
                     ssamptime = db_session.query(SteamEnergy.CollectionDate).filter(SteamEnergy.TagClassValue == key.TagClassValue, SteamEnergy.CollectionDate == valueSSamptime).order_by(desc("CollectionDate")).first()
-                    if ssamptime is None and valueS != 0.0 and Volume != 0.0:
+                    if ssamptime is None and valueS != 0.0:
                         ste = db_session.query(SteamEnergy).filter(SteamEnergy.TagClassValue == key.TagClassValue).order_by(desc("CollectionDate")).first()
                         unitf = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽瞬时流量单位").first()
                         units = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽累计量体积单位").first()

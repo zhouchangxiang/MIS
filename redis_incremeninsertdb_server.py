@@ -27,7 +27,7 @@ def run():
     runcount = 0
     failcount = 0
     while True:
-        # time.sleep(60)
+        time.sleep(60)
         print("数据开始写入增量数据库")
         redis_conn = redis.Redis(connection_pool=pool, password=constant.REDIS_PASSWORD, decode_responses=True)
         redis_conn.hset(constant.REDIS_TABLENAME, "redis_incremeninsertdb_server_start",
@@ -44,11 +44,27 @@ def run():
                 else:
                     proWsumValue = 0
                 wsumvalue = abs(round(float(key.WaterSum) - float(proWsumValue), 2))
-                wt = (wsumvalue, "水", key.ID,
-                      key.PriceID, key.SumWUnit, key.EquipmnetID,
-                      key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
-                      key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName, "0")
-                water_value.append(wt)
+                if proWsumValue == 0:
+                    wt = (wsumvalue, "水", key.ID,
+                          key.PriceID, key.SumWUnit, key.EquipmnetID,
+                          key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
+                          key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName, "0")
+                    water_value.append(wt)
+                else:
+                    if float(key.WaterSum) < float(proWsumValue):#去除清零情况，统计累计值减小就认为是脏数据
+                        if wsumvalue/float(proWsumValue) > 0.2:
+                            wt = (wsumvalue, "水", key.ID,
+                                  key.PriceID, key.SumWUnit, key.EquipmnetID,
+                                  key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
+                                  key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName, "0")
+                            water_value.append(wt)
+                    else:
+                        if wsumvalue/float(proWsumValue) < 0.8:
+                            wt = (wsumvalue, "水", key.ID,
+                                  key.PriceID, key.SumWUnit, key.EquipmnetID,
+                                  key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
+                                  key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName, "0")
+                            water_value.append(wt)
             try:
                 cursor = conn.cursor()
                 cursor.executemany(
@@ -90,11 +106,27 @@ def run():
                 else:
                     proSumValue = 0
                 sumvalue = abs(round(float(key.SumValue) - float(proSumValue), 2))
-                ss = (sumvalue, "汽", key.ID,
-                      key.PriceID, key.SumUnit, key.EquipmnetID,
-                      key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
-                      key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName, "0")
-                steam_value.append(ss)
+                if proSumValue == 0:
+                    ss = (sumvalue, "汽", key.ID,
+                          key.PriceID, key.SumUnit, key.EquipmnetID,
+                          key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
+                          key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName, "0")
+                    steam_value.append(ss)
+                else:
+                    if float(key.SumValue) < float(proSumValue):#去除清零情况，统计累计值减小就认为是脏数据
+                        if sumvalue/float(proSumValue) > 0.2:
+                            ss = (sumvalue, "汽", key.ID,
+                                  key.PriceID, key.SumUnit, key.EquipmnetID,
+                                  key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
+                                  key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName, "0")
+                            steam_value.append(ss)
+                    else:
+                        if sumvalue / float(proSumValue) < 0.8:#去除增长量过大的数据
+                            ss = (sumvalue, "汽", key.ID,
+                                  key.PriceID, key.SumUnit, key.EquipmnetID,
+                                  key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
+                                  key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName, "0")
+                            steam_value.append(ss)
             try:
                 cursor = conn.cursor()
                 cursor.executemany(
@@ -183,11 +215,27 @@ def run():
                 else:
                     proZGLmValue = 0
                 ZGLvalue = abs(round(float(key.ZGL) - float(proZGLmValue), 2))
-                el = (ZGLvalue, "电", key.ID,
-                      key.PriceID, key.Unit, key.EquipmnetID,
-                      key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
-                      key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName, "0")
-                electric_value.append(el)
+                if proZGLmValue == 0:
+                    el = (ZGLvalue, "电", key.ID,
+                          key.PriceID, key.Unit, key.EquipmnetID,
+                          key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
+                          key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName, "0")
+                    electric_value.append(el)
+                else:
+                    if float(key.ZGL) < float(proZGLmValue):#去除清零情况，统计累计值减小就认为是脏数据
+                        if ZGLvalue/float(proZGLmValue) > 0.2:
+                            el = (ZGLvalue, "电", key.ID,
+                                  key.PriceID, key.Unit, key.EquipmnetID,
+                                  key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
+                                  key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName, "0")
+                            electric_value.append(el)
+                    else:
+                        if ZGLvalue/float(proZGLmValue) < 0.8:
+                            el = (ZGLvalue, "电", key.ID,
+                                  key.PriceID, key.Unit, key.EquipmnetID,
+                                  key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
+                                  key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName, "0")
+                            electric_value.append(el)
             try:
                 cursor = conn.cursor()
                 cursor.executemany(
