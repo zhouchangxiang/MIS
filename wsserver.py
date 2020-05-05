@@ -239,6 +239,7 @@ def handler_msg(conn):
                 oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == "汽").all()
                 dir_list = []
                 for oc in oclass:
+                    oc_dict_i_tag = {}
                     oc_dict_i = {}
                     oc_dict_i["flowValue"] = strtofloat(
                         redis_conn.hget(constant.REDIS_TABLENAME, oc.TagClassValue + "F"))  # 蒸汽瞬时流量
@@ -246,7 +247,8 @@ def handler_msg(conn):
                         redis_conn.hget(constant.REDIS_TABLENAME, oc.TagClassValue + "S"))  # 蒸汽累计流量
                     oc_dict_i["SteamWD"] = strtofloat(
                         redis_conn.hget(constant.REDIS_TABLENAME, oc.TagClassValue + "WD"))  # 蒸汽体积
-                    dir_list.append(oc_dict_i)
+                    oc_dict_i_tag[oc.TagClassValue] = oc_dict_i
+                    dir_list.append(oc_dict_i_tag)
                 oc_dict = {}
                 oc_dict["steam"] = dir_list
                 area_list.append(oc_dict)
