@@ -233,11 +233,10 @@
         var api = ""
         var that = this
         var areaName = ''
-        var nowTime = moment().format('HH:mm').substring(0,4) + "0"
-        var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
-        var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
-        var compareDateStartTime = moment(this.CompareDate).format('YYYY-MM-DD') + " 00:00"
-        var compareDateEndTime = moment(this.CompareDate).format('YYYY-MM-DD') + " " + nowTime
+        var todayStartTime = moment().day(moment().day()).startOf('day').format('YYYY-MM-DD HH:mm:ss')
+        var todayEndTime = moment().day(moment().day()).endOf('day').format('YYYY-MM-DD HH:mm:ss')
+        var compareDateStartTime = moment(this.CompareDate).day(moment(this.CompareDate).day()).startOf('day').format('YYYY-MM-DD HH:mm:ss')
+        var compareDateEndTime = moment(this.CompareDate).day(moment(this.CompareDate).day()).endOf('day').format('YYYY-MM-DD HH:mm:ss')
         if(this.formParameters.energy === "电"){
           api = "/api/energyelectric"
         }else if(this.formParameters.energy === "水"){

@@ -245,19 +245,18 @@
         this.ChartsLoading = true
         var that = this
         var nowTime = moment().format('HH:mm').substring(0,4) + "0"
-        var nowDate = moment().format('MM-DD') + " " + nowTime
         var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
         var thisStartMonth = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm')
-        var contrastStartMonth = moment().month(moment(this.formParameters.contrastingMonth).month()).startOf('month').format('YYYY-MM-DD HH:mm')
-        var contrastEndMonth = moment().month(moment(this.formParameters.contrastingMonth).month()).endOf('month').format('YYYY-MM-DD HH:mm')
+        var contrastStartMonth = moment(this.formParameters.contrastingMonth).month(moment(this.formParameters.contrastingMonth).month()).startOf('month').format('YYYY-MM-DD HH:mm')
+        var contrastEndMonth = moment(this.formParameters.contrastingMonth).month(moment(this.formParameters.contrastingMonth).month()).endOf('month').format('YYYY-MM-DD HH:mm')
         var thisStartQuarter = moment().quarter(moment().quarter()).startOf('quarter').format('YYYY-MM-DD HH:mm')
         var thisEndQuarter = moment().quarter(moment().quarter()).endOf('quarter').format('YYYY-MM-DD HH:mm')
-        var contrastStartQuarter = moment().quarter(moment(this.formParameters.contrastingMonth).quarter()).startOf('quarter').format('YYYY-MM-DD HH:mm')
-        var contrastEndQuarter = moment().quarter(moment(this.formParameters.contrastingMonth).quarter()).endOf('quarter').format('YYYY-MM-DD HH:mm')
+        var contrastStartQuarter = moment(this.formParameters.contrastingMonth).quarter(moment(this.formParameters.contrastingMonth).quarter()).startOf('quarter').format('YYYY-MM-DD HH:mm')
+        var contrastEndQuarter = moment(this.formParameters.contrastingMonth).quarter(moment(this.formParameters.contrastingMonth).quarter()).endOf('quarter').format('YYYY-MM-DD HH:mm')
         var thisStartYear = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD HH:mm')
         var thisEndYear = moment().year(moment().year()).endOf('year').format('YYYY-MM-DD HH:mm')
-        var contrastStartYear = moment().year(moment(this.formParameters.contrastingMonth).year()).startOf('year').format('YYYY-MM-DD HH:mm')
-        var contrastEndYear = moment().year(moment(this.formParameters.contrastingMonth).year()).endOf('year').format('YYYY-MM-DD HH:mm')
+        var contrastStartYear = moment(this.formParameters.contrastingMonth).year(moment(this.formParameters.contrastingMonth).year()).startOf('year').format('YYYY-MM-DD HH:mm')
+        var contrastEndYear = moment(this.formParameters.contrastingMonth).year(moment(this.formParameters.contrastingMonth).year()).endOf('year').format('YYYY-MM-DD HH:mm')
         var params = {}
         var contrastParams = {}
         var chartParams = {}
@@ -425,9 +424,6 @@
 <style>
   .energyDataItem{
     margin-bottom: 30px;
-  }
-  .energyDataItem:last-child{
-    margin-bottom:0;
   }
   .energyDataItem li{
     margin-bottom: 5px;

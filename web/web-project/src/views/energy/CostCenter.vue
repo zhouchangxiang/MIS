@@ -22,13 +22,13 @@
       </el-form>
     </el-col>
     <el-col :span="24" v-if="formParameters.resourceType === '基本电费' && formParameters.energy === '电'" style="margin-top: 10px;">
-      <el-col :span="12" v-for="(item,index) in ElecCalculationTypeItem" :key="index">
-        <div class="ElecCalculationType">
-          <p>{{ item.title }}</p>
-          <el-col :span="12"><p class="text-color-caption">{{ item.typeTitle }}</p>{{ item.typeData }}</el-col>
-          <el-col :span="12"><p class="text-color-caption">{{ item.electricity }}</p>{{ item.electricityData }}</el-col>
-        </div>
-      </el-col>
+      <!--<el-col :span="12" v-for="(item,index) in ElecCalculationTypeItem" :key="index">-->
+        <!--<div class="ElecCalculationType">-->
+          <!--<p>{{ item.title }}</p>-->
+          <!--<el-col :span="12"><p class="text-color-caption">{{ item.typeTitle }}</p>{{ item.typeData }}</el-col>-->
+          <!--<el-col :span="12"><p class="text-color-caption">{{ item.electricity }}</p>{{ item.electricityData }}</el-col>-->
+        <!--</div>-->
+      <!--</el-col>-->
       <el-col :span="24">
         <div class="energyDataContainer">
           <ve-histogram :data="basicElectricityChartData" :settings="basicElectricityChartSettings" :extend="ChartExtend" v-loading="chartsLoading"></ve-histogram>
@@ -108,7 +108,7 @@
     data(){
       return {
         formParameters:{
-          resourceTime:"时",
+          resourceTime:"日",
           resourceType:"基本电费",
           startDate:moment().day(moment().day()).startOf('day').format('YYYY-MM-DD HH:mm'),
           endDate:moment().format('YYYY-MM-DD HH:mm'),
@@ -116,7 +116,6 @@
           dataType:"电费"
         },
         radioTimeList:[
-          {name:"时"},
           {name:"日"},
           {name:"月"},
           {name:"年"}
@@ -140,11 +139,11 @@
           {name:"水"},
           {name:"汽"},
         ],
-        ElecCalculationTypeIndex:0,
-        ElecCalculationTypeItem:[
-          {title:"按容量计算",typeTitle:"变压器容量",typeData:"",electricity:"成本",electricityData:""},
-          {title:"按耗量计算",typeTitle:"实际耗量",typeData:"",electricity:"成本",electricityData:""}
-        ],
+        // ElecCalculationTypeIndex:0,
+        // ElecCalculationTypeItem:[
+        //   {title:"按容量计算",typeTitle:"变压器容量",typeData:"",electricity:"成本",electricityData:""},
+        //   {title:"按耗量计算",typeTitle:"实际耗量",typeData:"",electricity:"成本",electricityData:""}
+        // ],
         chartsLoading:false,
         chartsPileLoading:false,
         ChartExtend: {
@@ -217,9 +216,6 @@
       this.getEnergyChartsData()
     },
     methods:{
-      selectElecCalculationType(index){
-        this.ElecCalculationTypeIndex = index;
-      },
       getEnergyChartsData(){
         this.chartsLoading = true
         this.chartsPileLoading = true
@@ -239,10 +235,6 @@
         }
         this.axios.get("/api/energycost",{params:params}).then(res => {
           this.chartsLoading = false
-          that.ElecCalculationTypeItem[0].typeData = res.data.transformerStorage + res.data.transformerUnit
-          that.ElecCalculationTypeItem[0].electricityData = res.data.storageCost + "元"
-          that.ElecCalculationTypeItem[1].typeData = res.data.expend + res.data.expendUnit
-          that.ElecCalculationTypeItem[1].electricityData = res.data.expendCost + "元"
           that.basicElectricityChartSettings.yAxisName = [res.data.expendUnit,'成本']
           that.basicElectricityChartData.rows = res.data.rows
           that.waterAndSteamCostChartSettings.yAxisName = [res.data.unit,'成本']
