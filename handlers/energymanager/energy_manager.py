@@ -1007,22 +1007,28 @@ def trendlookboard():
             dir = {}
             EnergyClass = data.get("EnergyClass")
             CompareTime = data.get("CompareTime")
-            oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
+            AreaName = data.get("AreaName")
+            if AreaName == None or AreaName == "":
+                oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
+            else:
+                oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass, TagDetail.AreaName == AreaName).all()
+
             oc_list = []
             for oc in oclass:
                 oc_list.append(oc.TagClassValue)
             rows_list = []
-            recomper = energyStatisticshour(oc_list, CompareTime+" 00:00:00", CompareTime+" 23:59:59", EnergyClass)
-            dictpre = {letter: score for score, letters in recomper for letter in letters.split(",")}
-            for myHour in constant.myHours:
-                spretime = CompareTime + " " + myHour
-                dir_rows = {}
-                dir_rows["时间"] = spretime
-                comparecount = 0
-                if spretime in dictpre.keys():
-                    comparecount = round(float(dictpre[spretime]), 2)
-                dir_rows["能耗量"] = comparecount
-                rows_list.append(dir_rows)
+            if oc_list:
+                recomper = energyStatisticshour(oc_list, CompareTime+" 00:00:00", CompareTime+" 23:59:59", EnergyClass)
+                dictpre = {letter: score for score, letters in recomper for letter in letters.split(",")}
+                for myHour in constant.myHours:
+                    spretime = CompareTime + " " + myHour
+                    dir_rows = {}
+                    dir_rows["时间"] = spretime
+                    comparecount = 0
+                    if spretime in dictpre.keys():
+                        comparecount = round(float(dictpre[spretime]), 2)
+                    dir_rows["能耗量"] = comparecount
+                    rows_list.append(dir_rows)
             dir["rows"] = rows_list
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
