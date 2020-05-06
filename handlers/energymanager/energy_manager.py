@@ -900,14 +900,14 @@ def exportx(Area, EnergyClass,  StartTime, EndTime):
         db_session.close()
     elif EnergyClass == "电":
         columns = ['单位', '仪表ID', '价格ID', '采集点', '采集时间', '采集年', '采集月', '采集天', '总功率', 'A相电压', 'A相电流', 'B相电压', 'B相电流',
-                   'C相电压', 'C相电压']
-        sql = "SELECT [ID],[FlowUnit],[EquipmnetID],[PriceID],[TagClassValue],[CollectionDate],[CollectionYear],[CollectionMonth],[CollectionDay],[WD],[FlowValue],[SumValue],[SumUnit],[Volume],[IncrementFlag],[PrevID],[AreaName],[insertVolumeFlag] FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_SteamEnergy) " \
+                   'C相电压', 'C相电流','计算增量更新标识', '两个相邻采集点上一个采集点ID', '区域']
+        sql = "SELECT [ID],[Unit],[EquipmnetID],[PriceID],[TagClassValue],[CollectionDate],[CollectionYear],[CollectionMonth],[CollectionDay],[ZGL],[AU],[AI],[BU],[BI],[CU],[CI],[IncrementFlag],[PrevID],[AreaName] FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricEnergy) " \
               "WHERE t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' order by t.CollectionDate"
         oclass = db_session.execute(sql).fetchall()
         db_session.close()
     else:
-        columns = ['蒸汽值', '单位', '仪表ID', '价格ID', '采集点', '采集时间', '采集年', '采集月', '采集天', '温度', '蒸汽瞬时值', '蒸汽累计值']
-        sql = "SELECT [ID],[Unit],[EquipmnetID],[PriceID],[TagClassValue],[CollectionDate],[CollectionYear],[CollectionMonth],[CollectionDay],[ZGL],[AU],[AI],[BU],[BI],[CU],[CI],[IncrementFlag],[PrevID],[AreaName] FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricEnergy) " \
+        columns = ['瞬时流量单位', '仪表ID', '价格ID', '采集点', '采集时间', '采集年', '采集月', '采集天', '温度', '蒸汽瞬时值', '蒸汽累计值', '累计量体积单位', '体积', '计算增量更新标识', '两个相邻采集点上一个采集点ID', '区域', '增量库体积插入标识']
+        sql = "SELECT [ID],[FlowUnit],[EquipmnetID],[PriceID],[TagClassValue],[CollectionDate],[CollectionYear],[CollectionMonth],[CollectionDay],[WD],[FlowValue],[SumValue],[SumUnit],[Volume],[IncrementFlag],[PrevID],[AreaName],[insertVolumeFlag] FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy) " \
               "WHERE t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' order by t.CollectionDate"
         oclass = db_session.execute(sql).fetchall()
         db_session.close()
@@ -916,87 +916,110 @@ def exportx(Area, EnergyClass,  StartTime, EndTime):
         col += 1
     # 写入数据
     for i in range(1, len(oclass)):
-        print(oclass[i]['FlowUnit'])
         if EnergyClass == "水":
             for cum in columns:
                 if cum == '水瞬时流量单位':
-                    worksheet.write(i, columns.index(cum), oclass[i]['FlowUnit'])
+                    worksheet.write(i, columns.index(cum), oclass[i]['FlowWUnit'])
                 if cum == '仪表ID':
-                    worksheet.write(i, columns.index(cum), oclass[i][''])
+                    worksheet.write(i, columns.index(cum), oclass[i]['EquipmnetID'])
                 if cum == '价格ID':
-                    worksheet.write(i, columns.index(cum), oclass[i].PriceID)
+                    worksheet.write(i, columns.index(cum), oclass[i]['PriceID'])
                 if cum == '采集点':
-                    worksheet.write(i, columns.index(cum), oclass[i].TagClassValue)
+                    worksheet.write(i, columns.index(cum), oclass[i]['TagClassValue'])
                 if cum == '采集时间':
-                    worksheet.write(i, columns.index(cum), oclass[i].CollectionDate)
+                    worksheet.write(i, columns.index(cum), oclass[i]['CollectionDate'])
                 if cum == '采集年':
-                    worksheet.write(i, columns.index(cum), oclass[i].CollectionYear)
+                    worksheet.write(i, columns.index(cum), oclass[i]['CollectionYear'])
                 if cum == '采集月':
-                    worksheet.write(i, columns.index(cum), oclass[i].CollectionMonth)
+                    worksheet.write(i, columns.index(cum), oclass[i]['CollectionMonth'])
                 if cum == '采集天':
-                    worksheet.write(i, columns.index(cum), oclass[i].CollectionDay)
+                    worksheet.write(i, columns.index(cum), oclass[i]['CollectionDay'])
                 if cum == '瞬时流量':
-                    worksheet.write(i, columns.index(cum), oclass[i].WaterFlow)
+                    worksheet.write(i, columns.index(cum), oclass[i]['WaterFlow'])
                 if cum == '累计流量':
-                    worksheet.write(i, columns.index(cum), oclass[i].WaterSum)
+                    worksheet.write(i, columns.index(cum), oclass[i]['WaterSum'])
+                if cum == '水累计量体积单位':
+                    worksheet.write(i, columns.index(cum), oclass[i]['SumWUnit'])
+                if cum == '计算增量更新标识':
+                    worksheet.write(i, columns.index(cum), oclass[i]['IncrementFlag'])
+                if cum == '两个相邻采集点上一个采集点ID':
+                    worksheet.write(i, columns.index(cum), oclass[i]['PrevID'])
+                if cum == '区域':
+                    worksheet.write(i, columns.index(cum), oclass[i]['AreaName'])
         elif EnergyClass == "电":
             for cum in columns:
                 if cum == '单位':
-                    worksheet.write(i, columns.index(cum), oclass[i].Unit)
+                    worksheet.write(i, columns.index(cum), oclass[i]['Unit'])
                 if cum == '仪表ID':
-                    worksheet.write(i, columns.index(cum), oclass[i].EquipmnetID)
+                    worksheet.write(i, columns.index(cum), oclass[i]['EquipmnetID'])
                 if cum == '价格ID':
-                    worksheet.write(i, columns.index(cum), oclass[i].PriceID)
+                    worksheet.write(i, columns.index(cum), oclass[i]['PriceID'])
                 if cum == '采集点':
-                    worksheet.write(i, columns.index(cum), oclass[i].TagClassValue)
+                    worksheet.write(i, columns.index(cum), oclass[i]['TagClassValue'])
                 if cum == '采集时间':
-                    worksheet.write(i, columns.index(cum), oclass[i].CollectionDate)
+                    worksheet.write(i, columns.index(cum), oclass[i]['CollectionDate'])
                 if cum == '采集年':
-                    worksheet.write(i, columns.index(cum), oclass[i].CollectionYear)
+                    worksheet.write(i, columns.index(cum), oclass[i]['CollectionYear'])
                 if cum == '采集月':
-                    worksheet.write(i, columns.index(cum), oclass[i].CollectionMonth)
+                    worksheet.write(i, columns.index(cum), oclass[i]['CollectionMonth'])
                 if cum == '采集天':
-                    worksheet.write(i, columns.index(cum), oclass[i].CollectionDay)
+                    worksheet.write(i, columns.index(cum), oclass[i]['CollectionDay'])
                 if cum == '总功率':
-                    worksheet.write(i, columns.index(cum), oclass[i].ZGL)
+                    worksheet.write(i, columns.index(cum), oclass[i]['ZGL'])
                 if cum == 'A相电压':
-                    worksheet.write(i, columns.index(cum), oclass[i].AU)
+                    worksheet.write(i, columns.index(cum), oclass[i]['AU'])
                 if cum == 'A相电流':
-                    worksheet.write(i, columns.index(cum), oclass[i].AI)
+                    worksheet.write(i, columns.index(cum), oclass[i]['AI'])
                 if cum == 'B相电压':
-                    worksheet.write(i, columns.index(cum), oclass[i].BU)
+                    worksheet.write(i, columns.index(cum), oclass[i]['BU'])
                 if cum == 'B相电流':
-                    worksheet.write(i, columns.index(cum), oclass[i].BI)
+                    worksheet.write(i, columns.index(cum), oclass[i]['BI'])
                 if cum == 'C相电压':
-                    worksheet.write(i, columns.index(cum), oclass[i].CU)
-                if cum == 'C相电压':
-                    worksheet.write(i, columns.index(cum), oclass[i].CI)
+                    worksheet.write(i, columns.index(cum), oclass[i]['CU'])
+                if cum == 'C相电流':
+                    worksheet.write(i, columns.index(cum), oclass[i]['CI'])
+                if cum == '计算增量更新标识':
+                    worksheet.write(i, columns.index(cum), oclass[i]['IncrementFlag'])
+                if cum == '两个相邻采集点上一个采集点ID':
+                    worksheet.write(i, columns.index(cum), oclass[i]['PrevID'])
+                if cum == '区域':
+                    worksheet.write(i, columns.index(cum), oclass[i]['AreaName'])
         elif EnergyClass == "汽":
             for cum in columns:
-                if cum == '蒸汽值':
-                    worksheet.write(i, columns.index(cum), oclass[i].SteamValue)
-                if cum == '单位':
-                    worksheet.write(i, columns.index(cum), oclass[i].Unit)
+                if cum == '瞬时流量单位':
+                    worksheet.write(i, columns.index(cum), oclass[i]['FlowUnit'])
                 if cum == '仪表ID':
-                    worksheet.write(i, columns.index(cum), oclass[i].EquipmnetID)
+                    worksheet.write(i, columns.index(cum), oclass[i]['EquipmnetID'])
                 if cum == '价格ID':
-                    worksheet.write(i, columns.index(cum), oclass[i].PriceID)
+                    worksheet.write(i, columns.index(cum), oclass[i]['PriceID'])
                 if cum == '采集点':
-                    worksheet.write(i, columns.index(cum), oclass[i].TagClassValue)
+                    worksheet.write(i, columns.index(cum), oclass[i]['TagClassValue'])
                 if cum == '采集时间':
-                    worksheet.write(i, columns.index(cum), oclass[i].CollectionDate)
+                    worksheet.write(i, columns.index(cum), oclass[i]['CollectionDate'])
                 if cum == '采集年':
-                    worksheet.write(i, columns.index(cum), oclass[i].CollectionYear)
+                    worksheet.write(i, columns.index(cum), oclass[i]['CollectionYear'])
                 if cum == '采集月':
-                    worksheet.write(i, columns.index(cum), oclass[i].CollectionMonth)
+                    worksheet.write(i, columns.index(cum), oclass[i]['CollectionMonth'])
                 if cum == '采集天':
-                    worksheet.write(i, columns.index(cum), oclass[i].CollectionDay)
+                    worksheet.write(i, columns.index(cum), oclass[i]['CollectionDay'])
                 if cum == '温度':
-                    worksheet.write(i, columns.index(cum), oclass[i].WD)
+                    worksheet.write(i, columns.index(cum), oclass[i]['WD'])
                 if cum == '蒸汽瞬时值':
-                    worksheet.write(i, columns.index(cum), oclass[i].FlowValue)
+                    worksheet.write(i, columns.index(cum), oclass[i]['FlowValue'])
                 if cum == '蒸汽累计值':
-                    worksheet.write(i, columns.index(cum), oclass[i].SumValue)
+                    worksheet.write(i, columns.index(cum), oclass[i]['SumValue'])
+                if cum == '累计量体积单位':
+                    worksheet.write(i, columns.index(cum), oclass[i]['SumUnit'])
+                if cum == '体积':
+                    worksheet.write(i, columns.index(cum), oclass[i]['Volume'])
+                if cum == '计算增量更新标识':
+                    worksheet.write(i, columns.index(cum), oclass[i]['IncrementFlag'])
+                if cum == '两个相邻采集点上一个采集点ID':
+                    worksheet.write(i, columns.index(cum), oclass[i]['PrevID'])
+                if cum == '区域':
+                    worksheet.write(i, columns.index(cum), oclass[i]['AreaName'])
+                if cum == '增量库体积插入标识':
+                    worksheet.write(i, columns.index(cum), oclass[i]['insertVolumeFlag'])
     writer.close()
     output.seek(0)
     return output
