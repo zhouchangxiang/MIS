@@ -13,7 +13,7 @@
     <el-col :span="24">
       <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
         <div class="chartTile">运行效率</div>
-        <el-select v-model="areaValue" size="mini" @change="searchTime">
+        <el-select v-model="areaValue" size="mini" @change="getPipeData">
           <el-option v-for="(item,index) in areaOptions" :key="index" :label="item.AreaName" :value="item.value"></el-option>
         </el-select>
       </div>
@@ -89,6 +89,7 @@
       }
     },
     created(){
+      this.getArea()
       this.getPipeData()
     },
     methods:{
@@ -147,6 +148,7 @@
               value:item.AreaName
             })
           })
+          console.log(that.areaOptions)
         })
       },
     }

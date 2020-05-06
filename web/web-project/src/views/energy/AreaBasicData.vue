@@ -18,13 +18,16 @@
     <el-col :span="24" style="margin-bottom:2px;">
       <div class="chartHead text-size-large text-color-info">
         <div class="chartTile">趋势图</div>
-        <el-select v-model="ElectricEqActive" size="mini" @change="getChartData" v-if="newAreaName.areaName != '整厂区' && formParameters.resourceTime != '实时' && formParameters.energy ==='电'">
+        <el-select v-model="areaName" size="mini" @change="getEq" v-if="newAreaName.areaName === '整厂区' || $route.query.areaName === '整厂区'">
+          <el-option v-for="(item,index) in areaList" :key="index" :label="item.label" :value="item.value"></el-option>
+        </el-select>
+        <el-select v-model="ElectricEqActive" size="mini" @change="getChartData" v-if="formParameters.energy ==='电'">
           <el-option v-for="(item,index) in ElectricEqList" :key="index" :label="item.FEFportIP" :value="item.TagClassValue"></el-option>
         </el-select>
-        <el-select v-model="WaterEqActive" size="mini" @change="getChartData" v-if="newAreaName.areaName != '整厂区' && formParameters.resourceTime != '实时' && formParameters.energy ==='水'">
+        <el-select v-model="WaterEqActive" size="mini" @change="getChartData" v-if="formParameters.energy ==='水'">
           <el-option v-for="(item,index) in WaterEqList" :key="index" :label="item.FEFportIP" :value="item.TagClassValue"></el-option>
         </el-select>
-        <el-select v-model="SteamEqActive" size="mini" @change="getChartData" v-if="newAreaName.areaName != '整厂区' && formParameters.resourceTime != '实时' && formParameters.energy ==='汽'">
+        <el-select v-model="SteamEqActive" size="mini" @change="getChartData" v-if="formParameters.energy ==='汽'">
           <el-option v-for="(item,index) in SteamEqList" :key="index" :label="item.FEFportIP" :value="item.TagClassValue"></el-option>
         </el-select>
         <div class="chartHeadRight">
@@ -100,35 +103,50 @@
         },
         chartsLoading:false,
         source:null,
+        areaList:[],
+        areaName:"",
       }
     },
     created(){
-      this.getEq()
-      this.getChartData();
+      this.getArea()
     },
     destroyed() {
-      this.websock.close() //离开路由之后断开websocket连接
+      if(this.websock){
+        this.websock.close() //离开路由之后断开websocket连接
+      }
     },
     methods:{
-      getEq(){
-        let that = this
-        var areaName = ''
-        if(this.newAreaName.areaName === "整厂区"){
-          areaName = ""
-        }else{
-          areaName = this.newAreaName.areaName
+      getArea(){
+        var params = {
+          tableName: "AreaTable",
+          limit:1000,
+          offset:0
         }
+        this.axios.get("/api/CUID",{params:params}).then(res =>{
+          var resData = JSON.parse(res.data).rows
+          resData.forEach(item =>{
+            this.areaList.push({
+              label:item.AreaName,
+              value:item.AreaName
+            })
+          })
+          this.areaName = resData[0].AreaName
+          this.getEq()
+        })
+      },
+      getEq(){
+        this.ElectricEqList = []
+        this.WaterEqList = []
+        this.SteamEqList = []
+        let that = this
         var params = {
           tableName:"TagDetail",
           field:"AreaName",
-          fieldvalue:areaName,
+          fieldvalue:this.areaName,
           limit:100000,
           offset:0
         }
         this.axios.get("/api/CUID",{params:params}).then(res =>{
-          that.ElectricEqList = []
-          that.WaterEqList = []
-          that.SteamEqList = []
           var rows = JSON.parse(res.data).rows
           rows.forEach(item =>{
             if(item.EnergyClass === "电"){
@@ -333,10 +351,12 @@
         this.websock.onclose = this.websocketclose;
       },
       websocketonopen(){ //连接建立之后执行send方法发送数据
-        if(this.newAreaName.areaName === "整厂区"){
-          this.websocketsend("");
-        }else{
-          this.websocketsend(this.newAreaName.areaName);
+        if(this.formParameters.energy === "电"){
+          this.websocketsend(this.ElectricEqActive);
+        }else if(this.formParameters.energy === "水"){
+          this.websocketsend(this.WaterEqActive);
+        }else if(this.formParameters.energy === "汽"){
+          this.websocketsend(this.SteamEqActive);
         }
       },
       websocketonerror(){//连接建立失败

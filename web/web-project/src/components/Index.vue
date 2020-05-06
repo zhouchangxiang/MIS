@@ -262,7 +262,7 @@
                   <p>{{ steamGlTag.SteamWD }}°C</p>
                 </div>
               </div>
-              <div class="steamTagLabel" style="left:474px;top: -10px;min-width: 100px;width: 100px;">
+              <div class="steamTagLabel" style="left:474px;top: -28px;min-width: 100px;width: 100px;">
                 <div class="steamTagTitle" style="line-height: 22px;">二次浓缩DN100</div>
                 <div class="steamTagValue">
                   <p>{{ steamTagList.S_Area_ZH_46_1_502.sumValue }}</p>
@@ -463,7 +463,9 @@ export default {
     this.getWeather()
   },
   destroyed() {
-    this.websock.close() //离开路由之后断开websocket连接
+    if(this.websock){
+      this.websock.close() //离开路由之后断开websocket连接
+    }
   },
   methods:{
     getMenuHeight(){
@@ -616,7 +618,6 @@ export default {
     },
     closesocket(){
       this.websock.close()
-      console.log(1)
     }
   }
 }
