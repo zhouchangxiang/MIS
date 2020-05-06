@@ -23,14 +23,20 @@ def get_user():
             user_list = {'name': data.RoleName, 'value': data.RoleCode, 'role_description': data.Description, 'type': 'role', 'rid': data.ID, 'did': d1.ID, 'department_name': department.DepartName, 'children': []}
             user_role_query = db_session.query(RoleUser).filter(RoleUser.RoleName == data.RoleName).all()
             for user_role in user_role_query:
-                user_query = db_session.query(User).filter(User.ID == user_role.RoleID).all()
-                for user in user_query:
-                    d2 = db_session.query(DepartmentManager).filter(DepartmentManager.DepartName == user.OrganizationName).first()
-                    if d2:
-                        user_data = {'name': user.Name, 'value': user.WorkNumber, 'type': 'user', 'rid': data.ID, 'did': d2.ID}
-                    else:
-                        user_data = {'name': user.Name, 'value': user.WorkNumber, 'type': 'user', 'rid': data.ID, 'did': ''}
-                    user_list['children'].append(user_data)
+                user_query = db_session.query(User).filter(User.ID == user_role.UserID).first()
+                d2 = db_session.query(DepartmentManager).filter(DepartmentManager.DepartName == user_query.OrganizationName).first()
+                if d2:
+                    user_data = {'name': user_query.Name, 'value': user_query.WorkNumber, 'type': 'user', 'rid': data.ID,
+                                 'did': d2.ID}
+                else:
+                    user_data = {'name': user_query.Name, 'value': user_query.WorkNumber, 'type': 'user', 'rid': data.ID, 'did': ''}
+                # for user in user_query:
+                #     d2 = db_session.query(DepartmentManager).filter(DepartmentManager.DepartName == user.OrganizationName).first()
+                #     if d2:
+                #         user_data = {'name': user.Name, 'value': user.WorkNumber, 'type': 'user', 'rid': data.ID, 'did': d2.ID}
+                #     else:
+                #         user_data = {'name': user.Name, 'value': user.WorkNumber, 'type': 'user', 'rid': data.ID, 'did': ''}
+                user_list['children'].append(user_data)
             role_list.append(user_list)
         department_data = {'name': department.DepartName, 'value': department.DepartCode, 'type': 'department', 'did': department.ID, 'factory_name': factory.FactoryName, 'children': role_list}
         area = db_session.query(AreaMaintain).filter(AreaMaintain.FactoryName == department.DepartLoad).first()
@@ -81,6 +87,10 @@ def update_department():
     department.DepartCode = code
     department.DepartName = department_name
     db_session.commit()
+    user_query = db_session.query(User).filter(User.OrganizationName == department.DepartName).all()
+    for user in user_query:
+        user.OrganizationName = department_name
+    db_session.commit()
     return json.dumps({'code': 10002, 'msg': '更新成功'})
 
 
@@ -101,9 +111,9 @@ def add_role():
 def delete_role():
     rid = request.headers.get('rid')
     role = db_session.query(Role).filter(Role.ID == rid).first()
-    user_query = db_session.query(User).filter(User.RoleName == role.RoleName).all()
+    user_query = db_session.query(RoleUser).filter(RoleUser.RoleName == role.RoleName).all()
     for item in user_query:
-        item.RoleName = ''
+        db_session.delete(item)
     db_session.delete(role)
     db_session.commit()
     return json.dumps({'code': 10004, 'msg': '删除成功'})
@@ -116,9 +126,9 @@ def update_role():
     role_name = request.json.get('role_name')
     rdes = request.json.get('role_description')
     role = db_session.query(Role).filter(Role.ID == rid).first()
-    user_query = db_session.query(User).filter(User.RoleName == role.RoleName).all()
+    user_query = db_session.query(RoleUser).filter(RoleUser.RoleName == role.RoleName).all()
     for item in user_query:
-        item.RoleName = ''
+        item.RoleName = role_name
     role.RoleCode = code
     role.RoleName = role_name
     role.Description = rdes
