@@ -25,6 +25,9 @@ pool = redis.ConnectionPool(host=constant.REDIS_HOST)
 def run():
     runcount = 0
     failcount = 0
+    redis_conn = redis.Redis(connection_pool=pool, password=constant.REDIS_PASSWORD, decode_responses=True)
+    redis_conn.hset(constant.REDIS_TABLENAME, "redis_insertdb_server_start",
+                    datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     while True:
         time.sleep(180)
         print("Redis数据开始写入数据库")
@@ -32,9 +35,6 @@ def run():
         # currentyear = str(a.shift(years=0))[0:4]
         # currentmonth = str(a.shift(years=0))[0:7]
         # currentday = str(a.shift(days=0))[0:10]
-        redis_conn = redis.Redis(connection_pool=pool, password=constant.REDIS_PASSWORD,decode_responses=True)
-        redis_conn.hset(constant.REDIS_TABLENAME, "redis_insertdb_server_start",
-                        datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         keys = db_session.query(TagDetail).filter(TagDetail.TagClassValue != None).all()
         for key in keys:
             try:
