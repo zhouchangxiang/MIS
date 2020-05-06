@@ -12,7 +12,7 @@ import threading
 import random
 import datetime
 from dbset.database.db_operate import db_session
-from models.SystemManagement.system import ElectricSiteURL
+from models.SystemManagement.system import ElectricSiteURL, ElectricProportion
 from models.SystemManagement.core import TagDetail, AreaTable
 from dbset.log.BK2TLogger import logger,insertSyslog
 import ast
@@ -118,8 +118,6 @@ def handler_msg(conn):
         failcount = 0
         while True:
             try:
-                redis_conn.hset(constant.REDIS_TABLENAME, "websocket_start",
-                                datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
                 TagClassValue = ""
                 time.sleep(2)
                 if data_recv[0:1] == b"\x81":
@@ -138,7 +136,7 @@ def handler_msg(conn):
                 areaECI = 0.0
                 areaECU = 0.0
                 area_dir = {}
-                if TagClassValue == "":
+                if TagClassValue != "":
                     # all_tags = returnb(redis_conn.hget(constant.REDIS_TABLENAME, "all_tags"))
                     # if all_tags:
                     #     all_tags = ast.literal_eval(all_tags)
@@ -246,7 +244,7 @@ def handler_msg(conn):
                 #     area_dir["areaEBU"] = strtofloat(areaEBU)
                 #     area_dir["areaECI"] = strtofloat(areaEBI)
                 #     area_dir["areaECU"] = strtofloat(areaEBU)
-                oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == "汽").all()
+                oclass = ast.literal_eval(redis_conn.hget(constant.REDIS_TABLENAME, "all_steam_tags"))
                 oc_dict_i_tag = {}
                 for oc in oclass:
                     oc_dict_i = {}
@@ -292,16 +290,18 @@ def returnb(rod):
 
 def server_socket():
     try:
+        redis_conn.hset(constant.REDIS_TABLENAME, "websocket_start",
+                        datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.bind(("127.0.0.1", 5002))
         sock.listen(2)
         #将所有的tag写入redis
-        Tags = db_session.query(TagDetail).all()
+        Tags = db_session.query(TagDetail).filter(TagDetail.EnergyClass == "汽").all()
         tag_all_list = []
         for tag in Tags:
             tag_all_list.append(tag.TagClassValue)
-        redis_conn.hset(constant.REDIS_TABLENAME,"all_tags",str(tag_all_list))
+        redis_conn.hset(constant.REDIS_TABLENAME,"all_steam_tags",str(tag_all_list))
         areas = db_session.query(AreaTable).all()
         for area in areas:
             tagareas = db_session.query(TagDetail).filter(TagDetail.AreaName == area.AreaName).all()

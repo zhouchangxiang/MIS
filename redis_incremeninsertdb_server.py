@@ -23,15 +23,15 @@ from dbset.database import constant
 from dbset.log.BK2TLogger import logger, insertSyslog
 from dbset.database.db_operate import engine,conn
 pool = redis.ConnectionPool(host=constant.REDIS_HOST)
+redis_conn = redis.Redis(connection_pool=pool, password=constant.REDIS_PASSWORD, decode_responses=True)
 def run():
     runcount = 0
     failcount = 0
+    redis_conn.hset(constant.REDIS_TABLENAME, "redis_incremeninsertdb_server_start",
+                    datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     while True:
         time.sleep(60)
         print("数据开始写入增量数据库")
-        redis_conn = redis.Redis(connection_pool=pool, password=constant.REDIS_PASSWORD, decode_responses=True)
-        redis_conn.hset(constant.REDIS_TABLENAME, "redis_incremeninsertdb_server_start",
-                        datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         try:
             #水------------------------------------------------------------------------------------------
             water_value = list()
