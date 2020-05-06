@@ -812,7 +812,6 @@ def exportxstatistic(StartTime, EndTime, EnergyClass):
     for item in columns:
         worksheet.write(0, col, item, cell_format)
         col += 1
-    AreaNames = db_session.query(AreaTable).filter().all()
     oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass ==EnergyClass).all()
     unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == EnergyClass).first()[0]
     i = 0
@@ -894,29 +893,36 @@ def exportx(Area, EnergyClass,  StartTime, EndTime):
         tag.append(ta.TagClassValue)
     # 写入列名
     if EnergyClass == "水":
-        columns = ['单位', '仪表ID', '价格ID', '采集点', '采集时间', '采集年', '采集月', '采集天', '瞬时流量', '累计流量']
-        oclass = db_session.query(WaterEnergy).filter(WaterEnergy.TagClassValue.in_(tag),
-                                                      WaterEnergy.CollectionDate.between(StartTime, EndTime)).all()
+        columns = ['水瞬时流量单位', '仪表ID', '价格ID', '采集点', '采集时间', '采集年', '采集月', '采集天', '瞬时流量', '累计流量', '水累计量体积单位', '计算增量更新标识', '两个相邻采集点上一个采集点ID', '区域']
+        sql = "SELECT [ID],[FlowWUnit],[EquipmnetID],[PriceID],[TagClassValue],[CollectionDate],[CollectionYear],[CollectionMonth],[CollectionDay],[WaterFlow],[WaterSum],[SumWUnit],[IncrementFlag],[PrevID],[AreaName] FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_WaterEnergy) " \
+              "WHERE t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' order by t.CollectionDate"
+        oclass = db_session.execute(sql).fetchall()
+        db_session.close()
     elif EnergyClass == "电":
         columns = ['单位', '仪表ID', '价格ID', '采集点', '采集时间', '采集年', '采集月', '采集天', '总功率', 'A相电压', 'A相电流', 'B相电压', 'B相电流',
                    'C相电压', 'C相电压']
-        oclass = db_session.query(ElectricEnergy).filter(ElectricEnergy.TagClassValue.in_(tag),
-                                                         ElectricEnergy.CollectionDate.between(StartTime, EndTime)).all()
+        sql = "SELECT [ID],[FlowUnit],[EquipmnetID],[PriceID],[TagClassValue],[CollectionDate],[CollectionYear],[CollectionMonth],[CollectionDay],[WD],[FlowValue],[SumValue],[SumUnit],[Volume],[IncrementFlag],[PrevID],[AreaName],[insertVolumeFlag] FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_SteamEnergy) " \
+              "WHERE t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' order by t.CollectionDate"
+        oclass = db_session.execute(sql).fetchall()
+        db_session.close()
     else:
         columns = ['蒸汽值', '单位', '仪表ID', '价格ID', '采集点', '采集时间', '采集年', '采集月', '采集天', '温度', '蒸汽瞬时值', '蒸汽累计值']
-        oclass = db_session.query(SteamEnergy).filter(SteamEnergy.TagClassValue.in_(tag),
-                                                      SteamEnergy.CollectionDate.between(StartTime, EndTime)).all()
+        sql = "SELECT [ID],[Unit],[EquipmnetID],[PriceID],[TagClassValue],[CollectionDate],[CollectionYear],[CollectionMonth],[CollectionDay],[ZGL],[AU],[AI],[BU],[BI],[CU],[CI],[IncrementFlag],[PrevID],[AreaName] FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricEnergy) " \
+              "WHERE t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' order by t.CollectionDate"
+        oclass = db_session.execute(sql).fetchall()
+        db_session.close()
     for item in columns:
         worksheet.write(0, col, item, cell_format)
         col += 1
     # 写入数据
     for i in range(1, len(oclass)):
+        print(oclass[i]['FlowUnit'])
         if EnergyClass == "水":
             for cum in columns:
-                if cum == '单位':
-                    worksheet.write(i, columns.index(cum), oclass[i].Unit)
+                if cum == '水瞬时流量单位':
+                    worksheet.write(i, columns.index(cum), oclass[i]['FlowUnit'])
                 if cum == '仪表ID':
-                    worksheet.write(i, columns.index(cum), oclass[i].EquipmnetID)
+                    worksheet.write(i, columns.index(cum), oclass[i][''])
                 if cum == '价格ID':
                     worksheet.write(i, columns.index(cum), oclass[i].PriceID)
                 if cum == '采集点':
