@@ -7,28 +7,28 @@
         </ul>
       </div>
       <EfficiencyAnalysisRun v-if="navOptionsCurrent === 0"></EfficiencyAnalysisRun>
-      <EfficiencyAnalysisLoss v-if="navOptionsCurrent === 1"></EfficiencyAnalysisLoss>
-      <EfficiencyAnalysisPipe v-if="navOptionsCurrent === 2"></EfficiencyAnalysisPipe>
+      <EfficiencyAnalysisPipe v-if="navOptionsCurrent === 1"></EfficiencyAnalysisPipe>
+      <!--<EfficiencyAnalysisLoss v-if="navOptionsCurrent === 1"></EfficiencyAnalysisLoss>-->
     </el-col>
   </el-row>
 </template>
 
 <script>
   import EfficiencyAnalysisRun from '@/views/energy/EfficiencyAnalysisRun'
-  import EfficiencyAnalysisLoss from '@/views/energy/EfficiencyAnalysisLoss'
   import EfficiencyAnalysisPipe from '@/views/energy/EfficiencyAnalysisPipe'
+  // import EfficiencyAnalysisLoss from '@/views/energy/EfficiencyAnalysisLoss'
   export default {
     name: "EfficiencyAnalysis",
     components:{
-      EfficiencyAnalysisRun,EfficiencyAnalysisLoss,EfficiencyAnalysisPipe
+      EfficiencyAnalysisRun,EfficiencyAnalysisPipe,
     },
     data(){
       return {
         navOptionsCurrent:0,
         navOptions:[
           {name:"运行效率"},
-          {name:"线损分析"},
           {name:"管损分析"},
+          //{name:"线损分析"},
         ]
       }
     },

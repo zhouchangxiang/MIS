@@ -285,13 +285,6 @@
           var params = {}
           var areaName = ""
           var TagClassValue = ""
-          if(this.formParameters.energy === "电"){
-            TagClassValue = this.ElectricEqActive
-          }else if(this.formParameters.energy === "水"){
-            TagClassValue = this.WaterEqActive
-          }else if(this.formParameters.energy === "汽"){
-            TagClassValue = this.SteamEqActive
-          }
           if(this.newAreaName.areaName === "整厂区" || this.newAreaName.areaName === ""){
             areaName = ""
             this.ChartExtend.series.label.show = true
@@ -299,6 +292,13 @@
           }else{
             areaName = this.newAreaName.areaName
             this.ChartExtend.series.label.show = false
+            if(this.formParameters.energy === "电"){
+              TagClassValue = this.ElectricEqActive
+            }else if(this.formParameters.energy === "水"){
+              TagClassValue = this.WaterEqActive
+            }else if(this.formParameters.energy === "汽"){
+              TagClassValue = this.SteamEqActive
+            }
           }
           if(this.formParameters.resourceTime === "日"){
             params.StartTime = dayStartTime
@@ -375,7 +375,6 @@
       websocketonmessage(e){ //数据接收
         this.chartsLoading = false
         var resdata = JSON.parse(e.data);
-        console.log(resdata)
         if(this.formParameters.energy === "电"){
           this.chartData.rows.push({
             "时间": moment().format("HH:mm:ss"),
