@@ -148,7 +148,6 @@
               value:item.AreaName
             })
           })
-          console.log(that.areaOptions)
         })
       },
     }

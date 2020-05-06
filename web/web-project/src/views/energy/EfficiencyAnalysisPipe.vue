@@ -81,6 +81,9 @@
           label:{
             position:"insideEndTop",
             formatter:'{b}：{c}'
+          },
+          lineStyle:{
+            color:"#FB8A06"
           }
         },
         ChartExtend: {

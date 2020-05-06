@@ -15,7 +15,7 @@
                 <div class="itemMarginBottom text-size-big text-color-info">{{ todayElectricity }} {{ ElectricityUnit }}</div>
                 <div class="itemMarginBottom">
                   <span class="text-size-mini text-color-info-shallow">今日电费</span>
-                  <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
+                  <span class="text-size-mini text-color-info-shallow float-right">对比昨日能耗</span>
                 </div>
                 <div class="itemMarginBottom">
                   <span class="text-size-normol text-color-info">{{ electricityCost }}</span>
@@ -46,7 +46,7 @@
                 <div class="itemMarginBottom text-size-big text-color-info">{{ todayWater }} {{ WaterUnit }}</div>
                 <div class="itemMarginBottom">
                   <span class="text-size-mini text-color-info-shallow">今日水费</span>
-                  <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
+                  <span class="text-size-mini text-color-info-shallow float-right">对比昨日能耗</span>
                 </div>
                 <div class="itemMarginBottom">
                   <span class="text-size-normol text-color-info">{{ waterCost }}</span>
@@ -77,7 +77,7 @@
                 <div class="itemMarginBottom text-size-big text-color-info">{{ todaySteam }} {{ SteamUnit }}</div>
                 <div class="itemMarginBottom">
                   <span class="text-size-mini text-color-info-shallow">今日汽费</span>
-                  <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
+                  <span class="text-size-mini text-color-info-shallow float-right">对比昨日能耗</span>
                 </div>
                 <div class="itemMarginBottom">
                   <span class="text-size-normol text-color-info">{{ steamCost }}</span>
@@ -112,7 +112,7 @@
               <div class="itemMarginBottom text-size-big text-color-info">{{ todayElectricity }} {{ ElectricityUnit }}</div>
               <div class="itemMarginBottom">
                 <span class="text-size-mini text-color-info-shallow">今日电费</span>
-                <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
+                <span class="text-size-mini text-color-info-shallow float-right">对比昨日能耗</span>
               </div>
               <div class="itemMarginBottom">
                 <span class="text-size-normol text-color-info">{{ electricityCost }}</span>
@@ -135,7 +135,7 @@
               <div class="itemMarginBottom text-size-big text-color-info">{{ todayWater }} {{ WaterUnit }}</div>
               <div class="itemMarginBottom">
                 <span class="text-size-mini text-color-info-shallow">今日水费</span>
-                <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
+                <span class="text-size-mini text-color-info-shallow float-right">对比昨日能耗</span>
               </div>
               <div class="itemMarginBottom">
                 <span class="text-size-normol text-color-info">{{ waterCost }}</span>
@@ -158,7 +158,7 @@
                 <div class="itemMarginBottom text-size-big text-color-info">{{ todaySteam }} {{ SteamUnit }}</div>
                 <div class="itemMarginBottom">
                   <span class="text-size-mini text-color-info-shallow">今日汽费</span>
-                  <span class="text-size-mini text-color-info-shallow float-right">对比昨日</span>
+                  <span class="text-size-mini text-color-info-shallow float-right">对比昨日能耗</span>
                 </div>
                 <div class="itemMarginBottom">
                   <span class="text-size-normol text-color-info">{{ steamCost }}</span>
@@ -175,7 +175,7 @@
             <div class="chartTile">生产详情</div>
           </div>
           <div class="platformContainer" style="margin-bottom:3px;">
-            <el-table :data="commodityTable" style="width: 100%" height="305px">
+            <el-table :data="commodityTable" height="305px">
               <el-table-column prop="BrandName" label="品名"></el-table-column>
             </el-table>
           </div>

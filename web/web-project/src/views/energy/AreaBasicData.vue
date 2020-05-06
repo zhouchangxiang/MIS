@@ -18,7 +18,7 @@
     <el-col :span="24" style="margin-bottom:2px;">
       <div class="chartHead text-size-large text-color-info">
         <div class="chartTile">趋势图</div>
-        <el-select v-model="areaName" size="mini" @change="getEq" v-if="newAreaName.areaName === '整厂区' || $route.query.areaName === '整厂区'">
+        <el-select v-model="areaName" size="mini" @change="getEq" v-if="newAreaName.areaName === '整厂区' || $route.query.areaName === '整厂区' || formParameters.resourceTime === '实时'">
           <el-option v-for="(item,index) in areaList" :key="index" :label="item.label" :value="item.value"></el-option>
         </el-select>
         <el-select v-model="ElectricEqActive" size="mini" @change="getChartData" v-if="formParameters.energy ==='电'">
@@ -199,7 +199,9 @@
                 { '时间': moment().subtract(2, 's').format("HH:mm:ss"), '总功率': null}
               ]
             }
-            this.initWebSocket()
+            if(this.ElectricEqList){
+              this.initWebSocket()
+            }
           }else if(this.formParameters.energy === "水"){
             this.chartData = {
               columns: ['时间', '累计流量'],
@@ -226,7 +228,9 @@
                 { '时间': moment().subtract(2, 's').format("HH:mm:ss"), '累计流量': null}
               ]
             }
-            this.initWebSocket()
+            if(this.WaterEqList){
+              this.initWebSocket()
+            }
           }else if(this.formParameters.energy === "汽"){
             this.chartData = {
               columns: ['时间', '累计流量'],
@@ -253,14 +257,18 @@
                 { '时间': moment().subtract(2, 's').format("HH:mm:ss"), '累计流量': null}
               ]
             }
-            this.initWebSocket()
+            if(this.SteamEqList){
+              this.initWebSocket()
+            }
           }
         }else{
           if(this.source){
             this.cancel()
           }
           this.source = this.axios.CancelToken.source(); // 初始化source对象
-          this.websock.close()
+          if(this.websock){
+            this.websock.close()
+          }
           this.chartsLoading = true
           var that = this
           var nowTime = moment().format('HH:mm').substring(0,4) + "0"
@@ -286,8 +294,11 @@
           }
           if(this.newAreaName.areaName === "整厂区" || this.newAreaName.areaName === ""){
             areaName = ""
+            this.ChartExtend.series.label.show = true
+            TagClassValue = ""
           }else{
             areaName = this.newAreaName.areaName
+            this.ChartExtend.series.label.show = false
           }
           if(this.formParameters.resourceTime === "日"){
             params.StartTime = dayStartTime
@@ -322,7 +333,6 @@
           }
           this.axios.get("/api/energydetail",{params:params,cancelToken: this.source.token}).then(res => {
             this.chartsLoading = false
-            console.log(res.data.row)
             if(areaName === ""){
               that.dataZoom = []
               that.chartSettings.type = "histogram"
@@ -365,6 +375,7 @@
       websocketonmessage(e){ //数据接收
         this.chartsLoading = false
         var resdata = JSON.parse(e.data);
+        console.log(resdata)
         if(this.formParameters.energy === "电"){
           this.chartData.rows.push({
             "时间": moment().format("HH:mm:ss"),
