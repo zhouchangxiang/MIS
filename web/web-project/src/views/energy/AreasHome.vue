@@ -24,17 +24,12 @@
               </el-col>
             </el-col>
             <el-col :span="24" style="margin-top: 15px;">
-              <p class="text-size-small">- 总功率：{{ electricChartValue }}</p>
-              <ve-line :data="electricChartData" :extend="chartExtend" :legend-visible="false" height="300px" v-loading="socketLoading"></ve-line>
+              <p class="text-color-info-shallow">日耗量</p>
+              <ve-histogram :data="electricHistogram" height="200px" :extend="chartExtend" :legend-visible="false"></ve-histogram>
             </el-col>
             <el-col :span="24" style="margin-top: 15px;">
-              <p class="text-color-info-shallow">日耗量</p>
-              <el-col :span="10">
-                <ve-histogram :data="electricHistogram" height="200px" :extend="chartExtend" :legend-visible="false"></ve-histogram>
-              </el-col>
-              <el-col :span="14">
-                <ve-ring :data="electricRing" :settings="ChartSettings" :extend="ChartExtend" width="100%" height="200px"></ve-ring>
-              </el-col>
+              <p class="text-color-info-shallow">车间耗量占比</p>
+              <ve-ring :data="electricRing" :settings="ChartSettings" :extend="ChartExtend" width="100%" height="300px"></ve-ring>
             </el-col>
           </div>
         </el-col>
@@ -59,18 +54,13 @@
                 </div>
               </el-col>
             </el-col>
-            <el-col :span="24" style="margin-top: 15px;">
-              <p class="text-size-small">- 累计流量：{{ waterChartValue }}</p>
-              <ve-line :data="waterChartData" :extend="chartExtend" :legend-visible="false" height="300px" v-loading="socketLoading"></ve-line>
-            </el-col>
             <el-col :span="24" style="margin-top: 20px;">
               <p class="text-color-info-shallow">日耗量</p>
-              <el-col :span="10">
-                <ve-histogram :data="waterHistogram" height="200px" :extend="chartExtend" :legend-visible="false"></ve-histogram>
-              </el-col>
-              <el-col :span="14">
-                <ve-ring :data="waterRing" :settings="ChartSettings" :extend="ChartExtend" width="100%" height="200px"></ve-ring>
-              </el-col>
+              <ve-histogram :data="waterHistogram" height="200px" :extend="chartExtend" :legend-visible="false"></ve-histogram>
+            </el-col>
+            <el-col :span="24" style="margin-top: 15px;">
+              <p class="text-color-info-shallow">车间耗量占比</p>
+              <ve-ring :data="waterRing" :settings="ChartSettings" :extend="ChartExtend" width="100%" height="300px"></ve-ring>
             </el-col>
           </div>
         </el-col>
@@ -96,17 +86,12 @@
               </el-col>
             </el-col>
             <el-col :span="24" style="margin-top: 20px;">
-              <p class="text-size-small">- 累计流量：{{ steamChartValue }}</p>
-              <ve-line :data="steamChartData" :extend="chartExtend" :legend-visible="false" height="300px" v-loading="socketLoading"></ve-line>
-            </el-col>
-            <el-col :span="24" style="margin-top: 20px;">
               <p class="text-color-info-shallow">日耗量</p>
-              <el-col :span="10">
-                <ve-histogram :data="steamHistogram" height="200px" :extend="chartExtend" :legend-visible="false"></ve-histogram>
-              </el-col>
-              <el-col :span="14">
-                <ve-ring :data="steamRing" :settings="ChartSettings" :extend="ChartExtend" width="100%" height="200px"></ve-ring>
-              </el-col>
+              <ve-histogram :data="steamHistogram" height="200px" :extend="chartExtend" :legend-visible="false"></ve-histogram>
+            </el-col>
+            <el-col :span="24" style="margin-top: 15px;">
+              <p class="text-color-info-shallow">车间耗量占比</p>
+              <ve-ring :data="steamRing" :settings="ChartSettings" :extend="ChartExtend" width="100%" height="300px"></ve-ring>
             </el-col>
           </div>
         </el-col>
@@ -278,8 +263,6 @@
         electricityCost:"",
         waterCost:"",
         steamCost:"",
-        websock:null,
-        socketLoading:false,
         chartExtend:{
           yAxis:{
             show:false
@@ -299,32 +282,6 @@
             }
           }
         },
-        electricChartValue:"",
-        electricChartData:{
-          columns: ['时间', '总功率'],
-          rows: [
-            { '时间': moment().subtract(40, 's').format("HH:mm:ss"), '总功率': null},
-            { '时间': moment().subtract(38, 's').format("HH:mm:ss"), '总功率': null},
-            { '时间': moment().subtract(36, 's').format("HH:mm:ss"), '总功率': null},
-            { '时间': moment().subtract(34, 's').format("HH:mm:ss"), '总功率': null},
-            { '时间': moment().subtract(32, 's').format("HH:mm:ss"), '总功率': null},
-            { '时间': moment().subtract(30, 's').format("HH:mm:ss"), '总功率': null},
-            { '时间': moment().subtract(28, 's').format("HH:mm:ss"), '总功率': null},
-            { '时间': moment().subtract(26, 's').format("HH:mm:ss"), '总功率': null},
-            { '时间': moment().subtract(24, 's').format("HH:mm:ss"), '总功率': null},
-            { '时间': moment().subtract(22, 's').format("HH:mm:ss"), '总功率': null},
-            { '时间': moment().subtract(20, 's').format("HH:mm:ss"), '总功率': null},
-            { '时间': moment().subtract(18, 's').format("HH:mm:ss"), '总功率': null},
-            { '时间': moment().subtract(16, 's').format("HH:mm:ss"), '总功率': null},
-            { '时间': moment().subtract(14, 's').format("HH:mm:ss"), '总功率': null},
-            { '时间': moment().subtract(12, 's').format("HH:mm:ss"), '总功率': null},
-            { '时间': moment().subtract(10, 's').format("HH:mm:ss"), '总功率': null},
-            { '时间': moment().subtract(8, 's').format("HH:mm:ss"), '总功率': null},
-            { '时间': moment().subtract(6, 's').format("HH:mm:ss"), '总功率': null},
-            { '时间': moment().subtract(4, 's').format("HH:mm:ss"), '总功率': null},
-            { '时间': moment().subtract(2, 's').format("HH:mm:ss"), '总功率': null}
-          ]
-        },
         electricHistogram:{
           columns: ['时间', '总功率'],
           rows: []
@@ -333,32 +290,6 @@
           columns: ['区域', '能耗量'],
           rows: []
         },
-        waterChartValue:"",
-        waterChartData:{
-          columns: ['时间', '累计流量'],
-          rows: [
-            { '时间': moment().subtract(40, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(38, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(36, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(34, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(32, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(30, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(28, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(26, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(24, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(22, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(20, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(18, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(16, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(14, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(12, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(10, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(8, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(6, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(4, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(2, 's').format("HH:mm:ss"), '累计流量': null}
-          ]
-        },
         waterHistogram:{
           columns: ['时间', '累计流量'],
           rows: []
@@ -366,32 +297,6 @@
         waterRing:{
           columns: ['区域', '能耗量'],
           rows: []
-        },
-        steamChartValue:"",
-        steamChartData:{
-          columns: ['时间', '累计流量'],
-          rows: [
-            { '时间': moment().subtract(40, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(38, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(36, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(34, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(32, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(30, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(28, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(26, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(24, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(22, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(20, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(18, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(16, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(14, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(12, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(10, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(8, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(6, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(4, 's').format("HH:mm:ss"), '累计流量': null},
-            { '时间': moment().subtract(2, 's').format("HH:mm:ss"), '累计流量': null}
-          ]
         },
         steamHistogram:{
           columns: ['时间', '累计流量'],
@@ -403,22 +308,22 @@
         },
         commodityTable:[],
         ChartSettings: {
-          radius: [20,40],
-          offsetY:"100px",
+          radius: [40,60],
+          offsetY:"160px",
           label:{
             show:true,
             position:'outside'
           },
           labelLine:{
             show:true,
-            length:5,
-            length2:2,
+            length:16,
+            length2:10,
           }
         },
         ChartExtend: {
           legend:{
             show:false
-          }
+          },
         },
         tableData:[],
         total:0,
@@ -433,16 +338,8 @@
       this.getEnergyPreview()
       this.getBrandName()
       this.getBrandData()
-      if(this.$route.query.areaName === "整厂区"){
-        this.initWebSocket()
-      }
       this.getBatchTable()
       this.getOnLineEq()
-    },
-    destroyed() {
-      if(this.$route.query.areaName === "整厂区" || this.newAreaName.AreaName === "整厂区"){
-        this.websock.close() //离开路由之后断开websocket连接
-      }
     },
     computed:{
       ElectricityCompare(){
@@ -648,54 +545,6 @@
           this.onlineEquipmentOption = JSON.parse(res.data)
         })
       },
-      initWebSocket(){ //初始化weosocket
-        const wsuri = "ws://127.0.0.1:5002";
-        this.websock = new WebSocket(wsuri);
-        this.socketLoading = true
-        this.websock.onmessage = this.websocketonmessage;
-        this.websock.onopen = this.websocketonopen;
-        this.websock.onerror = this.websocketonerror;
-        this.websock.onclose = this.websocketclose;
-      },
-      websocketonopen(){ //连接建立之后执行send方法发送数据
-        this.websocketsend("");
-      },
-      websocketonerror(){//连接建立失败重连
-        console.log("websocket连接失败")
-      },
-      websocketonmessage(e){ //数据接收
-        this.socketLoading = false
-        var resdata = JSON.parse(e.data);
-        if(resdata[1].AreaName === ""){
-          this.electricChartValue = resdata[1].areaEZGL
-          this.waterChartValue = resdata[1].areaWSum
-          this.steamChartValue = resdata[1].areaSSum
-          //电
-          this.electricChartData.rows.push({
-            "时间": moment().format("HH:mm:ss"),
-            "总功率": this.electricChartValue
-          })
-          this.electricChartData.rows.shift()
-          //水
-          this.waterChartData.rows.push({
-            "时间": moment().format("HH:mm:ss"),
-            "累计流量": this.waterChartValue
-          })
-          this.waterChartData.rows.shift()
-          //汽
-          this.steamChartData.rows.push({
-            '时间': moment().format("HH:mm:ss"),
-            '累计流量': this.steamChartValue
-          })
-          this.steamChartData.rows.shift()
-        }
-      },
-      websocketsend(Data){//数据发送
-        this.websock.send(Data);
-      },
-      websocketclose(e){  //关闭
-        console.log("websocket关闭")
-      }
     }
   }
 </script>

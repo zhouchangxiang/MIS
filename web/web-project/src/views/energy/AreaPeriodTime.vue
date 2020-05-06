@@ -7,7 +7,7 @@
           </el-form-item>
           <el-form-item style="float: right;">
             <el-radio-group v-model="formParameters.energy" fill="#082F4C" size="small" @change="getDayEnergy(),getChartData(),getAreaTimeEnergy(),getEnergycost()">
-              <el-radio-button v-for="(item,index) in energyList" :key="item.index" :label="item.label"></el-radio-button>
+              <el-radio-button v-for="(item,index) in energyList" :key="index" :label="item.label"></el-radio-button>
             </el-radio-group>
           </el-form-item>
         </el-form>
