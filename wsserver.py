@@ -244,17 +244,17 @@ def handler_msg(conn):
                 #     area_dir["areaEBU"] = strtofloat(areaEBU)
                 #     area_dir["areaECI"] = strtofloat(areaEBI)
                 #     area_dir["areaECU"] = strtofloat(areaEBU)
-                oclass = ast.literal_eval(redis_conn.hget(constant.REDIS_TABLENAME, "all_steam_tags"))
+                oclass = ast.literal_eval(returnb(redis_conn.hget(constant.REDIS_TABLENAME, "all_steam_tags")))
                 oc_dict_i_tag = {}
                 for oc in oclass:
                     oc_dict_i = {}
                     oc_dict_i["flowValue"] = strtofloat(
-                        redis_conn.hget(constant.REDIS_TABLENAME, oc.TagClassValue + "F"))  # 蒸汽瞬时流量
+                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "F"))  # 蒸汽瞬时流量
                     oc_dict_i["sumValue"] = strtofloat(
-                        redis_conn.hget(constant.REDIS_TABLENAME, oc.TagClassValue + "S"))  # 蒸汽累计流量
+                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "S"))  # 蒸汽累计流量
                     oc_dict_i["SteamWD"] = strtofloat(
-                        redis_conn.hget(constant.REDIS_TABLENAME, oc.TagClassValue + "WD"))  # 蒸汽体积
-                    oc_dict_i_tag[oc.TagClassValue] = oc_dict_i
+                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "WD"))  # 蒸汽体积
+                    oc_dict_i_tag[oc] = oc_dict_i
                 oc_dict = {}
                 oc_dict["steam"] = oc_dict_i_tag
                 area_list.append(oc_dict)
