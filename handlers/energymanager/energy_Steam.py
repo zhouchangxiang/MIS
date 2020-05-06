@@ -435,6 +435,11 @@ def steamlossanalysis():
                     if timehou in dictcurr.keys():
                         stem = round(float(dictcurr[timehou]), 2)
                     lossh = totalm - stem
+                    sttimeArray = time.strptime(timehou, '%Y-%m-%d %H')
+                    sttime = int(time.mktime(sttimeArray))
+                    nowtime = int(round(time.time()))
+                    if sttime > nowtime:
+                        lossh = ""
                     dir_list_i["管损"] = lossh
                     dir_list.append(dir_list_i)
             elif TimeClass == "月":
@@ -448,6 +453,11 @@ def steamlossanalysis():
                     if timeday in dictcurry.keys():
                         stemy = round(float(dictcurry[timeday]), 2)
                     lossd = totalm - stemy
+                    sttimeArray = time.strptime(timeday, '%Y-%m-%d')
+                    sttime = int(time.mktime(sttimeArray))
+                    nowtime = int(round(time.time()))
+                    if sttime > nowtime:
+                        lossd = ""
                     dir_list_i["管损"] = lossd
                     dir_list.append(dir_list_i)
             elif TimeClass == "年":
@@ -461,6 +471,11 @@ def steamlossanalysis():
                     if timemonth in dictcurrm.keys():
                         stemm = round(float(dictcurrm[timemonth]), 2)
                     lossy = totalm - stemm
+                    sttimeArray = time.strptime(timemonth, '%Y-%m')
+                    sttime = int(time.mktime(sttimeArray))
+                    nowtime = int(round(time.time()))
+                    if sttime > nowtime:
+                        lossy = ""
                     dir_list_i["管损"] = lossy
                     dir_list.append(dir_list_i)
             dir["row"] = dir_list
