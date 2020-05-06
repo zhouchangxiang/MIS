@@ -5,7 +5,7 @@ from flask import Blueprint, request
 from dbset.database.db_operate import db_session
 from dbset.main.BSFramwork import AlchemyEncoder
 from models.SystemManagement.core import Role, DepartmentManager, AreaMaintain
-from models.SystemManagement.system import User
+from models.SystemManagement.system import User, RoleUser
 
 user_manager = Blueprint('user_manager', __name__)
 
@@ -21,14 +21,16 @@ def get_user():
         for data in role_query:
             d1 = db_session.query(DepartmentManager).filter(DepartmentManager.DepartCode == data.ParentNode).first()
             user_list = {'name': data.RoleName, 'value': data.RoleCode, 'role_description': data.Description, 'type': 'role', 'rid': data.ID, 'did': d1.ID, 'department_name': department.DepartName, 'children': []}
-            user_query = db_session.query(User).filter(User.RoleName == data.RoleName).all()
-            for user in user_query:
-                d2 = db_session.query(DepartmentManager).filter(DepartmentManager.DepartName == user.OrganizationName).first()
-                if d2:
-                    user_data = {'name': user.Name, 'value': user.WorkNumber, 'type': 'user', 'rid': data.ID, 'did': d2.ID}
-                else:
-                    user_data = {'name': user.Name, 'value': user.WorkNumber, 'type': 'user', 'rid': data.ID, 'did': ''}
-                user_list['children'].append(user_data)
+            user_role_query = db_session.query(RoleUser).filter(RoleUser.RoleName == data.RoleName).all()
+            for user_role in user_role_query:
+                user_query = db_session.query(User).filter(User.ID == user_role.RoleID).all()
+                for user in user_query:
+                    d2 = db_session.query(DepartmentManager).filter(DepartmentManager.DepartName == user.OrganizationName).first()
+                    if d2:
+                        user_data = {'name': user.Name, 'value': user.WorkNumber, 'type': 'user', 'rid': data.ID, 'did': d2.ID}
+                    else:
+                        user_data = {'name': user.Name, 'value': user.WorkNumber, 'type': 'user', 'rid': data.ID, 'did': ''}
+                    user_list['children'].append(user_data)
             role_list.append(user_list)
         department_data = {'name': department.DepartName, 'value': department.DepartCode, 'type': 'department', 'did': department.ID, 'factory_name': factory.FactoryName, 'children': role_list}
         area = db_session.query(AreaMaintain).filter(AreaMaintain.FactoryName == department.DepartLoad).first()
