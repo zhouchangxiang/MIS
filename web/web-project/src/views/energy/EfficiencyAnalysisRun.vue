@@ -52,7 +52,7 @@
       return {
         formParameters:{
           resourceTime:"日",
-          startDate:moment().format("YYYY-MM-DD HH:mm:ss")
+          startDate:moment().format("YYYY-MM-DD")
         },
         radioTimeList:[
           {name:"日"},
@@ -61,7 +61,7 @@
         ],
         pickerOptions:{
           disabledDate(time) {
-            return time.getTime() > Date.now();
+            return time.getTime() > moment();
           }
         },
         loadRate:"",
@@ -111,35 +111,34 @@
       getPipeData(){
         this.chartsLoading = true
         var that = this
-        var dayStartTime = moment(this.formParameters.startDate).format('YYYY-MM-DD') + " 00:00:00"
-        var dayEndTime = moment(this.formParameters.startDate).format('YYYY-MM-DD HH:mm:ss')
-        var monthStartTime = moment(this.formParameters.startDate).month(moment(this.formParameters.startDate).month()).startOf('month').format('YYYY-MM-DD HH:mm:ss')
-        var monthEndTime = moment(this.formParameters.startDate).month(moment(this.formParameters.startDate).month()).endOf('month').format('YYYY-MM-DD HH:mm:ss')
-        var yearStartTime = moment(this.formParameters.startDate).year(moment(this.formParameters.startDate).year()).startOf('year').format('YYYY-MM-DD HH:mm:ss')
-        var yearEndTime = moment(this.formParameters.startDate).year(moment(this.formParameters.startDate).year()).endOf('year').format('YYYY-MM-DD HH:mm:ss')
+        var dayStartTime = moment(this.formParameters.startDate).format('YYYY-MM-DD')
+        var dayEndTime = moment(this.formParameters.startDate).format('YYYY-MM-DD')
+        var monthStartTime = moment(this.formParameters.startDate).month(moment(this.formParameters.startDate).month()).startOf('month').format('YYYY-MM-DD')
+        var monthEndTime = moment(this.formParameters.startDate).month(moment(this.formParameters.startDate).month()).endOf('month').format('YYYY-MM-DD')
+        var yearStartTime = moment(this.formParameters.startDate).year(moment(this.formParameters.startDate).year()).startOf('year').format('YYYY-MM-DD')
+        var yearEndTime = moment(this.formParameters.startDate).year(moment(this.formParameters.startDate).year()).endOf('year').format('YYYY-MM-DD')
         var params = {}
         if(this.formParameters.resourceTime === "日"){
           params.StartTime = dayStartTime
           params.EndTime = dayEndTime
           params.TimeClass = this.formParameters.resourceTime
-          params.CurrentTime = moment(this.formParameters.startDate).format('YYYY-MM-DD HH:mm:ss')
+          params.CurrentTime = moment(this.formParameters.startDate).format('YYYY-MM-DD')
           params.AreaName = this.areaValue
         }else if(this.formParameters.resourceTime === "月"){
           params.StartTime = monthStartTime
           params.EndTime = monthEndTime
           params.TimeClass = this.formParameters.resourceTime
-          params.CurrentTime = moment(this.formParameters.startDate).format('YYYY-MM-DD HH:mm:ss')
+          params.CurrentTime = moment(this.formParameters.startDate).format('YYYY-MM-DD')
           params.AreaName = this.areaValue
         }else if(this.formParameters.resourceTime === "年"){
           params.StartTime = yearStartTime
           params.EndTime = yearEndTime
           params.TimeClass = this.formParameters.resourceTime
-          params.CurrentTime = moment(this.formParameters.startDate).format('YYYY-MM-DD HH:mm:ss')
+          params.CurrentTime = moment(this.formParameters.startDate).format('YYYY-MM-DD')
           params.AreaName = this.areaValue
         }
         this.axios.get("/api/runefficiency",{params:params}).then(res => {
           that.chartsLoading = false
-          console.log(res.data)
           that.loadRate = res.data.loadRate + "%"
           that.ratedPower = res.data.ratedPower + res.data.unit
           that.activePower = res.data.activePower + res.data.unit
