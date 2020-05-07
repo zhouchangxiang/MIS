@@ -1357,6 +1357,20 @@ class Shifts(Base):
     # 班次结束时间
     EndTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+# 班制
+class ShiftsClass(Base):
+    __tablename__ = "ShiftsClass"
+    # ID:
+    ID = Column(Integer, primary_key=True, autoincrement=True, nullable=True)
+    # 班制编码
+    ShiftsClassCode = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 班制名称
+    ShiftsClassName = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 班制开始时间
+    BeginTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 班制结束时间
+    EndTime = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
 
 
 # 生成表单的执行语句
