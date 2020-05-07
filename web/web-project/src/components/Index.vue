@@ -5,17 +5,17 @@
       <el-row>
         <el-col :span="24">
           <div class="aside-head">
-            <el-tooltip content="系统首页" placement="bottom">
-              <router-link :to="{name:'home'}"><i class="fa fa-home"></i></router-link>
-            </el-tooltip>
+            <router-link :to="{name:'home'}">
+              <el-image style="padding: 0 25px;" :src="require('@/assets/imgs/logo.png')"></el-image>
+            </router-link>
           </div>
           <div :style="selfHeight" class="aside-menu">
             <el-menu class="menu-ul" :default-active="defaultActiveUrl" :collapse="isCollapse" :router="true">
               <template v-for="item in subMenulist">
                 <el-menu-item v-if="!item.children" :index="item.url"><i :class="item.icon"></i><span slot="title">{{ item.name }}</span></el-menu-item>
                 <el-submenu v-if="!item.url" :index="item.name">
-                    <template slot="title"><i :class="item.icon"></i><span>{{ item.name }}</span></template>
-                    <el-menu-item v-for="(child,childIndex) in item.children" :key="childIndex" :index="child.url" @click="clickSubMenu(child.name)"><span style="margin-left:10px;">{{child.name}}</span></el-menu-item>
+                  <template slot="title"><i :class="item.icon"></i><span>{{ item.name }}</span></template>
+                  <el-menu-item v-for="(child,childIndex) in item.children" :key="childIndex" :index="child.url" @click="clickSubMenu(child.name)"><span style="margin-left:10px;">{{child.name}}</span></el-menu-item>
                 </el-submenu>
               </template>
             </el-menu>
@@ -474,7 +474,7 @@ export default {
   },
   methods:{
     getMenuHeight(){
-      this.selfHeight.height = window.innerHeight - 210+'px';
+      this.selfHeight.height = window.innerHeight - 230+'px';
     },
     clickSubMenu(areaName){  //点击左菜单传区域给子组件
       this.areaObj.areaName = areaName
@@ -643,9 +643,7 @@ export default {
   }
   .aside-head{
     width: 100%;
-    text-align: center;
-    font-size: 30px;
-    padding: 30px 0;
+    padding: 50px 0 30px;
   }
   .aside-head a{
     color: #fff;

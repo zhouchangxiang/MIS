@@ -23,13 +23,13 @@
         </el-col>
         <el-col :span="6">
           <div class="platformItem">
-            <p style="margin-bottom: 10px;">输入总汽量<span class="float-right text-size-mini text-color-info-shallow"></span></p>
+            <p style="margin-bottom: 10px;">蒸汽总汽量<span class="float-right text-size-mini text-color-info-shallow"></span></p>
             <p><label class="text-size-big text-color-primary">{{ inputSteam }}</label><span class="float-right"></span></p>
           </div>
         </el-col>
         <el-col :span="6">
           <div class="platformItem">
-            <p style="margin-bottom: 10px;">输出总汽量<span class="float-right text-size-mini text-color-info-shallow"></span></p>
+            <p style="margin-bottom: 10px;">使用总汽量<span class="float-right text-size-mini text-color-info-shallow"></span></p>
             <p><label class="text-size-big text-color-primary">{{ outputSteam }}</label><span class="float-right"></span></p>
           </div>
         </el-col>

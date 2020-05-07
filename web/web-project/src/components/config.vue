@@ -74,7 +74,8 @@
           multipleSelection: [],
           dialogVisible: false,
           dialogTitle:'',
-          relatedTableField:"TableName",  //关联子表的字段搜索值
+          relatedTableField:"TableName",  //点击行的字段
+          relatedChildTableField:"TableName",  //关联子表的字段搜索值
         },
         FieldSetData:{
           tableName:"FieldSet", //表名

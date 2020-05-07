@@ -72,12 +72,12 @@
         this.tableData.multipleSelection = val;
         if(val[0] != undefined){
           if(this.relatedTableData) {
-            this.relatedTableData.searchProp = this.tableData.relatedTableField
+            this.relatedTableData.searchProp = this.tableData.relatedChildTableField
             this.relatedTableData.searchVal = val[0][this.tableData.relatedTableField]
             this.axios.get("/api/CUID",{
               params: {
                 tableName: this.relatedTableData.tableName,
-                field:this.tableData.relatedTableField,
+                field:this.relatedTableData.searchProp,
                 fieldvalue:this.relatedTableData.searchVal,
                 limit:this.relatedTableData.limit,
                 offset:this.relatedTableData.offset - 1

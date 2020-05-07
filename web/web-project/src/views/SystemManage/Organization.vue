@@ -51,7 +51,7 @@
       </div>
       <el-col :span="24" v-else-if="showTypeValue === '表格视图'">
         <div class="dataContainer" style="margin-bottom: 10px;">
-          <tableView :tableData="DepartmentTableData" @getTableData="getDepartmentTable"></tableView>
+          <tableView :tableData="DepartmentTableData" @getTableData="getDepartmentTable" :relatedTableData="RoleTableData"></tableView>
         </div>
         <div class="dataContainer" style="margin-bottom: 10px;">
           <tableView :tableData="RoleTableData" @getTableData="getRoleTable"></tableView>
@@ -260,6 +260,11 @@
             {label:"部门编码",prop:"DepartCode"}
           ],
           searchVal:"",
+          tableSelection:true, //是否在第一列添加复选框
+          tableSelectionRadio:true, //是否需要单选
+          multipleSelection: [],  //表格选中条的数据
+          relatedTableField:"DepartCode",  //点击行的字段
+          relatedChildTableField:"ParentNode",  //关联子表的字段搜索值
         },
         RoleTableData:{
           tableName:"Role",
@@ -276,7 +281,8 @@
           searchProp:"",
           searchPropList:[
             {label:"角色名称",prop:"RoleName"},
-            {label:"角色编码",prop:"RoleCode"}
+            {label:"角色编码",prop:"RoleCode"},
+            {label:"所属部门",prop:"ParentNode"},
           ],
           searchVal:"",
         },

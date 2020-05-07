@@ -11,7 +11,7 @@
           </el-form-item>
           <el-form-item label="开始班次：">
             <el-radio-group v-model="formParameters.team" fill="#082F4C" size="mini">
-              <el-radio-button v-for="(item,index) in teamList" :key="index" :label="item.ShiftsName" :value="item.ShiftsName"></el-radio-button>
+              <el-radio-button v-for="(item,index) in teamList" :key="index" :label="item.ShiftsClassName" :value="item.ShiftsClassName"></el-radio-button>
             </el-radio-group>
           </el-form-item>
           <el-form-item>
@@ -83,7 +83,7 @@
       getScheduling(){
         this.axios.get("/api/CUID",{
           params: {
-            tableName: "Shifts",
+            tableName: "ShiftsClass",
             limit:100000000,
             offset:0
           }
