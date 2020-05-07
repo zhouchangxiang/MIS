@@ -468,16 +468,18 @@ def steamlossanalysis():
                     stemy = 0
                     if timeday in dictcurry.keys():
                         stemy = round(float(dictcurry[timeday])/24, 2)
-                    sttimeArray = time.strptime(timeday, '%Y-%m-%d')
-                    sttime = int(time.mktime(sttimeArray))
-                    nowtime = int(round(time.time()))
-                    if sttime > nowtime:
-                        dir_list_i["输入总量"] = ""
-                        dir_list_i["输出总量"] = ""
-                    else:
-                        dir_list_i["输入总量"] = totalm
-                        dir_list_i["输出总量"] = stemy
-                    dir_list.append(dir_list_i)
+                    returnmonthfirstend = getMonthFirstDayAndLastDay(StartTime[0:4], StartTime[5:7])
+                    if int(myday) <= int(str(returnmonthfirstend[1])[8:10]):
+                        sttimeArray = time.strptime(timeday, '%Y-%m-%d')
+                        sttime = int(time.mktime(sttimeArray))
+                        nowtime = int(round(time.time()))
+                        if sttime > nowtime:
+                            dir_list_i["输入总量"] = ""
+                            dir_list_i["输出总量"] = ""
+                        else:
+                            dir_list_i["输入总量"] = totalm
+                            dir_list_i["输出总量"] = stemy
+                        dir_list.append(dir_list_i)
             elif TimeClass == "年":
                 recurrm = energyStatisticsmonth(oc_list, StartTime, EndTime, EnergyClass)
                 dictcurrm = {letter: score for score, letters in recurrm for letter in letters.split(",")}

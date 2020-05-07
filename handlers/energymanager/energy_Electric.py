@@ -565,7 +565,8 @@ def runefficiency():
                 dict_rpms[rpm.TagClassValue] = rpm.RatedPowerValue
             if oc_list:
                 runes = loadRateTotal(oc_list, CurrentTime[0:11]+"00:00:00", CurrentTime[0:11]+"23:59:59", EnergyClass)
-                dir["activePower"] = round(float(runes[0][0]), 2)
+                runes = round(0 if runes[0]['Rate'] is None else float(runes[0]['Rate']), 2)
+                dir["activePower"] = runes
             else:
                 dir["activePower"] = 0
                 runes = 0
@@ -589,7 +590,7 @@ def runefficiency():
                 if TimeClass == "日":
                     sql = "SELECT Sum(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '" + EnergyClass + "'),t.CollectionHour FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(
                         oc_list)[
-                                                                                                                                                                                                                                                                                                                                       1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionHour"
+                                                                                                                                                                                                                                                                                                                                       1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime[0:11] + "00:00:00" + "'" + " AND " + "'" + EndTime[0:11] + "23:59:59" + "' group by t.CollectionHour"
                     rehours = db_session.execute(sql).fetchall()
                     db_session.close()
                     dict_rehours = {letter: score for score, letters in rehours for letter in letters.split(",")}
@@ -616,7 +617,7 @@ def runefficiency():
                 elif TimeClass == "月":
                     sql = "SELECT Sum(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '" + EnergyClass + "'),t.CollectionDay FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(
                         oc_list)[
-                                                                                                                                                                                                                                                                                                                                       1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionDay"
+                                                                                                                                                                                                                                                                                                                                       1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime[0:11] + "00:00:00" + "'" + " AND " + "'" + EndTime[0:11] + "23:59:59" + "' group by t.CollectionDay"
                     redays = db_session.execute(sql).fetchall()
                     db_session.close()
                     dict_redays = {letter: score for score, letters in redays for letter in letters.split(",")}
@@ -629,21 +630,23 @@ def runefficiency():
                         else:
                             if mydaycurr in dict_redays.keys():
                                 runeday = (float(dict_redays[mydaycurr]) / 24) / float(dict_rpms[AreaName])
-                        dir_list_i = {}
-                        sttimeArray = time.strptime(mydaycurr, '%Y-%m-%d')
-                        sttime = int(time.mktime(sttimeArray))
-                        nowtime = int(round(time.time()))
-                        if sttime > nowtime:
-                            dir_list_i["时间"] = mydaycurr
-                            dir_list_i["负荷率"] = ""
-                        else:
-                            dir_list_i["时间"] = mydaycurr
-                            dir_list_i["负荷率"] = round(100 * runeday, 2)
-                        dir_list.append(dir_list_i)
+                        returnmonthfirstend = getMonthFirstDayAndLastDay(StartTime[0:4], StartTime[5:7])
+                        if int(myday) <= int(str(returnmonthfirstend[1])[8:10]):
+                            dir_list_i = {}
+                            sttimeArray = time.strptime(mydaycurr, '%Y-%m-%d')
+                            sttime = int(time.mktime(sttimeArray))
+                            nowtime = int(round(time.time()))
+                            if sttime > nowtime:
+                                dir_list_i["时间"] = mydaycurr
+                                dir_list_i["负荷率"] = ""
+                            else:
+                                dir_list_i["时间"] = mydaycurr
+                                dir_list_i["负荷率"] = round(100 * runeday, 2)
+                            dir_list.append(dir_list_i)
                 elif TimeClass == "年":
                     sql = "SELECT Sum(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '" + EnergyClass + "'),t.CollectionMonth FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(
                         oc_list)[
-                                                                                                                                                                                                                                                                                                                                       1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionMonth"
+                                                                                                                                                                                                                                                                                                                                       1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime[0:11] + "00:00:00" + "'" + " AND " + "'" + EndTime[0:11] + "23:59:59" + "' group by t.CollectionMonth"
                     remonths = db_session.execute(sql).fetchall()
                     db_session.close()
                     dict_remonths = {letter: score for score, letters in remonths for letter in letters.split(",")}
@@ -675,7 +678,7 @@ def runefficiency():
             insertSyslog("error", "运行效率查询报错Error：" + str(e), current_user.Name)
 
 def loadRateTotal(oc_list, StartTime, EndTime, energy):
-    sql = "SELECT Sum(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"') FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(oc_list)[1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+    sql = "SELECT Sum(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"') as Rate FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(oc_list)[1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
     re = db_session.execute(sql).fetchall()
     db_session.close()
     return re
