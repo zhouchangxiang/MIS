@@ -364,6 +364,10 @@ def energyStatisticsteamtotal(StartTime, EndTime, TimeClass):
         restar = db_session.query(SteamTotalMaintain.SumValue).filter(
             SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0',
             SteamTotalMaintain.CollectionDay == StartTime[0:10]).order_by(("CollectionDate")).first()
+        if reend != None and restar != None:
+            return round(float(reend[0]) - float(restar[0])/24, 2)
+        else:
+            return 0
     elif TimeClass == "月":
         reend = db_session.query(SteamTotalMaintain.SumValue).filter(
             SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0',
@@ -371,6 +375,10 @@ def energyStatisticsteamtotal(StartTime, EndTime, TimeClass):
         restar = db_session.query(SteamTotalMaintain.SumValue).filter(
             SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0',
             SteamTotalMaintain.CollectionMonth == StartTime[0:7]).order_by(("CollectionDate")).first()
+        if reend != None and restar != None:
+            return round(float(reend[0]) - float(restar[0])/720, 2)
+        else:
+            return 0
     else:
         reend = db_session.query(SteamTotalMaintain.SumValue).filter(
             SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0',
@@ -378,10 +386,10 @@ def energyStatisticsteamtotal(StartTime, EndTime, TimeClass):
         restar = db_session.query(SteamTotalMaintain.SumValue).filter(
             SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0',
             SteamTotalMaintain.CollectionYear == StartTime[0:4]).order_by(("CollectionDate")).first()
-    if reend != None and restar != None:
-        return round(float(reend[0]) - float(restar[0]), 2)
-    else:
-        return 0
+        if reend != None and restar != None:
+            return round(float(reend[0]) - float(restar[0])/8760, 2)
+        else:
+            return 0
 
 @energySteam.route('/steamlossanalysis', methods=['POST', 'GET'])
 def steamlossanalysis():
@@ -409,8 +417,13 @@ def steamlossanalysis():
             reto = energyStatistics(oc_list, StartTime, EndTime, EnergyClass)
             totalm = energyStatisticsteamtotal(StartTime, EndTime, TimeClass)
             dir["inputSteam"] = totalm
-            dir["outputSteam"] = reto
             if reto > 0:
+                if TimeClass == "年":
+                    reto = round(reto/8760, 2)
+                elif TimeClass == "月":
+                    reto = round(reto / 720, 2)
+                elif TimeClass == "日":
+                    reto = round(reto / 24, 2)
                 losst = totalm - reto
                 if losst > 0:
                     lossr = str(round((losst/totalm)*100, 2)) + "%"
@@ -419,6 +432,7 @@ def steamlossanalysis():
             else:
                 losst = totalm
                 lossr = "100%"
+            dir["outputSteam"] = reto
             dir["PipeDamageRate"] = lossr
             dir["PipeDamage"] = round(float(losst), 2)
             unit = db_session.query(Unit.UnitValue).filter(Unit.UnitName == EnergyClass).first()[0]
@@ -434,13 +448,15 @@ def steamlossanalysis():
                     stem = 0
                     if timehou in dictcurr.keys():
                         stem = round(float(dictcurr[timehou]), 2)
-                    lossh = totalm - stem
                     sttimeArray = time.strptime(timehou, '%Y-%m-%d %H')
                     sttime = int(time.mktime(sttimeArray))
                     nowtime = int(round(time.time()))
                     if sttime > nowtime:
-                        lossh = ""
-                    dir_list_i["管损"] = lossh
+                        dir_list_i["输入总量"] = ""
+                        dir_list_i["输出总量"] = ""
+                    else:
+                        dir_list_i["输入总量"] = totalm
+                        dir_list_i["输出总量"] = stem
                     dir_list.append(dir_list_i)
             elif TimeClass == "月":
                 recurry = energyStatisticsday(oc_list, StartTime, EndTime, EnergyClass)
@@ -451,14 +467,16 @@ def steamlossanalysis():
                     dir_list_i["时间"] = timeday
                     stemy = 0
                     if timeday in dictcurry.keys():
-                        stemy = round(float(dictcurry[timeday]), 2)
-                    lossd = totalm - stemy
+                        stemy = round(float(dictcurry[timeday])/24, 2)
                     sttimeArray = time.strptime(timeday, '%Y-%m-%d')
                     sttime = int(time.mktime(sttimeArray))
                     nowtime = int(round(time.time()))
                     if sttime > nowtime:
-                        lossd = ""
-                    dir_list_i["管损"] = lossd
+                        dir_list_i["输入总量"] = ""
+                        dir_list_i["输出总量"] = ""
+                    else:
+                        dir_list_i["输入总量"] = totalm
+                        dir_list_i["输出总量"] = stemy
                     dir_list.append(dir_list_i)
             elif TimeClass == "年":
                 recurrm = energyStatisticsmonth(oc_list, StartTime, EndTime, EnergyClass)
@@ -469,14 +487,16 @@ def steamlossanalysis():
                     dir_list_i["时间"] = timemonth
                     stemm = 0
                     if timemonth in dictcurrm.keys():
-                        stemm = round(float(dictcurrm[timemonth]), 2)
-                    lossy = totalm - stemm
+                        stemm = round(float(dictcurrm[timemonth])/720, 2)
                     sttimeArray = time.strptime(timemonth, '%Y-%m')
                     sttime = int(time.mktime(sttimeArray))
                     nowtime = int(round(time.time()))
                     if sttime > nowtime:
-                        lossy = ""
-                    dir_list_i["管损"] = lossy
+                        dir_list_i["输入总量"] = ""
+                        dir_list_i["输出总量"] = ""
+                    else:
+                        dir_list_i["输入总量"] = totalm
+                        dir_list_i["输出总量"] = stemm
                     dir_list.append(dir_list_i)
             dir["row"] = dir_list
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)

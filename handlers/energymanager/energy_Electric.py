@@ -515,8 +515,6 @@ def electricnergycost():
 
 
 def timeelectricprice(oc_list, StartTime, EndTime, energy):
-    propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
-    pro = float(propor.Proportion)
     sql = "select t2.PriceName,SUM(Cast(t1.IncremenValue as float)) * Cast(t2.PriceValue as float) FROM [DB_MICS].[dbo].[IncrementElectricTable] t1 with (INDEX =IX_IncrementElectricTable) INNER JOIN [DB_MICS].[dbo].[ElectricPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
         oc_list)[
                                                                                                                                                                                                                                                                                                 1:-1] + ") and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue, t2.PriceName"
@@ -605,8 +603,15 @@ def runefficiency():
                             if myhourcurr in dict_rehours.keys():
                                 runehou = float(dict_rehours[myhourcurr]) / float(dict_rpms[AreaName])
                         dir_list_i = {}
-                        dir_list_i["时间"] = myhourcurr
-                        dir_list_i["负荷率"] = round(100*runehou, 2)
+                        sttimeArray = time.strptime(myhourcurr, '%Y-%m-%d %H')
+                        sttime = int(time.mktime(sttimeArray))
+                        nowtime = int(round(time.time()))
+                        if sttime > nowtime:
+                            dir_list_i["时间"] = myhourcurr
+                            dir_list_i["负荷率"] = ""
+                        else:
+                            dir_list_i["时间"] = myhourcurr
+                            dir_list_i["负荷率"] = round(100 * runehou, 2)
                         dir_list.append(dir_list_i)
                 elif TimeClass == "月":
                     sql = "SELECT Sum(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '" + EnergyClass + "'),t.CollectionDay FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(
@@ -625,8 +630,15 @@ def runefficiency():
                             if mydaycurr in dict_redays.keys():
                                 runeday = (float(dict_redays[mydaycurr]) / 24) / float(dict_rpms[AreaName])
                         dir_list_i = {}
-                        dir_list_i["时间"] = mydaycurr
-                        dir_list_i["负荷率"] = round(100 * runeday, 2)
+                        sttimeArray = time.strptime(mydaycurr, '%Y-%m-%d')
+                        sttime = int(time.mktime(sttimeArray))
+                        nowtime = int(round(time.time()))
+                        if sttime > nowtime:
+                            dir_list_i["时间"] = mydaycurr
+                            dir_list_i["负荷率"] = ""
+                        else:
+                            dir_list_i["时间"] = mydaycurr
+                            dir_list_i["负荷率"] = round(100 * runeday, 2)
                         dir_list.append(dir_list_i)
                 elif TimeClass == "年":
                     sql = "SELECT Sum(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '" + EnergyClass + "'),t.CollectionMonth FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(
@@ -645,8 +657,15 @@ def runefficiency():
                             if myonthcurr in dict_remonths.keys():
                                 runemonth = (float(dict_remonths[myonthcurr]) / (30*24)) / float(dict_rpms[AreaName])
                         dir_list_i = {}
-                        dir_list_i["时间"] = myonthcurr
-                        dir_list_i["负荷率"] = round(100 * runemonth, 2)
+                        sttimeArray = time.strptime(myonthcurr, '%Y-%m')
+                        sttime = int(time.mktime(sttimeArray))
+                        nowtime = int(round(time.time()))
+                        if sttime > nowtime:
+                            dir_list_i["时间"] = myonthcurr
+                            dir_list_i["负荷率"] = ""
+                        else:
+                            dir_list_i["时间"] = myonthcurr
+                            dir_list_i["负荷率"] = round(100 * runemonth, 2)
                         dir_list.append(dir_list_i)
             dir["row"] = dir_list
             return json.dumps(dir)
