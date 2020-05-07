@@ -4,28 +4,31 @@
       <div class="card-head">
         <span style="margin-left: 10px;" class="text-size-normol">工厂日历</span>
       </div>
+      <el-col :span="24">
+        <el-form :inline="true" :model="formParameters">
+          <el-form-item label="月份：">
+            <el-date-picker type="month" v-model="formParameters.startDate" size="mini" format="yyyy-MM" style="width: 120px;" :clearable="false"></el-date-picker>
+          </el-form-item>
+          <el-form-item label="开始班次：">
+            <el-radio-group v-model="formParameters.team" fill="#082F4C" size="mini">
+              <el-radio-button v-for="(item,index) in teamList" :key="index" :label="item.ShiftsName" :value="item.ShiftsName"></el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+        </el-form>
+      </el-col>
       <div class="platformContainer">
         <FullCalendar :plugins="calendarPlugins"
-                      locale="zh-cn"
-                      :header="header"
-                      :events="events"
-                      :editable="true"
-                      :selectable="true"
-                      :button-text="buttonText"
-                      @dateClick="handleDateClick"
-                      @eventClick="handleEventClick"
-                      @eventDrop="handleEventDrop"
-                      @eventResize="handleEventResize"
+          locale="zh-cn"
+          :header="header"
+          :events="events"
+          :editable="true"
+          :selectable="true"
+          :button-text="buttonText"
+          @dateClick="handleDateClick"
+          @eventClick="handleEventClick"
+          @eventDrop="handleEventDrop"
+          @eventResize="handleEventResize"
         />
-        <el-dialog title="添加日程" :visible.sync="dialogTableVisible" width="30%">
-          <el-radio-group v-model="team" size="small">
-            <el-radio-button v-for="(item,index) in teamList" :label="item.label" :value="item.value" :key="index"></el-radio-button>
-          </el-radio-group>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogTableVisible = false">取消</el-button>
-            <el-button type="primary" @click="addSave">确认</el-button>
-          </div>
-        </el-dialog>
       </div>
     </el-col>
   </el-row>
@@ -47,6 +50,10 @@
     },
     data(){
       return {
+        formParameters:{
+          startDate:moment(),
+          team:"",
+        },
         calendarPlugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
         events:[],
         buttonText:{
@@ -62,19 +69,26 @@
         },
         dialogTableVisible:false,
         start:"",
-        team:"",
-        teamList:[
-          {label:"a班组",value:"a"},
-          {label:"b班组",value:"b"},
-          {label:"c班组",value:"c"},
-        ]
+        teamList:[]
       }
     },
     mounted() {
+      this.getScheduling()
       this.getData()
-      this.team = this.teamList[0].label
     },
     methods:{
+      getScheduling(){
+        this.axios.get("/api/CUID",{
+          params: {
+            tableName: "Shifts",
+            limit:100000000,
+            offset:0
+          }
+        }).then(res =>{
+          var data = JSON.parse(res.data)
+          this.teamList = data.rows
+        })
+      },
       getData() {
         this.axios.get("/api/CUID",{
           params: {
@@ -85,13 +99,11 @@
         }).then(res =>{
           var data = JSON.parse(res.data)
           this.events = data.rows
-        },res =>{
-          console.log("请求错误")
         })
       },
       handleDateClick(arg){  //点击日期
         this.start = arg.dateStr
-        this.dialogTableVisible = true
+
       },
       handleEventClick(e) {  //点击日程删除
         var ID = {

@@ -14,7 +14,6 @@
       <UnitTable v-if="navOptionsCurrent === 'UnitTable'"></UnitTable>
       <EnergyLimit v-if="navOptionsCurrent === 'EnergyLimit'"></EnergyLimit>
       <EarlyWarningLimit v-if="navOptionsCurrent === 'EarlyWarningLimit'"></EarlyWarningLimit>
-      <SchedulingRules v-if="navOptionsCurrent === 'SchedulingRules'"></SchedulingRules>
       <electricityBalance v-if="navOptionsCurrent === 'electricityBalance'"></electricityBalance>
     </el-col>
   </el-row>
@@ -34,7 +33,7 @@
   export default {
     name: "MaintainedBoard",
     components:{
-      SchedulingRules,Area,AreaTimeRange,PowerLoadRateRange,EnergyPrices,UnitConversion,UnitTable,EnergyLimit,EarlyWarningLimit,electricityBalance
+      Area,AreaTimeRange,PowerLoadRateRange,EnergyPrices,UnitConversion,UnitTable,EnergyLimit,EarlyWarningLimit,electricityBalance
     },
     data(){
       return {
@@ -48,7 +47,6 @@
           {name:"能耗单位",value:"UnitTable"},
           {name:"能耗限度",value:"EnergyLimit"},
           {name:"温度预警限度",value:"EarlyWarningLimit"},
-          {name:"调度规则",value:"SchedulingRules"},
           {name:"三项电流不平衡",value:"electricityBalance"},
         ],
       }

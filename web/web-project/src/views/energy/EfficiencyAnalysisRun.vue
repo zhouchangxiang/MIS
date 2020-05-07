@@ -38,7 +38,7 @@
         </el-col>
       </div>
       <div class="energyDataContainer">
-        <ve-histogram :data="runEfficiencyChartData" :extend="ChartExtend" v-loading="chartsLoading"></ve-histogram>
+        <ve-histogram :data="runEfficiencyChartData" :extend="ChartExtend" :mark-line="markLine" v-loading="chartsLoading"></ve-histogram>
       </div>
     </el-col>
   </el-row>
@@ -79,6 +79,21 @@
           series:{
             barMaxWidth : 30,
             smooth: false
+          }
+        },
+        markLine: {
+          data: [
+            {
+              name: '平均值',
+              type: 'average',
+            }
+          ],
+          label:{
+            position:"insideEndTop",
+            formatter:'{b}：{c}'
+          },
+          lineStyle:{
+            color:"#FB8A06"
           }
         },
         runEfficiencyChartData:{
@@ -124,6 +139,7 @@
         }
         this.axios.get("/api/runefficiency",{params:params}).then(res => {
           that.chartsLoading = false
+          console.log(res.data)
           that.loadRate = res.data.loadRate + "%"
           that.ratedPower = res.data.ratedPower + res.data.unit
           that.activePower = res.data.activePower + res.data.unit
