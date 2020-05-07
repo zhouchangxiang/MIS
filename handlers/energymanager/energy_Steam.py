@@ -349,7 +349,7 @@ def roundtwo(rod):
         if float(rod) < 0:
             return 0.0
         return round(float(rod), 2)
-def energyStatisticsteamtotal(StartTime, EndTime, TimeClass):
+def energyStatisticsteamtotal(StartTime, EndTime):
     '''
     :param oc_list: tag点的List
     :param StartTime:
@@ -357,39 +357,16 @@ def energyStatisticsteamtotal(StartTime, EndTime, TimeClass):
     :param energy:
     :return:获取某段时间汽能总值
     '''
-    if TimeClass == "日":
-        reend = db_session.query(SteamTotalMaintain.SumValue).filter(
-            SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0',
-            SteamTotalMaintain.CollectionDay == EndTime[0:10]).order_by(desc("CollectionDate")).first()
-        restar = db_session.query(SteamTotalMaintain.SumValue).filter(
-            SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0',
-            SteamTotalMaintain.CollectionDay == StartTime[0:10]).order_by(("CollectionDate")).first()
-        if reend != None and restar != None:
-            return round(float(reend[0]) - float(restar[0])/24, 2)
-        else:
-            return 0
-    elif TimeClass == "月":
-        reend = db_session.query(SteamTotalMaintain.SumValue).filter(
-            SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0',
-            SteamTotalMaintain.CollectionMonth == EndTime[0:7]).order_by(desc("CollectionDate")).first()
-        restar = db_session.query(SteamTotalMaintain.SumValue).filter(
-            SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0',
-            SteamTotalMaintain.CollectionMonth == StartTime[0:7]).order_by(("CollectionDate")).first()
-        if reend != None and restar != None:
-            return round(float(reend[0]) - float(restar[0])/720, 2)
-        else:
-            return 0
+    reend = db_session.query(SteamTotalMaintain).filter(
+        SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0',
+        SteamTotalMaintain.CollectionDate.between(StartTime, EndTime)).order_by(desc("CollectionDate")).first()
+    restar = db_session.query(SteamTotalMaintain).filter(
+        SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0',
+        SteamTotalMaintain.CollectionDate.between(StartTime, EndTime)).order_by(("CollectionDate")).first()
+    if reend != None and restar != None:
+        return round(float(reend.SumValue) - float(restar.SumValue), 2)
     else:
-        reend = db_session.query(SteamTotalMaintain.SumValue).filter(
-            SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0',
-            SteamTotalMaintain.CollectionYear == EndTime[0:4]).order_by(desc("CollectionDate")).first()
-        restar = db_session.query(SteamTotalMaintain.SumValue).filter(
-            SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0',
-            SteamTotalMaintain.CollectionYear == StartTime[0:4]).order_by(("CollectionDate")).first()
-        if reend != None and restar != None:
-            return round(float(reend[0]) - float(restar[0])/8760, 2)
-        else:
-            return 0
+        return 0
 
 @energySteam.route('/steamlossanalysis', methods=['POST', 'GET'])
 def steamlossanalysis():
@@ -415,15 +392,9 @@ def steamlossanalysis():
             for tag in tags:
                 oc_list.append(tag.TagClassValue)
             reto = energyStatistics(oc_list, StartTime, EndTime, EnergyClass)
-            totalm = energyStatisticsteamtotal(StartTime, EndTime, TimeClass)
+            totalm = energyStatisticsteamtotal(StartTime, EndTime)
             dir["inputSteam"] = totalm
             if reto > 0:
-                if TimeClass == "年":
-                    reto = round(reto/8760, 2)
-                elif TimeClass == "月":
-                    reto = round(reto / 720, 2)
-                elif TimeClass == "日":
-                    reto = round(reto / 24, 2)
                 losst = totalm - reto
                 if losst > 0:
                     lossr = str(round((losst/totalm)*100, 2)) + "%"
@@ -448,6 +419,7 @@ def steamlossanalysis():
                     stem = 0
                     if timehou in dictcurr.keys():
                         stem = round(float(dictcurr[timehou]), 2)
+                    ste_total_hour = energyStatisticsteamtotal(timehou+":00:00", timehou+":59:59")
                     sttimeArray = time.strptime(timehou, '%Y-%m-%d %H')
                     sttime = int(time.mktime(sttimeArray))
                     nowtime = int(round(time.time()))
@@ -455,7 +427,7 @@ def steamlossanalysis():
                         dir_list_i["输入总量"] = ""
                         dir_list_i["输出总量"] = ""
                     else:
-                        dir_list_i["输入总量"] = totalm
+                        dir_list_i["输入总量"] = ste_total_hour
                         dir_list_i["输出总量"] = stem
                     dir_list.append(dir_list_i)
             elif TimeClass == "月":
@@ -467,7 +439,8 @@ def steamlossanalysis():
                     dir_list_i["时间"] = timeday
                     stemy = 0
                     if timeday in dictcurry.keys():
-                        stemy = round(float(dictcurry[timeday])/24, 2)
+                        stemy = round(float(dictcurry[timeday]), 2)
+                    ste_total_day = energyStatisticsteamtotal(timeday+" 00:00:00", timeday+" 23:59:59")
                     returnmonthfirstend = getMonthFirstDayAndLastDay(StartTime[0:4], StartTime[5:7])
                     if int(myday) <= int(str(returnmonthfirstend[1])[8:10]):
                         sttimeArray = time.strptime(timeday, '%Y-%m-%d')
@@ -477,7 +450,7 @@ def steamlossanalysis():
                             dir_list_i["输入总量"] = ""
                             dir_list_i["输出总量"] = ""
                         else:
-                            dir_list_i["输入总量"] = totalm
+                            dir_list_i["输入总量"] = ste_total_day
                             dir_list_i["输出总量"] = stemy
                         dir_list.append(dir_list_i)
             elif TimeClass == "年":
@@ -489,7 +462,9 @@ def steamlossanalysis():
                     dir_list_i["时间"] = timemonth
                     stemm = 0
                     if timemonth in dictcurrm.keys():
-                        stemm = round(float(dictcurrm[timemonth])/720, 2)
+                        stemm = round(float(dictcurrm[timemonth]), 2)
+                    returnmonthfirstend = getMonthFirstDayAndLastDay(timemonth[0:4], timemonth[5:7])
+                    ste_total_month = energyStatisticsteamtotal(timemonth+"-01 00:00:00", str(returnmonthfirstend[1])+" 23:59:59")
                     sttimeArray = time.strptime(timemonth, '%Y-%m')
                     sttime = int(time.mktime(sttimeArray))
                     nowtime = int(round(time.time()))
@@ -497,7 +472,7 @@ def steamlossanalysis():
                         dir_list_i["输入总量"] = ""
                         dir_list_i["输出总量"] = ""
                     else:
-                        dir_list_i["输入总量"] = totalm
+                        dir_list_i["输入总量"] = ste_total_month
                         dir_list_i["输出总量"] = stemm
                     dir_list.append(dir_list_i)
             dir["row"] = dir_list
