@@ -14,6 +14,9 @@
               <el-radio-button v-for="(item,index) in teamList" :key="index" :label="item.ShiftsName" :value="item.ShiftsName"></el-radio-button>
             </el-radio-group>
           </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="startScheduling" size="mini">开始排班</el-button>
+          </el-form-item>
         </el-form>
       </el-col>
       <div class="platformContainer">
@@ -89,6 +92,9 @@
           this.teamList = data.rows
         })
       },
+      startScheduling(){
+
+      },
       getData() {
         this.axios.get("/api/CUID",{
           params: {
@@ -101,9 +107,39 @@
           this.events = data.rows
         })
       },
-      handleDateClick(arg){  //点击日期
+      handleDateClick(arg){  //点击日期 添加休息日
         this.start = arg.dateStr
-
+        this.$confirm('是否要把'+ this.start + '设置为休息日？', '提示', {
+          distinguishCancelAndClose:true,
+          type: 'warning'
+        }).then(()  => {
+          var params = {
+            tableName: "plantCalendarScheduling",
+            title:"休息",
+            start:this.start,
+            color:"#00c3db"
+          }
+          this.axios.post("/api/CUID",this.qs.stringify(params)).then(res =>{
+            if(res.data == "OK"){
+              this.getData()
+              this.dialogTableVisible = false
+              this.$message({
+                type: 'success',
+                message: "添加成功"
+              });
+            }else{
+              this.$message({
+                type: 'info',
+                message: res.data
+              });
+            }
+          })
+        }).catch(()   => {
+          this.$message({
+            type: 'info',
+            message: '已取消添加'
+          });
+        });
       },
       handleEventClick(e) {  //点击日程删除
         var ID = {
@@ -154,31 +190,6 @@
             this.$message({
               type: 'success',
               message: "修改成功"
-            });
-          }else{
-            this.$message({
-              type: 'info',
-              message: res.data
-            });
-          }
-        },res =>{
-          console.log("请求错误")
-        })
-      },
-      addSave(){
-        var params = {
-          tableName: "plantCalendarScheduling",
-          title:this.team,
-          start:this.start,
-          color:"#00c3db"
-        }
-        this.axios.post("/api/CUID",this.qs.stringify(params)).then(res =>{
-          if(res.data == "OK"){
-            this.getData()
-            this.dialogTableVisible = false
-            this.$message({
-              type: 'success',
-              message: "添加成功"
             });
           }else{
             this.$message({

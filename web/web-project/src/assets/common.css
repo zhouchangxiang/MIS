@@ -262,3 +262,8 @@
 #baseTabDrawer .el-drawer__body{
   overflow: auto;
 }
+/*  */
+.fc-button,.fc-button-primary{
+  font-size: 12px;
+  padding:7px 15px;
+}

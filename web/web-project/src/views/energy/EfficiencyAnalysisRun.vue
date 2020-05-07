@@ -6,7 +6,7 @@
           <el-radio-group v-model="formParameters.resourceTime" fill="#082F4C" size="mini" @change="getPipeData">
             <el-radio-button v-for="(item,index) in radioTimeList" border :key="index" :label="item.name"></el-radio-button>
           </el-radio-group>
-          <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false" @change="getPipeData"></el-date-picker>
+          <el-date-picker type="date" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" style="width: 180px;" :clearable="false" @change="getPipeData"></el-date-picker>
         </el-form-item>
       </el-form>
     </el-col>

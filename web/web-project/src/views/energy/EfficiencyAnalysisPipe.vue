@@ -75,7 +75,7 @@
           data: [
             {
               name: '平均值',
-              type: 'average',
+              type: 'average'
             }
           ],
           label:{
@@ -99,7 +99,7 @@
           }
         },
         runEfficiencyChartData:{
-          columns: ['时间', '管损'],
+          columns: ['时间', '输入总量', '输出总量'],
           rows: []
         },
         chartsLoading:false
@@ -134,7 +134,6 @@
         }
         this.axios.get("/api/steamlossanalysis",{params:params}).then(res => {
           that.chartsLoading = false
-          console.log(res.data)
           that.PipeDamage = res.data.PipeDamage + res.data.Unit
           that.PipeDamageRate = res.data.PipeDamageRate
           that.inputSteam = res.data.inputSteam + res.data.Unit
