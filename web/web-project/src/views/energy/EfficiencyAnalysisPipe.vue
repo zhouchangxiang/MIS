@@ -64,7 +64,7 @@
         ],
         pickerOptions:{
           disabledDate(time) {
-            return time.getTime() > Date.now();
+            return time.getTime() > moment();
           }
         },
         PipeDamage:"",
@@ -134,6 +134,7 @@
         }
         this.axios.get("/api/steamlossanalysis",{params:params}).then(res => {
           that.chartsLoading = false
+          console.log(res.data)
           that.PipeDamage = res.data.PipeDamage + res.data.Unit
           that.PipeDamageRate = res.data.PipeDamageRate
           that.inputSteam = res.data.inputSteam + res.data.Unit

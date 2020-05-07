@@ -390,6 +390,7 @@ export default {
         {name:"角色管理",icon:"el-icon-s-check",url:"/Role"},
         {name:"人员管理",icon:"el-icon-user",url:"/Personnel"},
         {name:"工厂日历",icon:"el-icon-date",url:"/Calendar"},
+        {name:"调度维护",icon:"el-icon-suitcase",url:"/SchedulingRules"},
         {name:"系统日志",icon:"el-icon-notebook-1",url:"/Log"}
       ],
       isFullScreen:false, //是否全屏
@@ -437,7 +438,11 @@ export default {
     this.timer = setInterval(() =>{
       _this.time = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
     },1000);
+    if(this.$route.meta.title === "系统管理"){  //判断是否是属于系统管理模块，展示系统模块菜单
+      this.isactive = 1
+    }
     this.clickMainMenu(this.isactive)
+    this.defaultActiveUrl = this.$route.path //将菜单激活项设置为当前页面地址
   },
   created(){
     window.addEventListener('resize', this.getMenuHeight);

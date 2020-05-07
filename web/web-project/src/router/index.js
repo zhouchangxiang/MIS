@@ -15,6 +15,7 @@ import Factory from '@/views/SystemManage/Factory'
 import Role from '@/views/SystemManage/Role'
 import Personnel from '@/views/SystemManage/Personnel'
 import Calendar from '@/views/SystemManage/Calendar'
+import SchedulingRules from '@/views/MaintainedTable/SchedulingRules'
 import Log from '@/views/SystemManage/Log'
 
 Vue.use(Router)
@@ -67,32 +68,37 @@ export default new Router({
       },{
         path:'/Organization',
         name:'Organization',
-        meta:{ title:'组织架构' },
+        meta:{ title:'系统管理' },
         component:Organization
       },{
         path:'/Factory',
         name:'Factory',
-        meta:{ title:'厂区管理' },
+        meta:{ title:'系统管理' },
         component:Factory
       },{
         path:'/Role',
         name:'Role',
-        meta:{ title:'角色管理' },
+        meta:{ title:'系统管理' },
         component:Role
       },{
         path:'/Personnel',
         name:'Personnel',
-        meta:{ title:'人员管理' },
+        meta:{ title:'系统管理' },
         component:Personnel
       },{
         path:'/Calendar',
         name:'Calendar',
-        meta:{ title:'工厂日历' },
+        meta:{ title:'系统管理' },
         component:Calendar
+      },{
+        path:'/SchedulingRules',
+        name:'SchedulingRules',
+        meta:{ title:'系统管理' },
+        component:SchedulingRules
       },{
         path:'/Log',
         name:'Log',
-        meta:{ title:'系统日志' },
+        meta:{ title:'系统管理' },
         component:Log
       }]
     },

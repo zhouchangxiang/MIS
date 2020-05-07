@@ -1,6 +1,9 @@
 <template>
   <el-row>
     <el-col :span="24">
+      <div class="card-head">
+        <span style="margin-left: 10px;" class="text-size-normol">调度维护</span>
+      </div>
       <div class="platformContainer">
         <tableView :tableData="TableData" @getTableData="getTableData"></tableView>
       </div>
