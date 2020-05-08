@@ -258,32 +258,6 @@ def energyStatisticsCost(oc_list, StartTime, EndTime, energy):
     else:
         return 0.0
 
-def energyStatisticsFlowSumWD(oc_list, StartTime, EndTime, energy):
-    '''
-    :param oc_list: tag点的List
-    :param StartTime:
-    :param EndTime:
-    :param energy: 水，电 ，气
-    :return:历史表的瞬时值、温度、体积
-    '''
-    propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
-    pro = float(propor.Proportion)
-    if energy == "水":
-        sql = "SELECT SUM(Cast(t.WaterFlow as float)) as WaterFlow,MAX(Cast(t.WaterSum as float)),MIN(Cast(t.WaterSum as float))  FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_WaterEnergy)  WHERE t.TagClassValue in (" + str(
-            oc_list)[
-                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
-    elif energy == "电":
-        sql = "SELECT MAX(Cast(t.ZGL as float)),MIN(Cast(t.ZGL as float))  FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricEnergy)  WHERE t.TagClassValue in (" + str(
-            oc_list)[
-                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
-    elif energy == "汽":
-        sql = "SELECT SUM(Cast(t.FlowValue as float)) as FlowValue,SUM(Cast(t.Volume as float)) as Volume,AVG(Cast(t.WD as float)) AS WD,MAX(Cast(t.SumValue as float)),MIN(Cast(t.SumValue as float))  FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy)  WHERE t.TagClassValue in (" + str(
-            oc_list)[
-                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
-    re = db_session.execute(sql).fetchall()
-    db_session.close()
-    return re
-
 def energyStatisticshour(oc_list, StartTime, EndTime, energy):
     '''
     :param oc_list: tag点的List
@@ -497,7 +471,7 @@ def energyStatisticsCostbymonth(oc_list, StartTime, EndTime, energy):
 
 
 
-def energyselect(data):
+def energyselect():
     if request.method == 'GET':
         try:
             dir = {}
