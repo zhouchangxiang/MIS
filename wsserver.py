@@ -255,10 +255,20 @@ def handler_msg(conn):
                     oc_dict_i["SteamWD"] = strtofloat(
                         redis_conn.hget(constant.REDIS_TABLENAME, oc + "WD"))  # 蒸汽体积
                     oc_dict_i_tag[oc] = oc_dict_i
+                water_oclass = ast.literal_eval(returnb(redis_conn.hget(constant.REDIS_TABLENAME, "all_water_tags")))
+                oc_dict_i_water_tag = {}
+                for oc in water_oclass:
+                    oc_water_dict_i = {}
+                    oc_water_dict_i["flowValue"] = strtofloat(
+                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "F"))
+                    oc_water_dict_i["sumValue"] = strtofloat(
+                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "S"))
+                    oc_dict_i_water_tag[oc] = oc_water_dict_i
                 oc_dict = {}
                 oc_dict["steam"] = oc_dict_i_tag
                 area_list.append(oc_dict)
                 area_list.append(area_dir)
+                area_list.append(oc_dict_i_water_tag)
                 json_data = json.dumps(area_list)
                 # bytemsg = bytes(json_data, encoding="utf8")
                 # send_msg(c, bytes("recv: {}".format(data_parse), encoding="utf-8"))
@@ -297,11 +307,17 @@ def server_socket():
         sock.bind(("127.0.0.1", 5002))
         sock.listen(2)
         #将所有的tag写入redis
-        Tags = db_session.query(TagDetail).filter(TagDetail.EnergyClass == "汽").all()
-        tag_all_list = []
+        Tags = db_session.query(TagDetail).filter().all()
+        tag_steam_list = []
+        tag_water_list = []
         for tag in Tags:
-            tag_all_list.append(tag.TagClassValue)
-        redis_conn.hset(constant.REDIS_TABLENAME,"all_steam_tags",str(tag_all_list))
+            EnergyClass = tag[0:1]
+            if EnergyClass == "S":
+                tag_steam_list.append(tag.TagClassValue)
+            elif EnergyClass == "W":
+                tag_water_list.append(tag.TagClassValue)
+        redis_conn.hset(constant.REDIS_TABLENAME, "all_steam_tags", str(tag_steam_list))
+        redis_conn.hset(constant.REDIS_TABLENAME, "all_water_tags", str(tag_water_list))
         areas = db_session.query(AreaTable).all()
         for area in areas:
             tagareas = db_session.query(TagDetail).filter(TagDetail.AreaName == area.AreaName).all()
