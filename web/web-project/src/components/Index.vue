@@ -77,7 +77,7 @@
           <div class="drawerContent">
             <div class="drawerMaskBg"></div>
             <i class="close-drawer el-icon-close text-size-large" @click="drawer=false"></i>
-            <div class="mapContent">
+            <div class="mapContent"  v-if="JSON.stringify(steamTagList) != '{}'">
               <div class="mapContentTop">
                 <div style="position: relative;height: 100%;">
                   <div v-for="(item,index) in drawerTopAreaOption" class="mapContentItem" :style="{width:item.width, height: item.height,top: item.top,left: item.left}" :key="index" @click="showAreaInfo(item.title,item.img,item.img2)">
@@ -93,11 +93,11 @@
                 </div>
               </div>
             </div>
-            <el-button type="primary" @click="lookWaterMap" style="position: absolute;">水表采集图</el-button>
+            <el-button type="primary" @click="lookWaterMap" style="position: absolute;" v-if="JSON.stringify(waterTagList) != '{}'">水表采集图</el-button>
           </div>
         </el-drawer>
         <!-- 水表分布图 -->
-        <el-dialog title="水表采集分布" :visible.sync="waterAreaDialog" width="60%">
+        <el-dialog title="水表采集分布" :visible.sync="waterAreaDialog" width="70%" v-if="waterAreaDialog">
           <el-row :gutter="20">
             <el-col :span="24" style="margin-bottom: 20px;">
               <el-col :span="4">
@@ -167,10 +167,11 @@
               </el-col>
             </el-col>
             <el-col :span="24">
-              <el-col :span="8" :offset="5"><el-card shadow="hover" class="useAreaCard">
-                <p>办公楼\食堂</p>
-                <div class="waterTagData" style="left: 100px;bottom: 10px;">1楼卫生间DN65<p>{{ waterTagList.W_Area_BGL_34_1_22.sumValue }}</p><p>{{ waterTagList.W_Area_BGL_34_1_22.flowValue }}</p></div>
-              </el-card>
+              <el-col :span="8" :offset="5">
+                <el-card shadow="hover" class="useAreaCard">
+                  <p>办公楼\食堂</p>
+                  <div class="waterTagData" style="left: 100px;bottom: 10px;">1楼卫生间DN65<p>{{ waterTagList.W_Area_BGL_34_1_22.sumValue }}</p><p>{{ waterTagList.W_Area_BGL_34_1_22.flowValue }}</p></div>
+                </el-card>
               </el-col>
             </el-col>
           </el-row>
@@ -680,9 +681,7 @@ export default {
       })
     },
     lookWaterMap(){
-      if(this.waterTagList){
-        this.waterAreaDialog = true
-      }
+      this.waterAreaDialog = true
     },
     initWebSocket(){ //初始化weosocket
       const wsuri = "ws://127.0.0.1:5002";
@@ -700,7 +699,6 @@ export default {
     },
     websocketonmessage(e){ //数据接收
       var resdata = JSON.parse(e.data);
-      console.log(resdata)
       this.steamTagList = resdata[0].steam
       this.waterTagList = resdata[0].water
     },
