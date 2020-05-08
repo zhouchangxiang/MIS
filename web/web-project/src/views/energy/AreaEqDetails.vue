@@ -457,8 +457,8 @@
       },
       getEqData(){
         var that = this
-        if(this.TagClassValue === "蒸汽总"){
-          this.TagClassValue = "汽"
+        if(this.EnergyClass === "蒸汽总"){
+          this.EnergyClass = "汽"
         }
         var params = {
           TagClassValue:this.TagClassValue,
