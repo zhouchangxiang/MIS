@@ -118,16 +118,16 @@ def EquipmentDetail():
                 dir_list_i = {}
                 dir_list_i["时间"] = re['CollectionDate']
                 if EnergyClass == "电":
-                    dir_list_i["功率"] = round((roundtwo((0 if re['ZGL'] is None else float(re['ZGL']))))*Proportion, 2)
+                    dir_list_i["功率"] = round(((0 if re['ZGL'] is None else float(re['ZGL'])))*Proportion, 2)
                 elif EnergyClass == "水":
-                    dir_list_i["累计量"] = round((roundtwo((0 if re['WaterSum'] is None else float(re['WaterSum']))))*Proportion, 2)
-                    dir_list_i["瞬时量"] = round((roundtwo((0 if re['WaterFlow'] is None else float(re['WaterFlow']))))*Proportion, 2)
+                    dir_list_i["累计量"] = round(((0 if re['WaterSum'] is None else float(re['WaterSum'])))*Proportion, 2)
+                    dir_list_i["瞬时量"] = round(((0 if re['WaterFlow'] is None else float(re['WaterFlow'])))*Proportion, 2)
                 elif EnergyClass == "汽":
                     if TagClassValue == "S_AllArea_Value":
-                        dir_list_i["瞬时量"] = round((roundtwo((0 if re['FlowValue'] is None else float(re['FlowValue']))))*Proportion, 2)
-                        dir_list_i["累计量"] = round((roundtwo((0 if re['SumValue'] is None else float(re['SumValue']))))*Proportion, 2)
-                        dir_list_i["体积"] = roundtwo((0 if re['Volume'] is None else float(re['Volume'])))
-                        dir_list_i["温度"] = roundtwo((0 if re['WD'] is None else float(re['WD'])))
+                        dir_list_i["瞬时量"] = round(((0 if re['FlowValue'] is None else float(re['FlowValue'])))*Proportion, 2)
+                        dir_list_i["累计量"] = round(((0 if re['SumValue'] is None else float(re['SumValue'])))*Proportion, 2)
+                        dir_list_i["体积"] = round((0 if re['Volume'] is None else float(re['Volume'])), 2)
+                        dir_list_i["温度"] = round((0 if re['WD'] is None else float(re['WD'])), 2)
                 dir_list.append(dir_list_i)
             DeviceNum = db_session.query(TagDetail.DeviceNum).filter(TagDetail.TagClassValue == TagClassValue).first()
             if DeviceNum:
