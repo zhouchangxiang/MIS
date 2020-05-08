@@ -1,26 +1,16 @@
 import redis
 import arrow
-from flask import Blueprint, render_template
-from sqlalchemy.orm import Session, relationship, sessionmaker
-from sqlalchemy import create_engine
-from flask import render_template, request, make_response
-from dbset.main.BSFramwork import AlchemyEncoder
+from flask import Blueprint
+from flask import render_template, request
 import json
-import socket
 import datetime
-from flask_login import login_required, logout_user, login_user,current_user,LoginManager
-import re
+from flask_login import login_required, logout_user, login_user,current_user
 from sqlalchemy import create_engine, Column, ForeignKey, Table, Integer, String, and_, or_, desc,extract
-from io import StringIO
-import calendar
 from dbset.main.BSFramwork import AlchemyEncoder
-from dbset.database import db_operate
 from dbset.log.BK2TLogger import logger,insertSyslog
-from handlers.energymanager.energy_manager import energyStatistics, energyStatisticsFlowSumWD
-from models.SystemManagement.system import EarlyWarning
-from tools.common import insert,delete,update
+from models.SystemManagement.system import EarlyWarning, SteamTotalMaintain, ElectricProportion
 from dbset.database.db_operate import db_session
-from models.SystemManagement.core import Equipment, Instrumentation, TagDetail, ElectricEnergy
+from models.SystemManagement.core import Instrumentation, TagDetail, ElectricEnergy
 from dbset.database import constant
 
 # 创建蓝图 第一个参数为蓝图的名字
@@ -63,7 +53,23 @@ def InstrumentationReminderTimeSelect():
             return json.dumps("仪器仪表查询报错")
 
 
-
+def energyhistory(TagClassValue, StartTime, EndTime, energy):
+    '''
+    :param oc_list: tag点的List
+    :param StartTime:
+    :param EndTime:
+    :param energy: 水，电 ，气
+    :return:历史表的瞬时值、温度、体积
+    '''
+    if energy == "水":
+        sql = "SELECT t.CollectionDate as CollectionDate, t.WaterFlow as WaterFlow, t.WaterSum as WaterSum FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_WaterEnergy)  WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+    elif energy == "电":
+        sql = "SELECT t.CollectionDate as CollectionDate, t.ZGL FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricEnergy) WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+    elif energy == "汽":
+        sql = "SELECT t.CollectionDate as CollectionDate, t.FlowValue as FlowValue, t.SumValue as SumValue,t.Volume as Volume, t.WD as WD FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy) WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+    re = db_session.execute(sql).fetchall()
+    db_session.close()
+    return re
 @equip.route('/EquipmentDetail', methods=['POST', 'GET'])
 def EquipmentDetail():
     '''
@@ -78,8 +84,13 @@ def EquipmentDetail():
             EnergyClass = data.get("EnergyClass")
             StartTime = data.get("StartTime")
             EndTime = data.get("EndTime")
+            Proportion = db_session.query(ElectricProportion.Proportion).filter(ElectricProportion.ProportionType == EnergyClass).first()
+            if Proportion:
+                Proportion = float(Proportion[0])
+            else:
+                Proportion = 1
             if EnergyClass == "电":
-                dir["ZGL"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "_ZGL"))
+                dir["ZGL"] = round((roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "_ZGL")))*Proportion, 2)
                 dir["AU"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "_AU"))
                 dir["AI"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "_AI"))
                 dir["BU"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "_BU"))
@@ -87,36 +98,36 @@ def EquipmentDetail():
                 dir["CU"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "_CU"))
                 dir["CI"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "_CI"))
             elif EnergyClass == "水":
-                dir["WaterS"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "S"))  # 水的累计流量
-                dir["WaterF"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "F"))  # 水的瞬时流量
+                dir["WaterS"] = round((roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "S")))*Proportion, 2)  # 水的累计流量
+                dir["WaterF"] = round((roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "F")))*Proportion, 2)  # 水的瞬时流量
             elif EnergyClass == "汽":
-                dir["SteamF"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "F"))  # 蒸汽瞬时流量
-                dir["SteamS"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "S"))  # 蒸汽累计流量
-                dir["SteamV"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "V"))  # 蒸汽体积
-                dir["SteamWD"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "WD"))  # 蒸汽体积
-            oc_list = []
+                if TagClassValue == "S_AllArea_Value":
+                    stm = db_session.query(SteamTotalMaintain).filter().order_by(desc("CollectionDate")).first()
+                    dir["SteamF"] = round((roundtwo(stm.FlowValue))*Proportion, 2)  # 蒸汽瞬时流量
+                    dir["SteamS"] = round((roundtwo(stm.SumValue))*Proportion, 2)  # 蒸汽累计流量
+                    dir["SteamV"] = roundtwo(stm.Volume)  # 蒸汽体积
+                    dir["SteamWD"] = roundtwo(stm.WD)  # 蒸汽体积
+                else:
+                    dir["SteamF"] = round((roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "F")))*Proportion, 2)  # 蒸汽瞬时流量
+                    dir["SteamS"] = round((roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "S")))*Proportion, 2)  # 蒸汽累计流量
+                    dir["SteamV"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "V"))  # 蒸汽体积
+                    dir["SteamWD"] = roundtwo(redis_conn.hget(constant.REDIS_TABLENAME, TagClassValue + "WD"))  # 蒸汽体积
             dir_list = []
-            oc_list.append(TagClassValue)
-            for i in range(int(StartTime[11:13]), int(EndTime[11:13]) + 1):
-                staeH = StartTime[0:11] + addzero(i) + ":00:00"
-                endeH = StartTime[0:11] + addzero(i) + ":59:59"
+            res = energyhistory(TagClassValue, StartTime, EndTime, EnergyClass)
+            for re in res:
                 dir_list_i = {}
-                dir_list_i["时间"] = StartTime[0:11] + addzero(i)
+                dir_list_i["时间"] = re['CollectionDate']
                 if EnergyClass == "电":
-                    elecs = energyStatistics(oc_list, staeH, endeH, EnergyClass)
-                    dir_list_i["功率"] = elecs
+                    dir_list_i["功率"] = round((roundtwo((0 if re['ZGL'] is None else float(re['ZGL']))))*Proportion, 2)
                 elif EnergyClass == "水":
-                    rews = energyStatisticsFlowSumWD(oc_list, staeH, endeH, EnergyClass)
-                    wats = energyStatistics(oc_list, staeH, endeH, EnergyClass)
-                    dir_list_i["累计量"] = wats
-                    dir_list_i["瞬时量"] = roundtwo(rews[0][0])
+                    dir_list_i["累计量"] = round((roundtwo((0 if re['WaterSum'] is None else float(re['WaterSum']))))*Proportion, 2)
+                    dir_list_i["瞬时量"] = round((roundtwo((0 if re['WaterFlow'] is None else float(re['WaterFlow']))))*Proportion, 2)
                 elif EnergyClass == "汽":
-                    stes = energyStatistics(oc_list, staeH, endeH, EnergyClass)
-                    steams = energyStatisticsFlowSumWD(oc_list, staeH, endeH, EnergyClass)
-                    dir_list_i["瞬时量"] = roundtwo(steams[0][0])
-                    dir_list_i["累计量"] = stes
-                    dir_list_i["体积"] = roundtwo(steams[0][1])
-                    dir_list_i["温度"] = roundtwo(steams[0][2])
+                    if TagClassValue == "S_AllArea_Value":
+                        dir_list_i["瞬时量"] = round((roundtwo((0 if re['FlowValue'] is None else float(re['FlowValue']))))*Proportion, 2)
+                        dir_list_i["累计量"] = round((roundtwo((0 if re['SumValue'] is None else float(re['SumValue']))))*Proportion, 2)
+                        dir_list_i["体积"] = roundtwo((0 if re['Volume'] is None else float(re['Volume'])))
+                        dir_list_i["温度"] = roundtwo((0 if re['WD'] is None else float(re['WD'])))
                 dir_list.append(dir_list_i)
             DeviceNum = db_session.query(TagDetail.DeviceNum).filter(TagDetail.TagClassValue == TagClassValue).first()
             if DeviceNum:
@@ -130,22 +141,6 @@ def EquipmentDetail():
             else:
                 dir["Situation"] = "未发现异常"
                 dir["SituationTime"] = ""
-            energys = energyStatisticsFlowSumWD(oc_list, StartTime, EndTime, EnergyClass)
-            if EnergyClass == "电":
-                dir["MaxValue"] = roundtwo(energys[0][0])
-                dir["MinValue"] = roundtwo(energys[0][1])
-            elif EnergyClass == "水":
-                dir["MaxValue"] = roundtwo(energys[0][1])
-                dir["MinValue"] = roundtwo(energys[0][2])
-            elif EnergyClass == "汽":
-                dir["MaxValue"] = roundtwo(energys[0][3])
-                dir["MinValue"] = roundtwo(energys[0][4])
-            # print(dir_list)
-            # if EnergyClass == "汽":
-            #     objects = sorted(dir_list_i, key=lambda obj: obj["volum"])
-            #     print(objects[0].volum)
-            #     dir["max"] = objects[0].volum
-            #     dir["min"] = objects[-1].volum
             dir["row"] = dir_list
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
