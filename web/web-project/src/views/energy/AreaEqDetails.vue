@@ -137,7 +137,7 @@
             </ul>
           </div>
         </el-col>
-        <el-col :span="24">
+        <el-col :span="24" style="margin-bottom: 2px;">
           <div class="energyDataContainer">
             <ve-line :data="faultChartData" :extend="chartExtend" :mark-line="markLine" :settings="chartSettings"></ve-line>
           </div>
@@ -457,6 +457,9 @@
       },
       getEqData(){
         var that = this
+        if(this.TagClassValue === "蒸汽总"){
+          this.TagClassValue = "汽"
+        }
         var params = {
           TagClassValue:this.TagClassValue,
           EnergyClass:this.EnergyClass,
@@ -468,17 +471,7 @@
           if(this.EnergyClass === "电"){
             that.chartSettings.area = false
             that.faultChartData.columns = ["时间","功率"]
-            that.overview = {
-              type:"总功率",
-              MaxValue: res.data.MaxValue,
-              MinValue: res.data.MinValue,
-            }
           }else if(this.EnergyClass === "水"){
-            that.overview = {
-              type:"累计量",
-              MaxValue: res.data.MaxValue,
-              MinValue: res.data.MinValue,
-            }
             if(this.subsectionWaterActive === 0){
               that.chartSettings.area = false
               that.faultChartData.columns = ["时间","累计量"]
@@ -487,11 +480,6 @@
               that.faultChartData.columns = ["时间","瞬时量"]
             }
           }else if(this.EnergyClass === "汽"){
-            that.overview = {
-              type:"累计量",
-              MaxValue: res.data.MaxValue,
-              MinValue: res.data.MinValue,
-            }
             if(this.subsectionSteamActive === 0){
               that.chartSettings.area = false
               that.faultChartData.columns = ["时间","累计量"]
