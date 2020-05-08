@@ -66,7 +66,10 @@ def energyhistory(TagClassValue, StartTime, EndTime, energy):
     elif energy == "电":
         sql = "SELECT t.CollectionDate as CollectionDate, t.ZGL FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricEnergy) WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
     elif energy == "汽":
-        sql = "SELECT t.CollectionDate as CollectionDate, t.FlowValue as FlowValue, t.SumValue as SumValue,t.Volume as Volume, t.WD as WD FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy) WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+        if TagClassValue == 'S_AllArea_Value':
+            sql = "SELECT t.CollectionDate as CollectionDate, t.FlowValue as FlowValue, t.SumValue as SumValue,t.Volume as Volume, t.WD as WD FROM [DB_MICS].[dbo].[SteamTotalMaintain] t with (INDEX =IX_SteamTotalMaintain) WHERE t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+        else:
+            sql = "SELECT t.CollectionDate as CollectionDate, t.FlowValue as FlowValue, t.SumValue as SumValue,t.Volume as Volume, t.WD as WD FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy) WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
     re = db_session.execute(sql).fetchall()
     db_session.close()
     return re
@@ -103,8 +106,8 @@ def EquipmentDetail():
             elif EnergyClass == "汽":
                 if TagClassValue == "S_AllArea_Value":
                     stm = db_session.query(SteamTotalMaintain).filter().order_by(desc("CollectionDate")).first()
-                    dir["SteamF"] = round((roundtwo(stm.FlowValue))*Proportion, 2)  # 蒸汽瞬时流量
-                    dir["SteamS"] = round((roundtwo(stm.SumValue))*Proportion, 2)  # 蒸汽累计流量
+                    dir["SteamF"] = roundtwo(stm.FlowValue)  # 蒸汽瞬时流量
+                    dir["SteamS"] = roundtwo(stm.SumValue) # 蒸汽累计流量
                     dir["SteamV"] = roundtwo(stm.Volume)  # 蒸汽体积
                     dir["SteamWD"] = roundtwo(stm.WD)  # 蒸汽体积
                 else:
@@ -124,8 +127,8 @@ def EquipmentDetail():
                     dir_list_i["瞬时量"] = round(((0 if re['WaterFlow'] is None else float(re['WaterFlow'])))*Proportion, 2)
                 elif EnergyClass == "汽":
                     if TagClassValue == "S_AllArea_Value":
-                        dir_list_i["瞬时量"] = round(((0 if re['FlowValue'] is None else float(re['FlowValue'])))*Proportion, 2)
-                        dir_list_i["累计量"] = round(((0 if re['SumValue'] is None else float(re['SumValue'])))*Proportion, 2)
+                        dir_list_i["瞬时量"] = round((0 if re['FlowValue'] is None else float(re['FlowValue'])), 2)
+                        dir_list_i["累计量"] = round((0 if re['SumValue'] is None else float(re['SumValue'])), 2)
                         dir_list_i["体积"] = round((0 if re['Volume'] is None else float(re['Volume'])), 2)
                         dir_list_i["温度"] = round((0 if re['WD'] is None else float(re['WD'])), 2)
                 dir_list.append(dir_list_i)
