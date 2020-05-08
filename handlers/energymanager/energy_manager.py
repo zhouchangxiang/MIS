@@ -471,7 +471,7 @@ def energyStatisticsCostbymonth(oc_list, StartTime, EndTime, energy):
 
 
 
-def energyselect():
+def energyselect(data):
     if request.method == 'GET':
         try:
             dir = {}
