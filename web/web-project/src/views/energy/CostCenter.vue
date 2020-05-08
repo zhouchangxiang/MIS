@@ -252,12 +252,7 @@
           that.waterAndSteamCostChartData.rows = res.data.rows
         })
         if(this.formParameters.resourceType === "电度电费" && this.formParameters.energy === "电"){
-          this.axios.get("/api/electricnergycost",{params:{
-            StartTime:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm"),
-            EndTime:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm"),
-            TimeClass:this.formParameters.resourceTime,
-            AreaName:areaName
-          }}).then(res => {
+          this.axios.get("/api/electricnergycost",{params:params}).then(res => {
             this.chartsPileLoading = false
             that.periodTimeTypeItem = res.data.periodTimeTypeItem
             that.totalPrice = res.data.totalPrice
