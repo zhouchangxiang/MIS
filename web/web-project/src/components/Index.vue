@@ -102,7 +102,9 @@
             <el-col :span="24" style="margin-bottom: 20px;">
               <el-col :span="4">
                 <el-card shadow="hover" class="useAreaCard">
-                  <p>污水站</p><div class="waterTagData" style="bottom: 3px;left: 3px;">灌溉水DN40<p>23424</p><p>234</p></div>
+                  <p>污水站</p><div class="waterTagData" style="bottom: 3px;left: 3px;">灌溉水DN40
+                  <p>{{ waterTagList.W_Area_WSZ_16_2_34.sumValue }}</p><p>{{ waterTagList.W_Area_WSZ_16_2_34.flowValue }}</p>
+                </div>
                 </el-card>
               </el-col>
               <el-col :span="8">
@@ -111,55 +113,55 @@
                 </el-card>
                 <el-card shadow="hover" class="useAreaCard itemMarginBottom">
                   <p>提取二车间</p>
-                  <div class="waterTagData" style="right: 3px;top: 3px;">后走廊灌溉水DN40<p>23424</p><p>234</p></div>
-                  <div class="waterTagData" style="bottom: 3px;left:3px;">出料电梯旁饮用水DN100<p>23424</p><p>234</p></div>
+                  <div class="waterTagData" style="right: 3px;top: 3px;">后走廊灌溉水DN40<p>{{ waterTagList.W_Area_TQR_17_1_9.sumValue }}</p><p>{{ waterTagList.W_Area_TQR_17_1_9.flowValue }}</p></div>
+                  <div class="waterTagData" style="bottom: 3px;left:3px;">出料电梯旁饮用水DN100<p>{{ waterTagList.W_Area_TQR_17_2_8.sumValue }}</p><p>{{ waterTagList.W_Area_TQR_17_2_8.flowValue }}</p></div>
                 </el-card>
                 <el-card shadow="hover" class="useAreaCard" style="height: 140px;">
                   <p>综合车间</p>
-                  <div class="waterTagData" style="right: 3px;top: 3px;">带干辅机灌溉水DN40<p>23424</p><p>234</p></div>
-                  <div class="waterTagData" style="right: 3px;bottom: 3px;">2楼会议室饮用水DN150<p>23424</p><p>234</p></div>
+                  <div class="waterTagData" style="right: 3px;top: 3px;">带干辅机灌溉水DN40<p>{{ waterTagList.W_Area_ZH_23_1_12.sumValue }}</p><p>{{ waterTagList.W_Area_ZH_23_1_12.flowValue }}</p></div>
+                  <div class="waterTagData" style="right: 3px;bottom: 3px;">2楼会议室饮用水DN150<p>{{ waterTagList.W_Area_ZH_23_2_13.sumValue }}</p><p>{{ waterTagList.W_Area_ZH_23_2_13.flowValue }}</p></div>
                 </el-card>
               </el-col>
               <el-col :span="4">
                 <el-card shadow="hover" style="height: 250px;margin-bottom: 20px;" class="useAreaCard">
                   <p>新综合制剂车间</p>
-                  <div class="waterTagData" style="left: 3px;top: 60px;width: 80px;">包材库灌溉水DN50<p>23424</p><p>234</p></div>
-                  <div class="waterTagData" style="right: 3px;bottom: 3px;">接待室DN100<p>23424</p><p>234</p></div>
+                  <div class="waterTagData" style="left: 3px;top: 60px;width: 80px;">包材库灌溉水DN50<p>{{ waterTagList.W_Area_XJZ_12_1_3.sumValue }}</p><p>{{ waterTagList.W_Area_XJZ_12_1_3.flowValue }}</p></div>
+                  <div class="waterTagData" style="right: 3px;bottom: 3px;">接待室DN100<p>{{ waterTagList.W_Area_XJZ_12_2_5.sumValue }}</p><p>{{ waterTagList.W_Area_XJZ_12_2_5.flowValue }}</p></div>
                 </el-card>
               </el-col>
-              <el-col :span="8" style="margin-top: 40px;">
+              <el-col :span="8">
                 <el-col :span="8">
-                  <el-card shadow="hover" class="useAreaCard" style="height: 200px;">
-                    <p>化验室/中试车间</p><div class="waterTagData" style="left: 3px;bottom: 3px;">消防DN100<p>23424</p><p>234</p></div>
+                  <el-card shadow="hover" class="useAreaCard" style="height: 240px;">
+                    <p>化验室/中试车间</p><div class="waterTagData" style="left: 3px;bottom: 3px;">消防DN100<p>{{ waterTagList.W_Area_YF_26_1_15.sumValue }}</p><p>{{ waterTagList.W_Area_YF_26_1_15.flowValue }}</p></div>
                   </el-card>
                 </el-col>
                 <el-col :span="8">
-                  <el-card shadow="hover" class="useAreaCard" style="text-align: right;">
-                    <p>老醇提</p>
-                    <div class="waterTagData" style="left: 3px;top: 3px;">消防DN50<p>23424</p><p>234</p></div>
-                    <div class="waterTagData" style="left: 3px;bottom: 3px;">灌溉水DN40<p>23424</p><p>234</p></div>
+                  <el-card shadow="hover" class="useAreaCard" style="height: 180px;">
+                    <p>原提取</p>
+                    <div class="waterTagData" style="left: 3px;top: 40px;">消防DN50<p>{{ waterTagList.W_Area_YTQ_39_1_30.sumValue }}</p><p>{{ waterTagList.W_Area_YTQ_39_1_30.flowValue }}</p></div>
+                    <div class="waterTagData" style="left: 3px;bottom: 3px;">灌溉水DN40<p>{{ waterTagList.W_Area_YTQ_39_2_30.sumValue }}</p><p>{{ waterTagList.W_Area_YTQ_39_2_30.flowValue }}</p></div>
                   </el-card>
                 </el-col>
                 <el-col :span="8">
-                  <el-card shadow="hover" class="useAreaCard" style="height: 200px;">
+                  <el-card shadow="hover" class="useAreaCard" style="height: 240px;">
                     <p>前处理车间</p>
-                    <div class="waterTagData" style="left: 3px;top: 3px;">洗药室DN25<p>23424</p><p>234</p></div>
-                    <div class="waterTagData" style="left: 3px;top: 50px;">引用水DN25<p>23424</p><p>234</p></div>
-                    <div class="waterTagData" style="right: 3px;bottom: 3px;">生产部 灌溉消防水<p>23424</p><p>234</p></div>
+                    <div class="waterTagData" style="left: 3px;top: 40px;">洗药室DN25<p>{{ waterTagList.W_Area_QCL_33_1_20.sumValue }}</p><p>{{ waterTagList.W_Area_QCL_33_1_20.flowValue }}</p></div>
+                    <div class="waterTagData" style="left: 3px;top: 110px;">饮用水DN25<p>{{ waterTagList.W_Area_QCL_33_2_20.sumValue }}</p><p>{{ waterTagList.W_Area_QCL_33_2_20.flowValue }}</p></div>
+                    <div class="waterTagData" style="right: 3px;bottom: 3px;">生产部 灌消防水</div>
                   </el-card>
                 </el-col>
                 <el-col :span="24" style="margin-top: 20px;">
-                  <el-card shadow="hover" class="useAreaCard">
+                  <el-card shadow="hover" class="useAreaCard" style="height: 140px;">
                     <p>健康科技车间</p>
-                    <div class="waterTagData" style="right: 3px;top: 3px;">消防水DN50<p>23424</p><p>234</p></div>
-                    <div class="waterTagData" style="right: 3px;bottom: 3px;">消防水DN50<p>23424</p><p>234</p></div>
+                    <div class="waterTagData" style="right: 3px;top: 3px;">消防水DN50<p>{{ waterTagList.W_Area_JK_28_1_16.sumValue }}</p><p>{{ waterTagList.W_Area_JK_28_1_16.flowValue }}</p></div>
+                    <div class="waterTagData" style="right: 3px;bottom: 3px;">消防水DN50<p>{{ waterTagList.W_Area_JK_28_2_16.sumValue }}</p><p>{{ waterTagList.W_Area_JK_28_2_16.flowValue }}</p></div>
                   </el-card>
                 </el-col>
                 <el-col :span="24" style="margin-top: 20px;">
-                  <el-card shadow="hover" class="useAreaCard">
+                  <el-card shadow="hover" class="useAreaCard" style="height: 140px;">
                     <p>固体制剂车间</p>
-                    <div class="waterTagData" style="right: 3px;top: 3px;">男卫生间灌溉水DN40<p>23424</p><p>234</p></div>
-                    <div class="waterTagData" style="right: 3px;bottom: 3px;">纯化水站饮用水DN100<p>23424</p><p>234</p></div>
+                    <div class="waterTagData" style="right: 3px;top: 3px;">男卫生间灌溉水DN40<p>{{ waterTagList.W_Area_GT_30_2_18.sumValue }}</p><p>{{ waterTagList.W_Area_GT_30_2_18.flowValue }}</p></div>
+                    <div class="waterTagData" style="right: 3px;bottom: 3px;">纯化水站饮用水DN100<p>{{ waterTagList.W_Area_GT_30_1_19.sumValue }}</p><p>{{ waterTagList.W_Area_GT_30_1_19.flowValue }}</p></div>
                   </el-card>
                 </el-col>
               </el-col>
@@ -167,7 +169,7 @@
             <el-col :span="24">
               <el-col :span="8" :offset="5"><el-card shadow="hover" class="useAreaCard">
                 <p>办公楼\食堂</p>
-                <div class="waterTagData" style="left: 100px;bottom: 10px;">1楼卫生间DN65<p>23424</p><p>234</p></div>
+                <div class="waterTagData" style="left: 100px;bottom: 10px;">1楼卫生间DN65<p>{{ waterTagList.W_Area_BGL_34_1_22.sumValue }}</p><p>{{ waterTagList.W_Area_BGL_34_1_22.flowValue }}</p></div>
               </el-card>
               </el-col>
             </el-col>
@@ -502,6 +504,7 @@ export default {
       areaOverallDialogSrc:"",
       areaOverallDialogSrc2:"",
       steamTagList:{},
+      waterTagList:{},
       steamGlTag:"",
       websock:null,
     }
@@ -677,7 +680,9 @@ export default {
       })
     },
     lookWaterMap(){
-      this.waterAreaDialog = true
+      if(this.waterTagList){
+        this.waterAreaDialog = true
+      }
     },
     initWebSocket(){ //初始化weosocket
       const wsuri = "ws://127.0.0.1:5002";
@@ -695,7 +700,9 @@ export default {
     },
     websocketonmessage(e){ //数据接收
       var resdata = JSON.parse(e.data);
+      console.log(resdata)
       this.steamTagList = resdata[0].steam
+      this.waterTagList = resdata[0].water
     },
     websocketsend(Data){//数据发送
       this.websock.send(Data);
