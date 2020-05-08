@@ -18,7 +18,7 @@
     <el-col :span="24" style="margin-bottom:2px;">
       <div class="chartHead text-size-large text-color-info">
         <div class="chartTile">趋势图</div>
-        <el-select v-model="areaName" size="mini" @change="getEq" v-if="newAreaName.areaName === '整厂区' || $route.query.areaName === '整厂区' || formParameters.resourceTime === '实时'">
+        <el-select v-model="areaName" size="mini" @change="getEq" v-if="newAreaName.areaName === '整厂区' || $route.query.areaName === '整厂区' && formParameters.resourceTime === '实时'">
           <el-option v-for="(item,index) in areaList" :key="index" :label="item.label" :value="item.value"></el-option>
         </el-select>
         <el-select v-model="ElectricEqActive" size="mini" @change="getChartData" v-if="formParameters.energy ==='电'">
@@ -151,10 +151,28 @@
           rows.forEach(item =>{
             if(item.EnergyClass === "电"){
               that.ElectricEqList.push(item)
+              if(that.ElectricEqList[0].TagClassValue){
+                that.ElectricEqActive = that.ElectricEqList[0].TagClassValue
+                that.getChartData()
+              }else{
+                that.ElectricEqActive = ""
+              }
             }else if(item.EnergyClass === "水"){
               that.WaterEqList.push(item)
+              if(that.WaterEqList[0].TagClassValue){
+                that.WaterEqActive = that.WaterEqList[0].TagClassValue
+                that.getChartData()
+              }else{
+                that.WaterEqActive = ""
+              }
             }else if(item.EnergyClass === "汽"){
               that.SteamEqList.push(item)
+              if(that.SteamEqList[0].TagClassValue){
+                that.SteamEqActive = that.SteamEqList[0].TagClassValue
+                that.getChartData()
+              }else{
+                that.SteamEqActive = ""
+              }
             }
           })
         })
@@ -167,6 +185,7 @@
           this.chartsLoading = true
           this.dataZoom = []
           this.chartSettings.type = "line"
+          this.ChartExtend.series.label.show = false
           if(this.websock){
             this.websock.close()
           }

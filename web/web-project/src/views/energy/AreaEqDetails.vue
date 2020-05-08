@@ -84,7 +84,7 @@
               </div>
             </el-col>
           </div>
-          <div class="platformContainer" style="margin-bottom:10px;" v-if="EnergyClass === '汽'">
+          <div class="platformContainer" style="margin-bottom:10px;" v-if="EnergyClass === '汽' || EnergyClass === '蒸汽总'">
             <el-col :span="6">
               <div class="faultItemHead">
                 <span>瞬时量</span>
@@ -139,17 +139,7 @@
         </el-col>
         <el-col :span="24">
           <div class="energyDataContainer">
-            <ve-line :data="faultChartData" :extend="chartExtend" :settings="chartSettings"></ve-line>
-          </div>
-          <div class="chartHead text-size-large text-color-info" style="margin-bottom: 2px;">
-            <div class="chartTile">数据概览</div>
-          </div>
-        </el-col>
-        <el-col :span="24" style="margin-bottom: 10px;">
-          <div class="overview">
-            <el-col :span="8"><p class="text-color-caption">类型</p>{{ overview.type }}</el-col>
-            <el-col :span="8"><p class="text-color-caption">最大值</p>{{ overview.MaxValue }}</el-col>
-            <el-col :span="8"><p class="text-color-caption">最小值</p>{{ overview.MaxValue }}</el-col>
+            <ve-line :data="faultChartData" :extend="chartExtend" :mark-line="markLine" :settings="chartSettings"></ve-line>
           </div>
         </el-col>
         <el-col :span="24">
@@ -331,6 +321,27 @@
           {name:"温度"}
         ],
         subsectionSteamActive:0,
+        markLine: {
+          data: [
+            {
+              name: '最小值',
+              type: 'min'
+            },{
+              name: '最大值',
+              type: 'max'
+            },{
+              name: '平均值',
+              type: 'average'
+            }
+          ],
+          label:{
+            position:"insideEndTop",
+            formatter:'{b}：{c}'
+          },
+          lineStyle:{
+            color:"#FB8A06"
+          }
+        },
         chartExtend: {
           grid:{
             left:'0',
@@ -348,11 +359,6 @@
         faultChartData: {
           columns: ["时间","功率"],
           rows: []
-        },
-        overview:{
-          type:"",
-          MaxValue:"",
-          MinValue:""
         },
         equiRunChartData:{
           columns: ['时间', '开机', '关机', '空载','重载'],
