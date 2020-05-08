@@ -266,9 +266,10 @@ def handler_msg(conn):
                     oc_dict_i_water_tag[oc] = oc_water_dict_i
                 oc_dict = {}
                 oc_dict["steam"] = oc_dict_i_tag
+                oc_dict["water"] = oc_dict_i_water_tag
                 area_list.append(oc_dict)
                 area_list.append(area_dir)
-                area_list.append(oc_dict_i_water_tag)
+                area_list.append()
                 json_data = json.dumps(area_list)
                 # bytemsg = bytes(json_data, encoding="utf8")
                 # send_msg(c, bytes("recv: {}".format(data_parse), encoding="utf-8"))
