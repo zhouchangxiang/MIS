@@ -100,28 +100,76 @@
         <el-dialog title="水表采集分布" :visible.sync="waterAreaDialog" width="60%">
           <el-row :gutter="20">
             <el-col :span="24" style="margin-bottom: 20px;">
-              <el-col :span="4"><el-card shadow="hover" class="useAreaCard">污水站</el-card></el-col>
+              <el-col :span="4">
+                <el-card shadow="hover" class="useAreaCard">
+                  <p>污水站</p><div class="waterTagData" style="bottom: 3px;left: 3px;">灌溉水DN40<p>23424</p><p>234</p></div>
+                </el-card>
+              </el-col>
               <el-col :span="8">
                 <el-card shadow="hover" class="useAreaCard itemMarginBottom">
-                  <p>锅炉房</p><p>灌溉水DN100</p>
+                  <p>锅炉房</p><div class="waterTagData">灌溉水DN100</div>
                 </el-card>
                 <el-card shadow="hover" class="useAreaCard itemMarginBottom">
-                  <p>后走廊灌溉水DN40</p><p>提取二车间</p><p>出料电梯旁饮用水DN100</p>
+                  <p>提取二车间</p>
+                  <div class="waterTagData" style="right: 3px;top: 3px;">后走廊灌溉水DN40<p>23424</p><p>234</p></div>
+                  <div class="waterTagData" style="bottom: 3px;left:3px;">出料电梯旁饮用水DN100<p>23424</p><p>234</p></div>
                 </el-card>
-                <el-card shadow="hover" class="useAreaCard">
-                  <p>带干辅机灌溉水DN40</p><p>综合车间</p><p>2楼会议室饮用水DN150</p>
+                <el-card shadow="hover" class="useAreaCard" style="height: 140px;">
+                  <p>综合车间</p>
+                  <div class="waterTagData" style="right: 3px;top: 3px;">带干辅机灌溉水DN40<p>23424</p><p>234</p></div>
+                  <div class="waterTagData" style="right: 3px;bottom: 3px;">2楼会议室饮用水DN150<p>23424</p><p>234</p></div>
                 </el-card>
               </el-col>
               <el-col :span="4">
-                <el-card shadow="hover" style="height: 200px;" class="useAreaCard">
-                <p>新综合制剂车间</p><p>包材库灌溉水DN50</p><p>接待室DN100</p></el-card>
+                <el-card shadow="hover" style="height: 250px;margin-bottom: 20px;" class="useAreaCard">
+                  <p>新综合制剂车间</p>
+                  <div class="waterTagData" style="left: 3px;top: 60px;width: 80px;">包材库灌溉水DN50<p>23424</p><p>234</p></div>
+                  <div class="waterTagData" style="right: 3px;bottom: 3px;">接待室DN100<p>23424</p><p>234</p></div>
+                </el-card>
               </el-col>
-              <el-col :span="8"><el-card shadow="hover">智能库</el-card></el-col>
+              <el-col :span="8" style="margin-top: 40px;">
+                <el-col :span="8">
+                  <el-card shadow="hover" class="useAreaCard" style="height: 200px;">
+                    <p>化验室/中试车间</p><div class="waterTagData" style="left: 3px;bottom: 3px;">消防DN100<p>23424</p><p>234</p></div>
+                  </el-card>
+                </el-col>
+                <el-col :span="8">
+                  <el-card shadow="hover" class="useAreaCard" style="text-align: right;">
+                    <p>老醇提</p>
+                    <div class="waterTagData" style="left: 3px;top: 3px;">消防DN50<p>23424</p><p>234</p></div>
+                    <div class="waterTagData" style="left: 3px;bottom: 3px;">灌溉水DN40<p>23424</p><p>234</p></div>
+                  </el-card>
+                </el-col>
+                <el-col :span="8">
+                  <el-card shadow="hover" class="useAreaCard" style="height: 200px;">
+                    <p>前处理车间</p>
+                    <div class="waterTagData" style="left: 3px;top: 3px;">洗药室DN25<p>23424</p><p>234</p></div>
+                    <div class="waterTagData" style="left: 3px;top: 50px;">引用水DN25<p>23424</p><p>234</p></div>
+                    <div class="waterTagData" style="right: 3px;bottom: 3px;">生产部 灌溉消防水<p>23424</p><p>234</p></div>
+                  </el-card>
+                </el-col>
+                <el-col :span="24" style="margin-top: 20px;">
+                  <el-card shadow="hover" class="useAreaCard">
+                    <p>健康科技车间</p>
+                    <div class="waterTagData" style="right: 3px;top: 3px;">消防水DN50<p>23424</p><p>234</p></div>
+                    <div class="waterTagData" style="right: 3px;bottom: 3px;">消防水DN50<p>23424</p><p>234</p></div>
+                  </el-card>
+                </el-col>
+                <el-col :span="24" style="margin-top: 20px;">
+                  <el-card shadow="hover" class="useAreaCard">
+                    <p>固体制剂车间</p>
+                    <div class="waterTagData" style="right: 3px;top: 3px;">男卫生间灌溉水DN40<p>23424</p><p>234</p></div>
+                    <div class="waterTagData" style="right: 3px;bottom: 3px;">纯化水站饮用水DN100<p>23424</p><p>234</p></div>
+                  </el-card>
+                </el-col>
+              </el-col>
             </el-col>
             <el-col :span="24">
-              <el-col :span="3"><el-card shadow="hover">宿舍</el-card></el-col>
-              <el-col :span="3"><el-card shadow="hover" class="useAreaCard">展览室</el-card></el-col>
-              <el-col :span="6"><el-card shadow="hover" class="useAreaCard">办公楼\食堂</el-card></el-col>
+              <el-col :span="8" :offset="5"><el-card shadow="hover" class="useAreaCard">
+                <p>办公楼\食堂</p>
+                <div class="waterTagData" style="left: 100px;bottom: 10px;">1楼卫生间DN65<p>23424</p><p>234</p></div>
+              </el-card>
+              </el-col>
             </el-col>
           </el-row>
           <div slot="footer" class="dialog-footer">
@@ -842,13 +890,30 @@ export default {
     float: right;
   }
   .steamTagValue p{
-    background: #333;
+    background: #333333;
     padding: 0 5px;
     color: #15CC48;
     margin-bottom: 3px;
     white-space: nowrap;
   }
   .useAreaCard{
+    position: relative;
     background: #EFF5FB;
+    min-height: 120px;
+  }
+  .waterTagData{
+    position: absolute;
+    display: inline-block;
+    padding: 5px;
+    font-size: 12px;
+    border:1px solid #e1e1e1;
+    background: #ffffff;
+  }
+  .waterTagData p{
+    background: #333333;
+    padding: 0 5px;
+    color: #15CC48;
+    margin-top: 3px;
+    white-space: nowrap;
   }
 </style>
