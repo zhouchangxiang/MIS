@@ -311,7 +311,7 @@ def server_socket():
         tag_steam_list = []
         tag_water_list = []
         for tag in Tags:
-            EnergyClass = tag[0:1]
+            EnergyClass = str(tag.TagClassValue)[0:1]
             if EnergyClass == "S":
                 tag_steam_list.append(tag.TagClassValue)
             elif EnergyClass == "W":
