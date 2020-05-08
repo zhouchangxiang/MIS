@@ -1472,7 +1472,7 @@ def energycost():
                                        letters.split(",")}
                     for mymonth in constant.mymonths:
                         dir_list_i = {}
-                        monthtime = StartTime[0:11] + mymonth
+                        monthtime = StartTime[0:5] + mymonth
                         dir_list_i["时间"] = monthtime
                         monthcount = 0
                         monthcostcount = 0
