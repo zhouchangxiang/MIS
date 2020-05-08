@@ -252,16 +252,6 @@
               </div>
             </div>
             <div v-if="areaOverallDialogTitle === '提取二车间'">
-              <!--<div class="steamTagLabel" style="left:195px;top: 83px;">-->
-                <!--<div class="steamTagTitle">制粒DN80</div>-->
-                <!--<div class="steamTagValue">-->
-                <!--</div>-->
-              <!--</div>-->
-              <!--<div class="steamTagLabel" style="left:180px;top: 175px;">-->
-                <!--<div class="steamTagTitle">60带干/刮板浓缩/空调DN100</div>-->
-                <!--<div class="steamTagValue">-->
-                <!--</div>-->
-              <!--</div>-->
               <div class="steamTagLabel" style="left:6px;top: 350px;min-width: 155px;width: 155px;">
                 <div class="steamTagTitle">锅炉流量计DN400</div>
                 <div class="steamTagValue">
@@ -269,6 +259,12 @@
                   <p>{{ steamGlTag.flowValue }}</p>
                   <p>{{ steamGlTag.SteamWD }}°C</p>
                 </div>
+              </div>
+              <div class="steamTagLabel" style="left:408px;top: 461px;min-width: 55px;width: 55px;">
+                <div class="steamTagTitle" style="line-height: 22px;padding: 12px 0;">提取停用</div>
+              </div>
+              <div class="steamTagLabel" style="left:487px;top: 461px;min-width: 55px;width: 55px;">
+                <div class="steamTagTitle" style="line-height: 22px;padding: 12px 0;">双效停用</div>
               </div>
             </div>
             <div v-if="areaOverallDialogTitle === '综合车间'">
@@ -288,7 +284,7 @@
                   <p>{{ steamTagList.S_Area_ZH_21_1_502.SteamWD }}°C</p>
                 </div>
               </div>
-              <div class="steamTagLabel" style="left:22px;top: 315px;">
+              <div class="steamTagLabel" style="left:30px;top: 315px;min-width: 120px;width: 120px;">
                 <div class="steamTagTitle" style="line-height: 22px;">锅炉流量计DN400</div>
                 <div class="steamTagValue">
                   <p>{{ steamGlTag.sumValue }}</p>
@@ -296,7 +292,7 @@
                   <p>{{ steamGlTag.SteamWD }}°C</p>
                 </div>
               </div>
-              <div class="steamTagLabel" style="left:474px;top: -28px;min-width: 100px;width: 100px;">
+              <div class="steamTagLabel" style="left:474px;top: -11px;min-width: 100px;width: 100px;">
                 <div class="steamTagTitle" style="line-height: 22px;">二次浓缩DN100</div>
                 <div class="steamTagValue">
                   <p>{{ steamTagList.S_Area_ZH_46_1_502.sumValue }}</p>
@@ -850,6 +846,7 @@ export default {
     padding: 0 5px;
     color: #15CC48;
     margin-bottom: 3px;
+    white-space: nowrap;
   }
   .useAreaCard{
     background: #EFF5FB;
