@@ -11,8 +11,7 @@
           <el-radio-group v-model="formParameters.resourceTime" fill="#082F4C" size="mini" @change="getEnergyChartsData">
             <el-radio-button v-for="item in radioTimeList" border :key="item.id" :label="item.name"></el-radio-button>
           </el-radio-group>
-          <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd HH:mm" style="width: 160px;" :clearable="false" @change="getEnergyChartsData"></el-date-picker> ~
-          <el-date-picker type="datetime" v-model="formParameters.endDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd HH:mm" style="width: 160px;" :clearable="false" @change="getEnergyChartsData"></el-date-picker>
+          <el-date-picker type="datetime" v-model="formParameters.startDate" :picker-options="pickerOptions" size="mini" format="yyyy-MM-dd" style="width: 130px;" :clearable="false" @change="getEnergyChartsData"></el-date-picker>
         </el-form-item>
         <el-form-item label="参数：" v-if="formParameters.energy === '电'" style="margin-bottom: 0;">
           <el-radio-group v-model="formParameters.resourceType" fill="#082F4C" size="mini" @change="getEnergyChartsData">
@@ -110,8 +109,7 @@
         formParameters:{
           resourceTime:"日",
           resourceType:"基本电费",
-          startDate:moment().day(moment().day()).startOf('day').format('YYYY-MM-DD HH:mm'),
-          endDate:moment().format('YYYY-MM-DD HH:mm'),
+          startDate:moment().format('YYYY-MM-DD HH:mm:ss'),
           energy:"电",
           dataType:"电费"
         },
@@ -220,18 +218,31 @@
         this.chartsLoading = true
         this.chartsPileLoading = true
         var that = this
+        var dayStartTime = moment(this.formParameters.startDate).day(moment(this.formParameters.startDate).day()).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
+          dayEndTime = moment(this.formParameters.startDate).day(moment(this.formParameters.startDate).day()).endOf('day').format('YYYY-MM-DD HH:mm:ss'),
+          monthStartTime = moment(this.formParameters.startDate).month(moment(this.formParameters.startDate).month()).startOf('month').format('YYYY-MM-DD HH:mm:ss'),
+          monthEndTime = moment(this.formParameters.startDate).month(moment(this.formParameters.startDate).month()).endOf('month').format('YYYY-MM-DD HH:mm:ss'),
+          yearStartTime = moment(this.formParameters.startDate).year(moment(this.formParameters.startDate).year()).startOf('year').format('YYYY-MM-DD HH:mm:ss'),
+          yearEndTime = moment(this.formParameters.startDate).year(moment(this.formParameters.startDate).year()).endOf('year').format('YYYY-MM-DD HH:mm:ss')
         var areaName = ""
         if(this.newAreaName.areaName === "整厂区"){
           areaName = ""
         }else{
           areaName = this.newAreaName.areaName
         }
-        var params = {
-          EnergyClass: this.formParameters.energy,
-          StartTime:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm"),
-          EndTime:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm"),
-          TimeClass:this.formParameters.resourceTime,
-          AreaName:areaName
+        var params = {}
+        params.EnergyClass = this.formParameters.energy
+        params.TimeClass = this.formParameters.resourceTime
+        params.AreaName = areaName
+        if(this.formParameters.resourceTime === "日"){
+          params.StartTime = dayStartTime
+          params.EndTime = dayEndTime
+        }else if(this.formParameters.resourceTime === "月"){
+          params.StartTime = monthStartTime
+          params.EndTime = monthEndTime
+        }else if(this.formParameters.resourceTime === "年"){
+          params.StartTime = yearStartTime
+          params.EndTime = yearEndTime
         }
         this.axios.get("/api/energycost",{params:params}).then(res => {
           this.chartsLoading = false

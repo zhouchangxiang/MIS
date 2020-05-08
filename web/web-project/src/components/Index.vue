@@ -93,12 +93,46 @@
                 </div>
               </div>
             </div>
+            <el-button type="primary" @click="lookWaterMap" style="position: absolute;">水表采集图</el-button>
           </div>
         </el-drawer>
-        <el-dialog :title="areaOverallgDialogTitle" :visible.sync="areaOverallgDialog" :modal="false" width="840px">
-          <div v-if="areaOverallgDialogSrc2" style="position: relative">
-            <el-image style="width: 100%;" :src="areaOverallgDialogSrc2"></el-image>
-            <div v-if="areaOverallgDialogTitle === '提取二车间'">
+        <!-- 水表分布图 -->
+        <el-dialog title="水表采集分布" :visible.sync="waterAreaDialog" width="60%">
+          <el-row :gutter="20">
+            <el-col :span="24" style="margin-bottom: 20px;">
+              <el-col :span="4"><el-card shadow="hover" class="useAreaCard">污水站</el-card></el-col>
+              <el-col :span="8">
+                <el-card shadow="hover" class="useAreaCard itemMarginBottom">
+                  <p>锅炉房</p><p>灌溉水DN100</p>
+                </el-card>
+                <el-card shadow="hover" class="useAreaCard itemMarginBottom">
+                  <p>后走廊灌溉水DN40</p><p>提取二车间</p><p>出料电梯旁饮用水DN100</p>
+                </el-card>
+                <el-card shadow="hover" class="useAreaCard">
+                  <p>带干辅机灌溉水DN40</p><p>综合车间</p><p>2楼会议室饮用水DN150</p>
+                </el-card>
+              </el-col>
+              <el-col :span="4">
+                <el-card shadow="hover" style="height: 200px;" class="useAreaCard">
+                <p>新综合制剂车间</p><p>包材库灌溉水DN50</p><p>接待室DN100</p></el-card>
+              </el-col>
+              <el-col :span="8"><el-card shadow="hover">智能库</el-card></el-col>
+            </el-col>
+            <el-col :span="24">
+              <el-col :span="3"><el-card shadow="hover">宿舍</el-card></el-col>
+              <el-col :span="3"><el-card shadow="hover" class="useAreaCard">展览室</el-card></el-col>
+              <el-col :span="6"><el-card shadow="hover" class="useAreaCard">办公楼\食堂</el-card></el-col>
+            </el-col>
+          </el-row>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="waterAreaDialog = false">关闭</el-button>
+          </div>
+        </el-dialog>
+        <!-- 汽表分布图 -->
+        <el-dialog :title="areaOverallDialogTitle" :visible.sync="areaOverallDialog" :modal="false" width="840px">
+          <div v-if="areaOverallDialogSrc2" style="position: relative">
+            <el-image style="width: 100%;" :src="areaOverallDialogSrc2"></el-image>
+            <div v-if="areaOverallDialogTitle === '提取二车间'">
               <div class="steamTagLabel" style="left:-10px;top: -15px;min-width: 155px;width: 155px;">
                 <div class="steamTagTitle">锅炉流量计DN400</div>
                 <div class="steamTagValue">
@@ -158,8 +192,8 @@
             </div>
           </div>
           <div style="position: relative">
-            <el-image style="width: 100%;" :src="areaOverallgDialogSrc"></el-image>
-            <div v-if="areaOverallgDialogTitle === '锅炉房'">
+            <el-image style="width: 100%;" :src="areaOverallDialogSrc"></el-image>
+            <div v-if="areaOverallDialogTitle === '锅炉房'">
               <div class="steamTagLabel" style="left:-10px;top: 345px;">
                 <div class="steamTagTitle">锅炉总流量计DN400</div>
                 <div class="steamTagValue">
@@ -217,7 +251,7 @@
                 </div>
               </div>
             </div>
-            <div v-if="areaOverallgDialogTitle === '提取二车间'">
+            <div v-if="areaOverallDialogTitle === '提取二车间'">
               <!--<div class="steamTagLabel" style="left:195px;top: 83px;">-->
                 <!--<div class="steamTagTitle">制粒DN80</div>-->
                 <!--<div class="steamTagValue">-->
@@ -237,7 +271,7 @@
                 </div>
               </div>
             </div>
-            <div v-if="areaOverallgDialogTitle === '综合车间'">
+            <div v-if="areaOverallDialogTitle === '综合车间'">
               <div class="steamTagLabel" style="left:0;top: 50px;min-width: 130px;width: 130px;">
                 <div class="steamTagTitle" style="line-height: 22px;">120带干DN32</div>
                 <div class="steamTagValue">
@@ -303,7 +337,7 @@
                 </div>
               </div>
             </div>
-            <div v-if="areaOverallgDialogTitle === '新建综合制剂车间'">
+            <div v-if="areaOverallDialogTitle === '新建综合制剂车间'">
               <div class="steamTagLabel" style="left:20px;top: 300px;">
                 <div class="steamTagTitle">新制剂分汽缸DN200</div>
                 <div class="steamTagValue">
@@ -313,7 +347,7 @@
                 </div>
               </div>
             </div>
-            <div v-if="areaOverallgDialogTitle === '固体制剂车间'">
+            <div v-if="areaOverallDialogTitle === '固体制剂车间'">
               <div class="steamTagLabel" style="left:20px;top: 320px;">
                 <div class="steamTagTitle">固体分汽缸流量计DN100</div>
                 <div class="steamTagValue">
@@ -325,7 +359,7 @@
             </div>
           </div>
           <div slot="footer" class="dialog-footer">
-            <el-button @click="areaOverallgDialog = false">取 消</el-button>
+            <el-button @click="areaOverallDialog = false">关 闭</el-button>
           </div>
         </el-dialog>
         <!-- 个人信息 -->
@@ -407,7 +441,7 @@ export default {
         {title:"锅炉房",width: "220px",height:"20%",top:"26%",left:"15%",marginLeft:"120px",img:require("@/assets/imgs/guolu.jpg")},
         {title:"提取二车间",width: "220px",height:"15%",top:"42%",left:"15%",marginLeft:"100px",img:require("@/assets/imgs/tiquer.jpg"),img2:require("@/assets/imgs/tiquer2.jpg")},
         {title:"综合车间",width: "250px",height:"28%",top:"60%",left:"10%",marginLeft:"100px",img:require("@/assets/imgs/zonghe.jpg")},
-        {title:"新建综合制剂车间",width: "100px",height:"45%",top:"18%",left:"34%",marginLeft:"30px",img:require("@/assets/imgs/xinzhiji.jpg")},
+        {title:"新建综合制剂车间",width: "100px",height:"45%",top:"18%",left:"34%",marginLeft:"60px",img:require("@/assets/imgs/xinzhiji.jpg")},
         //{title:"中试车间",width: "60px",height:"43%",top:"18%",left:"45%",marginLeft:"35px"},
         //{title:"原提取车间",width: "90px",height:"15%",top:"33%",left:"50%",marginLeft:"30px"},
         //{title:"前处理车间",width: "90px",height:"17%",top:"45%",left:"58%",marginLeft:"40px"},
@@ -418,10 +452,11 @@ export default {
         //{title:"展览室",width: "150px",height:"45%",top:"17%",left:"15%",marginLeft:"70px"},
         //{title:"办公楼＼食堂",width: "360px",height:"48%",top:"10%",left:"25%",marginLeft:"140px"},
       ],
-      areaOverallgDialog:false,
-      areaOverallgDialogTitle:"",
-      areaOverallgDialogSrc:"",
-      areaOverallgDialogSrc2:"",
+      waterAreaDialog:false,
+      areaOverallDialog:false,
+      areaOverallDialogTitle:"",
+      areaOverallDialogSrc:"",
+      areaOverallDialogSrc2:"",
       steamTagList:{},
       steamGlTag:"",
       websock:null,
@@ -580,15 +615,15 @@ export default {
     showAreaInfo(AreaName,img,img2){
       if(img){
         if(img2){
-          this.areaOverallgDialog = true
-          this.areaOverallgDialogTitle = AreaName
-          this.areaOverallgDialogSrc = img
-          this.areaOverallgDialogSrc2 = img2
+          this.areaOverallDialog = true
+          this.areaOverallDialogTitle = AreaName
+          this.areaOverallDialogSrc = img
+          this.areaOverallDialogSrc2 = img2
         }else{
-          this.areaOverallgDialog = true
-          this.areaOverallgDialogTitle = AreaName
-          this.areaOverallgDialogSrc = img
-          this.areaOverallgDialogSrc2 = ""
+          this.areaOverallDialog = true
+          this.areaOverallDialogTitle = AreaName
+          this.areaOverallDialogSrc = img
+          this.areaOverallDialogSrc2 = ""
         }
       }
     },
@@ -596,6 +631,9 @@ export default {
       this.axios.get("/api/steamtotal").then(res =>{
         this.steamGlTag = res.data.S_AllArea_Value
       })
+    },
+    lookWaterMap(){
+      this.waterAreaDialog = true
     },
     initWebSocket(){ //初始化weosocket
       const wsuri = "ws://127.0.0.1:5002";
@@ -812,5 +850,8 @@ export default {
     padding: 0 5px;
     color: #15CC48;
     margin-bottom: 3px;
+  }
+  .useAreaCard{
+    background: #EFF5FB;
   }
 </style>
