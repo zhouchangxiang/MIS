@@ -324,9 +324,8 @@ def electricnergycost():
                         dir_list2.append(dir_list_i_price)
                 elif TimeClass == "月":
                     for i in range(int(StartTime[8:10]), int(EndTime[8:10]) + 1):
-                        emonth = getMonthFirstDayAndLastDay(StartTime[0:4], i)
-                        staeM = datetime.datetime.strftime(emonth[0], "%Y-%m-%d %H:%M:%S")
-                        endeM = datetime.datetime.strftime(emonth[0], "%Y-%m-%d") + " 23:59:59"
+                        staeM = StartTime[0:8]+addzero(i) + " 00:00:00"
+                        endeM = StartTime[0:8]+addzero(i) + " 23:59:59"
                         dir_list_i = {}
                         dir_list_i["时间"] = StartTime[0:8] + addzero(i)
                         # 尖峰平谷电量
@@ -467,6 +466,7 @@ def electricnergycost():
             dir["rows1"] = dir_list
             dir["rows2"] = dir_list2
             dir["totalPrice"] = round(jtimeprice + ftimeprice + ptimeprice + gtimeprice, 2)
+            print(dir)
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
