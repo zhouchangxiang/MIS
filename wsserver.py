@@ -124,17 +124,6 @@ def handler_msg(conn):
                     data_parse = parse_payload(data_recv)
                     TagClassValue = str(data_parse)
                 area_list = []
-                areaSFlow = 0.0
-                areaSSum = 0.0
-                areaWFlow = 0.0
-                areaWSum = 0.0
-                areaEZGL = 0.0
-                areaEAI = 0.0
-                areaEAU = 0.0
-                areaEBI = 0.0
-                areaEBU = 0.0
-                areaECI = 0.0
-                areaECU = 0.0
                 area_dir = {}
                 if TagClassValue != "":
                     # all_tags = returnb(redis_conn.hget(constant.REDIS_TABLENAME, "all_tags"))
@@ -144,35 +133,35 @@ def handler_msg(conn):
                     try:
                         S = TagClassValue[0:1]
                         if S == "S":
-                            areaSFlow = areaSFlow + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            areaSFlow = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                TagClassValue + "F"))
-                            areaSSum = areaSSum + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            areaSSum = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                              TagClassValue + "S"))
                             area_dir["areaSFlow"] = strtofloat(areaSFlow)
                             area_dir["areaSSum"] = strtofloat(areaSSum)
                         elif S == "W":
-                            areaWFlow = areaWFlow + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            areaWFlow = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                                TagClassValue + "F"))
-                            areaWSum = areaWSum + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            areaWSum = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                              TagClassValue + "S"))
                             area_dir["areaWFlow"] = strtofloat(areaWFlow)
                             area_dir["areaWSum"] = strtofloat(areaWSum)
                         elif S == "E":
-                            areaEZGL = areaEZGL + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            areaEZGL = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                              TagClassValue + "_ZGL"))
-                            areaEAU = areaEAU + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            areaEAU = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                            TagClassValue + "_AU"))
-                            areaEAI = areaEAI + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            areaEAI = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                            TagClassValue + "_AI"))
-                            areaEBI = areaEBI + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            areaEBI = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                            TagClassValue + "_BU"))
-                            areaEBU = areaEBU + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            areaEBU = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                            TagClassValue + "_BI"))
-                            areaECI = areaECI + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            areaECI = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                            TagClassValue + "_CU"))
-                            areaECU = areaECU + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
+                            areaECU = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
                                                                            TagClassValue + "_CI"))
-                            area_dir["areaEZGL"] = strtofloat(areaEZGL)
+                            area_dir["areaEZGL"] = round(areaEZGL*160, 2)
                             area_dir["areaEAI"] = strtofloat(areaEAI)
                             area_dir["areaEAU"] = strtofloat(areaEAU)
                             area_dir["areaEBI"] = strtofloat(areaEBI)
