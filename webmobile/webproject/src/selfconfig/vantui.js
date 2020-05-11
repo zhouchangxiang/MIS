@@ -15,7 +15,9 @@ import { Button,
     Tab, Tabs,
     List,
     Picker,
-    Loading} from 'vant'
+    Loading,
+    DropdownMenu, DropdownItem
+    } from 'vant'
 
 Vue.use(Toast);
 Vue.use(Cell);
@@ -36,3 +38,5 @@ Vue.use( Tabs);
 Vue.use( List);
 Vue.use( Picker);
 Vue.use( Loading);
+Vue.use( DropdownMenu);
+Vue.use( DropdownItem);

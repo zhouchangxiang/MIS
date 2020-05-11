@@ -60,8 +60,8 @@ export default {
             radius: [40,70],
             offsetY:"90px",
             label:{
-                show:false
-            },
+            show:false
+           },
             labelLine:{
                 show:false
             }
