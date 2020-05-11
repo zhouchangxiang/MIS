@@ -429,7 +429,7 @@ def electricnergycost():
             dir_jtime = {}
             dir_jtime["title"] = "尖时刻"
             dir_jtime["expendEnergy"] = jtime
-            dir_jtime["expendPrice"] = jtimeprice
+            dir_jtime["expendPrice"] = round(jtimeprice, 2)
             dir_jtime["unit"] = unit
             dir_jtime["Ratio"] = jratio
             dir_jtime["unitPrice"] = juint
