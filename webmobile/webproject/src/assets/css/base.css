@@ -82,3 +82,9 @@
 .singledate .van-tabs__nav--card{
     width:40px;
   }
+  .van-dropdown-menu{
+    height: 18px;
+  }
+  .van-dropdown-menu__title{
+      font-size: 14px;
+  }

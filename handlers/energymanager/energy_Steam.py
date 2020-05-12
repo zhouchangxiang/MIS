@@ -490,11 +490,11 @@ def steamtotal():
     if request.method == 'GET':
         try:
             dir = {}
-            oclass = db_session.query(SteamTotalMaintain).filter(SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0').order_by(desc("ID")).first()
+            oclass = db_session.query(SteamTotalMaintain).filter(SteamTotalMaintain.SumValue != "",SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0').order_by(desc("ID")).first()
             dir_oc = {}
-            dir_oc["flowValue"] = round(float(oclass.FlowValue), 2)
-            dir_oc["sumValue"] = round(float(oclass.SumValue), 2)
-            dir_oc["SteamWD"] = round(float(oclass.WD), 2)
+            dir_oc["flowValue"] = roundtwo(oclass.FlowValue)
+            dir_oc["sumValue"] = roundtwo(oclass.SumValue)
+            dir_oc["SteamWD"] = roundtwo(oclass.WD)
             dir[oclass.TagClassValue] = dir_oc
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:

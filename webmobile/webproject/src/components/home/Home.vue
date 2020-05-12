@@ -9,7 +9,7 @@
                     </van-tabs>
                 </div>
                <div class="tips">
-                   <van-tabs type="card" title-active-color="#1E222B"  title-inactive-color="#fff" v-model="choosekind" @click="ChooseKind">
+                   <van-tabs type="card" title-active-color="#1E222B"  title-inactive-color="#fff" v-model="choosekind" @click="ChooseKind($event)">
                         <van-tab title="水"></van-tab>
                         <van-tab title="电"></van-tab>
                         <van-tab title="气"></van-tab>
@@ -19,25 +19,25 @@
         <van-loading size="24px" vertical v-if="loading" color="lightgreen" type="spinner">加载中...</van-loading>
         <div class="show-banner">
                   <div class="sb-name">厂区能耗</div>
-                  <div class="sb-number">{{$store.state.sbnumber.value}}</div>
+                  <div class="sb-number">{{kindnum}}</div>
                   <div class="sb-compare">较上期</div>
-                  <div class="sb-l-n">+1.345%</div>
+                  <div class="sb-l-n" :class="this.todaydaywater-this.yesterdaywater>0?'maxcolor':'mincolor'">{{dayCompare}}</div>
                   <div class="sb-dw">单位</div>
-                  <div class="sb-t">{{$store.state.sbnumber.unit}}</div>
+                  <div class="sb-t">{{unit}}</div>
                   <div class="tabbar">
                       <ve-bar :data="chartData" width="150px" height="150px" :legend-visible="false" :extend="areaTimeChartExtend"></ve-bar>
                    </div>
            </div>
            <div class="show-body">
-               <div class="sb-l" v-for="(item,index) in numberbox" :key='index'>
+               <div class="sb-l">
                    <div class="scpc">生产批次</div>
-                   <div class="scpc-s">{{item.batchCount}}</div>
+                   <div class="scpc-s">{{kind==='电'?0:batchCount}}</div>
                    <div class="znhl">总耗能量</div>
-                   <div class="znhl-s">{{choosekind==0?item.waterCon:item.steamCon}}</div>
+                   <div class="znhl-s">{{kind==='水'?waterCon:(kind==='电'?0:steamCon)}}</div>
                    <div class="dwnh">单位批次能耗</div>
-                   <div class="dwnh-s">{{choosekind==0?item.waterEveryBatch:item.steamEveryBatch}}</div>
-                   <div class="dw-kwh">{{choosekind==0?item.waterUnit:item.steamUnit}}</div>
-                   <div class="dw-pc">{{choosekind==0?item.waterUnit:item.steamUnit}}&nbsp;/&nbsp;批</div>
+                   <div class="dwnh-s">{{kind==='水'?waterEveryBatch:(kind==='电'?0:steamEveryBatch)}}</div>
+                   <div class="dw-kwh">{{unit}}</div>
+                   <div class="dw-pc">&nbsp;/&nbsp;批</div>
                </div>
                <div class="sb-r">
                     <van-picker :columns="area" @change="onChange" :default-index="2"/>
@@ -46,7 +46,7 @@
           <div class="show-foot">
                <div class="sf-l">
                    <div class="hf">耗费成本</div>
-                   <div class="all-money">{{this.$store.state.sbnumber.cost}}<span>元</span></div>
+                   <div class="all-money">{{cost}}<span>元</span></div>
                </div>
                 <div class="sf-r">
                    <div class="machine">{{kind}}表在线情况</div>
@@ -57,7 +57,6 @@
 </template>
 <script>
 var moment=require('moment')
-import store from '../../store/index'
 var moment=require('moment')
 export default {
     data(){
@@ -85,16 +84,13 @@ export default {
                 label:{
                     show:true,
                     position:"top",
-                    formatter: '{b}: {@score}'
+                    formatter: '{b}'
                 },
                 itemStyle: {
                     color:"#fff"
                 }
                 },
-            myapi:'',
             area:['原提取车间','GMP车间','固体制剂车间','中试车间'],
-            StartTime:'2020-04-07 12:22:59',
-            numberbox:[],
             loading:false,
             chartData: {
             columns: ['区域', '能耗量'],
@@ -107,176 +103,200 @@ export default {
             },
             choosedate:0,
             choosekind:0,
-            StartTime:'2020-04-07 12:22:59',
-            EndTime:'',
-            myapi:'',
-            myobj:{},
+            kindall:['水','电','汽'],
+            dateall:['日','月','年'],
             kind:'水',
-            onlinebiaolist:[],
-            onlineitem:{online:0,total:0}
+            date:'日',
+            unit:'t',
+            cost:0,
+            kindnum:0,
+            yesterdaywater:0,
+            yesterdayelectric:0,
+            yesterdaysteam:0,
+            todaydaywater:0,
+            todaysteam:0,
+            todaydayelectric:0,
+            AreaName:'GMP车间',
+            batchCount:0,
+            steamCon:0,
+            waterCon:0,
+            steamEveryBatch:0,
+            waterEveryBatch:0,
+            onlineitem:{online:0,total:0},
+            myapi:''
         }
     },
-    mounted(){
-        this.initNum()
+    created(){
+        this.getInitMessage()
+    },
+    computed:{
+         dayCompare(){
+        if(this.kind==='水'){
+        if(this.todaydaywater > 0){
+          var compare = (this.todaydaywater - this.yesterdaywater) / this.todaydaywater * 100
+          if(this.todaydaywater - this.yesterdaywater > 0){
+            return "+" + compare.toFixed(2) + "%"
+          }else{
+            return compare.toFixed(2) + "%"
+          }
+        }else{
+          if(this.yesterdaywater > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
+        }
+         }else if(this.kind==='电'){
+        if(this.todaydayelectric > 0){
+          var compare = (this.todaydayelectric - this.yesterdayelectric) / this.todaydayelectric * 100
+          if(this.todaydayelectric - this.yesterdayelectric > 0){
+            return "+" + compare.toFixed(2) + "%"
+          }else{
+            return compare.toFixed(2) + "%"
+          }
+        }else{
+          if(this.yesterdayelectric > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
+        }
+         }else{
+        if(this.todaysteam > 0){
+          var compare = (this.todaysteam - this.yesterdaysteam) / this.todaysteam * 100
+          if(this.todaysteam - this.yesterdaysteam > 0){
+            return "+" + compare.toFixed(2) + "%"
+          }else{
+            return compare.toFixed(2) + "%"
+          }
+        }else{
+          if(this.yesterdaysteam > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
+        }
+         }
+      }
     },
     methods:{
-    onChange(picker, value) {
+    getInitMessage(){
         this.loading=true
-        this.$store.commit("Chooseworkplace",value)
-        this.$toast(value);
-        let n=this.$store.state.choosedate
-        this.EndTime=moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
-        var x=this.choosekind
-            switch(x){
-                case 0:
-                    this.myapi='/energywater';
-                    break;
-                case 1:
-                    this.myapi='/energyelectric';
-                    break;
-                case 2:
-                    this.myapi='/energysteam';
-                    break;
-            }
-            if(n===0){
-                this.StartTime='2020-04-01 00:00:00'
-            }else if(n===1){
-                this.StartTime='2020-04-07 00:00:00'
-            }else{
-                this.StartTime='2020-04-09 00:00:00'
-            }
-            this.$http.all([
-                this.$http.get('/api'+this.myapi,{params:{
-                StartTime:this.StartTime,
-                EndTime:this.EndTime,
-                AreaName:this.$store.state.workplace
-                }}),
-            this.$http.get('/api/batchMaintainEnergy',{params:{
-                StartTime:this.StartTime,
-                EndTime:this.EndTime,
-                AreaName:this.$store.state.workplace
-            }})
-            ]).then(this.$http.spread((res1,res2)=>{
-                this.loading=false
-                this.$store.commit('Sbnumbers',JSON.parse(res1.data))
-                this.$store.commit('NumBox',res2.data)
-                this.numberbox=this.$store.state.numberbox 
-            }))
-    },
-    initNum(){
-        let str1=moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
-        let str2=moment(new Date()).format('YYYY-MM-DD')
-        this.loading=true
+        var nowTime = moment().format('HH:mm').substring(0,4) + "0"
+        var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
+        var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
+        var params={}
+        var params1={}
+        params.StartTime = todayStartTime
+        params.EndTime = todayEndTime
+        params.Area = 'GMP车间'
+        params1.AreaName='GMP车间'
+        params1.StartTime=todayStartTime
+        params1.EndTime=todayEndTime
         this.$http.all([
-            this.$http.get('/api/energywater',{params:{
-            StartTime:'2020-04-25 12:22:59',
-            EndTime:str1,
-            AreaName:'前处理车间'
-            }}),
-            this.$http.get('/api/batchMaintainEnergy',{params:{
-            StartTime:'2020-04-07 12:22:59',
-            EndTime:str1,
-            AreaName:'前处理车间'
-        }}),
-         this.$http.get('/api/areatimeenergycount',{params:{
-              EnergyClass:'电',CompareTime:'2020-04-14'
-            }}),
-        this.$http.get("/api/energyall",{params:{ModelFlag:"在线检测情况"}})
-        ]).then(this.$http.spread((res1,res2,res3,res4)=>{
-            this.onlinebiaolist=JSON.parse(res4.data)
+            this.$http.get("/api/energywater",{params: params}),
+            this.$http.get('/api/batchMaintainEnergy',{params:params1}),
+            this.$http.get('/api/areatimeenergycount',{params:{EnergyClass:'水',CompareTime:moment().format('YYYY-MM-DD')}}),
+            // this.$http.get('api/energyall',{params:{ModelFlag:"在线检测情况"}})
+        ]).then((this.$http.spread((res1,res2,res3)=>{
             this.loading=false
-            this.chartData.rows=res3.data.rows.slice(0, 4)
-            let arr=res3.data.rows
             this.area=[]
-            for(var i=0;i<arr.length;i++){
-               this.area.push(arr[i]['区域'])
+            this.chartData.rows=res3.data.rows.slice(0, 4)
+            for(var i=0;i<res3.data.rows.length;i++){
+                this.area.push(res3.data.rows[i]['区域'])
             }
-            this.$store.commit('Sbnumbers',JSON.parse(res1.data))
-            this.$store.commit('NumBox',res2.data)
-            this.numberbox=this.$store.state.numberbox
-
-    }))},
-    ChooseDate(){
-            this.$store.commit('Choosedate',this.choosedate)
-            let n=this.$store.state.choosedate
-            this.EndTime=moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
-            var x=this.choosekind
-            switch(x){
-                case 0:
-                    this.myapi='/energywater';
-                    break;
-                case 1:
-                    this.myapi='/energyelectric';
-                    break;
-                case 2:
-                    this.myapi='/energysteam';
-                    break;
-            }
-            if(n===0){
-                this.StartTime='2020-04-01 00:00:00'
-            }else if(n===1){
-                this.StartTime='2020-04-07 00:00:00'
-            }else{
-                this.StartTime='2020-04-09 00:00:00'
-            }
-            this.$http.all([
-                this.$http.get('/api'+this.myapi,{params:{
-                StartTime:this.StartTime,
-                EndTime:this.EndTime,
-                AreaName:this.$store.state.workplace
-                }}),
-                this.$http.get('/api/batchMaintainEnergy',{params:{
-                StartTime:this.StartTime,
-                EndTime:this.EndTime,
-                AreaName:this.$store.state.workplace
-            }})
-            ]).then(this.$http.spread((res1,res2)=>{
-                this.$store.commit('Sbnumbers',JSON.parse(res1.data))
-                this.$store.commit('NumBox',res2.data)
-            }))
-        },
-        ChooseKind(){
-            this.$store.commit('Choosekind',this.choosekind)
-            var x=this.$store.state.choosedate
-            var n=this.choosekind
-            switch(x){
-                case 0:
-                    this.StartTime='2020-04-01 00:00:00';
-                    break;
-                case 1:
-                     this.StartTime='2020-04-07 00:00:00';
-                    break;
-                case 2:
-                      this.StartTime='2020-04-09 00:00:00';
-                    break;
-            }
-            if(n===0){
-                this.myapi='/energywater',
-                this.kind='水'
-                this.onlineitem=this.onlinebiaolist[1]
-            }else if(n===1){
-                this.myapi='/energyelectric',
-                this.kind='电'
-                this.onlineitem=this.onlinebiaolist[0]
-            }else{
-                this.myapi='/energysteam',
-                this.kind='汽'
-                this.onlineitem=this.onlinebiaolist[2]
-            }
-            this.$http.all([
-                this.$http.get('/api'+this.myapi,{params:{
-                StartTime:this.StartTime,
-                EndTime:this.EndTime,
-                AreaName:this.$store.state.workplace
-                }}),
-            this.$http.get('/api/areatimeenergycount',{params:{
-                EnergyClass:this.kind,CompareTime:'2020-04-01'
-            }})
-            ]).then(this.$http.spread((res1,res2)=>{
-                this.$store.commit('Sbnumbers',JSON.parse(res1.data))
-                this.chartData.rows=res2.data.rows.slice(0, 4)
-            }))
+           this.kindnum=JSON.parse(res1.data).value
+           this.unit=JSON.parse(res1.data).unit
+           this.cost=JSON.parse(res1.data).cost
+           this.batchCount=res2.data.batchCount
+           this.waterCon=res2.data.waterCon
+           this.steamCon=res2.data.steamCon
+           this.steamEveryBatch=res2.data.steamEveryBatch
+           this.waterEveryBatch=res2.data.waterEveryBatch
         }
+        )))
+    },
+    onChange(picker, value) {
+      this.loading=true
+      this.AreaName=value
+      var nowTime = moment().format('HH:mm').substring(0,4) + "0"
+        var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
+        var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
+        var yesterdayStartTime = moment().subtract(1,'day').format('YYYY-MM-DD') + " 00:00"
+        var yesterdayEndTime = moment().subtract(1,'day').format('YYYY-MM-DD') + " " + nowTime
+        var monthStartTime = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm:ss')
+        var yearStartTime = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD HH:mm:ss')
+        var monthEndTime = moment().month(moment().month()).endOf('month').format('YYYY-MM-DD HH:mm:ss')
+        var params={}
+        var yesterdayParams={}
+        yesterdayParams.StartTime = yesterdayStartTime
+        yesterdayParams.EndTime = yesterdayEndTime
+        yesterdayParams.Area = this.AreaName
+        if(this.kind==='水'){
+            this.myapi='/energywater'
+        }else if(this.kind==='电'){
+             this.myapi='/energyelectric'
+        }else{
+             this.myapi='/energysteam'
+        }
+        if(this.date==='日'){
+            params.StartTime=todayStartTime
+            params.EndTime = todayEndTime
+            params.AreaName = this.AreaName
+            yesterdayParams.StartTime = yesterdayStartTime
+            yesterdayParams.EndTime = yesterdayEndTime
+            yesterdayParams.Area = this.AreaName
+        }else if(this.date==='月'){
+            params.StartTime=monthStartTime
+            params.EndTime = monthEndTime
+            params.AreaName = this.AreaName
+        }else{
+            params.StartTime=yearStartTime
+            params.EndTime =moment().format('YYYY-MM-DD HH:mm:ss')
+            params.AreaName = this.AreaName
+        }
+        this.$http.all([
+            this.$http.get('api'+this.myapi,{params: params}),
+            this.$http.get('/api/batchMaintainEnergy',{params:params}),
+            this.$http.get("/api/energywater",{params: yesterdayParams}),
+            this.$http.get("/api/energyelectric",{params: yesterdayParams}),
+            this.$http.get("/api/energysteam",{params: yesterdayParams}),
+            this.$http.get("/api/energywater",{params: params}),
+            this.$http.get("/api/energyelectric",{params: params}),
+            this.$http.get("/api/energysteam",{params: params}),
+        ]).then((this.$http.spread((res1,res2,res3,res4,res5,res6,res7,res8)=>{
+          this.loading=false
+          this.batchCount=res2.data.batchCount
+          this.steamCon=res2.data.steamCon
+          this.steamEveryBatch=res2.data.steamEveryBatch
+          this.waterCon=res2.data.waterCon
+          this.waterEveryBatch=res2.data.waterEveryBatch
+          this.kindnum=JSON.parse(res1.data).value
+          this.unit=JSON.parse(res1.data).unit
+          this.cost=JSON.parse(res1.data).cost
+          this.yesterdaywater=JSON.parse(res3.data).value
+          this.yesterdayelectric=JSON.parse(res4.data).value
+          this.yesterdaysteam=JSON.parse(res5.data).value
+          this.todaydaywater=JSON.parse(res6.data).value
+          this.todaydayelectric=JSON.parse(res7.data).value
+          this.todaysteam=JSON.parse(res8.data).value
+        }
+        )))
+    },
+    ChooseKind(e){
+     this.kind=this.kindall[e]
+     var comparetime = moment().format('YYYY-MM-DD')
+     var params={}
+     params.EnergyClass=this.kind
+     params.CompareTime=comparetime
+     this.$http.get('/api/areatimeenergycount',{params:params}).then((res) => {
+        this.unit=res.data.unit
+        this.chartData.rows=res.data.rows.slice(0, 4)
+     })
+    },
+    ChooseDate(e){
+     this.date=this.dateall[e]
+    }
 }
 }
 </script>
@@ -320,7 +340,7 @@ export default {
                position: absolute;
                left:13px;
                top:58px;
-               font-size: 32px;
+               font-size: 22px;
                word-spacing: 20px;
                height:36px;
                color:rgba(250,192,0,1);
@@ -535,7 +555,7 @@ export default {
                     left:16px;
                     top:28px;
                     height:23px;
-                    font-size: 23px;
+                    font-size: 18px;
                     color:rgba(255,255,255,1);
                     span{
                         font-size: 12px;
@@ -573,5 +593,11 @@ export default {
                 }
             }
         }
+    }
+    .maxcolor{
+        color:red;
+    }
+    .mincolor{
+        color:green;
     }
 </style>
