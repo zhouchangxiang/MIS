@@ -79,7 +79,7 @@
         this.$confirm('确定导出' +startTime+'至'+endTime+'汽能统计记录？', '提示', {
           type: 'warning'
         }).then(()  => {
-          window.location.href = "http://127.0.0.1:5000/exceloutstatistic?StartTime="+startTime+"&EndTime="+endTime+"&EnergyClass=汽"
+          window.location.href = "/api/exceloutstatistic?StartTime="+startTime+"&EndTime="+endTime+"&EnergyClass=汽"
         });
       },
       exportExcel(){
@@ -89,7 +89,7 @@
         this.$confirm('确定导出' +startTime+'至'+endTime+" "+areaValue+'的汽能详细记录？', '提示', {
           type: 'warning'
         }).then(()  => {
-          window.location.href = "http://127.0.0.1:5000/excelout?StartTime="+startTime+"&EndTime="+endTime+"&Area="+areaValue+"&EnergyClass=汽"
+          window.location.href = "/api/excelout?StartTime="+startTime+"&EndTime="+endTime+"&Area="+areaValue+"&EnergyClass=汽"
         });
       },
       getArea(){
