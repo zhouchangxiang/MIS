@@ -858,145 +858,91 @@ def exportx(Area, EnergyClass,  StartTime, EndTime):
 
     col = 0
     row = 1
-    tag = []
+    tag_list = []
     if Area != "" and Area !=None:
         tas = db_session.query(TagDetail).filter(TagDetail.AreaName == Area).all()
     else:
         tas = db_session.query(TagDetail).filter().all()
     for ta in tas:
-        tag.append(ta.TagClassValue)
+        tag_list.append(ta.TagClassValue)
     # 写入列名
-    if EnergyClass == "水":
-        columns = ['水瞬时流量单位', '仪表ID', '价格ID', '采集点', '采集时间', '采集年', '采集月', '采集天', '瞬时流量', '累计流量', '水累计量体积单位', '计算增量更新标识', '两个相邻采集点上一个采集点ID', '区域']
-        sql = "SELECT [ID],[FlowWUnit],[EquipmnetID],[PriceID],[TagClassValue],[CollectionDate],[CollectionYear],[CollectionMonth],[CollectionDay],[WaterFlow],[WaterSum],[SumWUnit],[IncrementFlag],[PrevID],[AreaName] FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_WaterEnergy) " \
-              "WHERE t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' order by t.CollectionDate"
-        oclass = db_session.execute(sql).fetchall()
-        db_session.close()
-    elif EnergyClass == "电":
-        columns = ['单位', '仪表ID', '价格ID', '采集点', '采集时间', '采集年', '采集月', '采集天', '总功率', 'A相电压', 'A相电流', 'B相电压', 'B相电流',
-                   'C相电压', 'C相电流','计算增量更新标识', '两个相邻采集点上一个采集点ID', '区域']
-        sql = "SELECT [ID],[Unit],[EquipmnetID],[PriceID],[TagClassValue],[CollectionDate],[CollectionYear],[CollectionMonth],[CollectionDay],[ZGL],[AU],[AI],[BU],[BI],[CU],[CI],[IncrementFlag],[PrevID],[AreaName] FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricEnergy) " \
-              "WHERE t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' order by t.CollectionDate"
-        oclass = db_session.execute(sql).fetchall()
-        db_session.close()
-    else:
-        columns = ['瞬时流量单位', '仪表ID', '价格ID', '采集点', '采集时间', '采集年', '采集月', '采集天', '温度', '蒸汽瞬时值', '蒸汽累计值', '累计量体积单位', '体积', '计算增量更新标识', '两个相邻采集点上一个采集点ID', '区域', '增量库体积插入标识']
-        sql = "SELECT [ID],[FlowUnit],[EquipmnetID],[PriceID],[TagClassValue],[CollectionDate],[CollectionYear],[CollectionMonth],[CollectionDay],[WD],[FlowValue],[SumValue],[SumUnit],[Volume],[IncrementFlag],[PrevID],[AreaName],[insertVolumeFlag] FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy) " \
-              "WHERE t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' order by t.CollectionDate"
-        oclass = db_session.execute(sql).fetchall()
-        db_session.close()
+    columns = ['采集点', '增量值', '区域', '单位', '开始时间', '结束时间']
     for item in columns:
         worksheet.write(0, col, item, cell_format)
         col += 1
+    reclass = tongjibaobiaosql(EnergyClass, tag_list, StartTime, EndTime)
     # 写入数据
-    for i in range(1, len(oclass)):
-        if EnergyClass == "水":
-            for cum in columns:
-                if cum == '水瞬时流量单位':
-                    worksheet.write(i, columns.index(cum), oclass[i]['FlowWUnit'])
-                if cum == '仪表ID':
-                    worksheet.write(i, columns.index(cum), oclass[i]['EquipmnetID'])
-                if cum == '价格ID':
-                    worksheet.write(i, columns.index(cum), oclass[i]['PriceID'])
-                if cum == '采集点':
-                    worksheet.write(i, columns.index(cum), oclass[i]['TagClassValue'])
-                if cum == '采集时间':
-                    worksheet.write(i, columns.index(cum), oclass[i]['CollectionDate'])
-                if cum == '采集年':
-                    worksheet.write(i, columns.index(cum), oclass[i]['CollectionYear'])
-                if cum == '采集月':
-                    worksheet.write(i, columns.index(cum), oclass[i]['CollectionMonth'])
-                if cum == '采集天':
-                    worksheet.write(i, columns.index(cum), oclass[i]['CollectionDay'])
-                if cum == '瞬时流量':
-                    worksheet.write(i, columns.index(cum), oclass[i]['WaterFlow'])
-                if cum == '累计流量':
-                    worksheet.write(i, columns.index(cum), oclass[i]['WaterSum'])
-                if cum == '水累计量体积单位':
-                    worksheet.write(i, columns.index(cum), oclass[i]['SumWUnit'])
-                if cum == '计算增量更新标识':
-                    worksheet.write(i, columns.index(cum), oclass[i]['IncrementFlag'])
-                if cum == '两个相邻采集点上一个采集点ID':
-                    worksheet.write(i, columns.index(cum), oclass[i]['PrevID'])
-                if cum == '区域':
-                    worksheet.write(i, columns.index(cum), oclass[i]['AreaName'])
-        elif EnergyClass == "电":
-            for cum in columns:
-                if cum == '单位':
-                    worksheet.write(i, columns.index(cum), oclass[i]['Unit'])
-                if cum == '仪表ID':
-                    worksheet.write(i, columns.index(cum), oclass[i]['EquipmnetID'])
-                if cum == '价格ID':
-                    worksheet.write(i, columns.index(cum), oclass[i]['PriceID'])
-                if cum == '采集点':
-                    worksheet.write(i, columns.index(cum), oclass[i]['TagClassValue'])
-                if cum == '采集时间':
-                    worksheet.write(i, columns.index(cum), oclass[i]['CollectionDate'])
-                if cum == '采集年':
-                    worksheet.write(i, columns.index(cum), oclass[i]['CollectionYear'])
-                if cum == '采集月':
-                    worksheet.write(i, columns.index(cum), oclass[i]['CollectionMonth'])
-                if cum == '采集天':
-                    worksheet.write(i, columns.index(cum), oclass[i]['CollectionDay'])
-                if cum == '总功率':
-                    worksheet.write(i, columns.index(cum), oclass[i]['ZGL'])
-                if cum == 'A相电压':
-                    worksheet.write(i, columns.index(cum), oclass[i]['AU'])
-                if cum == 'A相电流':
-                    worksheet.write(i, columns.index(cum), oclass[i]['AI'])
-                if cum == 'B相电压':
-                    worksheet.write(i, columns.index(cum), oclass[i]['BU'])
-                if cum == 'B相电流':
-                    worksheet.write(i, columns.index(cum), oclass[i]['BI'])
-                if cum == 'C相电压':
-                    worksheet.write(i, columns.index(cum), oclass[i]['CU'])
-                if cum == 'C相电流':
-                    worksheet.write(i, columns.index(cum), oclass[i]['CI'])
-                if cum == '计算增量更新标识':
-                    worksheet.write(i, columns.index(cum), oclass[i]['IncrementFlag'])
-                if cum == '两个相邻采集点上一个采集点ID':
-                    worksheet.write(i, columns.index(cum), oclass[i]['PrevID'])
-                if cum == '区域':
-                    worksheet.write(i, columns.index(cum), oclass[i]['AreaName'])
-        elif EnergyClass == "汽":
-            for cum in columns:
-                if cum == '瞬时流量单位':
-                    worksheet.write(i, columns.index(cum), oclass[i]['FlowUnit'])
-                if cum == '仪表ID':
-                    worksheet.write(i, columns.index(cum), oclass[i]['EquipmnetID'])
-                if cum == '价格ID':
-                    worksheet.write(i, columns.index(cum), oclass[i]['PriceID'])
-                if cum == '采集点':
-                    worksheet.write(i, columns.index(cum), oclass[i]['TagClassValue'])
-                if cum == '采集时间':
-                    worksheet.write(i, columns.index(cum), oclass[i]['CollectionDate'])
-                if cum == '采集年':
-                    worksheet.write(i, columns.index(cum), oclass[i]['CollectionYear'])
-                if cum == '采集月':
-                    worksheet.write(i, columns.index(cum), oclass[i]['CollectionMonth'])
-                if cum == '采集天':
-                    worksheet.write(i, columns.index(cum), oclass[i]['CollectionDay'])
-                if cum == '温度':
-                    worksheet.write(i, columns.index(cum), oclass[i]['WD'])
-                if cum == '蒸汽瞬时值':
-                    worksheet.write(i, columns.index(cum), oclass[i]['FlowValue'])
-                if cum == '蒸汽累计值':
-                    worksheet.write(i, columns.index(cum), oclass[i]['SumValue'])
-                if cum == '累计量体积单位':
-                    worksheet.write(i, columns.index(cum), oclass[i]['SumUnit'])
-                if cum == '体积':
-                    worksheet.write(i, columns.index(cum), oclass[i]['Volume'])
-                if cum == '计算增量更新标识':
-                    worksheet.write(i, columns.index(cum), oclass[i]['IncrementFlag'])
-                if cum == '两个相邻采集点上一个采集点ID':
-                    worksheet.write(i, columns.index(cum), oclass[i]['PrevID'])
-                if cum == '区域':
-                    worksheet.write(i, columns.index(cum), oclass[i]['AreaName'])
-                if cum == '增量库体积插入标识':
-                    worksheet.write(i, columns.index(cum), oclass[i]['insertVolumeFlag'])
+    for i in range(1, len(reclass)):
+        tag = db_session.query(TagDetail).filter(TagDetail.TagClassValue == reclass[i]['TagClassValue']).first()
+        for cum in columns:
+            if cum == '采集点':
+                worksheet.write(i, columns.index(cum), tag.FEFportIP)
+            if cum == '增量值':
+                worksheet.write(i, columns.index(cum), reclass[i]['IncremenValue'])
+            if cum == '区域':
+                worksheet.write(i, columns.index(cum), tag.AreaName)
+            if cum == '单位':
+                worksheet.write(i, columns.index(cum), reclass[i]['Unit'])
+            if cum == '开始时间':
+                worksheet.write(i, columns.index(cum), StartTime)
+            if cum == '结束时间':
+                worksheet.write(i, columns.index(cum), EndTime)
     writer.close()
     output.seek(0)
     return output
+
+def tongjibaobiaosql(EnergyClass, tag_list, StartTime, EndTime):
+    if EnergyClass == "水":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float) AS IncremenValue,[TagClassValue],[Unit] FROM [DB_MICS].[dbo].[IncrementWaterTable] t with (INDEX =IX_IncrementWaterTable) " \
+              "WHERE t.TagClassValue in (" + str(tag_list)[1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' grounp by t.TagClassValue, t.Unit order by t.CollectionDate"
+        oclass = db_session.execute(sql).fetchall()
+        db_session.close()
+    elif EnergyClass == "电":
+        sql = "SELECT SUM(Cast(t.IncremenValue as float) AS IncremenValue,[TagClassValue],[Unit] FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable) " \
+              "WHERE t.TagClassValue in (" + str(tag_list)[1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' grounp by t.TagClassValue, t.Unit order by t.CollectionDate"
+        oclass = db_session.execute(sql).fetchall()
+        db_session.close()
+    else:
+        sql = "SELECT SUM(Cast(t.IncremenValue as float) AS IncremenValue,[TagClassValue],[Unit] FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable) " \
+              "WHERE t.TagClassValue in (" + str(tag_list)[1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' grounp by t.TagClassValue, t.Unit order by t.CollectionDate"
+        oclass = db_session.execute(sql).fetchall()
+        db_session.close()
+    return oclass
+
+@energy.route('/tongjibaobiao', methods=['POST', 'GET'])
+def tongjibaobiao():
+    '''
+    统计报表
+    :return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            dir = {}
+            Area = data.get("Area")
+            EnergyClass = data.get("EnergyClass")
+            StartTime = data.get("StartTime")
+            EndTime = data.get("EndTime")
+            if Area == None or Area == "":
+                oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
+            else:
+                oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass, TagDetail.AreaName == Area).all()
+
+            oc_list = []
+            for oc in oclass:
+                oc_list.append(oc.TagClassValue)
+            reclass = tongjibaobiaosql(EnergyClass, oc_list, StartTime, EndTime)
+            for i in reclass:
+                tag = db_session.query(TagDetail).filter(TagDetail.TagClassValue == i.TagClassValue).first()
+                dict_data = {"TagClassValue": tag.FEFportIP, "IncremenValue": i['IncremenValue'], "AreaName": tag.AreaName, "Unit": i['Unit'], "StartTime": StartTime, "EndTime": EndTime}
+            dir["row"] = dict_data
+            dir["total"] = len(oc_list)
+            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "统计报表查询报错Error：" + str(e), current_user.Name)
+
 
 @energy.route('/trendlookboard', methods=['POST', 'GET'])
 def trendlookboard():
