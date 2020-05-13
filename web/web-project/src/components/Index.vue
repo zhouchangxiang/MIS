@@ -684,8 +684,8 @@ export default {
       this.waterAreaDialog = true
     },
     initWebSocket(){ //初始化weosocket
-      // this.websock = new WebSocket('ws://' + location.host + '/socket');
-      this.websock = new WebSocket('ws://127.0.0.1:5002');
+      this.websock = new WebSocket('ws://' + location.host + '/socket');
+      // this.websock = new WebSocket('ws://127.0.0.1:5002');
       this.websock.onmessage = this.websocketonmessage;
       this.websock.onopen = this.websocketonopen;
       this.websock.onerror = this.websocketonerror;
