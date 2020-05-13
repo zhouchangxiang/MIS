@@ -122,16 +122,18 @@
       },
       searchTime(){
         this.loading = true
-        this.axios.get("/api/electric_report",{
+        this.axios.get("/api/tongjibaobiao",{
           params: {
-            start_time:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss"),
-            end_time:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss"),
-            area_name:this.areaValue,
+            EnergyClass:"电",
+            StartTime:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss"),
+            EndTime:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss"),
+            Area:this.areaValue,
             limit:this.pagesize,
             offset:this.currentPage
           }
         }).then(res =>{
           var data = res.data
+          console.log(data)
           this.tableData = data.rows
           this.total = data.total_column
           this.loading = false

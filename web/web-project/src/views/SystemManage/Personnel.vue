@@ -96,7 +96,6 @@
             ]
             that.TableData.handleType = arr
           }
-          console.log(that.TableData.handleType)
         })
       },
       getTableData(){
