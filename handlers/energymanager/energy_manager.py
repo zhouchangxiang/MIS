@@ -893,18 +893,18 @@ def exportx(Area, EnergyClass,  StartTime, EndTime):
 
 def tongjibaobiaosql(EnergyClass, tag_list, StartTime, EndTime):
     if EnergyClass == "水":
-        sql = "SELECT SUM(Cast(t.IncremenValue as float) AS IncremenValue,[TagClassValue],[Unit] FROM [DB_MICS].[dbo].[IncrementWaterTable] t with (INDEX =IX_IncrementWaterTable) " \
-              "WHERE t.TagClassValue in (" + str(tag_list)[1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' grounp by t.TagClassValue, t.Unit order by t.CollectionDate"
+        sql = "SELECT SUM(Cast(t.IncremenValue as float)) AS IncremenValue,[TagClassValue],[Unit] FROM [DB_MICS].[dbo].[IncrementWaterTable] t with (INDEX =IX_IncrementWaterTable) " \
+              "WHERE t.TagClassValue in (" + str(tag_list)[1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.TagClassValue, t.Unit"
         oclass = db_session.execute(sql).fetchall()
         db_session.close()
     elif EnergyClass == "电":
-        sql = "SELECT SUM(Cast(t.IncremenValue as float) AS IncremenValue,[TagClassValue],[Unit] FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable) " \
-              "WHERE t.TagClassValue in (" + str(tag_list)[1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' grounp by t.TagClassValue, t.Unit order by t.CollectionDate"
+        sql = "SELECT SUM(Cast(t.IncremenValue as float)) AS IncremenValue,[TagClassValue],[Unit] FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable) " \
+              "WHERE t.TagClassValue in (" + str(tag_list)[1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.TagClassValue, t.Unit"
         oclass = db_session.execute(sql).fetchall()
         db_session.close()
     else:
-        sql = "SELECT SUM(Cast(t.IncremenValue as float) AS IncremenValue,[TagClassValue],[Unit] FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable) " \
-              "WHERE t.TagClassValue in (" + str(tag_list)[1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' grounp by t.TagClassValue, t.Unit order by t.CollectionDate"
+        sql = "SELECT SUM(Cast(t.IncremenValue as float)) AS IncremenValue,[TagClassValue],[Unit] FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable) " \
+              "WHERE t.TagClassValue in (" + str(tag_list)[1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.TagClassValue, t.Unit"
         oclass = db_session.execute(sql).fetchall()
         db_session.close()
     return oclass
@@ -932,11 +932,14 @@ def tongjibaobiao():
             for oc in oclass:
                 oc_list.append(oc.TagClassValue)
             reclass = tongjibaobiaosql(EnergyClass, oc_list, StartTime, EndTime)
+            data_list = []
             for i in reclass:
                 tag = db_session.query(TagDetail).filter(TagDetail.TagClassValue == i.TagClassValue).first()
                 dict_data = {"TagClassValue": tag.FEFportIP, "IncremenValue": i['IncremenValue'], "AreaName": tag.AreaName, "Unit": i['Unit'], "StartTime": StartTime, "EndTime": EndTime}
-            dir["row"] = dict_data
+                data_list.append(dict_data)
+            dir["row"] = data_list
             dir["total"] = len(oc_list)
+            print(dir)
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
