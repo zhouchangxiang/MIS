@@ -24,19 +24,20 @@ def get_user():
             user_role_query = db_session.query(RoleUser).filter(RoleUser.RoleName == data.RoleName).all()
             for user_role in user_role_query:
                 user_query = db_session.query(User).filter(User.ID == user_role.UserID).first()
-                d2 = db_session.query(DepartmentManager).filter(DepartmentManager.DepartName == user_query.OrganizationName).first()
-                if d2:
-                    user_data = {'name': user_query.Name, 'value': user_query.WorkNumber, 'type': 'user', 'rid': data.ID,
-                                 'did': d2.ID}
-                else:
-                    user_data = {'name': user_query.Name, 'value': user_query.WorkNumber, 'type': 'user', 'rid': data.ID, 'did': ''}
-                # for user in user_query:
-                #     d2 = db_session.query(DepartmentManager).filter(DepartmentManager.DepartName == user.OrganizationName).first()
-                #     if d2:
-                #         user_data = {'name': user.Name, 'value': user.WorkNumber, 'type': 'user', 'rid': data.ID, 'did': d2.ID}
-                #     else:
-                #         user_data = {'name': user.Name, 'value': user.WorkNumber, 'type': 'user', 'rid': data.ID, 'did': ''}
-                user_list['children'].append(user_data)
+                if user_query:
+                    d2 = db_session.query(DepartmentManager).filter(DepartmentManager.DepartName == user_query.OrganizationName).first()
+                    if d2:
+                        user_data = {'name': user_query.Name, 'value': user_query.WorkNumber, 'type': 'user', 'rid': data.ID,
+                                     'did': d2.ID}
+                    else:
+                        user_data = {'name': user_query.Name, 'value': user_query.WorkNumber, 'type': 'user', 'rid': data.ID, 'did': ''}
+                    # for user in user_query:
+                    #     d2 = db_session.query(DepartmentManager).filter(DepartmentManager.DepartName == user.OrganizationName).first()
+                    #     if d2:
+                    #         user_data = {'name': user.Name, 'value': user.WorkNumber, 'type': 'user', 'rid': data.ID, 'did': d2.ID}
+                    #     else:
+                    #         user_data = {'name': user.Name, 'value': user.WorkNumber, 'type': 'user', 'rid': data.ID, 'did': ''}
+                    user_list['children'].append(user_data)
             role_list.append(user_list)
         department_data = {'name': department.DepartName, 'value': department.DepartCode, 'type': 'department', 'did': department.ID, 'factory_name': factory.FactoryName, 'children': role_list}
         area = db_session.query(AreaMaintain).filter(AreaMaintain.FactoryName == department.DepartLoad).first()
