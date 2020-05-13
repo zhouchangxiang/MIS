@@ -18,6 +18,13 @@ module.exports = {
           '^/api': '/' //路径重写
           }
       }
+      // '/socket': {
+      //   target: 'ws://127.0.0.1:5002',
+      //   changeOrigin: true,
+      //   pathRewrite: {
+      //     '^/socket': '/'
+      //     }
+      // }
     },
 
     // Various Dev Server settings

@@ -21,7 +21,9 @@
                   <div class="sb-name">厂区能耗</div>
                   <div class="sb-number">{{kindnum}}</div>
                   <div class="sb-compare">较上期</div>
-                  <div class="sb-l-n" :class="this.todaydaywater-this.yesterdaywater>0?'maxcolor':'mincolor'">{{dayCompare}}</div>
+                  <div class="sb-l-n" :class="todayCon-compareDateCon>0?'maxcolor':'mincolor'"  v-if="this.date==='日'">{{dayCompare}}</div>
+                  <div class="sb-l-n" :class="thisMonthCon-lastMonthCon>0?'maxcolor':'mincolor'" v-if="this.date==='月'">{{monthCompare}}</div>
+                  <div class="sb-l-n" :class="thisYearCon-lastYearCon>0?'maxcolor':'mincolor'" v-if="this.date==='年'">{{yearCompare}}</div>
                   <div class="sb-dw">单位</div>
                   <div class="sb-t">{{unit}}</div>
                   <div class="tabbar">
@@ -104,18 +106,16 @@ export default {
             choosedate:0,
             choosekind:0,
             kindall:['水','电','汽'],
-            dateall:['日','月','年'],
+            dateall:['年','月','日'],
             kind:'水',
             date:'日',
             unit:'t',
             cost:0,
             kindnum:0,
-            yesterdaywater:0,
-            yesterdayelectric:0,
-            yesterdaysteam:0,
             todaydaywater:0,
-            todaysteam:0,
+            todaysteakindnumm:0,
             todaydayelectric:0,
+            CompareDate:Date.now() - 3600 * 1000 * 24, //默认对比日期
             AreaName:'GMP车间',
             batchCount:0,
             steamCon:0,
@@ -123,61 +123,80 @@ export default {
             steamEveryBatch:0,
             waterEveryBatch:0,
             onlineitem:{online:0,total:0},
-            myapi:''
+            myapi:'',
+            todayCon:0,
+            compareDateCon:0,
+            thisMonthCon:0,
+            lastMonthCon:0,
+            thisYearCon:0,
+            lastYearCon:0,
+            water1:{},
+            water2:{},
+            water3:{},
+            electric1:{},
+            electric2:{},
+            electric3:{},
+            steam1:{},
+            steam2:{},
+            steam3:{},
+            batch1:{batchCount:0,steamCon:'0',steamEveryBatch:'0',waterCon:'0',waterEveryBatch:'0'},
+            batch2:{batchCount:0,steamCon:'0',steamEveryBatch:'0',waterCon:'0',waterEveryBatch:'0'},
+            batch3:{batchCount:0,steamCon:'0',steamEveryBatch:'0',waterCon:'0',waterEveryBatch:'0'}
+
         }
     },
     created(){
         this.getInitMessage()
     },
     computed:{
-         dayCompare(){
-        if(this.kind==='水'){
-        if(this.todaydaywater > 0){
-          var compare = (this.todaydaywater - this.yesterdaywater) / this.todaydaywater * 100
-          if(this.todaydaywater - this.yesterdaywater > 0){
+        dayCompare(){
+        if(this.todayCon > 0){
+          var compare = (this.todayCon - this.compareDateCon) / this.todayCon * 100
+          if(this.todayCon - this.compareDateCon > 0){
             return "+" + compare.toFixed(2) + "%"
           }else{
             return compare.toFixed(2) + "%"
           }
         }else{
-          if(this.yesterdaywater > 0){
+          if(this.compareDateCon > 0){
             return "-" + 100 + "%"
           }else{
             return 0 + "%"
           }
         }
-         }else if(this.kind==='电'){
-        if(this.todaydayelectric > 0){
-          var compare = (this.todaydayelectric - this.yesterdayelectric) / this.todaydayelectric * 100
-          if(this.todaydayelectric - this.yesterdayelectric > 0){
+         },
+        monthCompare(){
+         if(this.thisMonthCon > 0){
+          var compare = (this.thisMonthCon - this.lastMonthCon) / this.thisMonthCon * 100
+          if(this.thisMonthCon - this.lastMonthCon > 0){
             return "+" + compare.toFixed(2) + "%"
           }else{
             return compare.toFixed(2) + "%"
           }
         }else{
-          if(this.yesterdayelectric > 0){
+          if(this.lastMonthCon > 0){
             return "-" + 100 + "%"
           }else{
             return 0 + "%"
           }
-        }
-         }else{
-        if(this.todaysteam > 0){
-          var compare = (this.todaysteam - this.yesterdaysteam) / this.todaysteam * 100
-          if(this.todaysteam - this.yesterdaysteam > 0){
+        }  
+        },
+        yearCompare(){
+        if(this.thisYearCon > 0){
+          var compare = (this.thisYearCon - this.lastYearCon) / this.thisYearCon * 100
+          if(this.thisYearCon - this.lastYearCon > 0){
             return "+" + compare.toFixed(2) + "%"
           }else{
             return compare.toFixed(2) + "%"
           }
         }else{
-          if(this.yesterdaysteam > 0){
+          if(this.lastYearCon > 0){
             return "-" + 100 + "%"
           }else{
             return 0 + "%"
           }
         }
-         }
-      }
+        }
     },
     methods:{
     getInitMessage(){
@@ -198,7 +217,7 @@ export default {
             this.$http.get('/api/batchMaintainEnergy',{params:params1}),
             this.$http.get('/api/areatimeenergycount',{params:{EnergyClass:'水',CompareTime:moment().format('YYYY-MM-DD')}}),
             // this.$http.get('api/energyall',{params:{ModelFlag:"在线检测情况"}})
-        ]).then((this.$http.spread((res1,res2,res3)=>{
+        ]).then((this.$http.spread((res1,res2,res3,res4)=>{
             this.loading=false
             this.area=[]
             this.chartData.rows=res3.data.rows.slice(0, 4)
@@ -227,12 +246,11 @@ export default {
         var monthStartTime = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm:ss')
         var yearStartTime = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD HH:mm:ss')
         var monthEndTime = moment().month(moment().month()).endOf('month').format('YYYY-MM-DD HH:mm:ss')
-        var params={}
-        var yesterdayParams={}
-        yesterdayParams.StartTime = yesterdayStartTime
-        yesterdayParams.EndTime = yesterdayEndTime
-        yesterdayParams.Area = this.AreaName
-        if(this.kind==='水'){
+        var params1={}
+        var params2={}
+        var params3={}
+        var myparams={}
+         if(this.kind==='水'){
             this.myapi='/energywater'
         }else if(this.kind==='电'){
              this.myapi='/energyelectric'
@@ -240,31 +258,43 @@ export default {
              this.myapi='/energysteam'
         }
         if(this.date==='日'){
-            params.StartTime=todayStartTime
-            params.EndTime = todayEndTime
-            params.AreaName = this.AreaName
-            yesterdayParams.StartTime = yesterdayStartTime
-            yesterdayParams.EndTime = yesterdayEndTime
-            yesterdayParams.Area = this.AreaName
+            myparams.StartTime=todayStartTime
+            myparams.EndTime = todayEndTime
+            myparams.AreaName = this.AreaName
         }else if(this.date==='月'){
-            params.StartTime=monthStartTime
-            params.EndTime = monthEndTime
-            params.AreaName = this.AreaName
+            myparams.StartTime=monthStartTime
+            myparams.EndTime = monthEndTime
+            myparams.AreaName = this.AreaName
         }else{
-            params.StartTime=yearStartTime
-            params.EndTime =moment().format('YYYY-MM-DD HH:mm:ss')
-            params.AreaName = this.AreaName
+            myparams.StartTime=yearStartTime
+            myparams.EndTime =moment().format('YYYY-MM-DD HH:mm:ss')
+            myparams.AreaName = this.AreaName
         }
+            params1.StartTime=todayStartTime
+            params1.EndTime = todayEndTime
+            params1.AreaName = this.AreaName
+            params2.StartTime=monthStartTime
+            params2.EndTime = monthEndTime
+            params2.AreaName = this.AreaName
+            params3.StartTime=yearStartTime
+            params3.EndTime =moment().format('YYYY-MM-DD HH:mm:ss')
+            params3.AreaName = this.AreaName
         this.$http.all([
-            this.$http.get('api'+this.myapi,{params: params}),
-            this.$http.get('/api/batchMaintainEnergy',{params:params}),
-            this.$http.get("/api/energywater",{params: yesterdayParams}),
-            this.$http.get("/api/energyelectric",{params: yesterdayParams}),
-            this.$http.get("/api/energysteam",{params: yesterdayParams}),
-            this.$http.get("/api/energywater",{params: params}),
-            this.$http.get("/api/energyelectric",{params: params}),
-            this.$http.get("/api/energysteam",{params: params}),
-        ]).then((this.$http.spread((res1,res2,res3,res4,res5,res6,res7,res8)=>{
+            this.$http.get('api'+this.myapi,{params: myparams}),//当前年月日水电气数据
+            this.$http.get('/api/batchMaintainEnergy',{params:myparams}),
+            this.$http.get('/api/energywater',{params:params1}),//今天水
+            this.$http.get('/api/energywater',{params:params2}),
+            this.$http.get('/api/energywater',{params:params3}),
+            this.$http.get('/api/energyelectric',{params:params1}),//今天电
+            this.$http.get('/api/energyelectric',{params:params2}),
+            this.$http.get('/api/energyelectric',{params:params3}),
+            this.$http.get('/api/energysteam',{params:params1}),//今天汽
+            this.$http.get('/api/energysteam',{params:params2}),
+            this.$http.get('/api/energysteam',{params:params3}),
+            this.$http.get('/api/batchMaintainEnergy',{params:params1}),//今天批次
+            this.$http.get('/api/batchMaintainEnergy',{params:params2}),
+            this.$http.get('/api/batchMaintainEnergy',{params:params3}),
+        ]).then((this.$http.spread((res1,res2,water1,water2,water3,electric1,electric2,electric3,steam1,steam2,steam3,batch1,batch2,batch3)=>{
           this.loading=false
           this.batchCount=res2.data.batchCount
           this.steamCon=res2.data.steamCon
@@ -274,18 +304,65 @@ export default {
           this.kindnum=JSON.parse(res1.data).value
           this.unit=JSON.parse(res1.data).unit
           this.cost=JSON.parse(res1.data).cost
-          this.yesterdaywater=JSON.parse(res3.data).value
-          this.yesterdayelectric=JSON.parse(res4.data).value
-          this.yesterdaysteam=JSON.parse(res5.data).value
-          this.todaydaywater=JSON.parse(res6.data).value
-          this.todaydayelectric=JSON.parse(res7.data).value
-          this.todaysteam=JSON.parse(res8.data).value
+          this.water1=JSON.parse(water1.data)
+          this.water2=JSON.parse(water2.data)
+          this.water3=JSON.parse(water3.data)
+          this.electric1=JSON.parse(electric1.data)
+          this.electric2=JSON.parse(electric2.data)
+          this.electric3=JSON.parse(electric3.data)
+          this.steam1=JSON.parse(steam1.data)
+          this.steam2=JSON.parse(steam2.data)
+          this.steam3=JSON.parse(steam3.data)
+          this.batch1=batch1.data
+          this.batch2=batch2.data
+          this.batch3=batch3.data
         }
         )))
     },
     ChooseKind(e){
      this.kind=this.kindall[e]
-     var comparetime = moment().format('YYYY-MM-DD')
+     var comparetime =''
+     var thisDate = moment().format('DD')
+     var lastMonth = moment().month(moment().month() - 1).endOf('month').format('YYYY-MM-DD').substring(0,7) + "-" + thisDate
+     var lastYear = moment().year(moment().year() - 1).format('YYYY-MM-DD')
+     if(this.date==='日'){
+         comparetime= moment(this.CompareDate).format('YYYY-MM-DD')
+         if(this.kind==='水'){
+          this.kindnum=this.water1.value
+          this.cost=this.water1.cost
+         }else if(this.kind==='电'){
+          this.kindnum=this.electric1.value
+          this.cost=this.electric1.cost
+         }else{
+          this.kindnum=this.steam1.value
+          this.cost=this.steam1.cost
+         }
+     }else if(this.date==='月'){
+         comparetime= lastMonth
+          if(this.kind==='水'){
+          this.kindnum=this.water2.value
+          this.cost=this.water2.cost
+         }else if(this.kind==='电'){
+          this.kindnum=this.electric2.value
+          this.cost=this.electric2.cost
+         }else{
+          this.kindnum=this.steam2.value
+          this.cost=this.steam2.cost
+         }
+
+     }else{
+         comparetime= lastYear
+          if(this.kind==='水'){
+          this.kindnum=this.water3.value
+          this.cost=this.water3.cost
+         }else if(this.kind==='电'){
+          this.kindnum=this.electric3.value
+          this.cost=this.electric3.cost
+         }else{
+          this.kindnum=this.steam3.value
+          this.cost=this.steam3.cost
+         }
+     }
      var params={}
      params.EnergyClass=this.kind
      params.CompareTime=comparetime
@@ -296,6 +373,98 @@ export default {
     },
     ChooseDate(e){
      this.date=this.dateall[e]
+      if(this.date==='日'){
+           this.batchCount=this.batch1.batchCount
+           this.waterCon==this.batch1.waterCon
+           this.steamCon==this.batch1.steamCon
+           this.steamEveryBatch==this.batch1.steamEveryBatch
+           this.waterEveryBatch==this.batch1.waterEveryBatch
+         if(this.kind==='水'){
+          this.kindnum=this.water1.value
+          this.cost=this.water1.cost
+         }else if(this.kind==='电'){
+          this.kindnum=this.electric1.value
+          this.cost=this.electric1.cost
+         }else{
+          this.kindnum=this.steam1.value
+          this.cost=this.steam1.cost
+         }
+     }else if(this.date==='月'){
+          this.batchCount=this.batch2.batchCount
+           this.waterCon==this.batch2.waterCon
+           this.steamCon==this.batch2.steamCon
+           this.steamEveryBatch==this.batch2.steamEveryBatch
+           this.waterEveryBatch==this.batch2.waterEveryBatch
+          if(this.kind==='水'){
+          this.kindnum=this.water2.value
+          this.cost=this.water2.cost
+         }else if(this.kind==='电'){
+          this.kindnum=this.electric2.value
+          this.cost=this.electric2.cost
+         }else{
+          this.kindnum=this.steam2.value
+          this.cost=this.steam2.cost
+         }
+     }else{
+           this.batchCount=this.batch3.batchCount
+           this.waterCon==this.batch3.waterCon
+           this.steamCon==this.batch3.steamCon
+           this.steamEveryBatch==this.batch3.steamEveryBatch
+           this.waterEveryBatch==this.batch3.waterEveryBatch
+          if(this.kind==='水'){
+          this.kindnum=this.water3.value
+          this.unit=this.water3.unit
+          this.cost=this.water3.cost
+         }else if(this.kind==='电'){
+          this.kindnum=this.electric3.value
+          this.unit=this.electric3.unit
+          this.cost=this.electric3.cost
+         }else{
+          this.kindnum=this.steam3.value
+          this.unit=this.steam3.unit
+          this.cost=this.steam3.cost
+         }
+     }
+     var api=''
+     var nowTime = moment().format('HH:mm').substring(0,4) + "0"
+     var nowDate = moment().format('MM-DD') + " " + nowTime
+     var thisDate = moment().format('DD')
+     var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
+     var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
+     var compareDateStartTime = moment(this.CompareDate).format('YYYY-MM-DD') + " 00:00"
+     var compareDateEndTime = moment(this.CompareDate).format('YYYY-MM-DD') + " " + nowTime
+     var thisStartMonth = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm')
+     var lastStartMonth = moment().month(moment().month() - 1).startOf('month').format('YYYY-MM-DD HH:mm')
+     var lastEndMonth = moment().month(moment().month() - 1).endOf('month').format('YYYY-MM-DD').substring(0,7) + "-" + thisDate + " " + nowTime
+     var thisStartYear = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD HH:mm')
+     var lastStartYear = moment().year(moment().year() - 1).startOf('year').format('YYYY-MM-DD HH:mm')
+     var lastEndYear = moment().year(moment().year() - 1).endOf('year').format('YYYY-MM-DD HH:mm')
+        if(!moment(lastEndMonth)._isValid){  //判断上月结束日期是否合法，否则赋值为上月最后一天的23：59
+          lastEndMonth = moment().month(moment().month() - 1).endOf('month').format('YYYY-MM-DD HH:mm');
+        }
+    if(this.kind === "电"){
+          api = "/api/energyelectric"
+        }else if(this.kind === "水"){
+          api = "/api/energywater"
+        }else if(this.kind === "汽"){
+          api = "/api/energysteam"
+        }
+         this.$http.all([
+          this.$http.get(api,{params: {StartTime: todayStartTime,EndTime:todayEndTime}}),//获取今天能耗
+          this.$http.get(api,{params: {StartTime: compareDateStartTime,EndTime:compareDateEndTime}}),//获取对比天能耗
+          this.$http.get(api,{params: {StartTime: thisStartMonth,EndTime:todayEndTime}}),//获取本月能耗
+          this.$http.get(api,{params: {StartTime: lastStartMonth,EndTime:lastEndMonth}}),//获取上月能耗
+          this.$http.get("/api/souyeselectyear",{params:{StartTime: thisStartYear,EndTime:todayEndTime,EnergyClass:this.kind}}),//当年能耗
+          this.$http.get("/api/souyeselectyear",{params:{StartTime: lastStartYear,EndTime:lastEndYear,EnergyClass:this.kind}})//上一年能耗
+        ]).then(this.$http.spread((todayCon,compareDateCon,thisMonthCon,lastMonthCon,thisYearCon,lastYearCon)=>{
+            this.todayCon = JSON.parse(todayCon.data).value
+            this.unit = JSON.parse(todayCon.data).unit
+            this.compareDateCon = JSON.parse(compareDateCon.data).value
+            this.thisMonthCon = JSON.parse(thisMonthCon.data).value
+            this.lastMonthCon = JSON.parse(lastMonthCon.data).value
+            this.thisYearCon = thisYearCon.data.value
+            this.lastYearCon = lastYearCon.data.value
+        }))
     }
 }
 }
@@ -366,7 +535,6 @@ export default {
                font-size:12px;
                font-weight:500;
                line-height:17px;
-               color:rgba(255,80,65,1);
                opacity:1;
            }
           .sb-dw{
