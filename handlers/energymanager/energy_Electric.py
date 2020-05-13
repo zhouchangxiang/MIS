@@ -466,7 +466,6 @@ def electricnergycost():
             dir["rows1"] = dir_list
             dir["rows2"] = dir_list2
             dir["totalPrice"] = round(jtimeprice + ftimeprice + ptimeprice + gtimeprice, 2)
-            print(dir)
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
