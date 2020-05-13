@@ -28,16 +28,16 @@
           <el-table-column prop="StartTime" label="开始时间" width="170"></el-table-column>
           <el-table-column prop="EndTime" label="结束时间" width="170"></el-table-column>
         </el-table>
-        <div class="paginationClass">
-          <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
-                         :total="total"
-                         :current-page="currentPage"
-                         :page-sizes="[10,20,30]"
-                         :page-size="pagesize"
-                         @size-change="handleSizeChange"
-                         @current-change="handleCurrentChange">
-          </el-pagination>
-        </div>
+        <!--<div class="paginationClass">-->
+          <!--<el-pagination background  layout="total, sizes, prev, pager, next, jumper"-->
+                         <!--:total="total"-->
+                         <!--:current-page="currentPage"-->
+                         <!--:page-sizes="[10,20,30]"-->
+                         <!--:page-size="pagesize"-->
+                         <!--@size-change="handleSizeChange"-->
+                         <!--@current-change="handleCurrentChange">-->
+          <!--</el-pagination>-->
+        <!--</div>-->
       </div>
     </el-col>
   </el-row>
@@ -112,14 +112,14 @@
           })
         })
       },
-      handleSizeChange(pagesize){ //每页条数切换
-        this.pagesize = pagesize
-        this.searchTime()
-      },
-      handleCurrentChange(currentPage) { // 页码切换
-        this.currentPage = currentPage
-        this.searchTime()
-      },
+      // handleSizeChange(pagesize){ //每页条数切换
+      //   this.pagesize = pagesize
+      //   this.searchTime()
+      // },
+      // handleCurrentChange(currentPage) { // 页码切换
+      //   this.currentPage = currentPage
+      //   this.searchTime()
+      // },
       searchTime(){
         this.loading = true
         this.axios.get("/api/tongjibaobiao",{
@@ -127,15 +127,12 @@
             EnergyClass:"电",
             StartTime:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss"),
             EndTime:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss"),
-            Area:this.areaValue,
-            limit:this.pagesize,
-            offset:this.currentPage
+            Area:this.areaValue
           }
         }).then(res =>{
           var data = res.data
-          console.log(data)
-          this.tableData = data.rows
-          this.total = data.total_column
+          this.tableData = data.row
+          this.total = data.total
           this.loading = false
         })
         var energyParams = {
