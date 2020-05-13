@@ -5,7 +5,7 @@ from flask_restful import reqparse
 
 from dbset.database.db_operate import db_session
 from models.SystemManagement.core import Role, Role_Menu, Menu
-from models.SystemManagement.system import Permission, ResourceMenus, ModulMenus, User, RolePermission
+from models.SystemManagement.system import Permission, ResourceMenus, ModulMenus, User, RolePermission, RoleUser
 from flask_login import current_user
 from dbset.log.BK2TLogger import logger,insertSyslog
 from dbset.main.BSFramwork import AlchemyEncoder
@@ -415,3 +415,28 @@ def selectpermissionbyrole():
             print(e)
             logger.error(e)
             insertSyslog("error", "根据角色查询权限Error：" + str(e), current_user.Name)
+
+@permission_distribution.route('/permission/selectpermissionbyuser', methods=['POST', 'GET'])
+def selectpermissionbyuser():
+    '''
+    根据用户查询权限
+    :return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            PermissionName = data.get("PermissionName")
+            pids = db_session.query(RolePermission).filter(RolePermission.PermissionName == PermissionName).all()
+            UserID = db_session.query(User.ID).filter(User.WorkNumber == current_user.WorkNumber).first()[0]
+            user_ids = []
+            for pid in pids:
+                role_user_ids = db_session.query(RolePermission.UserID).join(RoleUser, isouter=True).filter_by(RoleID=pid.RoleID).all()
+                user_ids.append(role_user_ids)
+            if UserID in user_ids:
+                return 'OK'
+            else:
+                return '没有此权限'
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "根据用户查询权限Error：" + str(e), current_user.Name)
