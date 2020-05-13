@@ -270,6 +270,7 @@
         this.axios.get("/api/trendlookboard",{params: {EnergyClass: this.formParameters.energy,CompareTime:selectDate,AreaName:areaName}}).then(res =>{
           this.ChartsLoading = false
           this.chartData.rows = res.data.rows
+          this.ChartExtend.title.text = this.formParameters.energy + "能耗预览"
         })
       },
       getAreaTimeEnergy(){
