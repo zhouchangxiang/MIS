@@ -426,12 +426,13 @@ def selectpermissionbyuser():
         data = request.values
         try:
             PermissionName = data.get("PermissionName")
-            pids = db_session.query(RolePermission).filter(RolePermission.PermissionName == PermissionName).all()
-            UserID = db_session.query(User.ID).filter(User.WorkNumber == current_user.WorkNumber).first()[0]
+            sql = "SELECT [UserID] AS UserID FROM [DB_MICS].[dbo].[RoleUser] t INNER JOIN [DB_MICS].[dbo].[RolePermission] p ON t.RoleID = p.RoleID WHERE P.PermissionName = '"+PermissionName+"'"
+            oclass = db_session.execute(sql).fetchall()
+            db_session.close()
             user_ids = []
-            for pid in pids:
-                role_user_ids = db_session.query(RolePermission.UserID).join(RoleUser, isouter=True).filter_by(RoleID=pid.RoleID).all()
-                user_ids.append(role_user_ids)
+            UserID = db_session.query(User.ID).filter(User.WorkNumber == current_user.WorkNumber).first()[0]
+            for userid in oclass:
+                user_ids.append(userid['UserID'])
             if UserID in user_ids:
                 return 'OK'
             else:
