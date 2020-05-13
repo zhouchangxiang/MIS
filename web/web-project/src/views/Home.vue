@@ -284,19 +284,19 @@
             top:'10px'
           },
           'series.0.itemStyle': {
-            color:"#228AD5"
-          },
-          'series.0.lineStyle':{
-            color:"#228AD5",
-            width:2
-          },
-          'series.1.itemStyle': {
             color:"#FB8A06"
           },
-          'series.1.lineStyle':{
+          'series.0.lineStyle':{
             color:"#FB8A06",
             width:2,
             type:'dotted'
+          },
+          'series.1.itemStyle': {
+            color:"#228AD5"
+          },
+          'series.1.lineStyle':{
+            color:"#228AD5",
+            width:2
           },
           series: {
             smooth: false,

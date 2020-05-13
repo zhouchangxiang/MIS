@@ -61,12 +61,7 @@
               {required: true, message: '请输入工号', trigger: 'blur'}
             ]
           },
-          handleType:[
-            {type:"primary",label:"添加"},
-            {type:"warning",label:"修改"},
-            {type:"danger",label:"删除"},
-            {type:"primary",label:"分配角色",clickEvent:"privileges"},
-          ],
+          handleType:[],
           handleForm:[
             {label:"ID",prop:"ID",type:"input",value:"",disabled:true},
             {label:"用户名",prop:"Name",type:"input",value:""},
@@ -80,10 +75,30 @@
         transferData:[],
       }
     },
+    created(){
+      this.WhetherHavePermission()
+    },
     mounted() {
       this.getTableData()
     },
     methods:{
+      WhetherHavePermission(){
+        let that = this
+        this.axios.get("/api/permission/selectpermissionbyuser",{
+          params: {PermissionName:"人员管理"}
+        }).then(res =>{
+          if(res.data === "OK"){
+            var arr = [
+              {type:"primary",label:"添加"},
+              {type:"warning",label:"修改"},
+              {type:"danger",label:"删除"},
+              {type:"primary",label:"分配角色",clickEvent:"privileges"},
+            ]
+            that.TableData.handleType = arr
+          }
+          console.log(that.TableData.handleType)
+        })
+      },
       getTableData(){
         var that = this
         var params = {
@@ -95,8 +110,8 @@
           params: params
         }).then(res =>{
           var data = JSON.parse(res.data)
-          this.TableData.data = data.rows
-          this.TableData.total = data.total
+          that.TableData.data = data.rows
+          that.TableData.total = data.total
         },res =>{
           console.log("请求错误")
         })

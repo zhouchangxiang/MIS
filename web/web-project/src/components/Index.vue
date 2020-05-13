@@ -93,7 +93,7 @@
                 </div>
               </div>
             </div>
-            <el-button type="primary" @click="lookWaterMap" style="position: absolute;" v-if="JSON.stringify(waterTagList) != '{}'">水表采集图</el-button>
+            <el-button type="primary" @click="lookWaterMap" style="position: absolute;left: 0;" v-if="JSON.stringify(waterTagList) != '{}'">水表采集图</el-button>
           </div>
         </el-drawer>
         <!-- 水表分布图 -->
@@ -181,7 +181,7 @@
         </el-dialog>
         <!-- 汽表分布图 -->
         <el-dialog :title="areaOverallDialogTitle" :visible.sync="areaOverallDialog" :modal="false" width="840px">
-          <div v-if="areaOverallDialogSrc2" style="position: relative">
+          <div v-if="areaOverallDialogSrc2" style="position: relative;display: inline-flex;">
             <el-image style="width: 100%;" :src="areaOverallDialogSrc2"></el-image>
             <div v-if="areaOverallDialogTitle === '提取二车间'">
               <div class="steamTagLabel" style="left:-10px;top: -15px;min-width: 155px;width: 155px;">
@@ -242,7 +242,7 @@
               </div>
             </div>
           </div>
-          <div style="position: relative">
+          <div style="position: relative;display: inline-flex;">
             <el-image style="width: 100%;" :src="areaOverallDialogSrc"></el-image>
             <div v-if="areaOverallDialogTitle === '锅炉房'">
               <div class="steamTagLabel" style="left:-10px;top: 345px;">
@@ -684,7 +684,8 @@ export default {
       this.waterAreaDialog = true
     },
     initWebSocket(){ //初始化weosocket
-      this.websock = new WebSocket('ws://' + location.host + '/socket');
+      // this.websock = new WebSocket('ws://' + location.host + '/socket');
+      this.websock = new WebSocket('ws://127.0.0.1:5002');
       this.websock.onmessage = this.websocketonmessage;
       this.websock.onopen = this.websocketonopen;
       this.websock.onerror = this.websocketonerror;

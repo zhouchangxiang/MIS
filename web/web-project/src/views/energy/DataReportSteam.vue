@@ -14,20 +14,19 @@
       <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
         <div class="chartTile">蒸汽报表</div>
         <el-select v-model="areaValue" size="mini" @change="searchTime">
-          <el-option v-for="(item,index) in areaOptions" :key="item.index" :label="item.AreaName" :value="item.value"></el-option>
+          <el-option v-for="(item,index) in areaOptions" :key="index" :label="item.AreaName" :value="item.value"></el-option>
         </el-select>
+        <p style="display: inline-block;margin-left: 20px;" class="text-color-info text-size-normol">总能耗：{{ totalValue }}</p>
         <el-button type="primary" size="mini" style="float: right;margin: 9px 0;" @click="exportExcel">导出详细数据</el-button>
       </div>
       <div class="platformContainer">
         <el-table :data="tableData" border tooltip-effect="dark" v-loading="loading">
           <el-table-column prop="AreaName" label="区域"></el-table-column>
-          <el-table-column prop="SumValue" label="累计值"></el-table-column>
-          <el-table-column prop="WD" label="温度"></el-table-column>
-          <el-table-column prop="IncremenValue" label="增量值"></el-table-column>
-          <el-table-column prop="Volume" label="体积"></el-table-column>
-          <el-table-column prop="Unit" label="单位"></el-table-column>
-          <el-table-column prop="CollectionDate" label="采集时间" width="170"></el-table-column>
           <el-table-column prop="TagClassValue" label="采集点"></el-table-column>
+          <el-table-column prop="IncremenValue" label="增量值"></el-table-column>
+          <el-table-column prop="Unit" label="单位"></el-table-column>
+          <el-table-column prop="StartTime" label="开始时间" width="170"></el-table-column>
+          <el-table-column prop="EndTime" label="结束时间" width="170"></el-table-column>
         </el-table>
         <div class="paginationClass">
           <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
@@ -65,7 +64,8 @@
         total:0,
         pagesize:10,
         currentPage:1,
-        loading:false
+        loading:false,
+        totalValue:""
       }
     },
     created(){
@@ -135,6 +135,14 @@
           this.tableData = data.rows
           this.total = data.total_column
           this.loading = false
+        })
+        var energyParams = {
+          StartTime:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss"),
+          EndTime:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss"),
+          Area:this.areaValue
+        }
+        this.axios.get("/api/energysteam",{params: energyParams}).then(res =>{
+          this.totalValue = JSON.parse(res.data).value + JSON.parse(res.data).unit
         })
       }
     }
