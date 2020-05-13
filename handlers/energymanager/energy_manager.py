@@ -935,7 +935,7 @@ def tongjibaobiao():
             data_list = []
             for i in reclass:
                 tag = db_session.query(TagDetail).filter(TagDetail.TagClassValue == i.TagClassValue).first()
-                dict_data = {"TagClassValue": tag.FEFportIP, "IncremenValue": i['IncremenValue'], "AreaName": tag.AreaName, "Unit": i['Unit'], "StartTime": StartTime, "EndTime": EndTime}
+                dict_data = {"TagClassValue": tag.FEFportIP, "IncremenValue": round(0 if i['IncremenValue'] is None else float(i['IncremenValue']), 2), "AreaName": tag.AreaName, "Unit": i['Unit'], "StartTime": StartTime, "EndTime": EndTime}
                 data_list.append(dict_data)
             dir["row"] = data_list
             dir["total"] = len(oc_list)
