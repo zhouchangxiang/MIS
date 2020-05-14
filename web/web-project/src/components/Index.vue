@@ -113,8 +113,8 @@
                 </el-card>
                 <el-card shadow="hover" class="useAreaCard" style="height: 140px;">
                   <p>综合车间</p>
-                  <div class="waterTagData" style="right: 3px;top: 3px;">带干辅机灌溉水DN40<p>{{ waterTagList.W_Area_ZH_23_1_12.sumValue }}</p><p>{{ waterTagList.W_Area_ZH_23_1_12.flowValue }}</p></div>
-                  <div class="waterTagData" style="right: 3px;bottom: 3px;">2楼会议室饮用水DN150<p>{{ waterTagList.W_Area_ZH_23_2_13.sumValue }}</p><p>{{ waterTagList.W_Area_ZH_23_2_13.flowValue }}</p></div>
+                  <div class="waterTagData" style="right: 3px;top: 3px;">带干辅机灌溉水DN40<p>{{ waterTagList.W_Area_ZH_23_2_13.sumValue }}</p><p>{{ waterTagList.W_Area_ZH_23_2_13.flowValue }}</p></div>
+                  <div class="waterTagData" style="right: 3px;bottom: 3px;">2楼会议室饮用水DN150<p>{{ waterTagList.W_Area_ZH_23_1_12.sumValue }}</p><p>{{ waterTagList.W_Area_ZH_23_1_12.flowValue }}</p></div>
                 </el-card>
               </el-col>
               <el-col :span="4">

@@ -67,17 +67,23 @@
           <div class="platformContainer">
             <el-col :span="8">
               <div class="energyDataCard">
-                <p class="text-size-normol itemMarginBottom">灌溉水</p>
+                <p class="text-size-normol text-color-info itemMarginBottom">灌溉水</p>
+                <p class="text-size-small itemMarginBottom">用量：{{ waterGG }}</p>
+                <p class="text-size-small">成本：{{ waterGGCost }}</p>
               </div>
             </el-col>
             <el-col :span="8">
               <div class="energyDataCard">
-                <p class="text-size-normol itemMarginBottom">饮用水</p>
+                <p class="text-size-normol text-color-info itemMarginBottom">饮用水</p>
+                <p class="text-size-small itemMarginBottom">用量：{{ waterYY }}</p>
+                <p class="text-size-small">成本：{{ waterYYCost }}</p>
               </div>
             </el-col>
             <el-col :span="8">
               <div class="energyDataCard">
-                <p class="text-size-normol itemMarginBottom">深井水</p>
+                <p class="text-size-normol text-color-info itemMarginBottom">深井水</p>
+                <p class="text-size-small itemMarginBottom">用量：{{ waterSJ }}</p>
+                <p class="text-size-small">成本：{{ waterSJCost }}</p>
               </div>
             </el-col>
           </div>
@@ -192,8 +198,10 @@
           }
         },
         AllArea:false,
+        totalDayEnergy:"",
         chartSettings: {
-          area:true
+          area:true,
+          yAxisName:[]
         },
         ChartsLoading:false,
         ChartExtend: {
@@ -204,7 +212,7 @@
             left:'0px',
             right:'10px',
             bottom:'0',
-            top:'50px'
+            top:'60px'
           },
           series:{
             smooth: false
@@ -214,6 +222,12 @@
           columns:["时间","能耗量"],
           rows:[]
         },
+        waterGG:"",
+        waterGGCost:"",
+        waterYY:"",
+        waterYYCost:"",
+        waterSJ:"",
+        waterSJCost:"",
         electricAnalyze:[],
         colorBarOption:[]
       }
@@ -285,9 +299,9 @@
           areaName = this.newAreaName.areaName
         }
         this.axios.all([
-          this.axios.get(api,{params: {StartTime: todayStartTime,EndTime:todayEndTime,AreaName:areaName}}),//获取今天能耗
-          this.axios.get(api,{params: {StartTime: compareDateStartTime,EndTime:compareDateEndTime,AreaName:areaName}}),//获取对比天截止当前时间能耗
-          this.axios.get(api,{params: {StartTime: compareDateStartTime,EndTime:compareDateAllEndTime,AreaName:areaName}}),//获取对比整天能耗
+          this.axios.get(api,{params: {StartTime: todayStartTime,EndTime:todayEndTime,Area:areaName}}),//获取今天能耗
+          this.axios.get(api,{params: {StartTime: compareDateStartTime,EndTime:compareDateEndTime,Area:areaName}}),//获取对比天截止当前时间能耗
+          this.axios.get(api,{params: {StartTime: compareDateStartTime,EndTime:compareDateAllEndTime,Area:areaName}}),//获取对比整天能耗
         ]).then(this.axios.spread((todayCon,CompareDateCon,CompareAllDateCon) =>{
           that.todayCon = JSON.parse(todayCon.data).value
           that.todayConUnit = JSON.parse(todayCon.data).unit
@@ -304,10 +318,34 @@
         }else{
           areaName = this.newAreaName.areaName
         }
+        //获取选择天总数据
+        var dayStartTime = moment(this.formParameters.date).day(moment(this.formParameters.date).day()).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
+          dayEndTime = moment(this.formParameters.date).day(moment(this.formParameters.date).day()).endOf('day').format('YYYY-MM-DD HH:mm:ss')
+        if(this.formParameters.energy === "电"){
+          this.chartSettings.yAxisName = ["kW·h"]
+          this.axios.get("/api/energyelectric",{params:{StartTime: dayStartTime,EndTime:dayEndTime,Area:areaName}}).then(thisDayCon => {
+            this.totalDayEnergy = JSON.parse(thisDayCon.data).value
+          })
+        }else if(this.formParameters.energy === "水"){
+          this.chartSettings.yAxisName = ["t"]
+          this.axios.get("/api/energywater",{params:{StartTime: dayStartTime,EndTime:dayEndTime,Area:areaName}}).then(thisDayCon => {
+            this.totalDayEnergy = JSON.parse(thisDayCon.data).value
+          })
+        }else if(this.formParameters.energy === "汽"){
+          this.chartSettings.yAxisName = ["t"]
+          this.axios.get("/api/energysteam",{params:{StartTime: dayStartTime,EndTime:dayEndTime,Area:areaName}}).then(thisDayCon => {
+            this.totalDayEnergy = JSON.parse(thisDayCon.data).value
+          })
+        }
+        //获取图表数据
         this.axios.get("/api/trendlookboard",{params: {EnergyClass: this.formParameters.energy,CompareTime:selectDate,AreaName:areaName}}).then(res =>{
           this.ChartsLoading = false
           this.chartData.rows = res.data.rows
-          this.ChartExtend.title.text = this.formParameters.energy + "能耗预览"
+          this.ChartExtend.title.text = this.formParameters.energy + "能总耗量：" + this.totalDayEnergy
+        })
+        //获取水能详细数据
+        this.axios.get("/api/watertrendlookboard",{params: {AreaName:areaName,StartTime:dayStartTime,EndTime:dayEndTime}}).then(res =>{
+          console.log(res)
         })
       },
       getAreaTimeEnergy(){

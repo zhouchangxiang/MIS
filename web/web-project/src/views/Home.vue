@@ -5,9 +5,9 @@
         <div class="home-card">
           <div class="home-card-head">
             <span><i class="el-icon-time el-icon--left" style="color: #FB3A06;"></i>能耗预览</span>
-            <el-select class="card-head-select" v-model="previewEnergyValue" placeholder="请选择" @change="getEnergyPreview">
-              <el-option v-for="(item,index) in previewEnergyOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-            </el-select>
+            <el-radio-group v-model="previewEnergyValue" size="small" @change="getEnergyPreview" fill="#fff" text-color="#082F4C" class="collapse-head-radio">
+              <el-radio-button v-for="(item,index) in previewEnergyOptions" :key="index" :label="item.label"></el-radio-button>
+            </el-radio-group>
           </div>
           <div class="home-card-body" style="height: 462px;">
             <el-row :gutter="10">
@@ -79,9 +79,9 @@
           <el-col :span="10">
             <div class="home-card-head">
               <span><i class="el-icon-place el-icon--left" style="color: #228AD5;"></i>区域时段能耗</span>
-              <el-select class="card-head-select" v-model="areaTimeEnergyValue" placeholder="请选择" @change="getAreaTimeEnergy">
-                <el-option v-for="(item,index) in areaTimeEnergyOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-              </el-select>
+              <el-radio-group v-model="areaTimeEnergyValue" size="small" @change="getAreaTimeEnergy" fill="#fff" text-color="#082F4C" class="collapse-head-radio">
+                <el-radio-button v-for="(item,index) in areaTimeEnergyOptions" :key="index" :label="item.label"></el-radio-button>
+              </el-radio-group>
             </div>
             <div class="home-card-body" style="height:280px;">
               <ve-bar :data="areaChartData" :extend="areaTimeChartExtend" v-loading="areaTimeChartsLoading" height="230px" :legend-visible="false"></ve-bar>
@@ -206,27 +206,17 @@
     name: "Home",
     data(){
       return{
-        previewEnergyOptions: [{
-          value: '电',
-          label: '电能'
-        }, {
-          value: '水',
-          label: '水能'
-        }, {
-          value: '汽',
-          label: '汽能'
-        }],
+        previewEnergyOptions: [
+          {label: '电'},
+          {label: '水'},
+          {label: '汽'}
+        ],
         previewEnergyValue:'电',
-        areaTimeEnergyOptions: [{
-          value: '电',
-          label: '电能'
-        }, {
-          value: '水',
-          label: '水能'
-        }, {
-          value: '汽',
-          label: '汽能'
-        }],
+        areaTimeEnergyOptions: [
+          {label: '电'},
+          {label: '水'},
+          {label: '汽'}
+        ],
         areaTimeEnergyValue:'电',
         pickerOptions: {
           disabledDate(time) {

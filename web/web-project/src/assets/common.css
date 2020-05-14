@@ -179,6 +179,27 @@
 .clearfix:after {
   clear: both
 }
+/* 卡片内单选框 */
+.collapse-head-radio{
+  float: right;
+  line-height: 48px;
+}
+.collapse-head-radio .el-radio-button__inner{
+  background-color: #082F4C;
+  border: 1px solid #082F4C;
+  color: #ffffff;
+}
+.collapse-head-radio .el-radio-button:first-child .el-radio-button__inner{
+  border: none;
+}
+/*  */
+.clearfix:before,.clearfix:after {
+  display: table;
+  content: "";
+}
+.clearfix:after {
+  clear: both
+}
 /* 卡片标题头部切换菜单 */
 .subsectionList{
   float: left;

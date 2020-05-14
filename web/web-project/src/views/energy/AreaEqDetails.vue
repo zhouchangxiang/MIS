@@ -139,7 +139,7 @@
         </el-col>
         <el-col :span="24" style="margin-bottom: 2px;">
           <div class="energyDataContainer">
-            <ve-line :data="faultChartData" :extend="chartExtend" :mark-line="markLine" :settings="chartSettings"></ve-line>
+            <ve-line :data="faultChartData" :extend="chartExtend" :settings="chartSettings"></ve-line>
           </div>
         </el-col>
         <el-col :span="24">
@@ -354,7 +354,8 @@
           }
         },
         chartSettings: {
-          area:true
+          area:true,
+          yAxisName:[]
         },
         faultChartData: {
           columns: ["时间","功率"],
@@ -469,22 +470,25 @@
         this.axios.get("/api/EquipmentDetail",{params:params}).then(res =>{
           that.forEqParameters = res.data
           if(this.EnergyClass === "电"){
-            that.chartSettings.area = false
+            that.chartSettings.area = true
+            that.chartSettings.yAxisName = ["kW·h"]
             that.faultChartData.columns = ["时间","功率"]
           }else if(this.EnergyClass === "水"){
+              that.chartSettings.yAxisName = ["t"]
             if(this.subsectionWaterActive === 0){
-              that.chartSettings.area = false
+              that.chartSettings.area = true
               that.faultChartData.columns = ["时间","累计量"]
             }else if(this.subsectionWaterActive === 1){
-              that.chartSettings.area = true
+              that.chartSettings.area = false
               that.faultChartData.columns = ["时间","瞬时量"]
             }
           }else if(this.EnergyClass === "汽"){
+            that.chartSettings.yAxisName = ["t"]
             if(this.subsectionSteamActive === 0){
-              that.chartSettings.area = false
+              that.chartSettings.area = true
               that.faultChartData.columns = ["时间","累计量"]
             }else if(this.subsectionSteamActive === 1){
-              that.chartSettings.area = true
+              that.chartSettings.area = false
               that.faultChartData.columns = ["时间","瞬时量"]
             }else if(this.subsectionSteamActive === 2){
               that.chartSettings.area = true

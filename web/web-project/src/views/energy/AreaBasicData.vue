@@ -96,7 +96,10 @@
             }
           }
         },
-        chartSettings: {type:""},
+        chartSettings: {
+          type:"",
+          yAxisName:[]
+        },
         chartData: {
           columns: [],
           rows: []
@@ -139,6 +142,9 @@
         this.WaterEqList = []
         this.SteamEqList = []
         let that = this
+        if(this.$route.query.areaName != "整厂区"){
+          this.areaName = this.$route.query.areaName
+        }
         var params = {
           tableName:"TagDetail",
           field:"AreaName",
@@ -193,6 +199,7 @@
             this.cancel()
           }
           if(this.formParameters.energy === "电"){
+            this.chartSettings.yAxisName = ["kW·h"]
             this.chartData = {
               columns: ["时间","总功率"],
               rows: [
@@ -222,6 +229,7 @@
               this.initWebSocket()
             }
           }else if(this.formParameters.energy === "水"){
+            this.chartSettings.yAxisName = ["t"]
             this.chartData = {
               columns: ['时间', '累计流量'],
               rows: [
@@ -251,6 +259,7 @@
               this.initWebSocket()
             }
           }else if(this.formParameters.energy === "汽"){
+            this.chartSettings.yAxisName = ["t"]
             this.chartData = {
               columns: ['时间', '累计流量'],
               rows: [
@@ -308,14 +317,24 @@
             areaName = ""
             this.ChartExtend.series.label.show = true
             TagClassValue = ""
+            if(this.formParameters.energy === "电"){
+              this.chartSettings.yAxisName = ["kW·h"]
+            }else if(this.formParameters.energy === "水"){
+              this.chartSettings.yAxisName = ["t"]
+            }else if(this.formParameters.energy === "汽"){
+              this.chartSettings.yAxisName = ["t"]
+            }
           }else{
             areaName = this.newAreaName.areaName
             this.ChartExtend.series.label.show = false
             if(this.formParameters.energy === "电"){
+              this.chartSettings.yAxisName = ["kW·h"]
               TagClassValue = this.ElectricEqActive
             }else if(this.formParameters.energy === "水"){
+              this.chartSettings.yAxisName = ["t"]
               TagClassValue = this.WaterEqActive
             }else if(this.formParameters.energy === "汽"){
+              this.chartSettings.yAxisName = ["t"]
               TagClassValue = this.SteamEqActive
             }
           }
