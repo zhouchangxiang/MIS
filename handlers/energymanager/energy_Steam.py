@@ -358,10 +358,10 @@ def energyStatisticsteamtotal(StartTime, EndTime):
     :return:获取某段时间汽能总值
     '''
     reend = db_session.query(SteamTotalMaintain).filter(
-        SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0',
+        SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0', SteamTotalMaintain.SumValue != '',
         SteamTotalMaintain.CollectionDate.between(StartTime, EndTime)).order_by(desc("CollectionDate")).first()
     restar = db_session.query(SteamTotalMaintain).filter(
-        SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0',
+        SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0', SteamTotalMaintain.SumValue != '',
         SteamTotalMaintain.CollectionDate.between(StartTime, EndTime)).order_by(("CollectionDate")).first()
     if reend != None and restar != None:
         return round(float(reend.SumValue) - float(restar.SumValue), 2)

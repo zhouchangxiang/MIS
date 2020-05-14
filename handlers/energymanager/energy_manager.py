@@ -871,6 +871,11 @@ def exportx(Area, EnergyClass,  StartTime, EndTime):
         worksheet.write(0, col, item, cell_format)
         col += 1
     reclass = tongjibaobiaosql(EnergyClass, tag_list, StartTime, EndTime)
+    UnitValue = db_session.query(Unit.UnitValue).filter(Unit.UnitName == EnergyClass).first()
+    if UnitValue:
+        unit = UnitValue[0]
+    else:
+        unit = ""
     # 写入数据
     for i in range(1, len(reclass)):
         tag = db_session.query(TagDetail).filter(TagDetail.TagClassValue == reclass[i]['TagClassValue']).first()
@@ -882,7 +887,7 @@ def exportx(Area, EnergyClass,  StartTime, EndTime):
             if cum == '区域':
                 worksheet.write(i, columns.index(cum), tag.AreaName)
             if cum == '单位':
-                worksheet.write(i, columns.index(cum), reclass[i]['Unit'])
+                worksheet.write(i, columns.index(cum), unit)
             if cum == '开始时间':
                 worksheet.write(i, columns.index(cum), StartTime)
             if cum == '结束时间':
@@ -893,17 +898,17 @@ def exportx(Area, EnergyClass,  StartTime, EndTime):
 
 def tongjibaobiaosql(EnergyClass, tag_list, StartTime, EndTime):
     if EnergyClass == "水":
-        sql = "SELECT SUM(Cast(t.IncremenValue as float)) AS IncremenValue,[TagClassValue],[Unit] FROM [DB_MICS].[dbo].[IncrementWaterTable] t with (INDEX =IX_IncrementWaterTable) " \
+        sql = "SELECT (SUM(Cast(t.IncremenValue as float)))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+EnergyClass+"') AS IncremenValue,[TagClassValue],[Unit] FROM [DB_MICS].[dbo].[IncrementWaterTable] t with (INDEX =IX_IncrementWaterTable) " \
               "WHERE t.TagClassValue in (" + str(tag_list)[1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.TagClassValue, t.Unit"
         oclass = db_session.execute(sql).fetchall()
         db_session.close()
     elif EnergyClass == "电":
-        sql = "SELECT SUM(Cast(t.IncremenValue as float)) AS IncremenValue,[TagClassValue],[Unit] FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable) " \
+        sql = "SELECT (SUM(Cast(t.IncremenValue as float)))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+EnergyClass+"') AS IncremenValue,[TagClassValue],[Unit] FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable) " \
               "WHERE t.TagClassValue in (" + str(tag_list)[1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.TagClassValue, t.Unit"
         oclass = db_session.execute(sql).fetchall()
         db_session.close()
     else:
-        sql = "SELECT SUM(Cast(t.IncremenValue as float)) AS IncremenValue,[TagClassValue],[Unit] FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable) " \
+        sql = "SELECT (SUM(Cast(t.IncremenValue as float)))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+EnergyClass+"') AS IncremenValue,[TagClassValue],[Unit] FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable) " \
               "WHERE t.TagClassValue in (" + str(tag_list)[1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.TagClassValue, t.Unit"
         oclass = db_session.execute(sql).fetchall()
         db_session.close()
@@ -927,19 +932,23 @@ def tongjibaobiao():
                 oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
             else:
                 oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass, TagDetail.AreaName == Area).all()
-
+            UnitValue = db_session.query(Unit.UnitValue).filter(Unit.UnitName == EnergyClass).first()
+            if UnitValue:
+                unit = UnitValue[0]
+            else:
+                unit = ""
             oc_list = []
             for oc in oclass:
                 oc_list.append(oc.TagClassValue)
-            reclass = tongjibaobiaosql(EnergyClass, oc_list, StartTime, EndTime)
             data_list = []
-            for i in reclass:
-                tag = db_session.query(TagDetail).filter(TagDetail.TagClassValue == i.TagClassValue).first()
-                dict_data = {"TagClassValue": tag.FEFportIP, "IncremenValue": i['IncremenValue'], "AreaName": tag.AreaName, "Unit": i['Unit'], "StartTime": StartTime, "EndTime": EndTime}
-                data_list.append(dict_data)
+            if len(oc_list) > 0:
+                reclass = tongjibaobiaosql(EnergyClass, oc_list, StartTime, EndTime)
+                for i in reclass:
+                    tag = db_session.query(TagDetail).filter(TagDetail.TagClassValue == i.TagClassValue).first()
+                    dict_data = {"TagClassValue": tag.FEFportIP, "IncremenValue": round(0 if i['IncremenValue'] is None else float(i['IncremenValue']), 2), "AreaName": tag.AreaName, "Unit": unit, "StartTime": StartTime, "EndTime": EndTime}
+                    data_list.append(dict_data)
             dir["row"] = data_list
             dir["total"] = len(oc_list)
-            print(dir)
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
