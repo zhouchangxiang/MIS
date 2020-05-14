@@ -871,6 +871,11 @@ def exportx(Area, EnergyClass,  StartTime, EndTime):
         worksheet.write(0, col, item, cell_format)
         col += 1
     reclass = tongjibaobiaosql(EnergyClass, tag_list, StartTime, EndTime)
+    UnitValue = db_session.query(Unit.UnitValue).filter(Unit.UnitName == EnergyClass).first()
+    if UnitValue:
+        unit = UnitValue[0]
+    else:
+        unit = ""
     # 写入数据
     for i in range(1, len(reclass)):
         tag = db_session.query(TagDetail).filter(TagDetail.TagClassValue == reclass[i]['TagClassValue']).first()
@@ -882,7 +887,7 @@ def exportx(Area, EnergyClass,  StartTime, EndTime):
             if cum == '区域':
                 worksheet.write(i, columns.index(cum), tag.AreaName)
             if cum == '单位':
-                worksheet.write(i, columns.index(cum), reclass[i]['Unit'])
+                worksheet.write(i, columns.index(cum), unit)
             if cum == '开始时间':
                 worksheet.write(i, columns.index(cum), StartTime)
             if cum == '结束时间':
@@ -927,7 +932,11 @@ def tongjibaobiao():
                 oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
             else:
                 oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass, TagDetail.AreaName == Area).all()
-
+            UnitValue = db_session.query(Unit.UnitValue).filter(Unit.UnitName == EnergyClass).first()
+            if UnitValue:
+                unit = UnitValue[0]
+            else:
+                unit = ""
             oc_list = []
             for oc in oclass:
                 oc_list.append(oc.TagClassValue)
@@ -936,7 +945,7 @@ def tongjibaobiao():
                 reclass = tongjibaobiaosql(EnergyClass, oc_list, StartTime, EndTime)
                 for i in reclass:
                     tag = db_session.query(TagDetail).filter(TagDetail.TagClassValue == i.TagClassValue).first()
-                    dict_data = {"TagClassValue": tag.FEFportIP, "IncremenValue": round(0 if i['IncremenValue'] is None else float(i['IncremenValue']), 2), "AreaName": tag.AreaName, "Unit": "t", "StartTime": StartTime, "EndTime": EndTime}
+                    dict_data = {"TagClassValue": tag.FEFportIP, "IncremenValue": round(0 if i['IncremenValue'] is None else float(i['IncremenValue']), 2), "AreaName": tag.AreaName, "Unit": unit, "StartTime": StartTime, "EndTime": EndTime}
                     data_list.append(dict_data)
             dir["row"] = data_list
             dir["total"] = len(oc_list)
