@@ -427,12 +427,14 @@
           yesterdayAllEndTime = moment().day(moment().day() - 1).endOf('day').format('YYYY-MM-DD HH:mm'),
           thisStartMonth = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm'),
           thisMonthDay = moment().format('DD'),
+          areaName = "",
           params = {},
           yesterdayParams ={},
           yesterdayAllParams ={},
           thisMonthParams ={}
           this.nowTime = nowTime
         if(this.newAreaName.areaName === "整厂区"){
+          areaName = ""
           params.StartTime = todayStartTime
           params.EndTime = todayEndTime
           yesterdayParams.StartTime = yesterdayStartTime
@@ -442,6 +444,7 @@
           thisMonthParams.StartTime = thisStartMonth
           thisMonthParams.EndTime = todayEndTime
         }else{
+          areaName = this.newAreaName.areaName
           params.StartTime = todayStartTime
           params.EndTime = todayEndTime
           params.Area = this.newAreaName.areaName
@@ -497,7 +500,6 @@
           //水
           that.todayWater = todayWaterData.value
           that.WaterUnit = todayWaterData.unit
-          that.waterCost = todayWaterData.cost + "元"
           that.waterHistogram.rows = [
             { '时间': "昨日", '累计流量': yesterdayAllWaterValue},
             { '时间': "本日", '累计流量': that.todayWater},
@@ -519,7 +521,7 @@
         //获取区分水的详细数据
         this.axios.get("/api/watertrendlookboard",{
           params: {
-            AreaName:"",
+            AreaName:areaName,
             StartTime:todayStartTime,
             EndTime:todayEndTime
           }
@@ -527,6 +529,7 @@
           this.waterGG = res.data.GG
           this.waterYY = res.data.YY
           this.waterSJ = res.data.SJ
+          this.waterCost = (res.data.GGcost + res.data.YYcost + res.data.SJcost).toFixed(2)
         })
       },
       getBrandName(){
