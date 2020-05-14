@@ -25,8 +25,8 @@
           <el-table-column prop="TagClassValue" label="采集点"></el-table-column>
           <el-table-column prop="IncremenValue" label="增量值"></el-table-column>
           <el-table-column prop="Unit" label="单位"></el-table-column>
-          <el-table-column prop="StartTime" label="开始时间" width="170"></el-table-column>
-          <el-table-column prop="EndTime" label="结束时间" width="170"></el-table-column>
+          <el-table-column prop="StartTime" label="开始时间" width="200"></el-table-column>
+          <el-table-column prop="EndTime" label="结束时间" width="200"></el-table-column>
         </el-table>
         <!--<div class="paginationClass">-->
           <!--<el-pagination background  layout="total, sizes, prev, pager, next, jumper"-->

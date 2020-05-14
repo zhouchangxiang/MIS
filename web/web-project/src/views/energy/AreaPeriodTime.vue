@@ -24,13 +24,17 @@
             <div class="realTimeData itemMarginBottom text-color-primary" v-html="todayHtml">{{ todayCon }}</div>
           </div>
           <div class="energyDataCard">
-            <div class="energyDataItem" style="margin-top: 8px">
+            <div class="energyDataItem">
               <div class="energyDataItemTitle">
                 <el-date-picker type="date" v-model="CompareDate" :picker-options="pickerOptions" size="mini" style="width: 130px;" :clearable="false" @change="getDayEnergy"></el-date-picker>
               </div>
             </div>
             <div class="energyDataItem">
               <div class="energyDataItemTitle">对比日能耗</div>
+              <div class="energyDataItemData">{{ CompareAllDateCon }} {{ todayConUnit }}</div>
+            </div>
+            <div class="energyDataItem">
+              <div class="energyDataItemTitle">截止{{ nowTime }}能耗</div>
               <div class="energyDataItemData">{{ CompareDateCon }} {{ todayConUnit }}</div>
             </div>
             <div class="energyDataItem">
@@ -39,7 +43,7 @@
             </div>
           </div>
         </el-col>
-        <el-col :span="24">
+        <el-col :span="24" v-if="formParameters.energy === '电'">
           <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
             <div class="chartTile">尖峰平谷分析</div>
           </div>
@@ -56,6 +60,28 @@
             </el-col>
           </div>
         </el-col>
+        <el-col :span="24" v-if="formParameters.energy === '水'">
+          <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
+            <div class="chartTile">水能详细数据</div>
+          </div>
+          <div class="platformContainer">
+            <el-col :span="8">
+              <div class="energyDataCard">
+                <p class="text-size-normol itemMarginBottom">灌溉水</p>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="energyDataCard">
+                <p class="text-size-normol itemMarginBottom">饮用水</p>
+              </div>
+            </el-col>
+            <el-col :span="8">
+              <div class="energyDataCard">
+                <p class="text-size-normol itemMarginBottom">深井水</p>
+              </div>
+            </el-col>
+          </div>
+        </el-col>
       </el-col>
       <el-col :span="24" v-if="$route.query.areaName === '整厂区'">
         <el-col :span="18">
@@ -69,13 +95,17 @@
             <div class="realTimeData itemMarginBottom text-color-primary" v-html="todayHtml">{{ todayCon }}</div>
           </div>
           <div class="energyDataCard" style="margin-bottom: 0">
-            <div class="energyDataItem" style="margin-top: 8px">
+            <div class="energyDataItem">
               <div class="energyDataItemTitle">
                 <el-date-picker type="date" v-model="CompareDate" :picker-options="pickerOptions" size="mini" style="width: 130px;" :clearable="false" @change="getDayEnergy"></el-date-picker>
               </div>
             </div>
             <div class="energyDataItem">
               <div class="energyDataItemTitle">对比日能耗</div>
+              <div class="energyDataItemData">{{ CompareAllDateCon }} {{ todayConUnit }}</div>
+            </div>
+            <div class="energyDataItem">
+              <div class="energyDataItemTitle">截止{{ nowTime }}能耗</div>
               <div class="energyDataItemData">{{ CompareDateCon }} {{ todayConUnit }}</div>
             </div>
             <div class="energyDataItem">
@@ -93,7 +123,7 @@
               <li><i class="bg-tall"></i><span>高</span></li>
             </ul>
             <ul class="gradientList itemMarginBottom">
-              <li v-for="(item,index) in colorBarOption">
+              <li v-for="(item,index) in colorBarOption" :key="index">
                 <p class="text-size-small text-color-info">{{ item.AreaName }}</p>
                 <el-popover trigger="hover">
                   <div v-for="valueItem in item.valuelist">{{ valueItem.date }}点：{{ valueItem.value }}</div>
@@ -149,10 +179,12 @@
           {label:"水"},
           {label:"汽"},
         ],
+        nowTime:"",
         todayCon:"",
         todayConUnit:"",
         CompareDate:moment().subtract(1,'day').format('YYYY-MM-DD'),
         CompareDateCon:"",
+        CompareAllDateCon:"",
         todayHtml:"",
         pickerOptions:{
           disabledDate(time) {
@@ -233,10 +265,13 @@
         var api = ""
         var that = this
         var areaName = ''
-        var todayStartTime = moment().day(moment().day()).startOf('day').format('YYYY-MM-DD HH:mm:ss')
-        var todayEndTime = moment().day(moment().day()).endOf('day').format('YYYY-MM-DD HH:mm:ss')
-        var compareDateStartTime = moment(this.CompareDate).day(moment(this.CompareDate).day()).startOf('day').format('YYYY-MM-DD HH:mm:ss')
-        var compareDateEndTime = moment(this.CompareDate).day(moment(this.CompareDate).day()).endOf('day').format('YYYY-MM-DD HH:mm:ss')
+        var nowTime = moment().format('HH:mm').substring(0,4) + "0"
+        var todayStartTime = moment().day(moment().day()).startOf('day').format('YYYY-MM-DD HH:mm')
+        var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
+        var compareDateStartTime = moment(this.CompareDate).day(moment(this.CompareDate).day()).startOf('day').format('YYYY-MM-DD HH:mm')
+        var compareDateEndTime = moment(this.CompareDate).format('YYYY-MM-DD') + " " + nowTime
+        var compareDateAllEndTime = moment(this.CompareDate).day(moment(this.CompareDate).day()).endOf('day').format('YYYY-MM-DD HH:mm')
+        this.nowTime = nowTime
         if(this.formParameters.energy === "电"){
           api = "/api/energyelectric"
         }else if(this.formParameters.energy === "水"){
@@ -251,11 +286,13 @@
         }
         this.axios.all([
           this.axios.get(api,{params: {StartTime: todayStartTime,EndTime:todayEndTime,AreaName:areaName}}),//获取今天能耗
-          this.axios.get(api,{params: {StartTime: compareDateStartTime,EndTime:compareDateEndTime,AreaName:areaName}})//获取对比天能耗
-        ]).then(this.axios.spread((todayCon,CompareDateCon) =>{
+          this.axios.get(api,{params: {StartTime: compareDateStartTime,EndTime:compareDateEndTime,AreaName:areaName}}),//获取对比天截止当前时间能耗
+          this.axios.get(api,{params: {StartTime: compareDateStartTime,EndTime:compareDateAllEndTime,AreaName:areaName}}),//获取对比整天能耗
+        ]).then(this.axios.spread((todayCon,CompareDateCon,CompareAllDateCon) =>{
           that.todayCon = JSON.parse(todayCon.data).value
           that.todayConUnit = JSON.parse(todayCon.data).unit
           that.CompareDateCon = JSON.parse(CompareDateCon.data).value
+          that.CompareAllDateCon = JSON.parse(CompareAllDateCon.data).value
         }))
       },
       getChartData(){
@@ -282,7 +319,7 @@
           this.colorBarOption = res.data
         })
       },
-      getEnergycost(){
+      getEnergycost(){  //获取尖峰平谷
         var that = this
         var areaName = ""
         if(this.newAreaName.areaName === "整厂区"){
@@ -347,7 +384,7 @@
   }
   .energyDataItem{
     display: table;
-    margin-bottom: 25px;
+    margin-bottom: 15px;
     font-size: 18px;
   }
   .energyDataItemTitle{
