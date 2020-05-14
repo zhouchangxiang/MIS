@@ -949,7 +949,6 @@ def tongjibaobiao():
                     data_list.append(dict_data)
             dir["row"] = data_list
             dir["total"] = len(oc_list)
-            print(dir)
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)

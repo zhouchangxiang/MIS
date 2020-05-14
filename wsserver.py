@@ -126,10 +126,6 @@ def handler_msg(conn):
                 area_list = []
                 area_dir = {}
                 if TagClassValue != "":
-                    # all_tags = returnb(redis_conn.hget(constant.REDIS_TABLENAME, "all_tags"))
-                    # if all_tags:
-                    #     all_tags = ast.literal_eval(all_tags)
-                    # for tag in all_tags:
                     try:
                         S = TagClassValue[0:1]
                         if S == "S":
@@ -173,66 +169,6 @@ def handler_msg(conn):
                             "报错tag：" + TagClassValue + "  |错误：" + str(ee))
                     finally:
                         pass
-                    # area_dir["AreaName"] = ""
-                    # area_dir["areaSFlow"] = strtofloat(areaSFlow)
-                    # area_dir["areaSSum"] = strtofloat(areaSSum)
-                    # area_dir["areaWFlow"] = strtofloat(areaWFlow)
-                    # area_dir["areaWSum"] = strtofloat(areaWSum)
-                    # area_dir["areaEZGL"] = strtofloat(areaEZGL)
-                    # area_dir["areaEAI"] = strtofloat(areaEAI)
-                    # area_dir["areaEAU"] = strtofloat(areaEAU)
-                    # area_dir["areaEBI"] = strtofloat(areaEBI)
-                    # area_dir["areaEBU"] = strtofloat(areaEBU)
-                    # area_dir["areaECI"] = strtofloat(areaEBI)
-                    # area_dir["areaECU"] = strtofloat(areaEBU)
-                # else:
-                #     all_area_tags = returnb(redis_conn.hget(constant.REDIS_TABLENAME, AreaName))
-                #     if all_area_tags:
-                #         all_area_tags = ast.literal_eval(all_area_tags)
-                #     for tag_area in all_area_tags:
-                #         try:
-                #             S = tag_area[0:1]
-                #             if S == "S":
-                #                 areaSFlow = areaSFlow + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                #                                                                    tag_area + "F"))
-                #                 areaSSum = areaSSum + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                #                                                                  tag_area + "S"))
-                #             elif S == "W":
-                #                 areaWFlow = areaWFlow + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                #                                                                    tag_area + "F"))
-                #                 areaWSum = areaWSum + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                #                                                                  tag_area + "S"))
-                #             elif S == "E":
-                #                 areaEZGL = areaEZGL + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                #                                                                  tag_area + "_ZGL"))
-                #                 areaEAU = areaEAU + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                #                                                                tag_area + "_AU"))
-                #                 areaEAI = areaEAI + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                #                                                                tag_area + "_AI"))
-                #                 areaEBI = areaEBI + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                #                                                                tag_area + "_BU"))
-                #                 areaEBU = areaEBU + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                #                                                                tag_area + "_BI"))
-                #                 areaECI = areaECI + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                #                                                                tag_area + "_CU"))
-                #                 areaECU = areaECU + strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                #                                                                tag_area + "_CI"))
-                #         except Exception as ee:
-                #             print("报错tag：" + tag.TagClassValue + " |报错IP：" + tag.IP + "  |报错端口：" + tag.COMNum + "  |错误：" + str(ee))
-                #         finally:
-                #             pass
-                #     area_dir["AreaName"] = AreaName
-                #     area_dir["areaSFlow"] = strtofloat(areaSFlow)
-                #     area_dir["areaSSum"] = strtofloat(areaSSum)
-                #     area_dir["areaWFlow"] = strtofloat(areaWFlow)
-                #     area_dir["areaWSum"] = strtofloat(areaWSum)
-                #     area_dir["areaEZGL"] = strtofloat(areaEZGL)
-                #     area_dir["areaEAI"] = strtofloat(areaEAI)
-                #     area_dir["areaEAU"] = strtofloat(areaEAU)
-                #     area_dir["areaEBI"] = strtofloat(areaEBI)
-                #     area_dir["areaEBU"] = strtofloat(areaEBU)
-                #     area_dir["areaECI"] = strtofloat(areaEBI)
-                #     area_dir["areaECU"] = strtofloat(areaEBU)
                 oclass = ast.literal_eval(returnb(redis_conn.hget(constant.REDIS_TABLENAME, "all_steam_tags")))
                 oc_dict_i_tag = {}
                 for oc in oclass:
