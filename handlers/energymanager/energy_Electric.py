@@ -428,7 +428,7 @@ def electricnergycost():
                 gratio = 0
             dir_jtime = {}
             dir_jtime["title"] = "尖时刻"
-            dir_jtime["expendEnergy"] = jtime
+            dir_jtime["expendEnergy"] = round(jtime, 2)
             dir_jtime["expendPrice"] = round(jtimeprice, 2)
             dir_jtime["unit"] = unit
             dir_jtime["Ratio"] = jratio

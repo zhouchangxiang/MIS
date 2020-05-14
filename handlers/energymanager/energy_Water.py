@@ -12,7 +12,7 @@ from handlers.energymanager.energy_manager import energyStatistics, energyStatis
 from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, WaterEnergy, LimitTable, Equipment, \
     AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
-    AreaTimeEnergyColour, ElectricProportion, IncrementWaterTable
+    AreaTimeEnergyColour, ElectricProportion, IncrementWaterTable, WaterSteamPrice
 from tools.common import insert, delete, update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger, insertSyslog
@@ -225,3 +225,63 @@ def get_water():
         print(e)
         insertSyslog("error", "能耗查询报错Error：" + str(e), current_user.Name)
         return json.dumps([{"status": "Error：" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
+
+@energyWater.route('/watertrendlookboard', methods=['POST', 'GET'])
+def watertrendlookboard():
+    '''
+    能耗看板的水能分类
+    :return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            dir = {}
+            StartTime = data.get("StartTime")
+            EndTime = data.get("EndTime")
+            AreaName = data.get("AreaName")
+            EnergyClass = "水"
+            if AreaName == None or AreaName == "":
+                oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
+            else:
+                oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass, TagDetail.AreaName == AreaName).all()
+            oc_list_S = []
+            oc_list_G = []
+            oc_list_Y = []
+            for oc in oclass:
+                if "深井水" in oc.FEFportIP:
+                    oc_list_S.append(oc.TagClassValue)
+                elif "灌溉水" in oc.FEFportIP:
+                    oc_list_G.append(oc.TagClassValue)
+                elif "饮用水" in oc.FEFportIP:
+                    oc_list_Y.append(oc.TagClassValue)
+            if len(oc_list_S)>0:
+                re_sum_S = energyStatistics(oc_list_S, StartTime, EndTime, EnergyClass)
+                sj = db_session.query(WaterSteamPrice.PriceValue).filter(WaterSteamPrice.PriceType == "深井水", WaterSteamPrice.IsEnabled == "是").first()
+                dir["SJ"] = round(re_sum_S, 2)
+                dir["SJcost"] = round((0 if sj is None else float(sj[0]))*re_sum_S, 2)
+            else:
+                dir["SJ"] = 0
+                dir["SJcost"] = 0
+            if len(oc_list_G)>0:
+                re_sum_G = energyStatistics(oc_list_G, StartTime, EndTime, EnergyClass)
+                gg = db_session.query(WaterSteamPrice).filter(WaterSteamPrice.PriceType == "灌溉水",
+                                                         WaterSteamPrice.IsEnabled == "是").first()
+                dir["GG"] =round(re_sum_G, 2)
+                dir["GGcost"] = round((0 if gg is None else float(gg[0])) * re_sum_G, 2)
+            else:
+                dir["GG"] = 0
+                dir["GGcost"] = 0
+            if len(oc_list_Y)>0:
+                re_sum_Y = energyStatistics(oc_list_Y, StartTime, EndTime, EnergyClass)
+                yy = db_session.query(WaterSteamPrice).filter(WaterSteamPrice.PriceType == "饮用水",
+                                                         WaterSteamPrice.IsEnabled == "是").first()
+                dir["YY"] = round(re_sum_Y, 2)
+                dir["YYcost"] = round((0 if yy is None else float(yy[0])) * re_sum_Y, 2)
+            else:
+                dir["YY"] = 0
+                dir["YYcost"] = 0
+            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "能耗看板的能耗看板的水能分类查询报错Error：" + str(e), current_user.Name)
