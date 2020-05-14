@@ -16,7 +16,10 @@
         <el-select v-model="areaValue" size="mini" @change="searchTime">
           <el-option v-for="(item,index) in areaOptions" :key="index" :label="item.AreaName" :value="item.value"></el-option>
         </el-select>
-        <p style="display: inline-block;margin-left: 20px;" class="text-color-info text-size-normol">总能耗：{{ totalValue }}</p>
+        <p style="display: inline-block;margin-left: 20px;" class="text-color-info text-size-normol">{{ totalValue }}</p>
+        <p style="display: inline-block;margin-left: 20px;" class="text-color-info text-size-normol">{{ waterGG }}</p>
+        <p style="display: inline-block;margin-left: 20px;" class="text-color-info text-size-normol">{{ waterYY }}</p>
+        <p style="display: inline-block;margin-left: 20px;" class="text-color-info text-size-normol">{{ waterSJ }}</p>
         <el-button type="primary" size="mini" style="float: right;margin: 9px 0;" @click="exportExcel">导出详细数据</el-button>
       </div>
       <div class="platformContainer">
@@ -65,7 +68,10 @@
         pagesize:10,
         currentPage:1,
         loading:false,
-        totalValue:""
+        totalValue:"",
+        waterGG:"",
+        waterYY:"",
+        waterSJ:"",
       }
     },
     created(){
@@ -140,8 +146,21 @@
           EndTime:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss"),
           Area:this.areaValue
         }
+        //获取总能耗
         this.axios.get("/api/energywater",{params: energyParams}).then(res =>{
-          this.totalValue = JSON.parse(res.data).value + JSON.parse(res.data).unit
+          this.totalValue = "总能耗：" + JSON.parse(res.data).value + JSON.parse(res.data).unit
+        })
+        //获取区分水详细能耗
+        this.axios.get("/api/watertrendlookboard",{
+          params: {
+            AreaName:"",
+            StartTime:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss"),
+            EndTime:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss")
+          }
+        }).then(res =>{
+          this.waterGG = "灌溉：" + res.data.GG
+          this.waterYY = "饮用：" + res.data.YY
+          this.waterSJ = "深井：" + res.data.SJ
         })
       }
     }

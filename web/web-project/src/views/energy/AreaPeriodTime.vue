@@ -54,8 +54,8 @@
                 <el-progress :text-inside="true" :stroke-width="16" :percentage="item.Ratio" :color="item.color"></el-progress>
               </el-col>
               <el-col :span="14">
-                <span class="text-color-info" style="padding-left: 10px;">耗能：{{ item.expendEnergy }}{{ item.unit }}</span>
-                <span class="text-color-info" style="padding-left: 10px;">价格：{{ item.expendPrice }}元</span>
+                <span class="text-color-info" style="padding-left: 10px;">用量：{{ item.expendEnergy }}{{ item.unit }}</span>
+                <span class="text-color-info" style="padding-left: 10px;">成本：{{ item.expendPrice }}元</span>
               </el-col>
             </el-col>
           </div>
@@ -345,7 +345,12 @@
         })
         //获取水能详细数据
         this.axios.get("/api/watertrendlookboard",{params: {AreaName:areaName,StartTime:dayStartTime,EndTime:dayEndTime}}).then(res =>{
-          console.log(res)
+          this.waterGG = res.data.GG + " t"
+          this.waterGGCost = res.data.GGcost + " 元"
+          this.waterYY = res.data.YY + " t"
+          this.waterYYCost = res.data.YYcost + " 元"
+          this.waterSJ = res.data.SJ + " t"
+          this.waterSJCost = res.data.SJcost + " 元"
         })
       },
       getAreaTimeEnergy(){

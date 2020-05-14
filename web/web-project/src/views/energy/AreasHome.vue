@@ -42,15 +42,35 @@
                 </div>
               </el-col>
               <el-col :span="18">
-                <div class="itemMarginBottom text-size-normol text-color-info-shallow">本日耗水量</div>
-                <div class="itemMarginBottom text-size-big text-color-info">{{ todayWater }} {{ WaterUnit }}</div>
                 <div class="itemMarginBottom">
-                  <span class="text-size-mini text-color-info-shallow">今日水费</span>
-                  <span class="text-size-mini text-color-info-shallow float-right">对比昨日截止{{ nowTime }}</span>
+                  <span class="text-size-normol text-color-info-shallow">本日耗水量</span>
+                  <span class="text-size text-color-info-shallow float-right">对比昨日截止{{ nowTime }}</span>
                 </div>
                 <div class="itemMarginBottom">
-                  <span class="text-size-normol text-color-info">{{ waterCost }}</span>
+                  <span class="text-size-big text-color-info">{{ todayWater }} {{ WaterUnit }}</span>
                   <span class="text-size-normol float-right" :class="todayWater-yesterdayWaterValue>0?'text-color-danger':'text-color-success'">{{ WaterCompare }}</span>
+                </div>
+                <div class="itemMarginBottom clearfix">
+                  <el-col :span="8">
+                    <span class="text-size-mini text-color-info-shallow">灌溉水</span>
+                  </el-col>
+                  <el-col :span="8">
+                    <span class="text-size-mini text-color-info-shallow">饮用水</span>
+                  </el-col>
+                  <el-col :span="8">
+                    <span class="text-size-mini text-color-info-shallow">深井水</span>
+                  </el-col>
+                </div>
+                <div class="itemMarginBottom clearfix">
+                  <el-col :span="8">
+                    <span class="text-size-normol text-color-info">{{ waterGG }}</span>
+                  </el-col>
+                  <el-col :span="8">
+                    <span class="text-size-normol text-color-info">{{ waterYY }}</span>
+                  </el-col>
+                  <el-col :span="8">
+                    <span class="text-size-normol text-color-info">{{ waterSJ }}</span>
+                  </el-col>
                 </div>
               </el-col>
             </el-col>
@@ -264,6 +284,9 @@
         electricityCost:"",
         waterCost:"",
         steamCost:"",
+        waterGG:"",
+        waterYY:"",
+        waterSJ:"",
         chartExtend:{
           yAxis:{
             show:false
@@ -493,6 +516,18 @@
           that.waterRing.rows = todayAreaData.data.wrow
           that.steamRing.rows = todayAreaData.data.srow
         }))
+        //获取区分水的详细数据
+        this.axios.get("/api/watertrendlookboard",{
+          params: {
+            AreaName:"",
+            StartTime:todayStartTime,
+            EndTime:todayEndTime
+          }
+        }).then(res =>{
+          this.waterGG = res.data.GG
+          this.waterYY = res.data.YY
+          this.waterSJ = res.data.SJ
+        })
       },
       getBrandName(){
         var that = this
