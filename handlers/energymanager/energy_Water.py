@@ -264,7 +264,7 @@ def watertrendlookboard():
                 dir["SJcost"] = 0
             if len(oc_list_G)>0:
                 re_sum_G = energyStatistics(oc_list_G, StartTime, EndTime, EnergyClass)
-                gg = db_session.query(WaterSteamPrice).filter(WaterSteamPrice.PriceType == "灌溉水",
+                gg = db_session.query(WaterSteamPrice.PriceValue).filter(WaterSteamPrice.PriceType == "灌溉水",
                                                          WaterSteamPrice.IsEnabled == "是").first()
                 dir["GG"] =round(re_sum_G, 2)
                 dir["GGcost"] = round((0 if gg is None else float(gg[0])) * re_sum_G, 2)
@@ -273,7 +273,7 @@ def watertrendlookboard():
                 dir["GGcost"] = 0
             if len(oc_list_Y)>0:
                 re_sum_Y = energyStatistics(oc_list_Y, StartTime, EndTime, EnergyClass)
-                yy = db_session.query(WaterSteamPrice).filter(WaterSteamPrice.PriceType == "饮用水",
+                yy = db_session.query(WaterSteamPrice.PriceValue).filter(WaterSteamPrice.PriceType == "饮用水",
                                                          WaterSteamPrice.IsEnabled == "是").first()
                 dir["YY"] = round(re_sum_Y, 2)
                 dir["YYcost"] = round((0 if yy is None else float(yy[0])) * re_sum_Y, 2)
