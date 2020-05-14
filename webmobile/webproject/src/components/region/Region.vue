@@ -11,22 +11,22 @@
           <div class="icon electric"></div>
           <div class="dw electric1">kwh</div>
           <div class="number">{{electric}}</div>
-          <div class="comp">较昨日</div>
-          <div class="sn">+1.456%</div>
+          <div class="comp" @click="getEq">较昨日</div>
+          <div class="sn">{{dayelectricCompare}}</div>
         </div>
          <div class="c2" :class="{switchbgc:bgc2}" @click="switchShow2()">
           <div class="icon water"></div>
           <div class="dw water">T</div>
           <div class="number">{{water}}</div>
           <div class="comp">较昨日</div>
-          <div class="sn">+1.456%</div>
+          <div class="sn">{{daywaterCompare}}</div>
         </div>
         <div class="c3" :class="{switchbgc:bgc3}" @click="switchShow3()">
           <div class="icon steam"></div>
           <div class="dw">T</div>
           <div class="number">{{steam}}</div>
           <div class="comp">较昨日</div>
-          <div class="sn">+1.456%</div>
+          <div class="sn">{{daysteamCompare}}</div>
         </div>
       </div>
       <div class="piclist">
@@ -47,19 +47,18 @@
            <div class="dnh-number">{{kind==='水'?water:(kind==='电'?electric:steam)}}</div>
            <div class="dw">{{kind==='电'?'kwh':'t'}}</div>
            <div class="dwpc">单位批次{{this.kind}}能耗量</div>
-           <div class="dwpc-number">{{kind==='水'?water/2:(kind==='电'?electric/2:steam/2)}}</div>
+           <div class="dwpc-number">{{kind==='水'?waterbatch:(kind==='电'?0:steambatch)}}</div>
            <div class="pc-dw">{{kind==='电'?'kwh':'t'}}/批</div>
          </div>
        </div>
 </template>
 <script>
-import ShowNumber from '../common/Shownumber.vue'
 var moment=require('moment')
 export default {
     data(){
       this.chartSettings = {
         yAxisType: ['KMB'],
-        yAxisName: ['单位']
+        yAxisName: ['数值']
       }
         return {
           active:0,
@@ -67,6 +66,12 @@ export default {
           water:0,
           electric:0,
           steam:0,
+          todaywater:0,
+          todayelectric:0,
+          todaysteam:0,
+          yesterdaywater:0,
+          yesterdayelectric:0,
+          yesterdaysteam:0,
           cost1:[],
           cost:'',
           bgc1:false,
@@ -75,9 +80,17 @@ export default {
           loading:false,
           websoc:null,
           kind:'电',
-          currentchoice:'',
+          currentchoice:'GMP车间',
           kong:null,
-          onlinebiaolist:[],
+          ElectricEqList:[],
+          WaterEqList:[],
+          SteamEqList:[],
+          watertag:'',
+          electrictag:'',
+          steamtag:'',
+          waterbatch:0,
+          steambatch:0,   
+          onlinebiaolist:[{online:12,total:12},{online:2,total:17},{online:12,total:25}],
           onlineitem:{online:0,total:0},
           electricChartData:{
           columns:['日期', '数值'],
@@ -98,6 +111,7 @@ export default {
         resetChartData: {
           columns: ['日期', '数值'],
           rows: [
+           { '日期': '', '数值': ""},
             { '日期': '', '数值': ""},
             { '日期': '', '数值': ""},
             { '日期': '', '数值': ""},
@@ -108,9 +122,7 @@ export default {
             { '日期': '', '数值': ""},
             { '日期': '', '数值': ""},
             { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""}
-          ]
+            { '日期': '', '数值': ""}]
         },
           waterChartData: {
           columns: ['日期', '数值'],
@@ -126,73 +138,129 @@ export default {
             { '日期': '', '数值': ""},
             { '日期': '', '数值': ""},
             { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""}
-          ]
+            { '日期': '', '数值': ""}]
         },
         steamChartData:{
           columns: ['日期', '数值'],
           rows: [
-          { '日期': '', '数值': ""},
-          { '日期': '', '数值': ""},
-          { '日期': '', '数值': ""},
-          { '日期': '', '数值': ""},
-          { '日期': '', '数值': ""},
-          { '日期': '', '数值': ""},
-          { '日期': '', '数值': ""},
-          { '日期': '', '数值': ""},
-          { '日期': '', '数值': ""},
-          { '日期': '', '数值': ""},
-          { '日期': '', '数值': ""},
-          { '日期': '', '数值': ""}
-          ]
+           { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""},
+            { '日期': '', '数值': ""}]
         }}
     },
-    components:{
-      ShowNumber
-    },
     created(){
-      this.initWebSocket()
-    },
-    mounted(){
       this.initNavbar()
     },
     destroyed(){
+      if(this.websoc){
       this.websoc.close()
+      }
+    },
+    computed:{
+        dayelectricCompare(){
+        if(this.thisYearCon > 0){
+          var compare = (this.todayelectric - this.yesterdayelectric) / this.todayelectric * 100
+          if(this.todayelectric - this.yesterdayelectric > 0){
+            return "+" + compare.toFixed(2) + "%"
+          }else{
+            return compare.toFixed(2) + "%"
+          }
+        }else{
+          if(this.yesterdayelectric > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
+        }
+        },
+        daywaterCompare(){
+        if(this.todaywater > 0){
+          var compare = (this.todaywater - this.yesterdaywater) / this.todaywater * 100
+          if(this.todaywater - this.yesterdaywater > 0){
+            return "+" + compare.toFixed(2) + "%"
+          }else{
+            return compare.toFixed(2) + "%"
+          }
+        }else{
+          if(this.yesterdaywater > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
+        }
+        },
+        daysteamCompare(){
+        if(this.todaysteam > 0){
+          var compare = (this.todaysteam - this.yesterdaysteam) / this.todaysteam * 100
+          if(this.todaysteam - this.yesterdaysteam > 0){
+            return "+" + compare.toFixed(2) + "%"
+          }else{
+            return compare.toFixed(2) + "%"
+          }
+        }else{
+          if(this.yesterdaysteam > 0){
+            return "-" + 100 + "%"
+          }else{
+            return 0 + "%"
+          }
+        }
+        },
     },
     methods:{
       switchShow1(){
-       this.bgc1=!this.bgc1
-       this.bgc2=false
-       this.bgc3=false
-       this.kind='电'
-       this.onlineitem=this.onlinebiaolist[0]
-       if(this.bgc1){
-         this.$toast('当前显示电数据')
+      if(this.websoc){
+        this.websoc.close()
+        }
+      this.kind='电'
+      this.bgc1=!this.bgc1
+      this.bgc2=this.bgc3=false
+      this.onlineitem=this.onlinebiaolist[0]
+      this.kong=this.resetChartData
+      if(this.bgc1){
+        this.$toast('当前显示电数据')
          this.kong=this.electricChartData
        }else{
          this.kong=this.resetChartData
        }
-       this.cost=this.cost1[0]
+       this.cost=this.cost1[1]
+        this.initWebSocket()
       },
       switchShow2(){
+        if(this.websoc){
+          this.websoc.close()
+          }
        this.bgc2=!this.bgc2
-       this.bgc1=false
-       this.bgc3=false
+       this.bgc1=this.bgc3=false
        this.kind='水'
-      this.onlineitem=this.onlinebiaolist[1]
+       this.onlineitem=this.onlinebiaolist[0]
+        this.kong=this.resetChartData
        if(this.bgc2){
          this.$toast('当前显示水数据')
          this.kong=this.waterChartData
        }else{
          this.kong=this.resetChartData
        }
-       this.cost=this.cost1[1]
+       this.cost=this.cost1[0]
+         this.initWebSocket()
       },
       switchShow3(){
+        if(this.websoc){
+          this.websoc.close()
+          }
        this.bgc1=this.bgc2=false
        this.bgc3=!this.bgc3
        this.kind='汽'
-      this.onlineitem=this.onlinebiaolist[2]
+       this.onlineitem=this.onlinebiaolist[2]
+        this.kong=this.SteamEqList=this.resetChartData
        if(this.bgc3){
          this.$toast('当前显示汽数据')
          this.kong=this.steamChartData
@@ -200,10 +268,11 @@ export default {
          this.kong=this.resetChartData
        }
        this.cost=this.cost1[2]
+       this.initWebSocket()
       },
       //websocket 获取数据方法汇总
       initWebSocket(){
-            this.websoc=new WebSocket('ws://127.0.0.1:5002')
+            this.websoc=new WebSocket('ws://127.0.0.1:5002');
             this.websoc.onopen=this.webscop
             this.websoc.onmessage=this.webscom
             this.websoc.onerror=this.webscoer
@@ -213,49 +282,84 @@ export default {
             this.websoc.send(data)
         },
         webscop(){
-          this.webscsend()
+          if(this.kind==='电'){
+            this.webscsend(this.electrictag)
+          }else if(this.kind==='水'){
+            this.webscsend(this.watertag)
+          }else{
+            this.webscsend(this.steamtag)
+          }
         },
         webscom(evt){
-            var arr=JSON.parse(evt.data)
-            for(var i=0;i<arr.length;i++){
-              if(arr[i]['AreaName']==this.currentchoice){
+          var arr=JSON.parse(evt.data)[1]
+           if(this.kind==='电'){
               this.electricChartData.rows.push({
                 "日期": moment(new Date()).format("ss"),
-                "数值": arr[i]['areaEZGL']
+                "数值": arr['areaEZGL']
               })
               this.electricChartData.rows.shift()
-              this.waterChartData.rows.push({
-                "日期": moment(new Date()).format("ss"),
-                "数值": arr[i]['areaWSum']
+           }else if(this.kind==='水'){
+             this.waterChartData.rows.push({
+               "日期": moment(new Date()).format("ss"),
+                "数值": arr['areaWSum']
               })
               this.waterChartData.rows.shift()
-               this.steamChartData.rows.push({
-                "日期": moment(new Date()).format("ss"),
-                "数值": arr[i]['areaSSum']
+           }else{
+             this.steamChartData.rows.push({
+               "日期": moment(new Date()).format("ss"),
+                "数值": arr['areaSSum']
               })
-              this.steamChartData.rows.shift()
-                }
-              }
+                this.steamChartData.rows.shift()
+           }
         },
         webscoer(){
-            console.log('连接失败。。。')
+            console.log('连接websocket失败。。。')
         },
-        webscoclos(){
-            console.log('关闭连接。。。')
+        webscoclos(e){
+            console.log('关闭websocket连接')
         },
         //点击导航栏获取相关能耗数据
         getData(e){
+          var nowTime = moment().format('HH:mm').substring(0,4) + "0"
+          var monthStartTime = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm:ss')
+          var monthEndTime = moment().month(moment().month()).endOf('month').format('YYYY-MM-DD HH:mm:ss')
+          var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
+          var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
+          var yesterdayStartTime = moment().subtract(1,'day').format('YYYY-MM-DD') + " 00:00"
+          var yesterdayEndTime = moment().subtract(1,'day').format('YYYY-MM-DD') + " " + nowTime
           let params={
-            StartTime:'2020-04-09 12:22:59',
-            EndTime:'2020-04-14 12:22:59',
+            StartTime:monthStartTime,
+            EndTime:monthEndTime,
+            AreaName:this.list[e]
+          }
+          let params1={
+            StartTime:todayStartTime,
+            EndTime:todayEndTime,
+            AreaName:this.list[e]
+          }
+          let params2={
+            StartTime:yesterdayStartTime,
+            EndTime:yesterdayEndTime,
             AreaName:this.list[e]
           }
           this.currentchoice=this.list[e]
           this.$toast('当前数据展示'+this.currentchoice)
+          this.kong=this.resetChartData
+          if(this.websoc){
+            this.websoc.close()
+            }
           this.$http.all([
             this.$http.get('/api/energywater',{params}),
             this.$http.get('/api/energyelectric',{params}),
-            this.$http.get('/api/energysteam',{params})]).then(this.$http.spread((res1,res2,res3)=>{
+            this.$http.get('/api/energysteam',{params}),
+            this.$http.get('/api/energywater',{params:params1}),
+            this.$http.get('/api/energyelectric',{params:params1}),
+            this.$http.get('/api/energysteam',{params:params1}),
+            this.$http.get('/api/energywater',{params:params2}),
+            this.$http.get('/api/energyelectric',{params:params2}),
+            this.$http.get('/api/energysteam',{params:params2}),
+            this.$http.get('/api/batchMaintainEnergy',{params:params1})
+            ]).then(this.$http.spread((res1,res2,res3,res4,res5,res6,res7,res8,res9,res10)=>{
                     this.water=JSON.parse(res1.data).value
                     this.electric=JSON.parse(res2.data).value
                     this.steam=JSON.parse(res3.data).value
@@ -266,8 +370,55 @@ export default {
                     this.cost1=newlist
                     this.bgc1=this.bgc2=this.bgc3=false
                     this.kong=this.resetChartData
+                    this.getEq()
+                    this.todaywater=JSON.parse(res4.data).value
+                    this.todayelectric=JSON.parse(res5.data).value
+                    this.todaysteam=JSON.parse(res6.data).value
+                    this.yesterdaywater=JSON.parse(res7.data).value
+                    this.yesterdayelectric=JSON.parse(res8.data).value
+                    this.yesterdaysteam=JSON.parse(res9.data).value
+                    this.waterbatch=res10.data.waterEveryBatch
+                    this.steambatch=res10.data.steamEveryBatch
                   }))
               },
+        getEq(){
+              this.ElectricEqList = []
+              this.WaterEqList = []
+              this.SteamEqList = []
+              var params = {
+                tableName:"TagDetail",
+                field:"AreaName",
+                fieldvalue:this.currentchoice,
+                limit:100000,
+                offset:0
+              }
+              this.$http.get("/api/CUID",{params:params}).then(res =>{
+                var rows = JSON.parse(res.data).rows
+                rows.forEach(item =>{
+                  if(item.EnergyClass === "电"){
+                    this.ElectricEqList.push(item)
+                    if(this.ElectricEqList!=[]){
+                      this.electrictag=this.ElectricEqList[0].TagClassValue
+                    }else{
+                      this.electrictag=""
+                    }
+                  }else if(item.EnergyClass === "水"){
+                    this.WaterEqList.push(item)
+                    if(this.WaterEqList!=[]){
+                      this.watertag=this.WaterEqList[0].TagClassValue
+                    }else{
+                      this.watertag=""
+                    }
+                  }else if(item.EnergyClass === "汽"){
+                    this.SteamEqList.push(item)
+                    if(this.SteamEqList!=[]){
+                      this.steamtag=this.SteamEqList[0].TagClassValue
+                    }else{
+                      this.steamtag=""
+                    }
+                  }
+                })
+              })},
         //初始化获取navbar数据条
         initNavbar(){
         this.loading=true
@@ -279,9 +430,6 @@ export default {
               for(var i=0;i<arr.length;i++){
               this.list.push(arr[i]['区域'])
         }
-      }),
-      this.$http.get("/api/energyall",{params:{ModelFlag:"在线检测情况"}}).then((res) => {
-         this.onlinebiaolist=JSON.parse(res.data)
       })
       }
     }
@@ -363,21 +511,21 @@ export default {
             text-align: center;
             width:97px;
             height:29px;
-            line-height: 29px;
+            overflow: hidden;
+            text-overflow: hidden;
             background:rgba(126,127,132,1);
             box-shadow:0px 0px 6px rgba(255,255,255,0.16);
-            opacity:1;
             border-radius:4px;
             font-size:18px;
             font-family:PingFang SC;
             font-weight:500;
             color:rgba(255,255,255,1);
-            letter-spacing:3px;
+            letter-spacing:1px;
             opacity:1;
           }
           .comp{
             position: absolute;
-            left:41px;
+            left:38px;
             top:125px;
             width:50px;
             height:11px;
@@ -390,7 +538,7 @@ export default {
           }
           .sn{
             position: absolute;
-            left: 32px;
+            left: 40px;
             top: 142px;
             width:60px;
             height:17px;
@@ -544,7 +692,7 @@ export default {
                 }
                 .all-money{
                     position: absolute;
-                    left:16px;
+                    left:10px;
                     top:28px;
                     height:23px;
                     font-size: 23px;
