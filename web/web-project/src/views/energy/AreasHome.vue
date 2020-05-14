@@ -15,7 +15,7 @@
                 <div class="itemMarginBottom text-size-big text-color-info">{{ todayElectricity }} {{ ElectricityUnit }}</div>
                 <div class="itemMarginBottom">
                   <span class="text-size-mini text-color-info-shallow">今日电费</span>
-                  <span class="text-size-mini text-color-info-shallow float-right">对比昨日能耗</span>
+                  <span class="text-size-mini text-color-info-shallow float-right">对比昨日截止{{ nowTime }}</span>
                 </div>
                 <div class="itemMarginBottom">
                   <span class="text-size-normol text-color-info">{{ electricityCost }}</span>
@@ -46,7 +46,7 @@
                 <div class="itemMarginBottom text-size-big text-color-info">{{ todayWater }} {{ WaterUnit }}</div>
                 <div class="itemMarginBottom">
                   <span class="text-size-mini text-color-info-shallow">今日水费</span>
-                  <span class="text-size-mini text-color-info-shallow float-right">对比昨日能耗</span>
+                  <span class="text-size-mini text-color-info-shallow float-right">对比昨日截止{{ nowTime }}</span>
                 </div>
                 <div class="itemMarginBottom">
                   <span class="text-size-normol text-color-info">{{ waterCost }}</span>
@@ -77,7 +77,7 @@
                 <div class="itemMarginBottom text-size-big text-color-info">{{ todaySteam }} {{ SteamUnit }}</div>
                 <div class="itemMarginBottom">
                   <span class="text-size-mini text-color-info-shallow">今日汽费</span>
-                  <span class="text-size-mini text-color-info-shallow float-right">对比昨日能耗</span>
+                  <span class="text-size-mini text-color-info-shallow float-right">对比昨日截止{{ nowTime }}</span>
                 </div>
                 <div class="itemMarginBottom">
                   <span class="text-size-normol text-color-info">{{ steamCost }}</span>
@@ -112,7 +112,7 @@
               <div class="itemMarginBottom text-size-big text-color-info">{{ todayElectricity }} {{ ElectricityUnit }}</div>
               <div class="itemMarginBottom">
                 <span class="text-size-mini text-color-info-shallow">今日电费</span>
-                <span class="text-size-mini text-color-info-shallow float-right">对比昨日能耗</span>
+                <span class="text-size-mini text-color-info-shallow float-right">对比昨日截止{{ nowTime }}</span>
               </div>
               <div class="itemMarginBottom">
                 <span class="text-size-normol text-color-info">{{ electricityCost }}</span>
@@ -135,7 +135,7 @@
               <div class="itemMarginBottom text-size-big text-color-info">{{ todayWater }} {{ WaterUnit }}</div>
               <div class="itemMarginBottom">
                 <span class="text-size-mini text-color-info-shallow">今日水费</span>
-                <span class="text-size-mini text-color-info-shallow float-right">对比昨日能耗</span>
+               <span class="text-size-mini text-color-info-shallow float-right">对比昨日截止{{ nowTime }}</span>
               </div>
               <div class="itemMarginBottom">
                 <span class="text-size-normol text-color-info">{{ waterCost }}</span>
@@ -158,7 +158,7 @@
                 <div class="itemMarginBottom text-size-big text-color-info">{{ todaySteam }} {{ SteamUnit }}</div>
                 <div class="itemMarginBottom">
                   <span class="text-size-mini text-color-info-shallow">今日汽费</span>
-                  <span class="text-size-mini text-color-info-shallow float-right">对比昨日能耗</span>
+                  <span class="text-size-mini text-color-info-shallow float-right">对比昨日截止{{ nowTime }}</span>
                 </div>
                 <div class="itemMarginBottom">
                   <span class="text-size-normol text-color-info">{{ steamCost }}</span>
@@ -251,6 +251,7 @@
     inject:['newAreaName'],
     data(){
       return {
+        nowTime:"",
         todayElectricity:"",
         todayWater:"",
         todaySteam:"",
@@ -399,16 +400,22 @@
           todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime,
           yesterdayStartTime = moment().subtract(1,'day').format('YYYY-MM-DD') + " 00:00",
           yesterdayEndTime = moment().subtract(1,'day').format('YYYY-MM-DD') + " " + nowTime,
+          yesterdayAllStartTime = moment().day(moment().day() - 1).startOf('day').format('YYYY-MM-DD HH:mm'),
+          yesterdayAllEndTime = moment().day(moment().day() - 1).endOf('day').format('YYYY-MM-DD HH:mm'),
           thisStartMonth = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm'),
           thisMonthDay = moment().format('DD'),
           params = {},
           yesterdayParams ={},
+          yesterdayAllParams ={},
           thisMonthParams ={}
+          this.nowTime = nowTime
         if(this.newAreaName.areaName === "整厂区"){
           params.StartTime = todayStartTime
           params.EndTime = todayEndTime
           yesterdayParams.StartTime = yesterdayStartTime
           yesterdayParams.EndTime = yesterdayEndTime
+          yesterdayAllParams.StartTime = yesterdayAllStartTime
+          yesterdayAllParams.EndTime = yesterdayAllEndTime
           thisMonthParams.StartTime = thisStartMonth
           thisMonthParams.EndTime = todayEndTime
         }else{
@@ -418,28 +425,37 @@
           yesterdayParams.StartTime = yesterdayStartTime
           yesterdayParams.EndTime = yesterdayEndTime
           yesterdayParams.Area = this.newAreaName.areaName
+          yesterdayAllParams.StartTime = yesterdayAllStartTime
+          yesterdayAllParams.EndTime = yesterdayAllEndTime
+          yesterdayAllParams.Area = this.newAreaName.areaName
           thisMonthParams.StartTime = thisStartMonth
           thisMonthParams.EndTime = todayEndTime
           thisMonthParams.Area = this.newAreaName.areaName
         }
         this.axios.all([
           this.axios.get("/api/energyelectric",{params: params}),//获取今天电
-          this.axios.get("/api/energyelectric",{params: yesterdayParams}),//获取昨天电
+          this.axios.get("/api/energyelectric",{params: yesterdayParams}),//获取昨天截止当期时间电
+          this.axios.get("/api/energyelectric",{params: yesterdayAllParams}),//获取昨天整天电
           this.axios.get("/api/energywater",{params: params}),//获取今天水
-          this.axios.get("/api/energywater",{params: yesterdayParams}),//获取昨天水
+          this.axios.get("/api/energywater",{params: yesterdayParams}),//获取昨天截止当前时间水
+          this.axios.get("/api/energywater",{params: yesterdayAllParams}),//获取昨天整天水
           this.axios.get("/api/energysteam",{params: params}),//获取今天汽
-          this.axios.get("/api/energysteam",{params: yesterdayParams}),//获取昨天汽
+          this.axios.get("/api/energysteam",{params: yesterdayParams}),//获取昨天截止当前时间汽
+          this.axios.get("/api/energysteam",{params: yesterdayAllParams}),//获取昨天整天汽
           this.axios.get("/api/energyelectric",{params: thisMonthParams}),//获取本月电
           this.axios.get("/api/energywater",{params: thisMonthParams}),//获取本月水
           this.axios.get("/api/energysteam",{params: thisMonthParams}),//获取本月汽
           this.axios.get("/api/todayAreaRingCharts"),//获取环形图
-        ]).then(this.axios.spread((todayElectricity,yesterdayElectricity,todayWater,yesterdayWater,todaySteam,yesterdaySteam,monthElectricity,monthWater,monthSteam,todayAreaData) =>{
+        ]).then(this.axios.spread((todayElectricity,yesterdayElectricity,yesterdayAllElectricity,todayWater,yesterdayWater,yesterdayAllWater,todaySteam,yesterdaySteam,yesterdayAllSteam,monthElectricity,monthWater,monthSteam,todayAreaData) =>{
           var todayElectricityData = JSON.parse(todayElectricity.data),
             todayWaterData = JSON.parse(todayWater.data),
             todaySteamData = JSON.parse(todaySteam.data),
             yesterdayElectricityValue = JSON.parse(yesterdayElectricity.data).value,
+            yesterdayAllElectricityValue = JSON.parse(yesterdayAllElectricity.data).value,
             yesterdayWaterValue = JSON.parse(yesterdayWater.data).value,
+            yesterdayAllWaterValue = JSON.parse(yesterdayAllWater.data).value,
             yesterdaySteamValue = JSON.parse(yesterdaySteam.data).value,
+            yesterdayAllSteamValue = JSON.parse(yesterdayAllSteam.data).value,
             thisMonthElectricityValue = JSON.parse(monthElectricity.data).value,
             thisMonthWaterValue = JSON.parse(monthWater.data).value,
             thisMonthSteamValue = JSON.parse(monthSteam.data).value
@@ -451,7 +467,7 @@
           that.ElectricityUnit = todayElectricityData.unit
           that.electricityCost = todayElectricityData.cost + "元"
           that.electricHistogram.rows = [
-            { '时间': "昨日", '总功率': that.yesterdayElectricityValue},
+            { '时间': "昨日", '总功率': yesterdayAllElectricityValue},
             { '时间': "本日", '总功率': that.todayElectricity},
             { '时间': "月均", '总功率': (thisMonthElectricityValue / thisMonthDay).toFixed(2)}
           ]
@@ -460,7 +476,7 @@
           that.WaterUnit = todayWaterData.unit
           that.waterCost = todayWaterData.cost + "元"
           that.waterHistogram.rows = [
-            { '时间': "昨日", '累计流量': that.yesterdayWaterValue},
+            { '时间': "昨日", '累计流量': yesterdayAllWaterValue},
             { '时间': "本日", '累计流量': that.todayWater},
             { '时间': "月均", '累计流量': (thisMonthWaterValue / thisMonthDay).toFixed(2)}
           ]
@@ -469,7 +485,7 @@
           that.SteamUnit = todaySteamData.unit
           that.steamCost = todaySteamData.cost + "元"
           that.steamHistogram.rows = [
-            { '时间': "昨日", '累计流量': that.yesterdaySteamValue},
+            { '时间': "昨日", '累计流量': yesterdayAllSteamValue},
             { '时间': "本日", '累计流量': that.todaySteam},
             { '时间': "月均", '累计流量': (thisMonthSteamValue / thisMonthDay).toFixed(2)}
           ]

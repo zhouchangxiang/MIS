@@ -54,11 +54,6 @@
                 <i :class="isFullScreen?'el-icon-aim':'el-icon-full-screen'" @click="getFullCreeen"></i>
               </el-tooltip>
             </li>
-            <li>
-              <el-tooltip class="head-menu-item" effect="dark" content="基础表管理" placement="bottom">
-                <i class="el-icon-c-scale-to-original" @click="$router.push({path:'/config'})"></i>
-              </el-tooltip>
-            </li>
             <li style="margin-right: 10px;" v-if="weatherDesc === 'OK'">
               <el-tooltip class="head-menu-item" effect="dark" :content="weatherType" placement="bottom">
                 <i :class="weatherIcon"></i>
@@ -126,7 +121,7 @@
                 <el-card shadow="hover" style="height: 250px;margin-bottom: 20px;" class="useAreaCard">
                   <p>新综合制剂车间</p>
                   <div class="waterTagData" style="left: 3px;top: 60px;width: 80px;">包材库灌溉水DN50<p>{{ waterTagList.W_Area_XJZ_12_1_3.sumValue }}</p><p>{{ waterTagList.W_Area_XJZ_12_1_3.flowValue }}</p></div>
-                  <div class="waterTagData" style="right: 3px;bottom: 3px;">接待室DN100<p>{{ waterTagList.W_Area_XJZ_12_2_5.sumValue }}</p><p>{{ waterTagList.W_Area_XJZ_12_2_5.flowValue }}</p></div>
+                  <div class="waterTagData" style="right: 3px;bottom: 3px;">接待室引用水DN100<p>{{ waterTagList.W_Area_XJZ_12_2_5.sumValue }}</p><p>{{ waterTagList.W_Area_XJZ_12_2_5.flowValue }}</p></div>
                 </el-card>
               </el-col>
               <el-col :span="8">
@@ -145,7 +140,7 @@
                 <el-col :span="8">
                   <el-card shadow="hover" class="useAreaCard" style="height: 240px;">
                     <p>前处理车间</p>
-                    <div class="waterTagData" style="left: 3px;top: 40px;">洗药室DN25<p>{{ waterTagList.W_Area_QCL_33_1_20.sumValue }}</p><p>{{ waterTagList.W_Area_QCL_33_1_20.flowValue }}</p></div>
+                    <div class="waterTagData" style="left: 3px;top: 40px;">洗药室灌溉水DN25<p>{{ waterTagList.W_Area_QCL_33_1_20.sumValue }}</p><p>{{ waterTagList.W_Area_QCL_33_1_20.flowValue }}</p></div>
                     <div class="waterTagData" style="left: 3px;top: 110px;">饮用水DN25<p>{{ waterTagList.W_Area_QCL_33_2_20.sumValue }}</p><p>{{ waterTagList.W_Area_QCL_33_2_20.flowValue }}</p></div>
                     <div class="waterTagData" style="right: 3px;bottom: 3px;">生产部 灌消防水</div>
                   </el-card>
@@ -170,7 +165,7 @@
               <el-col :span="8" :offset="5">
                 <el-card shadow="hover" class="useAreaCard">
                   <p>办公楼\食堂</p>
-                  <div class="waterTagData" style="left: 100px;bottom: 10px;">1楼卫生间DN65<p>{{ waterTagList.W_Area_BGL_34_1_22.sumValue }}</p><p>{{ waterTagList.W_Area_BGL_34_1_22.flowValue }}</p></div>
+                  <div class="waterTagData" style="left: 100px;bottom: 10px;">1楼卫生间深井水DN65<p>{{ waterTagList.W_Area_BGL_34_1_22.sumValue }}</p><p>{{ waterTagList.W_Area_BGL_34_1_22.flowValue }}</p></div>
                 </el-card>
               </el-col>
             </el-col>
@@ -187,8 +182,8 @@
               <div class="steamTagLabel" style="left:-10px;top: -15px;min-width: 155px;width: 155px;">
                 <div class="steamTagTitle">锅炉流量计DN400</div>
                 <div class="steamTagValue">
-                  <p>{{ steamGlTag.sumValue }}</p>
-                  <p>{{ steamGlTag.flowValue }}</p>
+                  <p>{{ steamGlTag.sumValue }}t</p>
+                  <p>{{ steamGlTag.flowValue }}t</p>
                   <p>{{ steamGlTag.SteamWD }}°C</p>
                 </div>
               </div>
@@ -248,8 +243,8 @@
               <div class="steamTagLabel" style="left:-10px;top: 345px;">
                 <div class="steamTagTitle">锅炉总流量计DN400</div>
                 <div class="steamTagValue">
-                  <p>{{ steamGlTag.sumValue }}</p>
-                  <p>{{ steamGlTag.flowValue }}</p>
+                  <p>{{ steamGlTag.sumValue }}t</p>
+                  <p>{{ steamGlTag.flowValue }}t</p>
                   <p>{{ steamGlTag.SteamWD }}°C</p>
                 </div>
               </div>
@@ -306,8 +301,8 @@
               <div class="steamTagLabel" style="left:6px;top: 350px;min-width: 155px;width: 155px;">
                 <div class="steamTagTitle">锅炉流量计DN400</div>
                 <div class="steamTagValue">
-                  <p>{{ steamGlTag.sumValue }}</p>
-                  <p>{{ steamGlTag.flowValue }}</p>
+                  <p>{{ steamGlTag.sumValue }}t</p>
+                  <p>{{ steamGlTag.flowValue }}t</p>
                   <p>{{ steamGlTag.SteamWD }}°C</p>
                 </div>
               </div>
@@ -338,8 +333,8 @@
               <div class="steamTagLabel" style="left:30px;top: 315px;min-width: 120px;width: 120px;">
                 <div class="steamTagTitle" style="line-height: 22px;">锅炉流量计DN400</div>
                 <div class="steamTagValue">
-                  <p>{{ steamGlTag.sumValue }}</p>
-                  <p>{{ steamGlTag.flowValue }}</p>
+                  <p>{{ steamGlTag.sumValue }}t</p>
+                  <p>{{ steamGlTag.flowValue }}t</p>
                   <p>{{ steamGlTag.SteamWD }}°C</p>
                 </div>
               </div>
