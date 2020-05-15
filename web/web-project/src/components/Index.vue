@@ -108,8 +108,8 @@
                 </el-card>
                 <el-card shadow="hover" class="useAreaCard itemMarginBottom">
                   <p>提取二车间</p>
-                  <div class="waterTagData" style="right: 3px;top: 3px;">后走廊灌溉水DN40<p>{{ waterTagList.W_Area_TQR_17_1_9.sumValue }}</p><p>{{ waterTagList.W_Area_TQR_17_1_9.flowValue }}</p></div>
-                  <div class="waterTagData" style="bottom: 3px;left:3px;">出料电梯旁饮用水DN100<p>{{ waterTagList.W_Area_TQR_17_2_8.sumValue }}</p><p>{{ waterTagList.W_Area_TQR_17_2_8.flowValue }}</p></div>
+                  <div class="waterTagData" style="right: 3px;top: 3px;">后走廊灌溉水DN40<p>{{ waterTagList.W_Area_TQR_17_2_8.sumValue }}</p><p>{{ waterTagList.W_Area_TQR_17_2_8.flowValue }}</p></div>
+                  <div class="waterTagData" style="bottom: 3px;left:3px;">出料电梯旁饮用水DN100<p>{{ waterTagList.W_Area_TQR_17_1_9.sumValue }}</p><p>{{ waterTagList.W_Area_TQR_17_1_9.flowValue }}</p></div>
                 </el-card>
                 <el-card shadow="hover" class="useAreaCard" style="height: 140px;">
                   <p>综合车间</p>
