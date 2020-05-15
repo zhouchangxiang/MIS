@@ -92,7 +92,7 @@
           </div>
         </el-drawer>
         <!-- 水表分布图 -->
-        <el-dialog title="水表采集分布" :visible.sync="waterAreaDialog" width="70%" v-if="waterAreaDialog">
+        <el-dialog title="水表采集分布" :visible.sync="waterAreaDialog" width="75%" v-if="waterAreaDialog">
           <el-row :gutter="20">
             <el-col :span="24" style="margin-bottom: 20px;">
               <el-col :span="4">
@@ -141,7 +141,7 @@
                   <el-card shadow="hover" class="useAreaCard" style="height: 240px;">
                     <p>前处理车间</p>
                     <div class="waterTagData" style="left: 3px;top: 40px;">洗药室灌溉水DN25<p>{{ waterTagList.W_Area_QCL_33_1_20.sumValue }}</p><p>{{ waterTagList.W_Area_QCL_33_1_20.flowValue }}</p></div>
-                    <div class="waterTagData" style="left: 3px;top: 110px;">饮用水DN25<p>{{ waterTagList.W_Area_QCL_33_2_20.sumValue }}</p><p>{{ waterTagList.W_Area_QCL_33_2_20.flowValue }}</p></div>
+                    <div class="waterTagData" style="left: 3px;top: 120px;">饮用水DN25<p>{{ waterTagList.W_Area_QCL_33_2_20.sumValue }}</p><p>{{ waterTagList.W_Area_QCL_33_2_20.flowValue }}</p></div>
                     <div class="waterTagData" style="right: 3px;bottom: 3px;">生产部 灌消防水</div>
                   </el-card>
                 </el-col>
