@@ -21,8 +21,8 @@
                    <ve-ring :data="chartData" :settings="chartSettings" :legend-visible="false" :events="chartEvents" :extend="piechartExtend"></ve-ring>
                 </div>
                 <div class="listpic">
-                    <ve-histogram :data="listchartData" width="350px" height="150px" :legend-visible="false"  :extend="ChartExtend">
-                </ve-histogram></div>
+                    <ve-histogram :data="vlchartData" width="350px" height="150px" :legend-visible="false"  :extend="ChartExtend"></ve-histogram>
+                </div>
             </div>
             <div class="list-banner">
                 <div class="header">{{currentArea}}</div>
@@ -88,6 +88,7 @@ export default {
                     smooth: false
             }
         },
+        CompareDate:Date.now() - 3600 * 1000 * 24,
         choosedate:0,
         choosekind:0,
         date:['年','月','日'],
@@ -100,6 +101,15 @@ export default {
         highvalue:1,
         lowvalue:1,
         flag:false,
+        vlchartData: {
+                columns: ['时间', '今日能耗'],
+                rows: [
+                    { '时间': '01', '今日能耗': 139},
+                    { '时间': '01', '今日能耗': 139},
+                    { '时间': '01', '今日能耗': 139},
+                    { '时间': '01', '今日能耗': 139}
+                ]
+        },
         chartData: {
           columns: ['region', 'value'],
           rows: []
@@ -114,16 +124,38 @@ export default {
         this.initOperation();
     },
     methods:{
+        //展示当天的数据
+        getallRreview(){
+            this.$http.get('/api/energyall',{
+            params: {ModelFlag: "能耗预览",CompareDate:moment(this.CompareDate).format('YYYY-MM-DD'),EnergyClass:this.currentkind}
+            }).then((res) => {
+               var arr1=JSON.parse(res.data).compareTodayRow
+               var arr2=JSON.parse(res.data).lastMonthRow
+               this.vlchartData.rows=[]
+              if(this.currentdate=='日'){
+               for(var i=0;i<arr1.length;i++){
+                    this.vlchartData.columns=['时间', '今日能耗']
+                    this.vlchartData.rows.push({'时间':arr1[i]['时间'].slice(-2),'今日能耗':arr1[i]['今日能耗']})
+               }
+                }else{
+                for(var i=0;i<arr2.length;i++){
+                   this.vlchartData.columns=['日期', '本月能耗']
+                   this.vlchartData.rows.push({'日期':arr2[i]['日期'].slice(-2),'本月能耗':arr2[i]['本月能耗']})
+               }
+                }
+            })
+        },
         ChooseDate(e){
             this.currentdate=this.date[e]
+            this.getallRreview()
             if(this.currentdate=='年'){
-                this.StartTime='2020-04-14 00:00:00'
+                this.StartTime= moment().year(moment().year()).startOf('year').format('YYYY-MM-DD HH:mm:ss')
             }else if(this.currentdate=='月'){
-                this.StartTime='2020-04-20 00:00:00'
+                this.StartTime=  moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm:ss')
             }else{
-                this.StartTime='2020-04-23 00:00:00'
+                this.StartTime= moment().format('YYYY-MM-DD') + " 00:00"
             }
-            this.EndTime=moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+            this.EndTime=moment(new Date()).format('YYYY-MM-DD HH:mm')
             this.currentArea=localStorage.getItem('myArea')
             this.$http.get('/api/electricnergycost',{params:{
                 StartTime:this.StartTime,
@@ -131,14 +163,17 @@ export default {
                 TimeClass:this.currentkind,
                 AreaName:this.currentArea
             }}).then((value) => {
+                console.log(value)
                 this.highvalue=value.data.periodTimeTypeItem[1].expendEnergy
                 this.lowvalue=value.data.periodTimeTypeItem[3].expendEnergy
             })
         },
         ChooseKind(e){
-           this.chartData.rows=[]
-           this.listchartData.rows=[]
            this.currentkind=this.kind[e]
+           this.listchartData.rows=[]
+           this.chartData.rows=[]
+           this.getallRreview()
+           this.currentArea=localStorage.getItem('myArea')
            var params={EnergyClass:this.currentkind,CompareTime:'2020-04-10'}
            if(!this.flag){
            this.flag=true

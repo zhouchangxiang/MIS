@@ -25,15 +25,38 @@
         <van-loading size="24px" vertical v-if="loading" color="lightgreen" type="spinner">加载中...</van-loading>
         <div class="show-banner" v-if="banner===0">
                   <div class="sb-name">厂区{{kind}}总能耗</div>
-                  <div class="sb-number">{{kindnum}}</div>
-                  <div class="sb-compare">较上期</div>
-                  <div class="sb-l-n" :class="todayCon-compareDateCon>0?'maxcolor':'mincolor'"  v-if="this.date==='日'">{{dayCompare}}</div>
-                  <div class="sb-l-n" :class="thisMonthCon-lastMonthCon>0?'maxcolor':'mincolor'" v-if="this.date==='月'">{{monthCompare}}</div>
-                  <div class="sb-l-n" :class="thisYearCon-lastYearCon>0?'maxcolor':'mincolor'" v-if="this.date==='年'">{{yearCompare}}</div>
+                  <div class="sb-number">{{valueall}}</div>
                   <div class="sb-dw">单位</div>
                   <div class="sb-t">{{unit}}</div>
+                  <div class="water-tips"  v-if="kind=='水'">水的数据面板</div>
+                  <div class="water-banner" v-if="kind=='水'">
+                      <div>
+                          <table>
+                              <tr>
+                                  <td>种类</td>
+                                  <td>用量</td>
+                                  <td>成本</td>
+                              </tr>
+                              <tr>
+                                  <td>灌溉水</td>
+                                  <td>{{waterGG}}</td>
+                                  <td>{{waterGGcost}}</td>
+                              </tr>
+                               <tr>
+                                  <td>饮用水</td>
+                                  <td>{{waterGG}}</td>
+                                  <td>{{waterYYcost}}</td>
+                              </tr>
+                               <tr>
+                                  <td>纯净水</td>
+                                  <td>{{waterSJ}}</td>
+                                  <td>{{waterSJcost}}</td>
+                              </tr>
+                          </table>
+                        </div>                      
+                  </div>
                   <div class="tabbar">
-                     <ve-line :data="mychartData" width="350px" height="200px" :legend-visible="true"  :extend="lineChartExtend"></ve-line>
+                     <ve-line :data="vlchartData" width="350px" height="200px" :legend-visible="true"  :extend="lineChartExtend"></ve-line>
                  </div>
            </div>
            <div class="current-Area"  v-if="banner===1">
@@ -87,7 +110,7 @@
           <div class="show-foot">
                <div class="sf-l">
                    <div class="hf">耗费成本</div>
-                   <div class="all-money">{{cost}}<span>元</span></div>
+                   <div class="all-money">{{this.banner===0?costall:cost}}<span>元</span></div>
                </div>
                 <div class="sf-r">
                    <div class="machine">{{kind}}表在线情况</div>
@@ -138,15 +161,10 @@ export default {
                 { '区域': '综合车间', '能耗量': 100}
             ]
             },
-            mychartData: {
-                columns: ['日期', '今天数值', '昨天数值'],
+            vlchartData: {
+                columns: ['时间', '今日能耗', '对比日能耗'],
                 rows: [
-                    { '日期': '1/1', '今天数值': 1393, '昨天数值': 1093},
-                    { '日期': '1/2', '今天数值': 3530, '昨天数值': 3230},
-                    { '日期': '1/3', '今天数值': 2923, '昨天数值': 2623},
-                    { '日期': '1/4', '今天数值': 1723, '昨天数值': 1423},
-                    { '日期': '1/5', '今天数值': 3792, '昨天数值': 3492},
-                    { '日期': '1/6', '今天数值': 4593, '昨天数值': 4293}
+                    { '时间': '01', '今日能耗': 1393, '对比日能耗': 1093}
                 ]
                 },
             choosedate:0,
@@ -159,6 +177,8 @@ export default {
             unit:'t',
             cost:0,
             kindnum:0,
+            valueall:0,
+            costall:0,
             todaydaywater:0,
             todaydayelectric:0,
             CompareDate:Date.now() - 3600 * 1000 * 24, //默认对比日期
@@ -187,7 +207,13 @@ export default {
             steam3:{},
             batch1:{batchCount:0,steamCon:'0',steamEveryBatch:'0',waterCon:'0',waterEveryBatch:'0'},
             batch2:{batchCount:0,steamCon:'0',steamEveryBatch:'0',waterCon:'0',waterEveryBatch:'0'},
-            batch3:{batchCount:0,steamCon:'0',steamEveryBatch:'0',waterCon:'0',waterEveryBatch:'0'}
+            batch3:{batchCount:0,steamCon:'0',steamEveryBatch:'0',waterCon:'0',waterEveryBatch:'0'},
+            waterGG:0,
+            waterYY:0,
+            waterSJ:0,
+            waterGGcost:0,
+            waterYYcost:0,
+            waterSJcost:0,
         }
     },
     created(){
@@ -244,19 +270,33 @@ export default {
         }
     },
     methods:{
-    getInitMessage(){
+        getallRreview(){
+            this.$http.get('/api/energyall',{
+            params: {ModelFlag: "能耗预览",CompareDate:moment(this.CompareDate).format('YYYY-MM-DD'),EnergyClass:this.kind}
+            }).then((res) => {
+               var arr1=JSON.parse(res.data).compareTodayRow
+               var arr2=JSON.parse(res.data).lastMonthRow
+               this.vlchartData.rows=[]
+                if(this.date=='日'){
+               for(var i=0;i<arr1.length;i++){
+                    this.vlchartData.columns=['时间', '今日能耗', '对比日能耗']
+                    this.vlchartData.rows.push({'时间':arr1[i]['时间'].slice(-2),'今日能耗':arr1[i]['今日能耗'],'对比日能耗':arr1[i]['对比日能耗']})
+               }
+                }else{
+               for(var i=0;i<arr2.length;i++){
+                   this.vlchartData.columns=['日期', '本月能耗', '上月能耗']
+                   this.vlchartData.rows.push({'日期':arr2[i]['日期'].slice(-2),'本月能耗':arr2[i]['本月能耗'],'上月能耗':arr2[i]['上月能耗']})
+               }
+                }
+            })
+        },
+        getInitMessage(){
         this.loading=true
         var nowTime = moment().format('HH:mm').substring(0,4) + "0"
         var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
         var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
-        var params={}
-        var params1={}
-        params.StartTime = todayStartTime
-        params.EndTime = todayEndTime
-        params.Area = '综合车间'
-        params1.AreaName='综合车间'
-        params1.StartTime=todayStartTime
-        params1.EndTime=todayEndTime
+        var params= {StartTime:todayStartTime,EndTime:todayEndTime,Area:'综合车间'}
+        var params1={AreaName:'综合车间',StartTime:todayStartTime,EndTime:todayEndTime}
         this.$http.all([
             this.$http.get("/api/energywater",{params: params}),
             this.$http.get('/api/batchMaintainEnergy',{params:params1}),
@@ -308,27 +348,15 @@ export default {
              this.myapi='/energysteam'
         }
         if(this.date==='日'){
-            myparams.StartTime=todayStartTime
-            myparams.EndTime = todayEndTime
-            myparams.AreaName = this.AreaName
+            myparams={StartTime:todayStartTime,EndTime:todayEndTime,AreaName:this.AreaName}
         }else if(this.date==='月'){
-            myparams.StartTime=monthStartTime
-            myparams.EndTime = monthEndTime
-            myparams.AreaName = this.AreaName
+            myparams={StartTime:monthStartTime,EndTime:monthEndTime,AreaName:this.AreaName}
         }else{
-            myparams.StartTime=yearStartTime
-            myparams.EndTime =moment().format('YYYY-MM-DD HH:mm:ss')
-            myparams.AreaName = this.AreaName
+            myparams={StartTime:yearStartTime,EndTime:moment().format('YYYY-MM-DD HH:mm:ss'),AreaName:this.AreaName}
         }
-            params1.StartTime=todayStartTime
-            params1.EndTime = todayEndTime
-            params1.AreaName = this.AreaName
-            params2.StartTime=monthStartTime
-            params2.EndTime = monthEndTime
-            params2.AreaName = this.AreaName
-            params3.StartTime=yearStartTime
-            params3.EndTime =moment().format('YYYY-MM-DD HH:mm:ss')
-            params3.AreaName = this.AreaName
+            params1={StartTime:todayStartTime,EndTime:todayEndTime,AreaName:this.AreaName}
+            params2={StartTime:monthStartTime,EndTime:monthEndTime,AreaName:this.AreaName}
+            params3={StartTime:yearStartTime,EndTime:moment().format('YYYY-MM-DD HH:mm:ss'),AreaName:this.AreaName}
         this.$http.all([
             this.$http.get('api'+this.myapi,{params: myparams}),//当前年月日水电气数据
             this.$http.get('/api/batchMaintainEnergy',{params:myparams}),
@@ -371,12 +399,22 @@ export default {
     },
     ChooseKind(e){
      this.kind=this.kindall[e]
-     var comparetime =''
+     var nowTime = moment().format('HH:mm').substring(0,4) + "0"
+     var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
+     var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
      var thisDate = moment().format('DD')
+     var thisStartYear = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD HH:mm')
+     var thisStartMonth = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm')
      var lastMonth = moment().month(moment().month() - 1).endOf('month').format('YYYY-MM-DD').substring(0,7) + "-" + thisDate
      var lastYear = moment().year(moment().year() - 1).format('YYYY-MM-DD')
+     var comparetime =''
+     var params2={}
+     var api=''
+     params2.Area=''
      if(this.date==='日'){
          comparetime= moment(this.CompareDate).format('YYYY-MM-DD')
+         params2.StartTime=todayStartTime
+         params2.EndTime=todayEndTime
          if(this.kind==='水'){
           this.kindnum=this.water1.value
           this.cost=this.water1.cost
@@ -389,6 +427,8 @@ export default {
          }
      }else if(this.date==='月'){
          comparetime= lastMonth
+         params2.StartTime=thisStartMonth
+         params2.EndTime=moment().format('YYYY-MM-DD HH:mm')
           if(this.kind==='水'){
           this.kindnum=this.water2.value
           this.cost=this.water2.cost
@@ -401,6 +441,8 @@ export default {
          }
      }else{
          comparetime= lastYear
+         params2.StartTime=thisStartYear
+         params2.EndTime=moment().format('YYYY-MM-DD HH:mm')
           if(this.kind==='水'){
           this.kindnum=this.water3.value
           this.cost=this.water3.cost
@@ -415,14 +457,49 @@ export default {
      var params={}
      params.EnergyClass=this.kind
      params.CompareTime='2020-04-11'
-     this.$http.get('/api/areatimeenergycount',{params:params}).then((res) => {
+     this.$http.get('/api/areatimeenergycount',{params:params}).then((res) => { //获取区域时段能耗，v-charts柱状图展示
         this.unit=res.data.unit
         this.chartData.rows=res.data.rows
      })
+       if(this.kind === "电"){
+          api = "/api/energyelectric"
+        }else if(this.kind === "水"){
+          api = "/api/energywater"
+        }else if(this.kind === "汽"){
+          api = "/api/energysteam"
+        }
+        if(this.banner===0){
+        this.$http.get(api,{params:params2}).then((value) => {
+            this.valueall=JSON.parse(value.data).value//获取整厂区水，电，汽的数据
+            this.costall=JSON.parse(value.data).cost
+        })
+        }
+        this.getallRreview()
     },
     ChooseDate(e){
-     this.date=this.dateall[e]
+        this.date=this.dateall[e]
+        var api=''
+        var nowTime = moment().format('HH:mm').substring(0,4) + "0"
+        var nowDate = moment().format('MM-DD') + " " + nowTime
+        var thisDate = moment().format('DD')
+        var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
+        var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
+        var compareDateStartTime = moment(this.CompareDate).format('YYYY-MM-DD') + " 00:00"
+        var compareDateEndTime = moment(this.CompareDate).format('YYYY-MM-DD') + " " + nowTime
+        var thisStartMonth = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm')
+        var lastStartMonth = moment().month(moment().month() - 1).startOf('month').format('YYYY-MM-DD HH:mm')
+        var lastEndMonth = moment().month(moment().month() - 1).endOf('month').format('YYYY-MM-DD').substring(0,7) + "-" + thisDate + " " + nowTime
+        var thisStartYear = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD HH:mm')
+        var lastStartYear = moment().year(moment().year() - 1).startOf('year').format('YYYY-MM-DD HH:mm')
+        var lastEndYear = moment().year(moment().year() - 1).endOf('year').format('YYYY-MM-DD HH:mm')
+          if(!moment(lastEndMonth)._isValid){  //判断上月结束日期是否合法，否则赋值为上月最后一天的23：59
+            lastEndMonth = moment().month(moment().month() - 1).endOf('month').format('YYYY-MM-DD HH:mm');
+          }
+        var params2={}
+        params2.Area=''
       if(this.date==='日'){
+          params2.StartTime=todayStartTime
+          params2.EndTime=todayEndTime
          if(this.kind==='水'){
           this.kindnum=this.water1.value
           this.cost=this.water1.cost
@@ -434,6 +511,8 @@ export default {
           this.cost=this.steam1.cost
          }
      }else if(this.date==='月'){
+          params2.StartTime=thisStartMonth
+          params2.EndTime=moment().format('YYYY-MM-DD HH:mm')
           if(this.kind==='水'){
           this.kindnum=this.water2.value
           this.cost=this.water2.cost
@@ -445,6 +524,8 @@ export default {
           this.cost=this.steam2.cost
          }
      }else{
+          params2.StartTime=thisStartYear
+          params2.EndTime=moment().format('YYYY-MM-DD HH:mm')
           if(this.kind==='水'){
           this.kindnum=this.water3.value
           this.unit=this.water3.unit
@@ -459,29 +540,18 @@ export default {
           this.cost=this.steam3.cost
          }
      }
-     var api=''
-     var nowTime = moment().format('HH:mm').substring(0,4) + "0"
-     var nowDate = moment().format('MM-DD') + " " + nowTime
-     var thisDate = moment().format('DD')
-     var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
-     var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
-     var compareDateStartTime = moment(this.CompareDate).format('YYYY-MM-DD') + " 00:00"
-     var compareDateEndTime = moment(this.CompareDate).format('YYYY-MM-DD') + " " + nowTime
-     var thisStartMonth = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm')
-     var lastStartMonth = moment().month(moment().month() - 1).startOf('month').format('YYYY-MM-DD HH:mm')
-     var lastEndMonth = moment().month(moment().month() - 1).endOf('month').format('YYYY-MM-DD').substring(0,7) + "-" + thisDate + " " + nowTime
-     var thisStartYear = moment().year(moment().year()).startOf('year').format('YYYY-MM-DD HH:mm')
-     var lastStartYear = moment().year(moment().year() - 1).startOf('year').format('YYYY-MM-DD HH:mm')
-     var lastEndYear = moment().year(moment().year() - 1).endOf('year').format('YYYY-MM-DD HH:mm')
-        if(!moment(lastEndMonth)._isValid){  //判断上月结束日期是否合法，否则赋值为上月最后一天的23：59
-          lastEndMonth = moment().month(moment().month() - 1).endOf('month').format('YYYY-MM-DD HH:mm');
-        }
-    if(this.kind === "电"){
+        if(this.kind === "电"){
           api = "/api/energyelectric"
         }else if(this.kind === "水"){
           api = "/api/energywater"
         }else if(this.kind === "汽"){
           api = "/api/energysteam"
+        }
+        if(this.banner==0){
+             this.$http.get(api,{params:params2}).then((res) => {
+                 this.valueall=JSON.parse(res.data).value //获取整厂区水，电，汽的数据
+                 this.costall=JSON.parse(res.data).cost
+             })
         }
          this.$http.all([
           this.$http.get(api,{params: {StartTime: todayStartTime,EndTime:todayEndTime}}),//获取今天能耗
@@ -499,11 +569,33 @@ export default {
             this.thisYearCon = thisYearCon.data.value
             this.lastYearCon = lastYearCon.data.value
         }))
+        this.getallRreview()
     },
     Choosebanner(e){
        this.banner=e
-    }
-}
+       if(this.banner==0){
+           this.getallRreview()
+       }
+        var todayStartTime = '2020-05-12 00:00'
+        var todayEndTime = '2020-05-12 18:00'
+       if(this.banner==0){
+           this.$http.get("/api/watertrendlookboard",{
+            params: {
+                AreaName:this.AreaName,
+                StartTime:todayStartTime,
+                EndTime:todayEndTime
+            }
+            }).then(res =>{
+            this.waterGG = res.data.GG+'t'
+            this.waterGGcost=res.data.GGcost+'元'
+            this.waterYY = res.data.YY+'t'
+            this.waterYYcost=res.data.YYcost+'元'
+            this.waterSJ = res.data.SJ+'t'
+            this.waterSJcost=res.data.GGcost+'元'
+            })
+                }
+                }
+            }
 }
 </script>
 <style lang="less" scoped>
@@ -516,14 +608,14 @@ export default {
      .show-box{
         position: relative;
         width: 375px;
-        height:720px;
+        height:800px;
         box-sizing: border-box;
         padding: 0 12px 12px 13px;
         background-color: @bgcc;
          .current-Area{
             position: relative;
             width:350px;
-            height:290px;
+            height:380px;
             overflow: hidden;
             font-family:PingFang SC;
             box-sizing: border-box;
@@ -534,7 +626,29 @@ export default {
             margin:2px 0 20px 0;
             }
         .show-banner{
-           .current-Area()
+           .current-Area();
+           .water-tips{
+               position: absolute;
+               top:80px;
+               left: 125px;
+               font-size: 12px;
+               color: #fff;
+           }
+           .water-banner{
+               position: absolute;
+               top:95px;
+               left: 10px;
+               height: 70px;
+               width: 300px;
+               background-color:#ddd;
+               table{
+                 width: 100%;
+                 height:100%;
+               tr{
+                   text-align: center;
+               }
+               }
+           }
         }
            .sb-name{
                position: absolute;
@@ -560,7 +674,7 @@ export default {
            }
            .sb-compare{
                position: absolute;
-               left: 220px;
+               left: 200px;
                top: 18px;
                height:11px;
                font-size:8px;
@@ -571,7 +685,7 @@ export default {
            }
            .sb-l-n{
                position: absolute;
-               left:220px;
+               left:200px;
                top:48px;
                height:17px;
                font-size:12px;
@@ -604,9 +718,9 @@ export default {
             }
             .tabbar{
                 position: absolute;
-                top:90px;
+                top:180px;
                 left:5px;
-                width: 350px;
+                width: 340px;
                 height: 200px;
             }
         .show-body{
