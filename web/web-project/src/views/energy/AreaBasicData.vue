@@ -390,7 +390,8 @@
         }
       },
       initWebSocket(){ //初始化weosocket
-        this.websock = new WebSocket('ws://' + location.host + '/socket');
+        // this.websock = new WebSocket('ws://' + location.host + '/socket');
+        this.websock = new WebSocket('ws://127.0.0.1:5002');
         this.chartsLoading = true
         this.websock.onmessage = this.websocketonmessage;
         this.websock.onopen = this.websocketonopen;
@@ -398,13 +399,7 @@
         this.websock.onclose = this.websocketclose;
       },
       websocketonopen(){ //连接建立之后执行send方法发送数据
-        if(this.formParameters.energy === "电"){
-          this.websocketsend(this.ElectricEqActive);
-        }else if(this.formParameters.energy === "水"){
-          this.websocketsend(this.WaterEqActive);
-        }else if(this.formParameters.energy === "汽"){
-          this.websocketsend(this.SteamEqActive);
-        }
+        this.websocketsend();
       },
       websocketonerror(){//连接建立失败
         console.log("websocket连接失败")
@@ -413,22 +408,36 @@
         this.chartsLoading = false
         var resdata = JSON.parse(e.data);
         if(this.formParameters.energy === "电"){
-          this.chartData.rows.push({
-            "时间": moment().format("HH:mm:ss"),
-            "总功率": resdata[1].areaEZGL
-          })
-          this.chartData.rows.shift()
+          for(var key in resdata[0].electric){
+            if(key === this.ElectricEqActive){
+              this.chartData.rows.push({
+                "时间": moment().format("HH:mm:ss"),
+                "总功率": resdata[0].electric[key].ZGL
+              })
+              this.chartData.rows.shift()
+            }
+          }
+
         }else if(this.formParameters.energy === "水"){
-          this.chartData.rows.push({
-            "时间": moment().format("HH:mm:ss"),
-            "累计流量": resdata[1].areaWSum
-          })
-          this.chartData.rows.shift()
+          for(var key in resdata[0].water){
+            if(key === this.WaterEqActive){
+              this.chartData.rows.push({
+                "时间": moment().format("HH:mm:ss"),
+                "累计流量": resdata[0].water[key].sumValue
+              })
+              this.chartData.rows.shift()
+            }
+          }
         }else if(this.formParameters.energy === "汽"){
-          this.chartData.rows.push({
-            '时间': moment().format("HH:mm:ss"),
-            '累计流量': resdata[1].areaSSum
-          })
+          for(var key in resdata[0].steam){
+            if(key === this.SteamEqActive){
+              this.chartData.rows.push({
+                "时间": moment().format("HH:mm:ss"),
+                "累计流量": resdata[0].steam[key].sumValue
+              })
+              this.chartData.rows.shift()
+            }
+          }
           this.chartData.rows.shift()
         }
       },
