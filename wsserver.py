@@ -147,7 +147,7 @@ def handler_msg(conn):
                     oc_water_dict_i["sumValue"] = abs(strtofloat(
                         redis_conn.hget(constant.REDIS_TABLENAME, oc + "S")))
                     oc_dict_i_water_tag[oc] = oc_water_dict_i
-                electric_oclass = ast.literal_eval(returnb(redis_conn.hget(constant.REDIS_TABLENAME, "all_water_tags")))
+                electric_oclass = ast.literal_eval(returnb(redis_conn.hget(constant.REDIS_TABLENAME, "all_electric_tags")))
                 oc_dict_i_electric_tag = {}
                 for oc in electric_oclass:
                     oc_electric_dict_i = {}
