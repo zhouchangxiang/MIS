@@ -16,7 +16,6 @@ from models.SystemManagement.system import ElectricSiteURL, ElectricProportion
 from models.SystemManagement.core import TagDetail, AreaTable
 from dbset.log.BK2TLogger import logger,insertSyslog
 import ast
-from __future__ import unicode_literals, print_function
 from datetime import datetime
 import time
 import os
@@ -216,7 +215,7 @@ if __name__ == "__main__":
 
     app = tornado.web.Application([
         (r"/", IndexHandler),
-        (r"/chat", ChatHandler),
+        (r"/socket", ChatHandler),
     ],
         static_path=os.path.join(os.path.dirname(__file__), "static"),
         template_path=os.path.join(os.path.dirname(__file__), "templates"),
