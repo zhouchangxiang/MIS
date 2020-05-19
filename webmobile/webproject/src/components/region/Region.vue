@@ -6,27 +6,31 @@
         <van-tab :title="item" v-for="(item,index) in list" :key="index"></van-tab>
       </van-tabs>
       </div>
+      <div class="date-choose">
+        <van-cell title="选择对比日期" :value="comparedate" @click="show = true" />
+          <van-calendar v-model="show" @confirm="onConfirm" :min-date="minDate" :max-date="maxDate" color="#07c160"/>
+      </div>
       <div class="compare">
         <div class="c1" :class="{switchbgc:bgc1}" @click="switchShow1()">
           <div class="icon electric"></div>
           <div class="dw electric1">kwh</div>
           <div class="number">{{electric}}</div>
-          <div class="comp" @click="getEq">较昨日</div>
-          <div class="sn">{{dayelectricCompare}}</div>
+          <div class="comp" @click="getEq">较{{yester}}日</div>
+          <div class="sn" :class="this.todayelectric-this.yesterdayelectric>0?'maxcolor':'mincolor'">{{dayelectricCompare}}</div>
         </div>
          <div class="c2" :class="{switchbgc:bgc2}" @click="switchShow2()">
           <div class="icon water"></div>
           <div class="dw water">T</div>
           <div class="number">{{water}}</div>
-          <div class="comp">较昨日</div>
-          <div class="sn">{{daywaterCompare}}</div>
+          <div class="comp">较{{yester}}日</div>
+          <div class="sn" :class="this.todaywater-this.yesterdaywater>0?'maxcolor':'mincolor'">{{daywaterCompare}}</div>
         </div>
         <div class="c3" :class="{switchbgc:bgc3}" @click="switchShow3()">
           <div class="icon steam"></div>
           <div class="dw">T</div>
           <div class="number">{{steam}}</div>
-          <div class="comp">较昨日</div>
-          <div class="sn">{{daysteamCompare}}</div>
+          <div class="comp">较{{yester}}日</div>
+          <div class="sn" :class="this.todaysteam-this.yesterdaysteam>0?'maxcolor':'mincolor'">{{daysteamCompare}}</div>
         </div>
       </div>
       <div class="piclist">
@@ -61,6 +65,10 @@ export default {
         yAxisName: ['数值']
       }
         return {
+          comparedate: '2020-04-30',
+          show: false,
+          minDate: new Date(2020, 0, 1),
+          maxDate: new Date(2020, 11, 31),
           active:0,
           list:[],
           water:0,
@@ -82,6 +90,7 @@ export default {
           kind:'电',
           currentchoice:'GMP车间',
           kong:null,
+          yester:'昨',
           ElectricEqList:[],
           WaterEqList:[],
           SteamEqList:[],
@@ -105,13 +114,11 @@ export default {
             { '日期': '', '数值': ""},
             { '日期': '', '数值': ""},
             { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
             { '日期': '', '数值': ""}]
         },
         resetChartData: {
           columns: ['日期', '数值'],
           rows: [
-           { '日期': '', '数值': ""},
             { '日期': '', '数值': ""},
             { '日期': '', '数值': ""},
             { '日期': '', '数值': ""},
@@ -137,13 +144,11 @@ export default {
             { '日期': '', '数值': ""},
             { '日期': '', '数值': ""},
             { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
             { '日期': '', '数值': ""}]
         },
         steamChartData:{
           columns: ['日期', '数值'],
           rows: [
-           { '日期': '', '数值': ""},
             { '日期': '', '数值': ""},
             { '日期': '', '数值': ""},
             { '日期': '', '数值': ""},
@@ -216,6 +221,28 @@ export default {
         },
     },
     methods:{
+      formatDate(date) {
+      var month=`${date.getMonth()+1}`.padStart(2, 0)
+      var day=`${date.getDate()}`.padStart(2, 0)
+      return `${date.getFullYear()}-${month}-${day}`;
+      },
+      onConfirm(date) {
+      this.show = false;
+      this.yester='对比'
+      this.comparedate = this.formatDate(date);
+      var nowTime = moment().format('HH:mm').substring(0,4) + "0"
+      var compareDateStartTime = moment(this.comparedate).day(moment(this.comparedate).day()).startOf('day').format('YYYY-MM-DD HH:mm')
+      var compareDateEndTime = moment(this.comparedate).format('YYYY-MM-DD') + " " + nowTime
+      this.$http.all([
+            this.$http.get('/api/energywater',{params:{StartTime:compareDateStartTime,EndTime:compareDateEndTime,AreaName:this.currentchoice}}),
+            this.$http.get('/api/energyelectric',{params:{StartTime:compareDateStartTime,EndTime:compareDateEndTime,AreaName:this.currentchoice}}),
+            this.$http.get('/api/energysteam',{params:{StartTime:compareDateStartTime,EndTime:compareDateEndTime,AreaName:this.currentchoice}})
+            ]).then(this.$http.spread((res1,res2,res3)=>{
+             this.yesterdaywater=JSON.parse(res1.data).value
+             this.yesterdayelectric=JSON.parse(res2.data).value
+             this.yesterdaysteam=JSON.parse(res3.data).value
+              }))
+      },
       switchShow1(){
       if(this.websoc){
         this.websoc.close()
@@ -242,7 +269,7 @@ export default {
        this.bgc1=this.bgc3=false
        this.kind='水'
        this.onlineitem=this.onlinebiaolist[0]
-        this.kong=this.resetChartData
+       this.kong=this.resetChartData
        if(this.bgc2){
          this.$toast('当前显示水数据')
          this.kong=this.waterChartData
@@ -250,7 +277,7 @@ export default {
          this.kong=this.resetChartData
        }
        this.cost=this.cost1[0]
-         this.initWebSocket()
+       this.initWebSocket()
       },
       switchShow3(){
         if(this.websoc){
@@ -260,7 +287,7 @@ export default {
        this.bgc3=!this.bgc3
        this.kind='汽'
        this.onlineitem=this.onlinebiaolist[2]
-        this.kong=this.SteamEqList=this.resetChartData
+       this.kong=this.SteamEqList=this.resetChartData
        if(this.bgc3){
          this.$toast('当前显示汽数据')
          this.kong=this.steamChartData
@@ -351,7 +378,7 @@ export default {
           this.$http.all([
             this.$http.get('/api/energywater',{params}),
             this.$http.get('/api/energyelectric',{params}),
-            this.$http.get('/api/energysteam',{params}),
+            this.$http.get('/api/energysteam',{params}),//时间段为月份，获取月的时间段的数据，模拟数据
             this.$http.get('/api/energywater',{params:params1}),
             this.$http.get('/api/energyelectric',{params:params1}),
             this.$http.get('/api/energysteam',{params:params1}),
@@ -442,7 +469,7 @@ export default {
      .show-box{
         position: relative;
         width: 375px;
-        height:750px;
+        height:800px;
         box-sizing: border-box;
         padding: 0 12px 12px 13px;
         background: @bgcc;
@@ -457,6 +484,10 @@ export default {
           opacity:1;
           background-color: #ccc;
           margin-bottom: 20px;
+        }
+        .date-choose{
+          height: 55px;
+          width: 100%;
         }
         .compare{
           width:100%;
@@ -546,9 +577,14 @@ export default {
             font-family:PingFang SC;
             font-weight:500;
             line-height:17px;
-            color:rgba(255,80,65,1);
             opacity:1;
           }
+        .maxcolor{
+          color:red;
+        }
+        .mincolor{
+          color:green;
+        }
           .c1{
             position: relative;
             width:103px;

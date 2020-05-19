@@ -16,7 +16,8 @@ import { Button,
     List,
     Picker,
     Loading,
-    DropdownMenu, DropdownItem
+    DropdownMenu, DropdownItem,
+    Calendar
     } from 'vant'
 
 Vue.use(Toast);
@@ -40,3 +41,4 @@ Vue.use( Picker);
 Vue.use( Loading);
 Vue.use( DropdownMenu);
 Vue.use( DropdownItem);
+Vue.use(Calendar);

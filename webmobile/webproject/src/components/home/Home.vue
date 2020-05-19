@@ -2,10 +2,10 @@
     <div class="show-box">
         <div class="show-top">
                <div class="tips">
-                   <van-tabs type="card" title-active-color="#1E222B" title-inactive-color="#fff" v-model="choosedate" @click="ChooseDate"> 
-                        <van-tab title="日"></van-tab>
-                        <van-tab title="月"></van-tab>
+                   <van-tabs type="card" title-active-color="#1E222B" title-inactive-color="#fff" v-model="choosedate" @click="ChooseDate($event)"> 
                         <van-tab title="年"></van-tab>
+                        <van-tab title="月"></van-tab>
+                        <van-tab title="日"></van-tab>
                     </van-tabs>
                 </div>
                <div class="tips">
@@ -16,9 +16,15 @@
                     </van-tabs>
                </div>
         </div>
+        <div class="tips bannertips">
+                <van-tabs type="card" title-active-color="#1E222B"  title-inactive-color="#fff" v-model="banner" @click="Choosebanner($event)">
+                        <van-tab title="区域总能耗"></van-tab>
+                        <van-tab :title="AreaName"></van-tab>
+                </van-tabs>
+        </div>
         <van-loading size="24px" vertical v-if="loading" color="lightgreen" type="spinner">加载中...</van-loading>
-        <div class="show-banner">
-                  <div class="sb-name">厂区能耗</div>
+        <div class="show-banner" v-if="banner===0">
+                  <div class="sb-name">厂区{{kind}}总能耗</div>
                   <div class="sb-number">{{kindnum}}</div>
                   <div class="sb-compare">较上期</div>
                   <div class="sb-l-n" :class="todayCon-compareDateCon>0?'maxcolor':'mincolor'"  v-if="this.date==='日'">{{dayCompare}}</div>
@@ -27,22 +33,55 @@
                   <div class="sb-dw">单位</div>
                   <div class="sb-t">{{unit}}</div>
                   <div class="tabbar">
-                      <ve-bar :data="chartData" width="150px" height="150px" :legend-visible="false" :extend="areaTimeChartExtend"></ve-bar>
-                   </div>
+                     <ve-line :data="mychartData" width="350px" height="200px" :legend-visible="true"  :extend="lineChartExtend"></ve-line>
+                 </div>
            </div>
+           <div class="current-Area"  v-if="banner===1">
+                  <div class="sb-name">{{AreaName}}--{{kind}}总能耗</div>
+                  <div class="sb-number">{{kindnum}}</div>
+                  <div class="sb-compare">较上期</div>
+                  <div class="sb-l-n" :class="todayCon-compareDateCon>0?'maxcolor':'mincolor'"  v-if="this.date==='日'">{{dayCompare}}</div>
+                  <div class="sb-l-n" :class="thisMonthCon-lastMonthCon>0?'maxcolor':'mincolor'" v-if="this.date==='月'">{{monthCompare}}</div>
+                  <div class="sb-l-n" :class="thisYearCon-lastYearCon>0?'maxcolor':'mincolor'" v-if="this.date==='年'">{{yearCompare}}</div>
+                  <div class="sb-dw">单位</div>
+                  <div class="sb-t">{{unit}}</div>
+                  <div class="tabbar">
+                     <ve-histogram :data="chartData" width="350px" height="200px" :legend-visible="false"  :extend="ChartExtend"></ve-histogram>
+                 </div>
+                 </div>
            <div class="show-body">
-               <div class="sb-l">
+               <div class="sb-l" v-if="this.date==='日'">
                    <div class="scpc">生产批次</div>
-                   <div class="scpc-s">{{kind==='电'?0:batchCount}}</div>
+                   <div class="scpc-s">{{kind==='电'?0:this.batch1.batchCount}}</div>
                    <div class="znhl">总耗能量</div>
-                   <div class="znhl-s">{{kind==='水'?waterCon:(kind==='电'?0:steamCon)}}</div>
+                   <div class="znhl-s">{{kind==='水'?this.batch1.waterCon:(kind==='电'?0:this.batch1.steamCon)}}</div>
                    <div class="dwnh">单位批次能耗</div>
-                   <div class="dwnh-s">{{kind==='水'?waterEveryBatch:(kind==='电'?0:steamEveryBatch)}}</div>
+                   <div class="dwnh-s">{{kind==='水'?this.batch1.waterEveryBatch:(kind==='电'?0:this.batch1.steamEveryBatch)}}</div>
                    <div class="dw-kwh">{{unit}}</div>
                    <div class="dw-pc">&nbsp;/&nbsp;批</div>
                </div>
+                <div class="sb-l" v-if="this.date==='月'">
+                   <div class="scpc">生产批次</div>
+                   <div class="scpc-s">{{kind==='电'?0:this.batch2.batchCount}}</div>
+                   <div class="znhl">总耗能量</div>
+                   <div class="znhl-s">{{kind==='水'?this.batch2.waterCon:(kind==='电'?0:this.batch2.steamCon)}}</div>
+                   <div class="dwnh">单位批次能耗</div>
+                   <div class="dwnh-s">{{kind==='水'?this.batch2.waterEveryBatch:(kind==='电'?0:this.batch2.steamEveryBatch)}}</div>
+                   <div class="dw-kwh">{{unit}}</div>
+                   <div class="dw-pc">&nbsp;/&nbsp;批</div>
+               </div>
+                <div class="sb-l" v-if="this.date==='年'">
+                   <div class="scpc">生产批次</div>
+                   <div class="scpc-s">{{kind==='电'?0:this.batch3.batchCount}}</div>
+                   <div class="znhl">总耗能量</div>
+                   <div class="znhl-s">{{kind==='水'?this.batch3.waterCon:(kind==='电'?0:this.batch3.steamCon)}}</div>
+                   <div class="dwnh">单位批次能耗</div>
+                   <div class="dwnh-s">{{kind==='水'?this.batch3.waterEveryBatch:(kind==='电'?0:this.batch3.steamEveryBatch)}}</div>
+                   <div class="dw-kwh">{{unit}}</div>
+                   <div class="dw-pc">{{unit}}&nbsp;/&nbsp;批</div>
+               </div>
                <div class="sb-r">
-                    <van-picker :columns="area" @change="onChange" :default-index="2"/>
+                    <van-picker :columns="area" @change="onChange" :default-index="9"/>
                </div>
            </div>
           <div class="show-foot">
@@ -63,35 +102,31 @@ var moment=require('moment')
 export default {
     data(){
         return {
-            areaTimeChartExtend: {
-                yAxis:{
-                    show:false,
-                    inverse:true
-                },
-                xAxis:{
-                    show:false,
-                    inverse:true
-                },
-                grid:{
-                    containLabel: false,
-                    left: '0',
-                    right: '0',
-                    bottom: '0',
-                    top:'0'
-                },
-                series: {
-                    barMaxWidth : '6px',
-                    smooth: false
-                },
-                label:{
-                    show:true,
-                    position:"top",
-                    formatter: '{b}'
-                },
-                itemStyle: {
-                    color:"#fff"
+            lineChartExtend:{
+            grid:{
+                    left:'0',
+                    right:'0',
+                    bottom:'0px',
+                    top:'30px'
+            }
+        },
+            ChartExtend: {
+            xAxis:{
+                axisLabel:{
+                    rotate:45
                 }
-                },
+            },
+            grid:{
+                    left:'0',
+                    right:'0',
+                    bottom:'0px',
+                    top:'20px'
+            },
+            series:{
+                    barMaxWidth : 15,
+                    smooth: false
+            }
+        },
             area:['原提取车间','GMP车间','固体制剂车间','中试车间'],
             loading:false,
             chartData: {
@@ -103,20 +138,31 @@ export default {
                 { '区域': '综合车间', '能耗量': 100}
             ]
             },
+            mychartData: {
+                columns: ['日期', '今天数值', '昨天数值'],
+                rows: [
+                    { '日期': '1/1', '今天数值': 1393, '昨天数值': 1093},
+                    { '日期': '1/2', '今天数值': 3530, '昨天数值': 3230},
+                    { '日期': '1/3', '今天数值': 2923, '昨天数值': 2623},
+                    { '日期': '1/4', '今天数值': 1723, '昨天数值': 1423},
+                    { '日期': '1/5', '今天数值': 3792, '昨天数值': 3492},
+                    { '日期': '1/6', '今天数值': 4593, '昨天数值': 4293}
+                ]
+                },
             choosedate:0,
             choosekind:0,
+            banner:1,
             kindall:['水','电','汽'],
             dateall:['年','月','日'],
             kind:'水',
-            date:'日',
+            date:'年',
             unit:'t',
             cost:0,
             kindnum:0,
             todaydaywater:0,
-            todaysteakindnumm:0,
             todaydayelectric:0,
             CompareDate:Date.now() - 3600 * 1000 * 24, //默认对比日期
-            AreaName:'GMP车间',
+            AreaName:'综合车间',
             batchCount:0,
             steamCon:0,
             waterCon:0,
@@ -142,7 +188,6 @@ export default {
             batch1:{batchCount:0,steamCon:'0',steamEveryBatch:'0',waterCon:'0',waterEveryBatch:'0'},
             batch2:{batchCount:0,steamCon:'0',steamEveryBatch:'0',waterCon:'0',waterEveryBatch:'0'},
             batch3:{batchCount:0,steamCon:'0',steamEveryBatch:'0',waterCon:'0',waterEveryBatch:'0'}
-
         }
     },
     created(){
@@ -208,8 +253,8 @@ export default {
         var params1={}
         params.StartTime = todayStartTime
         params.EndTime = todayEndTime
-        params.Area = 'GMP车间'
-        params1.AreaName='GMP车间'
+        params.Area = '综合车间'
+        params1.AreaName='综合车间'
         params1.StartTime=todayStartTime
         params1.EndTime=todayEndTime
         this.$http.all([
@@ -217,10 +262,15 @@ export default {
             this.$http.get('/api/batchMaintainEnergy',{params:params1}),
             this.$http.get('/api/areatimeenergycount',{params:{EnergyClass:'水',CompareTime:moment().format('YYYY-MM-DD')}}),
             // this.$http.get('api/energyall',{params:{ModelFlag:"在线检测情况"}})
-        ]).then((this.$http.spread((res1,res2,res3,res4)=>{
+            this.$http.get("/api/energyelectric",{params: params}),
+            this.$http.get("/api/energysteam",{params: params})
+        ]).then((this.$http.spread((res1,res2,res3,res4,res5)=>{
             this.loading=false
+            this.water1=this.water2=this.water3=JSON.parse(res1.data)
+            this.electric1=this.electric2=this.electric3=JSON.parse(res4.data)
+            this.steam1=this.steam2=this.steam3=JSON.parse(res5.data)
             this.area=[]
-            this.chartData.rows=res3.data.rows.slice(0, 4)
+            this.chartData.rows=res3.data.rows
             for(var i=0;i<res3.data.rows.length;i++){
                 this.area.push(res3.data.rows[i]['区域'])
             }
@@ -349,7 +399,6 @@ export default {
           this.kindnum=this.steam2.value
           this.cost=this.steam2.cost
          }
-
      }else{
          comparetime= lastYear
           if(this.kind==='水'){
@@ -365,20 +414,15 @@ export default {
      }
      var params={}
      params.EnergyClass=this.kind
-     params.CompareTime=comparetime
+     params.CompareTime='2020-04-11'
      this.$http.get('/api/areatimeenergycount',{params:params}).then((res) => {
         this.unit=res.data.unit
-        this.chartData.rows=res.data.rows.slice(0, 4)
+        this.chartData.rows=res.data.rows
      })
     },
     ChooseDate(e){
      this.date=this.dateall[e]
       if(this.date==='日'){
-           this.batchCount=this.batch1.batchCount
-           this.waterCon==this.batch1.waterCon
-           this.steamCon==this.batch1.steamCon
-           this.steamEveryBatch==this.batch1.steamEveryBatch
-           this.waterEveryBatch==this.batch1.waterEveryBatch
          if(this.kind==='水'){
           this.kindnum=this.water1.value
           this.cost=this.water1.cost
@@ -390,11 +434,6 @@ export default {
           this.cost=this.steam1.cost
          }
      }else if(this.date==='月'){
-          this.batchCount=this.batch2.batchCount
-           this.waterCon==this.batch2.waterCon
-           this.steamCon==this.batch2.steamCon
-           this.steamEveryBatch==this.batch2.steamEveryBatch
-           this.waterEveryBatch==this.batch2.waterEveryBatch
           if(this.kind==='水'){
           this.kindnum=this.water2.value
           this.cost=this.water2.cost
@@ -406,11 +445,6 @@ export default {
           this.cost=this.steam2.cost
          }
      }else{
-           this.batchCount=this.batch3.batchCount
-           this.waterCon==this.batch3.waterCon
-           this.steamCon==this.batch3.steamCon
-           this.steamEveryBatch==this.batch3.steamEveryBatch
-           this.waterEveryBatch==this.batch3.waterEveryBatch
           if(this.kind==='水'){
           this.kindnum=this.water3.value
           this.unit=this.water3.unit
@@ -465,6 +499,9 @@ export default {
             this.thisYearCon = thisYearCon.data.value
             this.lastYearCon = lastYearCon.data.value
         }))
+    },
+    Choosebanner(e){
+       this.banner=e
     }
 }
 }
@@ -479,13 +516,14 @@ export default {
      .show-box{
         position: relative;
         width: 375px;
+        height:720px;
         box-sizing: border-box;
         padding: 0 12px 12px 13px;
         background-color: @bgcc;
-        .show-banner{
+         .current-Area{
             position: relative;
             width:350px;
-            height:173px;
+            height:290px;
             overflow: hidden;
             font-family:PingFang SC;
             box-sizing: border-box;
@@ -493,7 +531,11 @@ export default {
             box-shadow:0px 0px 6px rgba(255,255,255,0.16);
             opacity:1;
             border-radius:4px;
-            margin:21px 0 20px 0;
+            margin:2px 0 20px 0;
+            }
+        .show-banner{
+           .current-Area()
+        }
            .sb-name{
                position: absolute;
                top:14px;
@@ -508,7 +550,7 @@ export default {
            .sb-number{
                position: absolute;
                left:13px;
-               top:58px;
+               top:40px;
                font-size: 22px;
                word-spacing: 20px;
                height:36px;
@@ -518,8 +560,8 @@ export default {
            }
            .sb-compare{
                position: absolute;
-               left: 15px;
-               top: 125px;
+               left: 220px;
+               top: 18px;
                height:11px;
                font-size:8px;
                font-weight:400;
@@ -529,8 +571,8 @@ export default {
            }
            .sb-l-n{
                position: absolute;
-               left:15px;
-               top:142px;
+               left:220px;
+               top:48px;
                height:17px;
                font-size:12px;
                font-weight:500;
@@ -539,8 +581,8 @@ export default {
            }
           .sb-dw{
             position: absolute;
-            top:125px;
-            left:91px;
+            top:18px;
+            left:300px;
             height:11px;
             font-size:8px;
             font-weight:400;
@@ -550,8 +592,8 @@ export default {
             }
             .sb-t{
                 position: absolute;
-                left:96px;
-                top:142px;
+                left:305px;
+                top:48px;
                 width:7px;
                 height:17px;
                 font-size:12px;
@@ -562,13 +604,11 @@ export default {
             }
             .tabbar{
                 position: absolute;
-                top:15px;
-                right:5px;
-                width: 150px;
-                height: 150px;
+                top:90px;
+                left:5px;
+                width: 350px;
+                height: 200px;
             }
-           
-        }
         .show-body{
             position: relative;
             height:199px;

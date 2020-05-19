@@ -88,3 +88,9 @@
   .van-dropdown-menu__title{
       font-size: 14px;
   }
+  .tips.bannertips{
+    margin-top: 20px;
+  }
+  .bannertips .van-tabs__nav--card {
+    width: 200px;
+}
