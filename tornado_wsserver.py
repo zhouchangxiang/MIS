@@ -90,7 +90,7 @@ class SendThread(threading.Thread):
                     oc_water_dict_i["sumValue"] = abs(strtofloat(
                         redis_conn.hget(constant.REDIS_TABLENAME, oc + "S")))
                     oc_dict_i_water_tag[oc] = oc_water_dict_i
-                electric_oclass = ast.literal_eval(returnb(redis_conn.hget(constant.REDIS_TABLENAME, "all_water_tags")))
+                electric_oclass = ast.literal_eval(returnb(redis_conn.hget(constant.REDIS_TABLENAME, "all_electric_tags")))
                 oc_dict_i_electric_tag = {}
                 for oc in electric_oclass:
                     oc_electric_dict_i = {}
@@ -113,8 +113,7 @@ class SendThread(threading.Thread):
                 oc_dict["steam"] = oc_dict_i_tag
                 oc_dict["water"] = oc_dict_i_water_tag
                 oc_dict["electric"] = oc_dict_i_electric_tag
-                area_list.append(oc_dict)
-                json_data = json.dumps(area_list)
+                json_data = json.dumps(oc_dict)
                 # bytemsg = bytes(json_data, encoding="utf8")
                 # send_msg(c, bytes("recv: {}".format(data_parse), encoding="utf-8"))
                 bytemsg = bytes(json_data,encoding="utf-8")
@@ -200,14 +199,18 @@ if __name__ == "__main__":
     Tags = db_session.query(TagDetail).filter().all()
     tag_steam_list = []
     tag_water_list = []
+    tag_electric_list = []
     for tag in Tags:
         EnergyClass = str(tag.TagClassValue)[0:1]
         if EnergyClass == "S":
             tag_steam_list.append(tag.TagClassValue)
         elif EnergyClass == "W":
             tag_water_list.append(tag.TagClassValue)
+        elif EnergyClass == "E":
+            tag_electric_list.append(tag.TagClassValue)
     redis_conn.hset(constant.REDIS_TABLENAME, "all_steam_tags", str(tag_steam_list))
     redis_conn.hset(constant.REDIS_TABLENAME, "all_water_tags", str(tag_water_list))
+    redis_conn.hset(constant.REDIS_TABLENAME, "all_electric_tags", str(tag_electric_list))
     areas = db_session.query(AreaTable).all()
     for area in areas:
         tagareas = db_session.query(TagDetail).filter(TagDetail.AreaName == area.AreaName).all()
