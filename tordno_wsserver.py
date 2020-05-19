@@ -73,8 +73,11 @@ class SendThread(threading.Thread):
                     oc_dict_i = {}
                     oc_dict_i["flowValue"] = strtofloat(
                         redis_conn.hget(constant.REDIS_TABLENAME, oc + "F"))  # 蒸汽瞬时流量
-                    oc_dict_i["sumValue"] = strtofloat(
+                    sumvalue = strtofloat(
                         redis_conn.hget(constant.REDIS_TABLENAME, oc + "S"))  # 蒸汽累计流量
+                    if oc == 'S_Area_GLF_45_3_502':
+                        sumvalue = round(sumvalue/1000, 4)
+                    oc_dict_i["sumValue"] = sumvalue  # 蒸汽累计流量
                     oc_dict_i["SteamWD"] = strtofloat(
                         redis_conn.hget(constant.REDIS_TABLENAME, oc + "WD"))  # 蒸汽体积
                     oc_dict_i_tag[oc] = oc_dict_i
