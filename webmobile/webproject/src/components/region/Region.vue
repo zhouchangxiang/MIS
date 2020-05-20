@@ -15,7 +15,7 @@
           <div class="icon electric"></div>
           <div class="dw electric1">kwh</div>
           <div class="number">{{electric}}</div>
-          <div class="comp" @click="getEq">较{{yester}}日</div>
+          <div class="comp">较{{yester}}日</div>
           <div class="sn" :class="this.todayelectric-this.yesterdayelectric>0?'maxcolor':'mincolor'">{{dayelectricCompare}}</div>
         </div>
          <div class="c2" :class="{switchbgc:bgc2}" @click="switchShow2()">
@@ -227,9 +227,9 @@ export default {
       return `${date.getFullYear()}-${month}-${day}`;
       },
       onConfirm(date) {
-      this.show = false;
+      this.show = false
       this.yester='对比'
-      this.comparedate = this.formatDate(date);
+      this.comparedate = this.formatDate(date)
       var nowTime = moment().format('HH:mm').substring(0,4) + "0"
       var compareDateStartTime = moment(this.comparedate).day(moment(this.comparedate).day()).startOf('day').format('YYYY-MM-DD HH:mm')
       var compareDateEndTime = moment(this.comparedate).format('YYYY-MM-DD') + " " + nowTime
@@ -259,7 +259,7 @@ export default {
          this.kong=this.resetChartData
        }
        this.cost=this.cost1[1]
-        this.initWebSocket()
+       this.initWebSocket()
       },
       switchShow2(){
         if(this.websoc){
@@ -309,35 +309,41 @@ export default {
             this.websoc.send(data)
         },
         webscop(){
-          if(this.kind==='电'){
-            this.webscsend(this.electrictag)
-          }else if(this.kind==='水'){
-            this.webscsend(this.watertag)
-          }else{
-            this.webscsend(this.steamtag)
-          }
+         this.webscsend()
         },
         webscom(evt){
-          var arr=JSON.parse(evt.data)[1]
-           if(this.kind==='电'){
-              this.electricChartData.rows.push({
-                "日期": moment(new Date()).format("ss"),
-                "数值": arr['areaEZGL']
-              })
-              this.electricChartData.rows.shift()
-           }else if(this.kind==='水'){
-             this.waterChartData.rows.push({
-               "日期": moment(new Date()).format("ss"),
-                "数值": arr['areaWSum']
-              })
-              this.waterChartData.rows.shift()
-           }else{
-             this.steamChartData.rows.push({
-               "日期": moment(new Date()).format("ss"),
-                "数值": arr['areaSSum']
-              })
+          var resdata = JSON.parse(evt.data); //获取到实时返回的数据
+          if(this.kind=== "电"){ 
+            for(var key in resdata[0].electric){ //循环数组里电的tag点
+              if(key === this.electrictag){  //找到想要的匹配变量的tag点
+                this.electricChartData.rows.push({
+                  "日期": moment().format("ss"),
+                  "数值": resdata[0].electric[key].ZGL //拿到这个tag点对象内的数据
+                })
+                this.electricChartData.rows.shift()
+              }
+            }
+          }else if(this.kind==='水'){
+             for(var key in resdata[0].water){
+              if(key === this.watertag){
+                this.waterChartData.rows.push({
+                  "日期": moment().format("ss"),
+                  "数值": resdata[0].water[key].sumValue
+                })
+                this.waterChartData.rows.shift()
+              }
+            }
+          }else{
+             for(var key in resdata[0].steam){
+              if(key=== this.steamtag){
+                this.steamChartData.rows.push({
+                  "日期": moment().format("ss"),
+                  "数值": resdata[0].steam[key].sumValue
+                })
                 this.steamChartData.rows.shift()
-           }
+              }
+            }
+          }
         },
         webscoer(){
             console.log('连接websocket失败。。。')

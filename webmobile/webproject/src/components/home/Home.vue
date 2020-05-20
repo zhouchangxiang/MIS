@@ -1,11 +1,16 @@
 <template>
     <div class="show-box">
+        <div class="swiper-choose">
+            <van-tabs v-model="active" line-height="0px" line-width="0px" @click="onChange($event)" :swipeable=true :border=false title-active-color="#fff" title-inactive-color="#76787E">
+                <van-tab :title="item" v-for="(item,index) in area" :key="index"></van-tab>
+            </van-tabs>
+            </div>
         <div class="show-top">
                <div class="tips">
                    <van-tabs type="card" title-active-color="#1E222B" title-inactive-color="#fff" v-model="choosedate" @click="ChooseDate($event)"> 
-                        <van-tab title="年"></van-tab>
-                        <van-tab title="月"></van-tab>
                         <van-tab title="日"></van-tab>
+                        <van-tab title="月"></van-tab>
+                        <van-tab title="年"></van-tab>
                     </van-tabs>
                 </div>
                <div class="tips">
@@ -15,12 +20,12 @@
                         <van-tab title="气"></van-tab>
                     </van-tabs>
                </div>
-        </div>
-        <div class="tips bannertips">
+                <div class="tips bannertips">
                 <van-tabs type="card" title-active-color="#1E222B"  title-inactive-color="#fff" v-model="banner" @click="Choosebanner($event)">
                         <van-tab title="区域总能耗"></van-tab>
                         <van-tab :title="AreaName"></van-tab>
                 </van-tabs>
+        </div>
         </div>
         <van-loading size="24px" vertical v-if="loading" color="lightgreen" type="spinner">加载中...</van-loading>
         <div class="show-banner" v-if="banner===0">
@@ -81,7 +86,7 @@
                    <div class="dwnh">单位批次能耗</div>
                    <div class="dwnh-s">{{kind==='水'?this.batch1.waterEveryBatch:(kind==='电'?0:this.batch1.steamEveryBatch)}}</div>
                    <div class="dw-kwh">{{unit}}</div>
-                   <div class="dw-pc">&nbsp;/&nbsp;批</div>
+                   <div class="dw-pc">{{unit}}&nbsp;/&nbsp;批</div>
                </div>
                 <div class="sb-l" v-if="this.date==='月'">
                    <div class="scpc">生产批次</div>
@@ -91,7 +96,7 @@
                    <div class="dwnh">单位批次能耗</div>
                    <div class="dwnh-s">{{kind==='水'?this.batch2.waterEveryBatch:(kind==='电'?0:this.batch2.steamEveryBatch)}}</div>
                    <div class="dw-kwh">{{unit}}</div>
-                   <div class="dw-pc">&nbsp;/&nbsp;批</div>
+                   <div class="dw-pc">{{unit}}&nbsp;/&nbsp;批</div>
                </div>
                 <div class="sb-l" v-if="this.date==='年'">
                    <div class="scpc">生产批次</div>
@@ -102,9 +107,6 @@
                    <div class="dwnh-s">{{kind==='水'?this.batch3.waterEveryBatch:(kind==='电'?0:this.batch3.steamEveryBatch)}}</div>
                    <div class="dw-kwh">{{unit}}</div>
                    <div class="dw-pc">{{unit}}&nbsp;/&nbsp;批</div>
-               </div>
-               <div class="sb-r">
-                    <van-picker :columns="area" @change="onChange" :default-index="9"/>
                </div>
            </div>
           <div class="show-foot">
@@ -168,10 +170,11 @@ export default {
                 ]
                 },
             choosedate:0,
+            active:0,
             choosekind:0,
             banner:1,
             kindall:['水','电','汽'],
-            dateall:['年','月','日'],
+            dateall:['日','月','年'],
             kind:'水',
             date:'年',
             unit:'t',
@@ -325,9 +328,9 @@ export default {
         }
         )))
     },
-    onChange(picker, value) {
+    onChange(e) {
       this.loading=true
-      this.AreaName=value
+      this.AreaName=this.area[e]
       var nowTime = moment().format('HH:mm').substring(0,4) + "0"
         var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
         var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
@@ -608,7 +611,7 @@ export default {
      .show-box{
         position: relative;
         width: 375px;
-        height:800px;
+        height:700px;
         box-sizing: border-box;
         padding: 0 12px 12px 13px;
         background-color: @bgcc;
@@ -725,7 +728,7 @@ export default {
             }
         .show-body{
             position: relative;
-            height:199px;
+            height:80px;
             opacity:1;
             border-radius:4px;
             margin-bottom: 13px;
@@ -733,8 +736,8 @@ export default {
                 position: absolute;
                 top:0;
                 left:0;
-                width:196px;
-                height:199px;
+                width: 100%;
+                height:80px;
                 background:rgba(126,127,132,1);
                 box-shadow:0px 0px 6px rgba(255,255,255,0.16);
                 opacity:1;
@@ -764,15 +767,15 @@ export default {
                 }
                 .znhl{
                     position: absolute;
-                    top:74px;
-                    left:15px;
+                    top:9px;
+                    left:100px;
                     font-size: 8px;
                     color: rgba(255,255,255,1);
                 }
                 .znhl-s{
                     position: absolute;
-                    top:95px;
-                    left: 14px;
+                    top:30px;
+                    left: 100px;
                     width:17px;
                     height:25px;
                     font-size: 23px;
@@ -781,15 +784,16 @@ export default {
                 }
                 .dwnh{
                     position: absolute;
-                    top:140px;
-                    left: 15px;
+                    top:9px;
+                    left:220px;
                     font-size: 8px;
-                    color:rgba(255, 255, 255, 1)
+                    color: rgba(255,255,255,1);
                 }
                 .dwnh-s{
                     position: absolute;
-                    top:161px;
-                    left: 14px;
+                    top:30px;
+                    left: 240px;
+                    width:17px;
                     height:25px;
                     font-size: 23px;
                     color:#00FAE7;
@@ -797,39 +801,19 @@ export default {
                 }
                 .dw-kwh{
                     position: absolute;
-                    right: 10px;
-                    top:108px;
+                    left: 150px;
+                    top:9px;
                     font-size: 8px;
                     font-weight: 500;
                     color: #fff;
                 }
                 .dw-pc{
                     position: absolute;
-                    right: 8px;
-                    top:174px;
+                    left: 290px;
+                    top:9px;
                     font-size: 8px;
                     font-weight: 500;
                     color: #fff;
-                }
-            }
-            .sb-r{
-                position: absolute;
-                top:0;
-                right:0;
-                width:150px;
-                height:199px;
-                background-color: @bgcc;
-                opacity:1;
-                border-radius:4px;
-                ul{
-                    margin: 0;
-                    padding: 0;
-                    li{
-                        height: 35px;
-                        line-height: 20px;
-                        color: #fff;
-                        text-align: right;
-                    }
                 }
             }
         }
@@ -841,7 +825,7 @@ export default {
             font-size: 10px;
             .tips{
                 float: left;
-                margin-right: 20px;
+                margin-right: 0px;
                 background-color:#1E222B;
                 height: 18px;
             }
@@ -921,5 +905,19 @@ export default {
     }
     .mincolor{
         color:green;
+    }
+    .swiper-choose{
+        position: relative;
+        width: 100%;
+        height: 20px;
+        font-weight:400;
+        line-height:20px;
+        background-color: #ccc;
+        font-size:14px;
+        font-family:PingFang SC;
+        color:rgba(255,255,255,1);
+        opacity:1;
+        background-color: #ccc;
+        margin-bottom: 20px;
     }
 </style>
