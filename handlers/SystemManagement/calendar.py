@@ -50,11 +50,12 @@ def paiban():
                                                                         plantCalendarScheduling.title == "休息")
                 if rest:
                     continue
-                pcs = plantCalendarScheduling()
-                pcs.color = ""
-                pcs.title = ""
-                pcs.start = Month + "-" + addzero(t)
-                pcs.end = ""
+                if t == 1:
+                    pcs = plantCalendarScheduling()
+                    pcs.color = "#FFA500"
+                    pcs.title = StartClass
+                    pcs.start = Month + "-" + addzero(t)
+                    pcs.end = ""
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)

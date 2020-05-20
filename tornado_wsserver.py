@@ -66,7 +66,6 @@ class SendThread(threading.Thread):
         while True:
 
             try:
-                area_list = []
                 oclass = ast.literal_eval(returnb(redis_conn.hget(constant.REDIS_TABLENAME, "all_steam_tags")))
                 oc_dict_i_tag = {}
                 for oc in oclass:
