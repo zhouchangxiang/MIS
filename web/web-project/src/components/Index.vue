@@ -72,18 +72,33 @@
           <div class="drawerContent">
             <div class="drawerMaskBg"></div>
             <i class="close-drawer el-icon-close text-size-large" @click="drawer=false"></i>
+            <div style="position: absolute;top: 50px;left: 100px;">
+              <div style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;background: #FB8A06;margin-left: 10px;"></div> 电
+              <div style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;background: #228AD5;margin-left: 10px;"></div> 水
+              <div style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;background: #15CC48;margin-left: 10px;"></div> 汽
+            </div>
             <div class="mapContent"  v-if="JSON.stringify(steamTagList) != '{}'">
               <div class="mapContentTop">
                 <div style="position: relative;height: 100%;">
-                  <div v-for="(item,index) in drawerTopAreaOption" class="mapContentItem" :style="{width:item.width, height: item.height,top: item.top,left: item.left}" :key="index" @click="showAreaInfo(item.title,item.img,item.img2)">
-                    <div class="mapItemPoint" :style="{marginLeft: item.marginLeft}"></div>
+                  <div v-for="(item,index) in drawerTopAreaOption" class="mapContentItem"
+                       :style="{width:item.width, height: item.height,top: item.top,left: item.left}" :key="index">
+                    <div :style="{marginLeft: item.marginLeft}">
+                      <div class="mapItemPoint ElectricPoint" v-if="item.hasElectric" @click="showAreaElectric(item.title)"></div>
+                      <div class="mapItemPoint WaterPoint" v-if="item.hasWater" @click="showAreaWater(item.title)"></div>
+                      <div class="mapItemPoint SteamPoint" v-if="item.hasSteam" @click="showAreaSteam(item.title,item.img,item.img2)"></div>
+                    </div>
                   </div>
                 </div>
               </div>
               <div class="mapContentBottom">
                 <div style="position: relative;height: 100%;">
-                  <div v-for="(item,index) in drawerBottomAreaOption" class="mapContentItem" :style="{width:item.width, height: item.height,top: item.top,left: item.left}" :key="index">
-                    <div class="mapItemPoint" :style="{marginLeft: item.marginLeft}"></div>
+                  <div v-for="(item,index) in drawerBottomAreaOption" class="mapContentItem"
+                       :style="{width:item.width, height: item.height,top: item.top,left: item.left}" :key="index">
+                    <div :style="{marginLeft: item.marginLeft}">
+                      <div class="mapItemPoint ElectricPoint" v-if="item.hasElectric" @click="showAreaElectric(item.title)"></div>
+                      <div class="mapItemPoint WaterPoint" v-if="item.hasWater" @click="showAreaWater(item.title)"></div>
+                      <div class="mapItemPoint SteamPoint" v-if="item.hasSteam" @click="showAreaSteam(item.title,item.img,item.img2)"></div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -121,19 +136,19 @@
                 <el-card shadow="hover" style="height: 250px;margin-bottom: 20px;" class="useAreaCard">
                   <p>新综合制剂车间</p>
                   <div class="waterTagData" style="left: 3px;top: 60px;width: 80px;">包材库灌溉水DN50<p>{{ waterTagList.W_Area_XJZ_12_1_3.sumValue }}</p><p>{{ waterTagList.W_Area_XJZ_12_1_3.flowValue }}</p></div>
-                  <div class="waterTagData" style="right: 3px;bottom: 3px;">接待室引用水DN100<p>{{ waterTagList.W_Area_XJZ_12_2_5.sumValue }}</p><p>{{ waterTagList.W_Area_XJZ_12_2_5.flowValue }}</p></div>
+                  <div class="waterTagData" style="right: 3px;bottom: 3px;">接待室饮用水DN100<p>{{ waterTagList.W_Area_XJZ_12_2_5.sumValue }}</p><p>{{ waterTagList.W_Area_XJZ_12_2_5.flowValue }}</p></div>
                 </el-card>
               </el-col>
               <el-col :span="8">
                 <el-col :span="8">
                   <el-card shadow="hover" class="useAreaCard" style="height: 240px;">
-                    <p>化验室/中试车间</p><div class="waterTagData" style="left: 3px;bottom: 3px;">消防DN100<p>{{ waterTagList.W_Area_YF_26_1_15.sumValue }}</p><p>{{ waterTagList.W_Area_YF_26_1_15.flowValue }}</p></div>
+                    <p>化验室/中试车间</p><div class="waterTagData" style="left: 3px;bottom: 3px;">消防水DN100<p>{{ waterTagList.W_Area_YF_26_1_15.sumValue }}</p><p>{{ waterTagList.W_Area_YF_26_1_15.flowValue }}</p></div>
                   </el-card>
                 </el-col>
                 <el-col :span="8">
                   <el-card shadow="hover" class="useAreaCard" style="height: 180px;">
                     <p>原提取</p>
-                    <div class="waterTagData" style="left: 3px;top: 40px;">消防DN50<p>{{ waterTagList.W_Area_YTQ_39_1_30.sumValue }}</p><p>{{ waterTagList.W_Area_YTQ_39_1_30.flowValue }}</p></div>
+                    <div class="waterTagData" style="left: 3px;top: 40px;">消防水DN50<p>{{ waterTagList.W_Area_YTQ_39_1_30.sumValue }}</p><p>{{ waterTagList.W_Area_YTQ_39_1_30.flowValue }}</p></div>
                     <div class="waterTagData" style="left: 3px;bottom: 3px;">灌溉水DN40<p>{{ waterTagList.W_Area_YTQ_39_2_30.sumValue }}</p><p>{{ waterTagList.W_Area_YTQ_39_2_30.flowValue }}</p></div>
                   </el-card>
                 </el-col>
@@ -174,7 +189,101 @@
             <el-button @click="waterAreaDialog = false">关闭</el-button>
           </div>
         </el-dialog>
-        <!-- 汽表分布图 -->
+        <!-- 水表分布图 -->
+        <el-dialog :title="areaOverallDialogTitle" :visible.sync="waterAreaTagDialog" width="40%" v-if="waterAreaTagDialog">
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '污水站'">
+            <div class="waterTagData" style="position: relative">灌溉水DN40<p>{{ waterTagList.W_Area_WSZ_16_2_34.sumValue }}</p><p>{{ waterTagList.W_Area_WSZ_16_2_34.flowValue }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '提取二车间'">
+            <div class="waterTagData" style="position: relative">后走廊灌溉水DN40<p>{{ waterTagList.W_Area_TQR_17_2_8.sumValue }}</p><p>{{ waterTagList.W_Area_TQR_17_2_8.flowValue }}</p></div>
+            <div class="waterTagData" style="position: relative">出料电梯旁饮用水DN100<p>{{ waterTagList.W_Area_TQR_17_1_9.sumValue }}</p><p>{{ waterTagList.W_Area_TQR_17_1_9.flowValue }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '综合车间'">
+            <div class="waterTagData" style="position: relative">带干辅机灌溉水DN40<p>{{ waterTagList.W_Area_ZH_23_2_13.sumValue }}</p><p>{{ waterTagList.W_Area_ZH_23_2_13.flowValue }}</p></div>
+            <div class="waterTagData" style="position: relative">2楼会议室饮用水DN150<p>{{ waterTagList.W_Area_ZH_23_1_12.sumValue }}</p><p>{{ waterTagList.W_Area_ZH_23_1_12.flowValue }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '新建综合制剂车间'">
+            <div class="waterTagData" style="position: relative">包材库灌溉水DN50<p>{{ waterTagList.W_Area_XJZ_12_1_3.sumValue }}</p><p>{{ waterTagList.W_Area_XJZ_12_1_3.flowValue }}</p></div>
+            <div class="waterTagData" style="position: relative">接待室饮用水DN100<p>{{ waterTagList.W_Area_XJZ_12_2_5.sumValue }}</p><p>{{ waterTagList.W_Area_XJZ_12_2_5.flowValue }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '中试车间'">
+            <div class="waterTagData" style="position: relative">消防水DN100<p>{{ waterTagList.W_Area_YF_26_1_15.sumValue }}</p><p>{{ waterTagList.W_Area_YF_26_1_15.flowValue }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '原提取车间'">
+            <div class="waterTagData" style="position: relative">消防水DN50<p>{{ waterTagList.W_Area_YTQ_39_1_30.sumValue }}</p><p>{{ waterTagList.W_Area_YTQ_39_1_30.flowValue }}</p></div>
+            <div class="waterTagData" style="position: relative">灌溉水DN40<p>{{ waterTagList.W_Area_YTQ_39_2_30.sumValue }}</p><p>{{ waterTagList.W_Area_YTQ_39_2_30.flowValue }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '前处理车间'">
+            <div class="waterTagData" style="position: relative">洗药室灌溉水DN25<p>{{ waterTagList.W_Area_QCL_33_1_20.sumValue }}</p><p>{{ waterTagList.W_Area_QCL_33_1_20.flowValue }}</p></div>
+            <div class="waterTagData" style="position: relative">饮用水DN25<p>{{ waterTagList.W_Area_QCL_33_2_20.sumValue }}</p><p>{{ waterTagList.W_Area_QCL_33_2_20.flowValue }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === 'GMP车间'">
+            <div class="waterTagData" style="position: relative">消防水DN50<p>{{ waterTagList.W_Area_JK_28_1_16.sumValue }}</p><p>{{ waterTagList.W_Area_JK_28_1_16.flowValue }}</p></div>
+            <div class="waterTagData" style="position: relative">消防水DN50<p>{{ waterTagList.W_Area_JK_28_2_16.sumValue }}</p><p>{{ waterTagList.W_Area_JK_28_2_16.flowValue }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '固体制剂车间'">
+            <div class="waterTagData" style="position: relative">男卫生间灌溉水DN40<p>{{ waterTagList.W_Area_GT_30_2_18.sumValue }}</p><p>{{ waterTagList.W_Area_GT_30_2_18.flowValue }}</p></div>
+            <div class="waterTagData" style="position: relative">纯化水站饮用水DN100<p>{{ waterTagList.W_Area_GT_30_1_19.sumValue }}</p><p>{{ waterTagList.W_Area_GT_30_1_19.flowValue }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '办公楼＼食堂'">
+            <div class="waterTagData" style="position: relative">1楼卫生间深井水DN65<p>{{ waterTagList.W_Area_BGL_34_1_22.sumValue }}</p><p>{{ waterTagList.W_Area_BGL_34_1_22.flowValue }}</p></div>
+          </el-card>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="waterAreaTagDialog = false">关 闭</el-button>
+          </div>
+        </el-dialog>
+        <!-- 电表分布图 -->
+        <el-dialog :title="areaOverallDialogTitle" :visible.sync="electricAreaTagDialog" width="40%" v-if="electricAreaTagDialog">
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '污水站'">
+            <div class="waterTagData" style="position: relative">电表<p>{{ electricTagList.E_Area_WSZ_16_2_35.ZGL }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '新建综合制剂车间'">
+            <div class="waterTagData" style="position: relative">电表（2楼配电室）<p>{{ electricTagList.E_Area_XJZ_11_2_7.ZGL }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '中试车间'">
+            <div class="waterTagData" style="position: relative">电表（化验室）<p>{{ electricTagList.E_Area_YF_26_1_14.ZGL }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '原提取车间'">
+            <div class="waterTagData" style="position: relative">电表（老醇提）<p>{{ electricTagList.E_Area_YTQ_38_1_28.ZGL }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '前处理车间'">
+            <div class="waterTagData" style="position: relative">电表（前处理）<p>{{ electricTagList.E_Area_YTQ_38_2_29.ZGL }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === 'GMP车间'">
+            <div class="waterTagData" style="position: relative">电表（一楼）<p>{{ electricTagList.E_Area_JK_28_2_17.ZGL }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '固体制剂车间'">
+            <div class="waterTagData" style="position: relative">电表<p>{{ electricTagList.E_Area_GT_30_1_19.ZGL }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '办公楼＼食堂'">
+            <div class="waterTagData" style="position: relative">电表<p>{{ electricTagList.E_Area_BGL_36_1_26.ZGL }}</p></div>
+          </el-card>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="electricAreaTagDialog = false">关 闭</el-button>
+          </div>
+        </el-dialog>
+        <!-- 汽表分布图 没有图片 -->
+        <el-dialog :title="areaOverallDialogTitle" :visible.sync="steamAreaTagDialog" width="40%" v-if="steamAreaTagDialog">
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '中试车间'">
+            <div class="waterTagData" style="position: relative">蒸汽表<p>{{ steamTagList.S_Area_YF_25_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_YF_25_1_502.flowValue }}</p><p>{{ steamTagList.S_Area_YF_25_1_502.SteamWD }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '原提取车间'">
+            <div class="waterTagData" style="position: relative">蒸汽表<p>{{ steamTagList.S_Area_YTQ_40_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_YTQ_40_1_502.flowValue }}</p><p>{{ steamTagList.S_Area_YTQ_40_1_502.SteamWD }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '前处理车间'">
+            <div class="waterTagData" style="position: relative">蒸汽表<p>{{ steamTagList.S_Area_YTQ_40_2_502.sumValue }}</p><p>{{ steamTagList.S_Area_YTQ_40_2_502.flowValue }}</p><p>{{ steamTagList.S_Area_YTQ_40_2_502.SteamWD }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === 'GMP车间'">
+            <div class="waterTagData" style="position: relative">蒸汽表<p>{{ steamTagList.S_Area_JK_27_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_JK_27_1_502.flowValue }}</p><p>{{ steamTagList.S_Area_JK_27_1_502.SteamWD }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '办公楼＼食堂'">
+            <div class="waterTagData" style="position: relative">蒸汽表<p>{{ steamTagList.S_Area_BGL_35_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_BGL_35_1_502.flowValue }}</p><p>{{ steamTagList.S_Area_BGL_35_1_502.SteamWD }}</p></div>
+          </el-card>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="steamAreaTagDialog = false">关 闭</el-button>
+          </div>
+        </el-dialog>
+        <!-- 汽表分布图 有图片-->
         <el-dialog :title="areaOverallDialogTitle" :visible.sync="areaOverallDialog" :modal="false" width="840px">
           <div v-if="areaOverallDialogSrc2" style="position: relative;display: inline-flex;">
             <el-image style="width: 100%;" :src="areaOverallDialogSrc2"></el-image>
@@ -283,7 +392,7 @@
               <div class="steamTagLabel" style="left:512px;top: 370px;">
                 <div class="steamTagTitle">供暖DN150</div>
                 <div class="steamTagValue">
-                  <p>{{ steamTagList.S_Area_GLF_45_3_502.sumValue }}</p>
+                  <p>{{ steamTagList.S_Area_GLF_45_3_502.sumValue }}t</p>
                   <p>{{ steamTagList.S_Area_GLF_45_3_502.flowValue }}</p>
                   <p>{{ steamTagList.S_Area_GLF_45_3_502.SteamWD }}°C</p>
                 </div>
@@ -479,26 +588,30 @@ export default {
       UserInfo:{},
       drawer: false,
       drawerTopAreaOption:[
-        //{title:"污水站",width: "120px",height:"30%",top:"26%",left:"5%",marginLeft:"80px"},
-        {title:"锅炉房",width: "220px",height:"20%",top:"26%",left:"15%",marginLeft:"120px",img:require("@/assets/imgs/guolu.jpg")},
-        {title:"提取二车间",width: "220px",height:"15%",top:"42%",left:"15%",marginLeft:"100px",img:require("@/assets/imgs/tiquer.jpg"),img2:require("@/assets/imgs/tiquer2.jpg")},
-        {title:"综合车间",width: "250px",height:"28%",top:"60%",left:"10%",marginLeft:"100px",img:require("@/assets/imgs/zonghe.jpg")},
-        {title:"新建综合制剂车间",width: "100px",height:"45%",top:"18%",left:"34%",marginLeft:"60px",img:require("@/assets/imgs/xinzhiji.jpg")},
-        //{title:"中试车间",width: "60px",height:"43%",top:"18%",left:"45%",marginLeft:"35px"},
-        //{title:"原提取车间",width: "90px",height:"15%",top:"33%",left:"50%",marginLeft:"30px"},
-        //{title:"前处理车间",width: "90px",height:"17%",top:"45%",left:"58%",marginLeft:"40px"},
-        //{title:"GMP车间",width: "220px",height:"17%",top:"55%",left:"46%",marginLeft:"80px"},
-        {title:"固体制剂车间",width: "280px",height:"28%",top:"74%",left:"48%",marginLeft:"160px",img:require("@/assets/imgs/gutizhiji.jpg")},
+        {title:"污水站",width: "120px",height:"30%",top:"31%",left:"8%",marginLeft:"20px",hasElectric:true,hasWater:true,hasSteam:false},
+        {title:"锅炉房",width: "220px",height:"20%",top:"30%",left:"15%",marginLeft:"100px",img:require("@/assets/imgs/guolu.jpg"),hasElectric:false,hasWater:false,hasSteam:true},
+        {title:"提取二车间",width: "220px",height:"15%",top:"44%",left:"15%",marginLeft:"30px",img:require("@/assets/imgs/tiquer.jpg"),img2:require("@/assets/imgs/tiquer2.jpg"),hasElectric:false,hasWater:true,hasSteam:true},
+        {title:"综合车间",width: "250px",height:"28%",top:"60%",left:"10%",marginLeft:"100px",img:require("@/assets/imgs/zonghe.jpg"),hasElectric:false,hasWater:true,hasSteam:true},
+        {title:"新建综合制剂车间",width: "100px",height:"45%",top:"18%",left:"34%",marginLeft:"20px",img:require("@/assets/imgs/xinzhiji.jpg"),hasElectric:true,hasWater:true,hasSteam:true},
+        {title:"中试车间",width: "70px",height:"43%",top:"18%",left:"45%",marginLeft:"0",hasElectric:true,hasWater:true,hasSteam:true},
+        {title:"原提取车间",width: "90px",height:"15%",top:"33%",left:"50%",marginLeft:"10px",hasElectric:true,hasWater:true,hasSteam:true},
+        {title:"前处理车间",width: "90px",height:"17%",top:"45%",left:"58%",marginLeft:"20px",hasElectric:true,hasWater:true,hasSteam:true},
+        {title:"GMP车间",width: "220px",height:"17%",top:"55%",left:"46%",marginLeft:"80px",hasElectric:true,hasWater:true,hasSteam:true},
+        {title:"固体制剂车间",width: "280px",height:"28%",top:"74%",left:"48%",marginLeft:"100px",img:require("@/assets/imgs/gutizhiji.jpg"),hasElectric:true,hasWater:true,hasSteam:true},
       ],
       drawerBottomAreaOption:[
-        //{title:"展览室",width: "150px",height:"45%",top:"17%",left:"15%",marginLeft:"70px"},
-        //{title:"办公楼＼食堂",width: "360px",height:"48%",top:"10%",left:"25%",marginLeft:"140px"},
+        {title:"展览室",width: "150px",height:"45%",top:"17%",left:"15%",marginLeft:"70px"},
+        {title:"办公楼＼食堂",width: "360px",height:"48%",top:"10%",left:"25%",marginLeft:"140px",hasElectric:true,hasWater:true,hasSteam:true},
       ],
       waterAreaDialog:false,
+      waterAreaTagDialog:false,
+      electricAreaTagDialog:false,
+      steamAreaTagDialog:false,
       areaOverallDialog:false,
       areaOverallDialogTitle:"",
       areaOverallDialogSrc:"",
       areaOverallDialogSrc2:"",
+      electricTagList:{},
       steamTagList:{},
       waterTagList:{},
       steamGlTag:"",
@@ -655,7 +768,15 @@ export default {
       this.getGlSteamLabel()
       this.initWebSocket()
     },
-    showAreaInfo(AreaName,img,img2){
+    showAreaElectric(AreaName){
+      this.electricAreaTagDialog = true
+      this.areaOverallDialogTitle = AreaName
+    },
+    showAreaWater(AreaName){
+      this.waterAreaTagDialog = true
+      this.areaOverallDialogTitle = AreaName
+    },
+    showAreaSteam(AreaName,img,img2){
       if(img){
         if(img2){
           this.areaOverallDialog = true
@@ -668,6 +789,9 @@ export default {
           this.areaOverallDialogSrc = img
           this.areaOverallDialogSrc2 = ""
         }
+      }else{
+        this.steamAreaTagDialog = true
+        this.areaOverallDialogTitle = AreaName
       }
     },
     getGlSteamLabel(){
@@ -687,13 +811,14 @@ export default {
       this.websock.onclose = this.websocketclose;
     },
     websocketonopen(){ //连接建立之后执行send方法发送数据
-      this.websocketsend("");
+      this.websocketsend();
     },
     websocketonerror(){//连接建立失败重连
       console.log("websocket连接失败")
     },
     websocketonmessage(e){ //数据接收
       var resdata = JSON.parse(e.data);
+      this.electricTagList = resdata[0].electric
       this.steamTagList = resdata[0].steam
       this.waterTagList = resdata[0].water
     },
@@ -857,20 +982,38 @@ export default {
     border: none;
     display: flex;
     align-items:center;
-    cursor: pointer;
   }
   .mapItemPoint{
+    display: inline-block;
     margin-top: 15%;
-    margin-left: 50px;
-    width: 5px;
-    height: 5px;
-    background: #fff;
+    margin-left: 10px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    box-shadow: 0 0 5px 5px rgba(227,95,95,1);
     transition: box-shadow 0.6s, transform 0.5s;
   }
-  .mapContentItem:hover .mapItemPoint{
-    box-shadow: 0 0 10px 10px rgba(251,58,6,1);
+  .mapContentItem .ElectricPoint{
+    background: #FB8A06;
+    box-shadow: 0 0 2px 2px #FB8A06;
+  }
+  .mapContentItem .ElectricPoint:hover{
+    box-shadow: 0 0 10px 10px #FB8A06;
+	  transition: box-shadow 0.5s;
+  }
+  .mapContentItem .WaterPoint{
+    background: #228AD5;
+    box-shadow: 0 0 2px 2px #228AD5;
+  }
+  .mapContentItem .WaterPoint:hover{
+    box-shadow: 0 0 10px 10px #228AD5;
+	  transition: box-shadow 0.5s;
+  }
+  .mapContentItem .SteamPoint{
+    background: #15CC48;
+    box-shadow: 0 0 2px 2px #15CC48;
+  }
+  .mapContentItem .SteamPoint:hover{
+    box-shadow: 0 0 10px 10px #15CC48;
 	  transition: box-shadow 0.5s;
   }
   .steamTagLabel{

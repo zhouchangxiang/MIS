@@ -94,10 +94,10 @@
             </div>
             <div class="home-card-body" style="height:280px;text-align: center">
               <ul class="colorBar">
-                <li><i class="bg-tall"></i><span>差</span></li>
-                <li><i class="bg-center"></i><span>中</span></li>
-                <li><i class="bg-fine"></i><span>良</span></li>
                 <li><i class="bg-best"></i><span>优</span></li>
+                <li><i class="bg-fine"></i><span>良</span></li>
+                <li><i class="bg-center"></i><span>中</span></li>
+                <li><i class="bg-tall"></i><span>差</span></li>
               </ul>
               <ve-gauge :data="electricLoadRateChartData" :extend="electricLoadRateChartExtend" height="200px"></ve-gauge>
               <el-select class="" v-model="electricLoadRateTime" size="small" style="width: 80px;" @change="getElectricLoadRateTime">
@@ -373,7 +373,7 @@
             axisLine:{ //轴线
               lineStyle: {
                 width: 10,
-                color:[[0.3, '#FB3A06'], [0.5, '#FB8A06'], [0.8, '#228AD5'], [1, '#15CC48']]
+                color:[[0.3, '#15CC48'], [0.5, '#228AD5'], [0.8, '#FB8A06'], [1, '#FB3A06']]
               }
             },
             splitLine:{ //分割线

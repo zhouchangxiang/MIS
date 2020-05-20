@@ -124,59 +124,17 @@ def handler_msg(conn):
                     data_parse = parse_payload(data_recv)
                     TagClassValue = str(data_parse)
                 area_list = []
-                area_dir = {}
-                if TagClassValue != "":
-                    try:
-                        S = TagClassValue[0:1]
-                        if S == "S":
-                            areaSFlow = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                               TagClassValue + "F"))
-                            areaSSum = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                             TagClassValue + "S"))
-                            area_dir["areaSFlow"] = strtofloat(areaSFlow)
-                            area_dir["areaSSum"] = strtofloat(areaSSum)
-                        elif S == "W":
-                            areaWFlow = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                               TagClassValue + "F"))
-                            areaWSum = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                             TagClassValue + "S"))
-                            area_dir["areaWFlow"] = strtofloat(areaWFlow)
-                            area_dir["areaWSum"] = strtofloat(areaWSum)
-                        elif S == "E":
-                            areaEZGL = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                             TagClassValue + "_ZGL"))
-                            areaEAU = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                           TagClassValue + "_AU"))
-                            areaEAI = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                           TagClassValue + "_AI"))
-                            areaEBI = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                           TagClassValue + "_BU"))
-                            areaEBU = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                           TagClassValue + "_BI"))
-                            areaECI = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                           TagClassValue + "_CU"))
-                            areaECU = strtofloat(redis_conn.hget(constant.REDIS_TABLENAME,
-                                                                           TagClassValue + "_CI"))
-                            area_dir["areaEZGL"] = round(areaEZGL*160, 2)
-                            area_dir["areaEAI"] = strtofloat(areaEAI)
-                            area_dir["areaEAU"] = strtofloat(areaEAU)
-                            area_dir["areaEBI"] = strtofloat(areaEBI)
-                            area_dir["areaEBU"] = strtofloat(areaEBU)
-                            area_dir["areaECI"] = strtofloat(areaECI)
-                            area_dir["areaECU"] = strtofloat(areaECU)
-                    except Exception as ee:
-                        print(
-                            "报错tag：" + TagClassValue + "  |错误：" + str(ee))
-                    finally:
-                        pass
                 oclass = ast.literal_eval(returnb(redis_conn.hget(constant.REDIS_TABLENAME, "all_steam_tags")))
                 oc_dict_i_tag = {}
                 for oc in oclass:
                     oc_dict_i = {}
                     oc_dict_i["flowValue"] = strtofloat(
                         redis_conn.hget(constant.REDIS_TABLENAME, oc + "F"))  # 蒸汽瞬时流量
-                    oc_dict_i["sumValue"] = strtofloat(
+                    sumvalue = strtofloat(
                         redis_conn.hget(constant.REDIS_TABLENAME, oc + "S"))  # 蒸汽累计流量
+                    if oc == 'S_Area_GLF_45_3_502':
+                        sumvalue = round(sumvalue / 1000, 4)
+                    oc_dict_i["sumValue"] = sumvalue  # 蒸汽累计流量
                     oc_dict_i["SteamWD"] = strtofloat(
                         redis_conn.hget(constant.REDIS_TABLENAME, oc + "WD"))  # 蒸汽体积
                     oc_dict_i_tag[oc] = oc_dict_i
@@ -189,11 +147,30 @@ def handler_msg(conn):
                     oc_water_dict_i["sumValue"] = abs(strtofloat(
                         redis_conn.hget(constant.REDIS_TABLENAME, oc + "S")))
                     oc_dict_i_water_tag[oc] = oc_water_dict_i
+                electric_oclass = ast.literal_eval(returnb(redis_conn.hget(constant.REDIS_TABLENAME, "all_electric_tags")))
+                oc_dict_i_electric_tag = {}
+                for oc in electric_oclass:
+                    oc_electric_dict_i = {}
+                    oc_electric_dict_i["ZGL"] = strtofloat(
+                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "_ZGL"))
+                    oc_electric_dict_i["AU"] = strtofloat(
+                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "_AU"))
+                    oc_electric_dict_i["AI"] = strtofloat(
+                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "_AI"))
+                    oc_electric_dict_i["BU"] = strtofloat(
+                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "_BU"))
+                    oc_electric_dict_i["BI"] = strtofloat(
+                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "_BI"))
+                    oc_electric_dict_i["CU"] = strtofloat(
+                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "_CU"))
+                    oc_electric_dict_i["CI"] = strtofloat(
+                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "_CI"))
+                    oc_dict_i_electric_tag[oc] = oc_electric_dict_i
                 oc_dict = {}
                 oc_dict["steam"] = oc_dict_i_tag
                 oc_dict["water"] = oc_dict_i_water_tag
+                oc_dict["electric"] = oc_dict_i_electric_tag
                 area_list.append(oc_dict)
-                area_list.append(area_dir)
                 json_data = json.dumps(area_list)
                 # bytemsg = bytes(json_data, encoding="utf8")
                 # send_msg(c, bytes("recv: {}".format(data_parse), encoding="utf-8"))
@@ -235,14 +212,18 @@ def server_socket():
         Tags = db_session.query(TagDetail).filter().all()
         tag_steam_list = []
         tag_water_list = []
+        tag_electric_list = []
         for tag in Tags:
             EnergyClass = str(tag.TagClassValue)[0:1]
             if EnergyClass == "S":
                 tag_steam_list.append(tag.TagClassValue)
             elif EnergyClass == "W":
                 tag_water_list.append(tag.TagClassValue)
+            elif EnergyClass == "E":
+                tag_electric_list.append(tag.TagClassValue)
         redis_conn.hset(constant.REDIS_TABLENAME, "all_steam_tags", str(tag_steam_list))
         redis_conn.hset(constant.REDIS_TABLENAME, "all_water_tags", str(tag_water_list))
+        redis_conn.hset(constant.REDIS_TABLENAME, "all_electric_tags", str(tag_electric_list))
         areas = db_session.query(AreaTable).all()
         for area in areas:
             tagareas = db_session.query(TagDetail).filter(TagDetail.AreaName == area.AreaName).all()
