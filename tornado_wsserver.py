@@ -112,7 +112,9 @@ class SendThread(threading.Thread):
                 oc_dict["steam"] = oc_dict_i_tag
                 oc_dict["water"] = oc_dict_i_water_tag
                 oc_dict["electric"] = oc_dict_i_electric_tag
-                json_data = json.dumps(oc_dict)
+                area_list = []
+                area_list.append(oc_dict)
+                json_data = json.dumps(area_list)
                 # bytemsg = bytes(json_data, encoding="utf8")
                 # send_msg(c, bytes("recv: {}".format(data_parse), encoding="utf-8"))
                 bytemsg = bytes(json_data,encoding="utf-8")
