@@ -390,8 +390,9 @@
         }
       },
       initWebSocket(){ //初始化weosocket
-        // this.websock = new WebSocket('ws://' + location.host + '/socket');
-        this.websock = new WebSocket('ws://127.0.0.1:5002');
+        console.log(this.ElectricEqActive)
+        this.websock = new WebSocket('ws://' + location.host + '/socket');
+        // this.websock = new WebSocket('ws://127.0.0.1:5002');
         this.chartsLoading = true
         this.websock.onmessage = this.websocketonmessage;
         this.websock.onopen = this.websocketonopen;
@@ -417,7 +418,6 @@
               this.chartData.rows.shift()
             }
           }
-
         }else if(this.formParameters.energy === "水"){
           for(var key in resdata[0].water){
             if(key === this.WaterEqActive){

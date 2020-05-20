@@ -72,6 +72,11 @@
           <div class="drawerContent">
             <div class="drawerMaskBg"></div>
             <i class="close-drawer el-icon-close text-size-large" @click="drawer=false"></i>
+            <div style="position: absolute;top: 50px;left: 100px;">
+              <div style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;background: #FB8A06;margin-left: 10px;"></div> 电
+              <div style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;background: #228AD5;margin-left: 10px;"></div> 水
+              <div style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;background: #15CC48;margin-left: 10px;"></div> 汽
+            </div>
             <div class="mapContent"  v-if="JSON.stringify(steamTagList) != '{}'">
               <div class="mapContentTop">
                 <div style="position: relative;height: 100%;">
@@ -227,7 +232,58 @@
             <el-button @click="waterAreaTagDialog = false">关 闭</el-button>
           </div>
         </el-dialog>
-        <!-- 汽表分布图 -->
+        <!-- 电表分布图 -->
+        <el-dialog :title="areaOverallDialogTitle" :visible.sync="electricAreaTagDialog" width="40%" v-if="electricAreaTagDialog">
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '污水站'">
+            <div class="waterTagData" style="position: relative">电表<p>{{ electricTagList.E_Area_WSZ_16_2_35.ZGL }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '新建综合制剂车间'">
+            <div class="waterTagData" style="position: relative">电表（2楼配电室）<p>{{ electricTagList.E_Area_XJZ_11_2_7.ZGL }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '中试车间'">
+            <div class="waterTagData" style="position: relative">电表（化验室）<p>{{ electricTagList.E_Area_YF_26_1_14.ZGL }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '原提取车间'">
+            <div class="waterTagData" style="position: relative">电表（老醇提）<p>{{ electricTagList.E_Area_YTQ_38_1_28.ZGL }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '前处理车间'">
+            <div class="waterTagData" style="position: relative">电表（前处理）<p>{{ electricTagList.E_Area_YTQ_38_2_29.ZGL }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === 'GMP车间'">
+            <div class="waterTagData" style="position: relative">电表（一楼）<p>{{ electricTagList.E_Area_JK_28_2_17.ZGL }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '固体制剂车间'">
+            <div class="waterTagData" style="position: relative">电表<p>{{ electricTagList.E_Area_GT_30_1_19.ZGL }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '办公楼＼食堂'">
+            <div class="waterTagData" style="position: relative">电表<p>{{ electricTagList.E_Area_BGL_36_1_26.ZGL }}</p></div>
+          </el-card>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="electricAreaTagDialog = false">关 闭</el-button>
+          </div>
+        </el-dialog>
+        <!-- 汽表分布图 没有图片 -->
+        <el-dialog :title="areaOverallDialogTitle" :visible.sync="steamAreaTagDialog" width="40%" v-if="steamAreaTagDialog">
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '中试车间'">
+            <div class="waterTagData" style="position: relative">蒸汽表<p>{{ steamTagList.S_Area_YF_25_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_YF_25_1_502.flowValue }}</p><p>{{ steamTagList.S_Area_YF_25_1_502.SteamWD }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '原提取车间'">
+            <div class="waterTagData" style="position: relative">蒸汽表<p>{{ steamTagList.S_Area_YTQ_40_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_YTQ_40_1_502.flowValue }}</p><p>{{ steamTagList.S_Area_YTQ_40_1_502.SteamWD }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '前处理车间'">
+            <div class="waterTagData" style="position: relative">蒸汽表<p>{{ steamTagList.S_Area_YTQ_40_2_502.sumValue }}</p><p>{{ steamTagList.S_Area_YTQ_40_2_502.flowValue }}</p><p>{{ steamTagList.S_Area_YTQ_40_2_502.SteamWD }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === 'GMP车间'">
+            <div class="waterTagData" style="position: relative">蒸汽表<p>{{ steamTagList.S_Area_JK_27_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_JK_27_1_502.flowValue }}</p><p>{{ steamTagList.S_Area_JK_27_1_502.SteamWD }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '办公楼＼食堂'">
+            <div class="waterTagData" style="position: relative">蒸汽表<p>{{ steamTagList.S_Area_BGL_35_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_BGL_35_1_502.flowValue }}</p><p>{{ steamTagList.S_Area_BGL_35_1_502.SteamWD }}</p></div>
+          </el-card>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="steamAreaTagDialog = false">关 闭</el-button>
+          </div>
+        </el-dialog>
+        <!-- 汽表分布图 有图片-->
         <el-dialog :title="areaOverallDialogTitle" :visible.sync="areaOverallDialog" :modal="false" width="840px">
           <div v-if="areaOverallDialogSrc2" style="position: relative;display: inline-flex;">
             <el-image style="width: 100%;" :src="areaOverallDialogSrc2"></el-image>
@@ -532,23 +588,25 @@ export default {
       UserInfo:{},
       drawer: false,
       drawerTopAreaOption:[
-        {title:"污水站",width: "120px",height:"30%",top:"26%",left:"5%",marginLeft:"80px",hasElectric:false,hasWater:true,hasSteam:false},
-        {title:"锅炉房",width: "220px",height:"20%",top:"28%",left:"15%",marginLeft:"100px",img:require("@/assets/imgs/guolu.jpg"),hasElectric:false,hasWater:false,hasSteam:true},
-        {title:"提取二车间",width: "220px",height:"15%",top:"42%",left:"15%",marginLeft:"100px",img:require("@/assets/imgs/tiquer.jpg"),img2:require("@/assets/imgs/tiquer2.jpg"),hasElectric:false,hasWater:true,hasSteam:true},
+        {title:"污水站",width: "120px",height:"30%",top:"31%",left:"8%",marginLeft:"20px",hasElectric:true,hasWater:true,hasSteam:false},
+        {title:"锅炉房",width: "220px",height:"20%",top:"30%",left:"15%",marginLeft:"100px",img:require("@/assets/imgs/guolu.jpg"),hasElectric:false,hasWater:false,hasSteam:true},
+        {title:"提取二车间",width: "220px",height:"15%",top:"44%",left:"15%",marginLeft:"30px",img:require("@/assets/imgs/tiquer.jpg"),img2:require("@/assets/imgs/tiquer2.jpg"),hasElectric:false,hasWater:true,hasSteam:true},
         {title:"综合车间",width: "250px",height:"28%",top:"60%",left:"10%",marginLeft:"100px",img:require("@/assets/imgs/zonghe.jpg"),hasElectric:false,hasWater:true,hasSteam:true},
         {title:"新建综合制剂车间",width: "100px",height:"45%",top:"18%",left:"34%",marginLeft:"20px",img:require("@/assets/imgs/xinzhiji.jpg"),hasElectric:true,hasWater:true,hasSteam:true},
-        {title:"中试车间",width: "60px",height:"43%",top:"18%",left:"45%",marginLeft:"35px",hasElectric:false,hasWater:true,hasSteam:false},
-        {title:"原提取车间",width: "90px",height:"15%",top:"33%",left:"50%",marginLeft:"30px",hasElectric:false,hasWater:true,hasSteam:false},
-        {title:"前处理车间",width: "90px",height:"17%",top:"45%",left:"58%",marginLeft:"40px",hasElectric:false,hasWater:true,hasSteam:false},
-        {title:"GMP车间",width: "220px",height:"17%",top:"55%",left:"46%",marginLeft:"80px",hasElectric:false,hasWater:true,hasSteam:false},
-        {title:"固体制剂车间",width: "280px",height:"28%",top:"74%",left:"48%",marginLeft:"160px",img:require("@/assets/imgs/gutizhiji.jpg"),hasElectric:true,hasWater:true,hasSteam:true},
+        {title:"中试车间",width: "70px",height:"43%",top:"18%",left:"45%",marginLeft:"0",hasElectric:true,hasWater:true,hasSteam:true},
+        {title:"原提取车间",width: "90px",height:"15%",top:"33%",left:"50%",marginLeft:"10px",hasElectric:true,hasWater:true,hasSteam:true},
+        {title:"前处理车间",width: "90px",height:"17%",top:"45%",left:"58%",marginLeft:"20px",hasElectric:true,hasWater:true,hasSteam:true},
+        {title:"GMP车间",width: "220px",height:"17%",top:"55%",left:"46%",marginLeft:"80px",hasElectric:true,hasWater:true,hasSteam:true},
+        {title:"固体制剂车间",width: "280px",height:"28%",top:"74%",left:"48%",marginLeft:"100px",img:require("@/assets/imgs/gutizhiji.jpg"),hasElectric:true,hasWater:true,hasSteam:true},
       ],
       drawerBottomAreaOption:[
         {title:"展览室",width: "150px",height:"45%",top:"17%",left:"15%",marginLeft:"70px"},
-        {title:"办公楼＼食堂",width: "360px",height:"48%",top:"10%",left:"25%",marginLeft:"140px",hasElectric:false,hasWater:true,hasSteam:false},
+        {title:"办公楼＼食堂",width: "360px",height:"48%",top:"10%",left:"25%",marginLeft:"140px",hasElectric:true,hasWater:true,hasSteam:true},
       ],
       waterAreaDialog:false,
       waterAreaTagDialog:false,
+      electricAreaTagDialog:false,
+      steamAreaTagDialog:false,
       areaOverallDialog:false,
       areaOverallDialogTitle:"",
       areaOverallDialogSrc:"",
@@ -711,7 +769,8 @@ export default {
       this.initWebSocket()
     },
     showAreaElectric(AreaName){
-
+      this.electricAreaTagDialog = true
+      this.areaOverallDialogTitle = AreaName
     },
     showAreaWater(AreaName){
       this.waterAreaTagDialog = true
@@ -730,6 +789,9 @@ export default {
           this.areaOverallDialogSrc = img
           this.areaOverallDialogSrc2 = ""
         }
+      }else{
+        this.steamAreaTagDialog = true
+        this.areaOverallDialogTitle = AreaName
       }
     },
     getGlSteamLabel(){
@@ -741,8 +803,8 @@ export default {
       this.waterAreaDialog = true
     },
     initWebSocket(){ //初始化weosocket
-      // this.websock = new WebSocket('ws://' + location.host + '/socket');
-      this.websock = new WebSocket('ws://127.0.0.1:5002');
+      this.websock = new WebSocket('ws://' + location.host + '/socket');
+      // this.websock = new WebSocket('ws://127.0.0.1:5002');
       this.websock.onmessage = this.websocketonmessage;
       this.websock.onopen = this.websocketonopen;
       this.websock.onerror = this.websocketonerror;
