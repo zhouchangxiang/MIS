@@ -200,7 +200,7 @@
         AllArea:false,
         totalDayEnergy:"",
         chartSettings: {
-          area:true,
+          area:false,
           yAxisName:[]
         },
         ChartsLoading:false,

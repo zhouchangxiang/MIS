@@ -390,7 +390,6 @@
         }
       },
       initWebSocket(){ //初始化weosocket
-        console.log(this.ElectricEqActive)
         this.websock = new WebSocket('ws://' + location.host + '/socket');
         // this.websock = new WebSocket('ws://127.0.0.1:5002');
         this.chartsLoading = true
