@@ -163,6 +163,7 @@ export default {
            var minrate=arr[0]['负荷率']
            var maxtime=arr[0]['时间']
            var mintime=arr[0]['时间']
+           this.chartData.columns=['日期','负荷率']
            for(var i=0;i<arr.length;i++){
                if(arr[i]['负荷率']!==''){
                this.chartData.rows.push({
@@ -195,6 +196,20 @@ export default {
             this.num1=res.data.inputSteam
             this.num2=res.data.outputSteam
             this.num3=res.data.PipeDamage
+            var arr=res.data.row
+            console.log(arr)
+            this.chartData.rows=[]
+            this.chartData.columns=['时间','输入总量','输出总量']
+            for(var i=0;i<arr.length;i++){
+            if(arr[i]['输入总量']!==''){
+             this.chartData.rows.push({
+               '时间':arr[i]['时间'].slice(-2),
+               '输入总量':arr[i]['输入总量'],
+               '输出总量':arr[i]['输出总量']
+               })
+                }
+
+            }
         })
        }
    },
@@ -208,6 +223,7 @@ export default {
           this.value4='当前负荷率:'
           this.value5='功率等级&nbsp;优'
           this.num1=this.num2=this.num3=0
+          this.chartData.rows=[]
       }
     if(e===1){
         this.tabbar=1
