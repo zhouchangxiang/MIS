@@ -9,7 +9,7 @@ from flask_login import login_required, logout_user, login_user, current_user, L
 import calendar
 
 from handlers.energymanager.energy_manager import energyStatistics, energyStatisticsCost, energyStatisticshour, \
-    energyStatisticsday, energyStatisticsmonth, energyStatisticsbyarea
+    energyStatisticsday, energyStatisticsmonth, energyStatisticsbyarea, energyStatisticsteamtotal
 from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable, Equipment, \
     AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
@@ -349,24 +349,7 @@ def roundtwo(rod):
         if float(rod) < 0:
             return 0.0
         return round(float(rod), 2)
-def energyStatisticsteamtotal(StartTime, EndTime):
-    '''
-    :param oc_list: tag点的List
-    :param StartTime:
-    :param EndTime:
-    :param energy:
-    :return:获取某段时间汽能总值
-    '''
-    reend = db_session.query(SteamTotalMaintain).filter(
-        SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0', SteamTotalMaintain.SumValue != '',
-        SteamTotalMaintain.CollectionDate.between(StartTime, EndTime)).order_by(desc("CollectionDate")).first()
-    restar = db_session.query(SteamTotalMaintain).filter(
-        SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0', SteamTotalMaintain.SumValue != '',
-        SteamTotalMaintain.CollectionDate.between(StartTime, EndTime)).order_by(("CollectionDate")).first()
-    if reend != None and restar != None:
-        return round(float(reend.SumValue) - float(restar.SumValue), 2)
-    else:
-        return 0
+
 
 @energySteam.route('/steamlossanalysis', methods=['POST', 'GET'])
 def steamlossanalysis():
