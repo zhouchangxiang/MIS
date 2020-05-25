@@ -8,9 +8,9 @@
         <div class="show-top">
                <div class="tips">
                    <van-tabs type="card" title-active-color="#1E222B" title-inactive-color="#fff" v-model="choosedate" @click="ChooseDate($event)"> 
-                        <van-tab title="日"></van-tab>
-                        <van-tab title="月"></van-tab>
                         <van-tab title="年"></van-tab>
+                        <van-tab title="月"></van-tab>
+                        <van-tab title="日"></van-tab>
                     </van-tabs>
                 </div>
                <div class="tips">
@@ -170,11 +170,11 @@ export default {
                 ]
                 },
             choosedate:0,
-            active:0,
+            active:2,
             choosekind:0,
-            banner:1,
+            banner:0,
             kindall:['水','电','汽'],
-            dateall:['日','月','年'],
+            dateall:['年','月','日'],
             kind:'水',
             date:'年',
             unit:'t',
@@ -293,20 +293,20 @@ export default {
                 }
             })
         },
-        getInitMessage(){
+        getInitMessage(){//初始数据调用
         this.loading=true
         var nowTime = moment().format('HH:mm').substring(0,4) + "0"
         var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
         var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
-        var params= {StartTime:todayStartTime,EndTime:todayEndTime,Area:'综合车间'}
-        var params1={AreaName:'综合车间',StartTime:todayStartTime,EndTime:todayEndTime}
+        var params= {StartTime:todayStartTime,EndTime:todayEndTime,Area:this.AreaName}
+        var params1={AreaName:this.AreaName,StartTime:todayStartTime,EndTime:todayEndTime}
         this.$http.all([
             this.$http.get("/api/energywater",{params: params}),
             this.$http.get('/api/batchMaintainEnergy',{params:params1}),
             this.$http.get('/api/areatimeenergycount',{params:{EnergyClass:'水',CompareTime:moment().format('YYYY-MM-DD')}}),
-            // this.$http.get('api/energyall',{params:{ModelFlag:"在线检测情况"}})
             this.$http.get("/api/energyelectric",{params: params}),
-            this.$http.get("/api/energysteam",{params: params})
+            this.$http.get("/api/energysteam",{params: params}),
+            // this.$http.get('api/energyall',{params:{ModelFlag:"在线检测情况"}})
         ]).then((this.$http.spread((res1,res2,res3,res4,res5)=>{
             this.loading=false
             this.water1=this.water2=this.water3=JSON.parse(res1.data)
@@ -328,7 +328,7 @@ export default {
         }
         )))
     },
-    onChange(e) {
+    onChange(e) { //上面导航栏滑动触发
       this.loading=true
       this.AreaName=this.area[e]
       var nowTime = moment().format('HH:mm').substring(0,4) + "0"
@@ -576,17 +576,27 @@ export default {
     },
     Choosebanner(e){
        this.banner=e
-       if(this.banner==0){
-           this.getallRreview()
+       this.getallRreview()
+       var preStartTime=''
+       var preEndTime=''
+       var nowTime = moment().format('HH:mm').substring(0,4) + "0"
+       var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
+       if(this.date=='日'){
+            preStartTime =  moment().format('YYYY-MM-DD') + " 00:00"
+            preEndTime = todayEndTime
+       }else if(this.date=='月'){
+            preStartTime = moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm')
+            preEndTime = moment().month(moment().month()).endOf('month').format('YYYY-MM-DD HH:mm')
+       }else{
+            preStartTime=moment().year(moment().year()).startOf('year').format('YYYY-MM-DD HH:mm')
+            preEndTime=todayEndTime
        }
-        var todayStartTime = '2020-05-12 00:00'
-        var todayEndTime = '2020-05-12 18:00'
        if(this.banner==0){
            this.$http.get("/api/watertrendlookboard",{
-            params: {
+               params: {
                 AreaName:this.AreaName,
-                StartTime:todayStartTime,
-                EndTime:todayEndTime
+                StartTime:preStartTime,
+                EndTime:preEndTime
             }
             }).then(res =>{
             this.waterGG = res.data.GG+'t'
@@ -641,7 +651,7 @@ export default {
                position: absolute;
                top:95px;
                left: 10px;
-               height: 70px;
+               height: 80px;
                width: 300px;
                background-color:#ddd;
                table{

@@ -17,7 +17,7 @@
                </div>
            </div>
             <div class="show">
-                <div class="roundpic">
+                <div class="roundpic" @click="Say()">
                    <ve-ring :data="chartData" :settings="chartSettings" :legend-visible="false" :events="chartEvents" :extend="piechartExtend"></ve-ring>
                 </div>
                 <div class="listpic">
@@ -31,14 +31,14 @@
                     <div class='today-water-max'>本{{currentdate}}耗{{currentkind}}峰值:</div>
                     <div class='today-water-min'>本{{currentdate}}耗{{currentkind}}谷值:</div>
                     <div class='today-consume-rank'>本日耗排名:</div>
-                    <div class='today-time1'>时间:</div>
-                    <div class='today-time2'>时间:</div>
-                    <div class='today-num1'>00.00</div>
+                    <div class='today-time1'>单位价格:</div>
+                    <div class='today-time2'>单位价格:</div>
+                    <div class='today-num1'>{{todayValue}}</div>
                     <div class='today-num2'>{{highvalue}}</div>
                     <div class='today-num3'>{{lowvalue}}</div>
-                    <div class='today-rank-num'>00.00</div>
-                    <div class='today-time1-num'>00:00:00</div>
-                    <div class='today-time2-num'>00:00:00</div>
+                    <div class='today-rank-num'>{{rank}}</div>
+                    <div class='today-time1-num'>{{highUnitPrice}}</div>
+                    <div class='today-time2-num'>{{lowUnitPrice}}</div>
                 </div>
             </div>
     </div>
@@ -68,7 +68,9 @@ export default {
         },
         chartEvents:{
                   click:function(e){
-                   localStorage.setItem('myArea',e.data.name)
+                    localStorage.setItem('myArea',e.data.name)
+                    localStorage.setItem('todayValue',e.data.value)
+                    localStorage.setItem('rank',e.dataIndex+1)
                   }
               },
         ChartExtend: {
@@ -98,15 +100,19 @@ export default {
         currentArea:'综合车间',
         StartTime:'',
         EndTime:'',
+        rank:1,
+        todayValue:0,
         highvalue:1,
         lowvalue:1,
         flag:false,
+        highUnitPrice:0,
+        lowUnitPrice:0,
         vlchartData: {
                 columns: ['时间', '今日能耗'],
                 rows: [
+                    { '时间': '01', '今日能耗': 100},
                     { '时间': '01', '今日能耗': 139},
-                    { '时间': '01', '今日能耗': 139},
-                    { '时间': '01', '今日能耗': 139},
+                    { '时间': '01', '今日能耗': 109},
                     { '时间': '01', '今日能耗': 139}
                 ]
         },
@@ -124,6 +130,12 @@ export default {
         this.initOperation();
     },
     methods:{
+        Say(){
+            this.currentArea=localStorage.getItem('myArea')
+            this.todayValue=localStorage.getItem('todayValue')
+            this.rank=localStorage.getItem('rank')
+            this.ChooseDate()
+        },
         //展示当天的数据
         getallRreview(){
             this.$http.get('/api/energyall',{
@@ -149,23 +161,23 @@ export default {
             this.currentdate=this.date[e]
             this.getallRreview()
             if(this.currentdate=='年'){
-                this.StartTime= moment().year(moment().year()).startOf('year').format('YYYY-MM-DD HH:mm:ss')
+                this.StartTime= moment().year(moment().year()).startOf('year').format('YYYY-MM-DD HH:mm')
             }else if(this.currentdate=='月'){
-                this.StartTime=  moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm:ss')
+                this.StartTime=  moment().month(moment().month()).startOf('month').format('YYYY-MM-DD HH:mm')
             }else{
                 this.StartTime= moment().format('YYYY-MM-DD') + " 00:00"
             }
             this.EndTime=moment(new Date()).format('YYYY-MM-DD HH:mm')
-            this.currentArea=localStorage.getItem('myArea')
             this.$http.get('/api/electricnergycost',{params:{
                 StartTime:this.StartTime,
                 EndTime:this.EndTime,
                 TimeClass:this.currentkind,
                 AreaName:this.currentArea
             }}).then((value) => {
-                console.log(value)
                 this.highvalue=value.data.periodTimeTypeItem[1].expendEnergy
+                this.highUnitPrice=value.data.periodTimeTypeItem[1].unitPrice
                 this.lowvalue=value.data.periodTimeTypeItem[3].expendEnergy
+                this.lowUnitPrice=value.data.periodTimeTypeItem[3].unitPrice
             })
         },
         ChooseKind(e){
@@ -174,6 +186,7 @@ export default {
            this.chartData.rows=[]
            this.getallRreview()
            this.currentArea=localStorage.getItem('myArea')
+           this.todayValue=0
            var params={EnergyClass:this.currentkind,CompareTime:'2020-04-10'}
            if(!this.flag){
            this.flag=true
