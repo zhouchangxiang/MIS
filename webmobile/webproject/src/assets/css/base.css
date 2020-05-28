@@ -10,10 +10,13 @@
     display: none;
 }
 .van-tabs__nav{
-    background-color: #1E222BFF;
+    background-color: #666;
+}
+.tabbar .van-tabs__nav{
+    background-color: #eee;
 }
 .van-tabs__nav--card{
-    width: 90px;
+    width:120px;
     height: 18px;
     margin: 0px 0px;
     border: 1px solid #3D4048;
@@ -70,7 +73,7 @@
     z-index: -9;
 }
 .van-loading{
-    position: absolute;
+    position: fixed;
     left: 50%;
     top: 50%;
     transform: translate(-50%);
@@ -91,4 +94,7 @@
   .bannertips .van-tabs__nav--card {
     margin-left: 10px;
     width: 155px;
+}
+.van-cell__value{
+    font-size: 12px;
 }

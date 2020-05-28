@@ -222,13 +222,13 @@ export default {
         width:375px;
         height:526px;
         box-sizing: border-box;
-        background-color: #1E222B;
+        background-color: #eee;
         padding: 0 12px 12px 13px;
         .date-box{
             height:18px;
             opacity:1;
             border-radius:4px;
-            color:#fff;
+            color:#000;
             font-size: 10px;
             .tips{
                 float: left;
@@ -240,7 +240,7 @@ export default {
         .show{
             position: relative;
             width: 100%;
-            background-color: #1E222B;
+            background-color: #eee;
             margin-top: 15px;
             .roundpic{
             position: relative;
@@ -266,7 +266,7 @@ export default {
             width: 350px;
             height: 120px;
             border-radius: 4px;
-            background: #1E222B;
+            background: #ccc;
             .header{
                 width: 100%;
                 height:17px;
@@ -275,7 +275,7 @@ export default {
                 font-family:PingFang SC;
                 font-weight:400;
                 line-height:17px;
-                color:rgba(255,255,255,1);
+                color:#000;
                 opacity:1;
             }
             .body{
@@ -290,7 +290,7 @@ export default {
                 font-family:PingFang SC;
                 font-weight:400;
                 line-height:11px;
-                color:rgba(255,255,255,1);
+                color:#000;
                 opacity:1;
                 }
                 .today-water-max{
@@ -331,7 +331,7 @@ export default {
                     top:75px;
                 }
                 .today-time1-num,.today-time2-num{
-                    color: #fff;
+                    color: #000;
                     left:120px;
                     top:75px;
                 }

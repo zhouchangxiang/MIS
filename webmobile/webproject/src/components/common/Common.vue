@@ -1,7 +1,7 @@
 <template>
    <div class="mainbox">
        <div class="top">
-           <div class='head-name'>好护士能管系统</div>
+           <div class='head-name'>辽宁好护士能源管理系统</div>
            <span @click="logout"></span>
        </div>
        <router-view/>
@@ -45,12 +45,11 @@ export default {
         position: relative;
         height:89px;
         width:375px;
-        background-color:@bgcc;
+        background-color:#999;
         .head-name{
             position: absolute;
             top:46px;
-            left:125px;
-            width:126px;
+            left:90px;
             height:25px;
             font-size:18px;
             font-family:PingFang SC;
@@ -76,13 +75,13 @@ export default {
         bottom: 0;
         width:375px;
         height:64px;
-        background:@bgcc;
+        background:#666;
         box-shadow:0px -2px 4px rgba(255,255,255,0.16);
         opacity:1;
     }
     .van-tabbar{
         height: 64px;
-        background-color: @bgcc;
+        background-color: #999;
         &.van-tabbar--fixed{
             height: 64px;
         }

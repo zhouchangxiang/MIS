@@ -1,7 +1,7 @@
 <template>
   <div class="login">
   <div class="login-header">
-    <h5>好护士能管系统</h5>
+    <h5>辽宁好护士能源管理系统</h5>
     <p>欢迎使用</p>
   </div>
   <div class="login-body">
@@ -95,7 +95,6 @@ export default {
     position:absolute;
     top:90px;
     left:156px;
-    width:64px;
     height:22px;
     line-height:22px;
     font-size:16px;
@@ -107,9 +106,9 @@ export default {
   }
   h5{
     position:absolute;
-    left:125px;
+    left:100px;
     top:46px;
-    font-size:18px;
+    font-size:16px;
     font-family:PingFang SC;
     font-weight:500;
     line-height:25px;
@@ -127,10 +126,9 @@ export default {
     p{
     position:absolute;
     left:152px;
-    width:72px;
     height:25px;
     top: 30px;
-    font-size:18px;
+    font-size:16px;
     font-family:PingFang SC;
     font-weight:500;
     line-height:25px;
@@ -156,11 +154,10 @@ export default {
     border-radius: 10px;
   }
   .van-button__text{
-    width:32px;
     height:22px;
     font-size:16px;
+    font-weight: 600;
     font-family:PingFang SC;
-    font-weight:400;
     line-height:22px;
     color:rgba(30,34,43,1);
     opacity:1;

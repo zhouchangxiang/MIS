@@ -64,6 +64,7 @@ export default {
         this.chartSettings = {
          yAxisType: ['KMB'],
          yAxisName: ['数值'],
+
       }
         return {
             valuekind: 0,
@@ -244,8 +245,8 @@ export default {
 </script>
 <style lang="less" scoped>
     @bgca:#3D4048FF;
-    @bgcc:#1E222BFF;
-    @bgct:#7E7F84;
+    @bgcc:#eee;
+    @bgct:#ccc;
     span{
         text-align: center;
     }
@@ -261,7 +262,7 @@ export default {
           left: 78px;
           width:193px;
           height:22px;
-          background:rgba(61,64,72,1);
+          background:#ccc;
           opacity:1;
           border-radius:4px
             }
@@ -271,7 +272,7 @@ export default {
           width:350px;
           height:130px;
           margin-top: 10px;
-          background:rgba(126,127,132,1);
+          background:#ccc;
           box-shadow:0px 0px 6px rgba(255,255,255,0.16);
           opacity:1;
           border-radius:4px;
@@ -285,7 +286,7 @@ export default {
             font-family:PingFang SC;
             font-weight:400;
             line-height:20px;
-            color:rgba(255,255,255,1);
+            color:#000;
             opacity:1;
         }
         .input-elc1{
@@ -297,7 +298,7 @@ export default {
             font-family:PingFang SC;
             font-weight:400;
             line-height:11px;
-            color:rgba(255,255,255,1);
+            color:#000;
             opacity:1;
         }
         .output-elc{
@@ -309,7 +310,7 @@ export default {
             font-family:PingFang SC;
             font-weight:400;
             line-height:11px;
-            color:rgba(255,255,255,1);
+            color:#000;
             opacity:1;
         }
         .input-elc2{
@@ -321,7 +322,7 @@ export default {
             font-family:PingFang SC;
             font-weight:400;
             line-height:11px;
-            color:rgba(255,255,255,1);
+            color:#000;
             opacity:1;
         }
         .ou{
@@ -333,7 +334,7 @@ export default {
             font-family:PingFang SC;
             font-weight:400;
             line-height:14px;
-            color: #fff;
+            color: #000;
             opacity:1;
         }
         .shownumber{
@@ -344,7 +345,7 @@ export default {
             font-family:PingFang SC;
             font-weight:500;
             line-height:45px;
-            color:#fff;
+            color:#fac000;
             letter-spacing:1px;
             opacity:1;
             height:36px;
@@ -367,12 +368,12 @@ export default {
                 top:12px;
                 width:7px;
                 height:17px;
-                border-bottom: 1px solid #fff;
+                border-bottom: 1px solid #000;
                 font-size:12px;
                 font-family:PingFang SC;
                 font-weight:500;
                 line-height:17px;
-                color:#fff;
+                color:#000;
                 opacity:1;
             }
             .fh2{
@@ -385,7 +386,7 @@ export default {
                 font-family:PingFang SC;
                 font-weight:500;
                 line-height:17px;
-                color:#fff;
+                color:#000;
                 opacity:1; 
             }
             .fh3{
@@ -398,7 +399,7 @@ export default {
                 font-family:PingFang SC;
                 font-weight:500;
                 line-height:17px;
-                color:#fff;
+                color:#000;
                 opacity:1; 
             }
         }
@@ -422,7 +423,7 @@ export default {
                   font-family:PingFang SC;
                   font-weight:400;
                   line-height:11px;
-                  color:rgba(255,255,255,1);
+                  color:#000;
                   opacity:1;
               }
               .num{
@@ -443,7 +444,7 @@ export default {
                   font-family:PingFang SC;
                   font-weight:500;
                   line-height:17px;
-                  color:rgba(255,255,255,1);
+                  color:#000;
                   opacity:1;
               }
               .time{
@@ -456,7 +457,7 @@ export default {
                   font-family:PingFang SC;
                   font-weight:400;
                   line-height:11px;
-                  color:rgba(255,255,255,1);
+                  color:#000;
                   opacity:1;
               }
               .time-now{
@@ -464,14 +465,14 @@ export default {
                   left:11px;
                   top:98px;
                   font-size: 20px;
-                  color:#fff;
+                  color:#000;
               }
           .left-box{
               position: absolute;;
               left: 0;
               width:165px;
               height:129px;
-              background:rgba(126,127,132,1);
+              background:#ccc;
               box-shadow:0px 0px 6px rgba(255,255,255,0.16);
               opacity:1;
               border-radius:4px;
@@ -482,7 +483,7 @@ export default {
               top:0;
               width:165px;
               height:129px;
-              background:rgba(126,127,132,1);
+              background:#ccc;
               box-shadow:0px 0px 6px rgba(255,255,255,0.16);
               opacity:1;
               border-radius:4px;
@@ -499,10 +500,10 @@ export default {
             height:18px;
             opacity:1;
             border-radius:4px;
-            color:#fff;
+            color:#000;
             font-size: 10px;
             .tips{
-                background-color:#1E222B;
+                background-color:#eee;
                 height: 18px;
             }
         }
