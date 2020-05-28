@@ -84,7 +84,7 @@
         markLine: {
           data: [
             {
-              name: '平均值',
+              name: '每小时平均值',
               type: 'average',
             }
           ],
