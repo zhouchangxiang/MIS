@@ -373,7 +373,7 @@ def exportxflow(TagClassValue, EnergyClass,  StartTime, EndTime):
         col += 1
     # 写入数据
     i = 1
-    reclass = flowvaluesql(EnergyClass, tag.TagClassValue, StartTime, EndTime)
+    reclass = flowvaluesqldaochu(EnergyClass, TagClassValue, StartTime, EndTime)
     for oc in reclass:
         for cum in columns:
             if cum == '采集点':
@@ -390,6 +390,23 @@ def exportxflow(TagClassValue, EnergyClass,  StartTime, EndTime):
     writer.close()
     output.seek(0)
     return output
+def flowvaluesqldaochu(EnergyClass, TagClassValue, StartTime, EndTime):
+    oclass = []
+    if EnergyClass == "水":
+        sql = "SELECT t.WaterFlow AS FlowValue,t.FlowWUnit AS FlowUnit,t.CollectionDate AS CollectionDate FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_WaterEnergy) " \
+              "WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "' AND " + "'" + EndTime + "' ORDER BY t.CollectionDate"
+        oclass = db_session.execute(sql).fetchall()
+        db_session.close()
+    elif EnergyClass == "汽":
+        if TagClassValue == "S_AllArea_Value":
+            sql = "SELECT t.FlowValue AS FlowValue,t.FlowWUnit AS FlowUnit,t.CollectionDate AS CollectionDate FROM [DB_MICS].[dbo].[SteamTotalMaintain] t with (INDEX =IX_SteamTotalMaintain) " \
+                  "WHERE t.CollectionDate BETWEEN " + "'" + StartTime + "' AND " + "'" + EndTime + "' ORDER BY t.CollectionDate"
+        else:
+            sql = "SELECT t.FlowValue AS FlowValue,t.FlowUnit AS FlowUnit,t.CollectionDate AS CollectionDate FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy) " \
+                  "WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "' AND " + "'" + EndTime + "' ORDER BY t.CollectionDate"
+        oclass = db_session.execute(sql).fetchall()
+        db_session.close()
+    return oclass
 
 def flowvaluesql(EnergyClass, TagClassValue, StartTime, EndTime, offset, limit):
     oclass = []
