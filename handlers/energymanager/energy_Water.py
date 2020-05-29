@@ -304,8 +304,7 @@ def flowvaluebaobiao():
             data_list = []
             oclass = flowvaluesql(EnergyClass, TagClassValue, StartTime, EndTime)
             for oc in oclass:
-                tag = db_session.query(TagDetail).filter(TagDetail.TagClassValue == oc.TagClassValue).first()
-                dict_data = {"TagClassValue": tag.FEFportIP, "FlowValue": round(0 if oc['FlowValue'] is None else float(oc[0]['FlowValue']), 2), "AreaName": tag.AreaName, "Unit": oc['FlowUnit'], "CollectionDate": oc['CollectionDate']}
+                dict_data = {"TagClassValue": tag.FEFportIP, "FlowValue": round(0 if oc['FlowValue'] is None else float(oc['FlowValue']), 2), "AreaName": tag.AreaName, "Unit": oc['FlowUnit'], "CollectionDate": oc['CollectionDate']}
                 data_list.append(dict_data)
             dir["row"] = data_list
             dir["total"] = len(oclass)
@@ -379,6 +378,7 @@ def exportxflow(TagClassValue, EnergyClass,  StartTime, EndTime):
     return output
 
 def flowvaluesql(EnergyClass, TagClassValue, StartTime, EndTime):
+    oclass = []
     if EnergyClass == "水":
         sql = "SELECT t.WaterFlow AS FlowValue,t.FlowWUnit AS FlowUnit,t.CollectionDate AS CollectionDate FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_WaterEnergy) " \
               "WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "' AND " + "'" + EndTime + "' ORDER BY t.CollectionDate"
