@@ -387,10 +387,10 @@ def flowvaluesql(EnergyClass, TagClassValue, StartTime, EndTime):
     elif EnergyClass == "汽":
         if TagClassValue == "S_AllArea_Value":
             sql = "SELECT t.FlowValue AS FlowValue,t.FlowUnit AS FlowUnit,t.CollectionDate AS CollectionDate FROM [DB_MICS].[dbo].[SteamTotalMaintain] t with (INDEX =IX_SteamTotalMaintain) " \
-                  "WHERE t.CollectionDate BETWEEN " + "'" + StartTime + "' AND " + "'" + EndTime + "' ORDER BY t.CollectionDate""
+                  "WHERE t.CollectionDate BETWEEN " + "'" + StartTime + "' AND " + "'" + EndTime + "' ORDER BY t.CollectionDate"
         else:
             sql = "SELECT t.FlowValue AS FlowValue,t.FlowUnit AS FlowUnit,t.CollectionDate AS CollectionDate FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy) " \
-                  "WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "' AND " + "'" + EndTime + "' ORDER BY t.CollectionDate""
+                  "WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "' AND " + "'" + EndTime + "' ORDER BY t.CollectionDate"
         oclass = db_session.execute(sql).fetchall()
         db_session.close()
     return oclass
