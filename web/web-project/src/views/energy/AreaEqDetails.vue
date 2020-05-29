@@ -128,7 +128,7 @@
         </el-col>
         <el-col :span="24" style="margin-bottom: 2px;">
           <div class="chartHead text-size-large text-color-info">
-            <div class="chartTile">能耗分析</div>
+            <div class="chartTile">能耗趋势</div>
             <ul class="subsectionList" v-if="EnergyClass === '水'">
               <li v-for="(item,index) in subsectionWaterList"><a href="javascript:;" :class="{active:subsectionWaterActive === index}" @click="getSubsectionWater(index)">{{ item.name }}</a></li>
             </ul>
@@ -137,17 +137,41 @@
             </ul>
           </div>
         </el-col>
-        <el-col :span="24" style="margin-bottom: 2px;">
+        <el-col :span="24" style="margin-bottom: 15px;">
           <div class="energyDataContainer">
             <ve-line :data="faultChartData" :extend="chartExtend" :settings="chartSettings"></ve-line>
           </div>
         </el-col>
-        <el-col :span="24">
+        <el-col :span="24" style="margin-bottom: 15px;">
           <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
-            <div class="chartTile">实时预警 <span class="text-color-info-shallow text-size-mini">所有记录</span></div>
+            <div class="chartTile">数据表</div>
           </div>
           <div class="platformContainer">
-            <el-table :data="ralTimeWarningTableData" size="mini" height="246px" max-height="246px" style="width: 100%">
+            <el-table :data="EqTagTableData" size="mini">
+              <el-table-column prop="TagClassValue" label="设备名"></el-table-column>
+              <el-table-column prop="FlowValue" label="瞬时量"></el-table-column>
+              <el-table-column prop="AreaName" label="区域"></el-table-column>
+              <el-table-column prop="Unit" label="单位"></el-table-column>
+              <el-table-column prop="CollectionDate" label="采集时间"></el-table-column>
+            </el-table>
+            <div class="paginationClass">
+              <el-pagination background  layout="total, sizes, prev, pager, next, jumper"
+                 :total="total"
+                 :current-page="currentPage"
+                 :page-sizes="[5,10,20]"
+                 :page-size="pagesize"
+                 @size-change="handleSizeChange"
+                 @current-change="handleCurrentChange">
+              </el-pagination>
+            </div>
+          </div>
+        </el-col>
+        <el-col :span="24">
+          <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
+            <div class="chartTile">实时预警</div>
+          </div>
+          <div class="platformContainer">
+            <el-table :data="ralTimeWarningTableData" size="mini">
               <el-table-column prop="area" label="区域"></el-table-column>
               <el-table-column prop="name" label="设备"></el-table-column>
               <el-table-column prop="type" label="状态">
@@ -157,65 +181,6 @@
               </el-table-column>
               <el-table-column prop="date" label="时间"></el-table-column>
             </el-table>
-          </div>
-        </el-col>
-      </el-col>
-      <el-col :span="24" v-if="formParameters.eqComponentValue == '设备利用率'">
-        <el-col :span="24">
-          <div class="chartHead text-size-large text-color-info" style="margin-bottom: 2px;">
-            <div class="chartTile">设备运行图</div>
-            <el-select class="collapse-head-select float-right" v-model="commodityValue" size="small">
-              <el-option v-for="item in commodityOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-            </el-select>
-          </div>
-        </el-col>
-        <el-col :span="24" style="margin-bottom: 10px;">
-          <div class="platformContainer">
-            <el-row type="flex" justify="space-between">
-              <el-col :span="4">
-                <div class="equirunInfoItem">
-                  <label>开机</label>
-                  <p><span class="text-size-mini text-color-info-shallow">次数</span><span class="text-size-mini text-color-info-shallow float-right">时间占比</span></p>
-                  <p><span>3</span><span class="float-right">72.5%</span></p>
-                </div>
-              </el-col>
-              <el-col :span="4">
-                <div class="equirunInfoItem">
-                  <label>关机</label>
-                  <p><span class="text-size-mini text-color-info-shallow">次数</span><span class="text-size-mini text-color-info-shallow float-right">时间占比</span></p>
-                  <p><span>3</span><span class="float-right">7.5%</span></p>
-                </div>
-              </el-col>
-              <el-col :span="4">
-                <div class="equirunInfoItem">
-                  <label>空载</label>
-                  <p><span class="text-size-mini text-color-info-shallow">次数</span><span class="text-size-mini text-color-info-shallow float-right">时间占比</span></p>
-                  <p><span>1</span><span class="float-right">7.5%</span></p>
-                </div>
-              </el-col>
-              <el-col :span="4">
-                <div class="equirunInfoItem">
-                  <label>重载</label>
-                  <p><span class="text-size-mini text-color-info-shallow">次数</span><span class="text-size-mini text-color-info-shallow float-right">时间占比</span></p>
-                  <p><span>1</span><span class="float-right">2.5%</span></p>
-                </div>
-              </el-col>
-              <el-col :span="4">
-                <div class="equirunInfoItem">
-                  <label>功率</label>
-                  <p><span class="text-size-mini text-color-info-shallow">额定功率</span><span class="text-size-mini text-color-info-shallow float-right">平均功率</span></p>
-                  <p><span>45.54</span><span class="float-right">54.4856</span></p>
-                </div>
-              </el-col>
-            </el-row>
-            <div class="energyDataContainer">
-              <ve-line :data="equiRunChartData" :extend="chartExtend"></ve-line>
-            </div>
-          </div>
-        </el-col>
-        <el-col :span="24">
-          <div class="chartHead text-size-large text-color-info" style="margin-bottom: 2px;">
-            <div class="chartTile">设备利用率分析</div>
           </div>
         </el-col>
       </el-col>
@@ -308,6 +273,10 @@
         forEqParameters:{},
         EnergyClass:"电",
         TagClassValue:"",
+        EqTagTableData:[],
+        total:0,
+        pagesize:5,
+        currentPage:1,
         ralTimeWarningTableData:[],
         subsectionWaterList:[
           {name:"累计量"},
@@ -354,7 +323,7 @@
           }
         },
         chartSettings: {
-          area:true,
+          area:false,
           yAxisName:[]
         },
         faultChartData: {
@@ -470,36 +439,56 @@
         this.axios.get("/api/EquipmentDetail",{params:params}).then(res =>{
           that.forEqParameters = res.data
           if(this.EnergyClass === "电"){
-            that.chartSettings.area = true
             that.chartSettings.yAxisName = ["kW·h"]
             that.faultChartData.columns = ["时间","功率"]
           }else if(this.EnergyClass === "水"){
               that.chartSettings.yAxisName = ["t"]
             if(this.subsectionWaterActive === 0){
-              that.chartSettings.area = true
               that.faultChartData.columns = ["时间","累计量"]
             }else if(this.subsectionWaterActive === 1){
-              that.chartSettings.area = false
               that.faultChartData.columns = ["时间","瞬时量"]
             }
           }else if(this.EnergyClass === "汽"){
             that.chartSettings.yAxisName = ["t"]
             if(this.subsectionSteamActive === 0){
-              that.chartSettings.area = true
               that.faultChartData.columns = ["时间","累计量"]
             }else if(this.subsectionSteamActive === 1){
-              that.chartSettings.area = false
               that.faultChartData.columns = ["时间","瞬时量"]
             }else if(this.subsectionSteamActive === 2){
-              that.chartSettings.area = true
               that.faultChartData.columns = ["时间","体积"]
             }else if(this.subsectionSteamActive === 3){
-              that.chartSettings.area = false
               that.faultChartData.columns = ["时间","温度"]
             }
           }
           that.faultChartData.rows = res.data.row
         })
+      },
+      getEqTagTableData(){ //获取设备的表格数据
+        this.axios.get("/api/flowvaluebaobiao",{
+          params: {
+            TagClassValue: this.TagClassValue,
+            EnergyClass: this.EnergyClass,
+            StartTime:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss"),
+            EndTime:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss"),
+            limit:this.pagesize,
+            offset:this.currentPage - 1
+          }
+        }).then(res =>{
+          console.log(res.data)
+          var data = JSON.parse(res.data)
+          this.EqTagTableData = data.rows
+          this.total = data.total
+        },res =>{
+          console.log("请求错误")
+        })
+      },
+      handleSizeChange(pagesize){ //每页条数切换
+        this.pagesize = pagesize
+        this.getEqTagTableData()
+      },
+      handleCurrentChange(currentPage) { // 页码切换
+        this.currentPage = currentPage
+        this.getEqTagTableData()
       },
       getSubsectionElectricItem(index){
         this.ElectricItemActive = index;
@@ -532,6 +521,7 @@
         this.EnergyClass = this.multipleSelection[0].EnergyClass
         this.TagClassValue = this.multipleSelection[0].TagClassValue
         this.getEqData()
+        this.getEqTagTableData()
       },
       ElectricHandleRowClick(row){
         this.$refs.ElectricMultipleTable.clearSelection();
