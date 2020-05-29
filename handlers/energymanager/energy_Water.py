@@ -305,7 +305,7 @@ def flowvaluebaobiao():
             oclass = flowvaluesql(EnergyClass, TagClassValue, StartTime, EndTime)
             for oc in oclass:
                 tag = db_session.query(TagDetail).filter(TagDetail.TagClassValue == oc.TagClassValue).first()
-                dict_data = {"TagClassValue": tag.FEFportIP, "FlowValue": round(0 if oc[0]['FlowValue'] is None else float(oc[0]['FlowValue']), 2), "AreaName": tag.AreaName, "Unit": oc[0]['FlowUnit'], "CollectionDate": oc[0]['CollectionDate']}
+                dict_data = {"TagClassValue": tag.FEFportIP, "FlowValue": round(0 if oc['FlowValue'] is None else float(oc[0]['FlowValue']), 2), "AreaName": tag.AreaName, "Unit": oc['FlowUnit'], "CollectionDate": oc['CollectionDate']}
                 data_list.append(dict_data)
             dir["row"] = data_list
             dir["total"] = len(oclass)
@@ -366,13 +366,13 @@ def exportxflow(TagClassValue, EnergyClass,  StartTime, EndTime):
             if cum == '采集点':
                 worksheet.write(i, columns.index(cum), tag.FEFportIP)
             if cum == '瞬时量':
-                worksheet.write(i, columns.index(cum), round(0 if oc[0]['FlowValue'] is None else float(oc[0]['FlowValue']), 2))
+                worksheet.write(i, columns.index(cum), round(0 if oc['FlowValue'] is None else float(oc['FlowValue']), 2))
             if cum == '区域':
                 worksheet.write(i, columns.index(cum), tag.AreaName)
             if cum == '单位':
-                worksheet.write(i, columns.index(cum), oc[0]['FlowUnit'])
+                worksheet.write(i, columns.index(cum), oc['FlowUnit'])
             if cum == '采集时间':
-                worksheet.write(i, columns.index(cum), oc[0]['CollectionDate'])
+                worksheet.write(i, columns.index(cum), oc['CollectionDate'])
         i = i + 1
     writer.close()
     output.seek(0)
@@ -386,7 +386,7 @@ def flowvaluesql(EnergyClass, TagClassValue, StartTime, EndTime):
         db_session.close()
     elif EnergyClass == "汽":
         if TagClassValue == "S_AllArea_Value":
-            sql = "SELECT t.FlowValue AS FlowValue,t.FlowUnit AS FlowUnit,t.CollectionDate AS CollectionDate FROM [DB_MICS].[dbo].[SteamTotalMaintain] t with (INDEX =IX_SteamTotalMaintain) " \
+            sql = "SELECT t.FlowValue AS FlowValue,t.FlowWUnit AS FlowUnit,t.CollectionDate AS CollectionDate FROM [DB_MICS].[dbo].[SteamTotalMaintain] t with (INDEX =IX_SteamTotalMaintain) " \
                   "WHERE t.CollectionDate BETWEEN " + "'" + StartTime + "' AND " + "'" + EndTime + "' ORDER BY t.CollectionDate"
         else:
             sql = "SELECT t.FlowValue AS FlowValue,t.FlowUnit AS FlowUnit,t.CollectionDate AS CollectionDate FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy) " \

@@ -62,14 +62,14 @@ def energyhistory(TagClassValue, StartTime, EndTime, energy):
     :return:历史表的瞬时值、温度、体积
     '''
     if energy == "水":
-        sql = "SELECT t.CollectionDate as CollectionDate, t.WaterFlow as WaterFlow, t.WaterSum as WaterSum FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_WaterEnergy)  WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+        sql = "SELECT t.CollectionDate as CollectionDate, t.WaterFlow as WaterFlow, t.WaterSum as WaterSum,t.FlowWUnit AS FlowUnit FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_WaterEnergy)  WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
     elif energy == "电":
         sql = "SELECT t.CollectionDate as CollectionDate, t.ZGL FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricEnergy) WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
     elif energy == "汽":
         if TagClassValue == 'S_AllArea_Value':
-            sql = "SELECT t.CollectionDate as CollectionDate, t.FlowValue as FlowValue, t.SumValue as SumValue,t.Volume as Volume, t.WD as WD FROM [DB_MICS].[dbo].[SteamTotalMaintain] t with (INDEX =IX_SteamTotalMaintain) WHERE t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+            sql = "SELECT t.CollectionDate as CollectionDate, t.FlowValue as FlowValue, t.SumValue as SumValue,t.Volume as Volume, t.WD as WD,t.FlowUnit AS FlowUnit FROM [DB_MICS].[dbo].[SteamTotalMaintain] t with (INDEX =IX_SteamTotalMaintain) WHERE t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
         else:
-            sql = "SELECT t.CollectionDate as CollectionDate, t.FlowValue as FlowValue, t.SumValue as SumValue,t.Volume as Volume, t.WD as WD FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy) WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+            sql = "SELECT t.CollectionDate as CollectionDate, t.FlowValue as FlowValue, t.SumValue as SumValue,t.Volume as Volume, t.WD as WD,t.FlowUnit AS FlowUnit FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy) WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
     re = db_session.execute(sql).fetchall()
     db_session.close()
     return re
@@ -125,12 +125,13 @@ def EquipmentDetail():
                 elif EnergyClass == "水":
                     dir_list_i["累计量"] = round(((0 if re['WaterSum'] is None else float(re['WaterSum'])))*Proportion, 2)
                     dir_list_i["瞬时量"] = round(((0 if re['WaterFlow'] is None else float(re['WaterFlow'])))*Proportion, 2)
+                    dir_list_i["瞬时单位"] = re['FlowUnit']
                 elif EnergyClass == "汽":
-                    if TagClassValue == "S_AllArea_Value":
-                        dir_list_i["瞬时量"] = round((0 if re['FlowValue'] is None else float(re['FlowValue'])), 2)
-                        dir_list_i["累计量"] = round((0 if re['SumValue'] is None else float(re['SumValue'])), 2)
-                        dir_list_i["体积"] = round((0 if re['Volume'] is None else float(re['Volume'])), 2)
-                        dir_list_i["温度"] = round((0 if re['WD'] is None else float(re['WD'])), 2)
+                    dir_list_i["瞬时量"] = round((0 if re['FlowValue'] is None else float(re['FlowValue'])), 2)
+                    dir_list_i["累计量"] = round((0 if re['SumValue'] is None else float(re['SumValue'])), 2)
+                    dir_list_i["体积"] = round((0 if re['Volume'] is None else float(re['Volume'])), 2)
+                    dir_list_i["温度"] = round((0 if re['WD'] is None else float(re['WD'])), 2)
+                    dir_list_i["瞬时单位"] = re['FlowUnit']
                 dir_list.append(dir_list_i)
             DeviceNum = db_session.query(TagDetail.DeviceNum).filter(TagDetail.TagClassValue == TagClassValue).first()
             if DeviceNum:
