@@ -296,13 +296,15 @@ def flowvaluebaobiao():
         data = request.values
         try:
             dir = {}
+            offset = str(int(data.get("offset"))+1)
+            limit = data.get("limit")
             TagClassValue = data.get("TagClassValue")
             EnergyClass = data.get("EnergyClass")
             StartTime = data.get("StartTime")
             EndTime = data.get("EndTime")
             tag = db_session.query(TagDetail).filter(TagDetail.TagClassValue == TagClassValue).first()
             data_list = []
-            oclass = flowvaluesql(EnergyClass, TagClassValue, StartTime, EndTime)
+            oclass = flowvaluesql(EnergyClass, TagClassValue, StartTime, EndTime, offset, limit)
             for oc in oclass:
                 dict_data = {"TagClassValue": tag.FEFportIP, "FlowValue": round(0 if oc['FlowValue'] is None else float(oc['FlowValue']), 2), "AreaName": tag.AreaName, "Unit": oc['FlowUnit'], "CollectionDate": oc['CollectionDate']}
                 data_list.append(dict_data)
@@ -377,20 +379,20 @@ def exportxflow(TagClassValue, EnergyClass,  StartTime, EndTime):
     output.seek(0)
     return output
 
-def flowvaluesql(EnergyClass, TagClassValue, StartTime, EndTime):
+def flowvaluesql(EnergyClass, TagClassValue, StartTime, EndTime, offset, limit):
     oclass = []
     if EnergyClass == "水":
-        sql = "SELECT t.WaterFlow AS FlowValue,t.FlowWUnit AS FlowUnit,t.CollectionDate AS CollectionDate FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_WaterEnergy) " \
-              "WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "' AND " + "'" + EndTime + "' ORDER BY t.CollectionDate"
+        sql = "SELECT TOP "+limit+" t.WaterFlow AS FlowValue,t.FlowWUnit AS FlowUnit,t.CollectionDate AS CollectionDate FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_WaterEnergy) " \
+              "WHERE t.ID not in (select top (("+offset+"-1)*"+limit+") id from [DB_MICS].[dbo].[WaterEnergy]  with (INDEX =IX_WaterEnergy) WHERE TagClassValue = '" + TagClassValue + "' AND CollectionDate BETWEEN " + "'" + StartTime + "' AND " + "'" + EndTime + "' ORDER BY CollectionDate) AND t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "' AND " + "'" + EndTime + "' ORDER BY t.CollectionDate"
         oclass = db_session.execute(sql).fetchall()
         db_session.close()
     elif EnergyClass == "汽":
         if TagClassValue == "S_AllArea_Value":
-            sql = "SELECT t.FlowValue AS FlowValue,t.FlowWUnit AS FlowUnit,t.CollectionDate AS CollectionDate FROM [DB_MICS].[dbo].[SteamTotalMaintain] t with (INDEX =IX_SteamTotalMaintain) " \
-                  "WHERE t.CollectionDate BETWEEN " + "'" + StartTime + "' AND " + "'" + EndTime + "' ORDER BY t.CollectionDate"
+            sql = "SELECT TOP "+limit+" t.FlowValue AS FlowValue,t.FlowWUnit AS FlowUnit,t.CollectionDate AS CollectionDate FROM [DB_MICS].[dbo].[SteamTotalMaintain] t with (INDEX =IX_SteamTotalMaintain) " \
+                  "WHERE t.ID not in (select top (("+offset+"-1)*"+limit+") id from [DB_MICS].[dbo].[SteamTotalMaintain]  with (INDEX =IX_SteamTotalMaintain) WHERE CollectionDate BETWEEN " + "'" + StartTime + "' AND " + "'" + EndTime + "' ORDER BY CollectionDate) AND t.CollectionDate BETWEEN " + "'" + StartTime + "' AND " + "'" + EndTime + "' ORDER BY t.CollectionDate"
         else:
-            sql = "SELECT t.FlowValue AS FlowValue,t.FlowUnit AS FlowUnit,t.CollectionDate AS CollectionDate FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy) " \
-                  "WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "' AND " + "'" + EndTime + "' ORDER BY t.CollectionDate"
+            sql = "SELECT TOP "+limit+" t.FlowValue AS FlowValue,t.FlowUnit AS FlowUnit,t.CollectionDate AS CollectionDate FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy) " \
+                  "WHERE t.ID not in (select top (("+offset+"-1)*"+limit+") id from [DB_MICS].[dbo].[SteamEnergy]  with (INDEX =IX_SteamEnergy) WHERE TagClassValue = '" + TagClassValue + "' AND CollectionDate BETWEEN " + "'" + StartTime + "' AND " + "'" + EndTime + "' ORDER BY CollectionDate) AND t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "' AND " + "'" + EndTime + "' ORDER BY t.CollectionDate"
         oclass = db_session.execute(sql).fetchall()
         db_session.close()
     return oclass
