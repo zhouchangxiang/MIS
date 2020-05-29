@@ -38,7 +38,7 @@ export default {
         position: relative;
         width:375px;
         height:667px;
-        background:rgba(30,34,43,1);
+        background:#eee;
         opacity:1;
     }
     .top{
@@ -51,7 +51,7 @@ export default {
             top:46px;
             left:90px;
             height:25px;
-            font-size:18px;
+            font-size:16px;
             font-family:PingFang SC;
             font-weight:500;
             line-height:25px;
@@ -64,9 +64,9 @@ export default {
            height: 20px;
            top:48px;
            left:318px;
-           border: 1px dashed #fff;
+           border: 1px solid #ccc;
            background-image: url('../../assets/png/delete_fill.png');
-           background-color:@bgca;
+           background-color:skyblue;
            background-size: contain;
         }
     }

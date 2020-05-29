@@ -1,11 +1,13 @@
 <template>
     <div class="show-box">
       <van-loading size="24px" vertical v-if="loading" color="lightgreen" type="spinner">加载中...</van-loading>
-      <div class="tabbar">
-      <van-tabs v-model="active" line-height="0px" line-width="0px" @click="getData($event)" :swipeable=true :border=false title-active-color="#3fb5b0" title-inactive-color="#000">
-        <van-tab :title="item" v-for="(item,index) in list" :key="index"></van-tab>
-      </van-tabs>
+      <van-sticky>
+         <div class="tabbar">
+          <van-tabs v-model="active" line-height="0px" line-width="0px" @click="getData($event)" :swipeable=true :border=false title-active-color="#3fb5b0" title-inactive-color="#000">
+            <van-tab :title="item" v-for="(item,index) in list" :key="index"></van-tab>
+          </van-tabs>
       </div>
+      </van-sticky>
       <div class="date-choose">
         <van-cell title="选择时间段" :value="comparedate" @click="show = true" />
           <van-calendar v-model="show" @confirm="onConfirm" type="range" :min-date="minDate" :max-date="maxDate" color="#07c160"/>

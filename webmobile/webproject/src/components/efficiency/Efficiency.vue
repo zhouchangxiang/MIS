@@ -36,7 +36,7 @@
            </div>
            </div>
           <div class="piclist">
-               <ve-histogram :data="chartData" :settings="chartSettings" width="350px" height="240px"></ve-histogram>
+               <ve-histogram :data="chartData" :settings="chartSettings" width="350px" height="250px" :extend="ChartExtend"></ve-histogram>
           </div>
           <div class="compare">
               <div class="left-box">
@@ -67,6 +67,14 @@ export default {
 
       }
         return {
+            ChartExtend:{
+            grid:{
+                    left:'10px',
+                    right:'50px',
+                    bottom:'50px',
+                    top:'60px',
+            }
+        },
             valuekind: 0,
             option1: [
                 { text: "原提取车间", value: 0 },
@@ -198,7 +206,6 @@ export default {
             this.num2=res.data.outputSteam
             this.num3=res.data.PipeDamage
             var arr=res.data.row
-            console.log(arr)
             this.chartData.rows=[]
             this.chartData.columns=['时间','输入总量','输出总量']
             for(var i=0;i<arr.length;i++){
@@ -253,7 +260,7 @@ export default {
      .show-box{
         position: relative;
         width: 375px;
-        height:576px;
+        height:680px;
         box-sizing: border-box;
         padding: 0 12px 12px 13px;
         background-color: @bgcc;
@@ -271,7 +278,7 @@ export default {
           position: relative;
           width:350px;
           height:130px;
-          margin-top: 10px;
+          margin-top: 15px;
           background:#ccc;
           box-shadow:0px 0px 6px rgba(255,255,255,0.16);
           opacity:1;
@@ -341,7 +348,7 @@ export default {
             position: absolute;
             left: 13px;
             top:75px;
-            font-size:22px;
+            font-size:16px;
             font-family:PingFang SC;
             font-weight:500;
             line-height:45px;
@@ -355,11 +362,11 @@ export default {
             }
             .num2{
                 position: absolute;
-                left: 95px;
+                left: 110px;
             }
             .num3{
                 position: absolute;
-                left: 210px;
+                left: 230px;
                 color:rgba(250,192,0,1); 
             }
             .fh1{
@@ -405,7 +412,8 @@ export default {
         }
       }
       .piclist{
-          height: 190px;
+          margin-top: 30px;
+          height: 220px;
           overflow: hidden;
           background-color:rgba(255,255,255,.5);
       }
@@ -413,7 +421,7 @@ export default {
           position: relative;
           height: 129px;
           width: 100%;
-          margin-top: 10px;
+          margin-top: 20px;
            .lt{
                   position: absolute;
                   top:14px;
@@ -431,12 +439,12 @@ export default {
                   left:9px;
                   top:34px;
                   height:36px;
-                  font-size: 30px;
+                  font-size: 20px;
                   color:rgba(250,192,0,1);   
               }
               .percent{
                   position: absolute;
-                  top:49px;
+                  top:40px;
                   left:103px;
                   width:12px;
                   height:17px;
@@ -464,7 +472,7 @@ export default {
                   position: absolute;
                   left:11px;
                   top:98px;
-                  font-size: 20px;
+                  font-size: 16px;
                   color:#000;
               }
           .left-box{
@@ -491,8 +499,8 @@ export default {
       }
       .choice-box{
           position: relative;
-          margin-top: 10px;
-          height: 18px;
+          margin-top: 15px;
+          height: 25px;
       }
       .show-top{
             position: absolute;
@@ -504,7 +512,7 @@ export default {
             font-size: 10px;
             .tips{
                 background-color:#eee;
-                height: 18px;
+                height: 25px;
             }
         }
         .select-workplace{
@@ -512,6 +520,6 @@ export default {
             float: left;
             left: 130px;
             width:120px;
-            height:18px;
+            height:25px;
         }
 </style>
