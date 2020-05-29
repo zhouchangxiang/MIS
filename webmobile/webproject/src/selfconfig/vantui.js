@@ -17,7 +17,7 @@ import { Button,
     Picker,
     Loading,
     DropdownMenu, DropdownItem,
-    Calendar
+    Calendar,Sticky
     } from 'vant'
 
 Vue.use(Toast);
@@ -42,3 +42,4 @@ Vue.use( Loading);
 Vue.use( DropdownMenu);
 Vue.use( DropdownItem);
 Vue.use(Calendar);
+Vue.use(Sticky);

@@ -38,6 +38,13 @@
     height: 22px;
     border: 1px solid #3D4048;
 }
+.choice-box .van-tabs--card,.choice-box .van-tabs--card .van-tabs__wrap{
+    height: 22px;
+}
+.choice-box .van-tabs__nav--card{
+    height: 22px;
+}
+
 .cir-choose .van-tabs--card>.van-tabs__wrap {
     height: 22px;
 }
@@ -57,7 +64,7 @@
     z-index: -10;
 }
 .van-picker-column{
-    font-size: 12px;
+    font-size: 10px;
     text-align:right;
 }
 .van-picker-column__item{
@@ -86,15 +93,21 @@
     width:40px;
   }
   .van-dropdown-menu{
-    height: 18px;
+    height: 25px;
   }
   .van-dropdown-menu__title{
-      font-size: 14px;
+      font-size: 10px;
   }
   .bannertips .van-tabs__nav--card {
     margin-left: 10px;
     width: 155px;
 }
 .van-cell__value{
+    font-size: 10px;
+}
+.van-sidebar{
+    width: 100%;
+}
+.van-sidebar-item__text{
     font-size: 12px;
 }
