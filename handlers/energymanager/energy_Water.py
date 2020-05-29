@@ -10,9 +10,9 @@ import calendar
 
 from handlers.energymanager.energy_manager import energyStatistics, energyStatisticsCost
 from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, WaterEnergy, LimitTable, Equipment, \
-    AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
+    AreaTable, Unit, TagClassType, TagDetail, BatchMaintain, SteamEnergy
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
-    AreaTimeEnergyColour, ElectricProportion, IncrementWaterTable, WaterSteamPrice
+    AreaTimeEnergyColour, ElectricProportion, IncrementWaterTable, WaterSteamPrice, SteamTotalMaintain
 from tools.common import insert, delete, update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger, insertSyslog
@@ -304,12 +304,24 @@ def flowvaluebaobiao():
             EndTime = data.get("EndTime")
             tag = db_session.query(TagDetail).filter(TagDetail.TagClassValue == TagClassValue).first()
             data_list = []
+            total = 0
+            if EnergyClass == "水":
+                total = db_session.query(WaterEnergy).filter(WaterEnergy.TagClassValue == TagClassValue, WaterEnergy.CollectionDate.between(StartTime, EndTime)).count()
+            elif EnergyClass == "汽":
+                if TagClassValue == "S_AllArea_Value":
+                    total = db_session.query(SteamTotalMaintain).filter(SteamTotalMaintain.TagClassValue == TagClassValue,
+                                                                        SteamTotalMaintain.CollectionDate.between(StartTime,
+                                                                                                    EndTime)).count()
+                else:
+                    total = db_session.query(SteamEnergy).filter(
+                        SteamEnergy.TagClassValue == TagClassValue,
+                        SteamEnergy.CollectionDate.between(StartTime,EndTime)).count()
             oclass = flowvaluesql(EnergyClass, TagClassValue, StartTime, EndTime, offset, limit)
             for oc in oclass:
                 dict_data = {"TagClassValue": tag.FEFportIP, "FlowValue": round(0 if oc['FlowValue'] is None else float(oc['FlowValue']), 2), "AreaName": tag.AreaName, "Unit": oc['FlowUnit'], "CollectionDate": oc['CollectionDate']}
                 data_list.append(dict_data)
             dir["row"] = data_list
-            dir["total"] = len(oclass)
+            dir["total"] = total
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
