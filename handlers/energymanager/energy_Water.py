@@ -360,15 +360,15 @@ def exportxflow(TagClassValue, EnergyClass,  StartTime, EndTime):
         col += 1
     # 写入数据
     i = 1
-    reclass = flowvaluesql(EnergyClass, ta.TagClassValue, StartTime, EndTime)
+    reclass = flowvaluesql(EnergyClass, tag.TagClassValue, StartTime, EndTime)
     for oc in reclass:
         for cum in columns:
             if cum == '采集点':
-                worksheet.write(i, columns.index(cum), ta.FEFportIP)
+                worksheet.write(i, columns.index(cum), tag.FEFportIP)
             if cum == '瞬时量':
                 worksheet.write(i, columns.index(cum), round(0 if oc[0]['FlowValue'] is None else float(oc[0]['FlowValue']), 2))
             if cum == '区域':
-                worksheet.write(i, columns.index(cum), ta.AreaName)
+                worksheet.write(i, columns.index(cum), tag.AreaName)
             if cum == '单位':
                 worksheet.write(i, columns.index(cum), oc[0]['FlowUnit'])
             if cum == '采集时间':
