@@ -285,3 +285,112 @@ def watertrendlookboard():
             print(e)
             logger.error(e)
             insertSyslog("error", "能耗看板的能耗看板的水能分类查询报错Error：" + str(e), current_user.Name)
+
+@energyWater.route('/flowvaluebaobiao', methods=['POST', 'GET'])
+def flowvaluebaobiao():
+    '''
+    瞬时报表
+    :return:
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            dir = {}
+            TagClassValue = data.get("TagClassValue")
+            EnergyClass = data.get("EnergyClass")
+            StartTime = data.get("StartTime")
+            EndTime = data.get("EndTime")
+            tag = db_session.query(TagDetail).filter(TagDetail.TagClassValue == TagClassValue).first()
+            data_list = []
+            oclass = flowvaluesql(EnergyClass, TagClassValue, StartTime, EndTime)
+            for oc in oclass:
+                tag = db_session.query(TagDetail).filter(TagDetail.TagClassValue == oc.TagClassValue).first()
+                dict_data = {"TagClassValue": tag.FEFportIP, "FlowValue": round(0 if oc[0]['FlowValue'] is None else float(oc[0]['FlowValue']), 2), "AreaName": tag.AreaName, "Unit": oc[0]['FlowUnit'], "CollectionDate": oc[0]['CollectionDate']}
+                data_list.append(dict_data)
+            dir["row"] = data_list
+            dir["total"] = len(oclass)
+            return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "统计报表查询报错Error：" + str(e), current_user.Name)
+@energyWater.route('/flowvalueexcelout', methods=['POST', 'GET'])
+def flowvalueexcelout():
+    '''
+    导出原始数据
+    :return:
+    '''
+    data = request.values
+    if request.method == 'GET':
+        TagClassValue = data.get("TagClassValue")
+        EnergyClass = data.get("EnergyClass")
+        StartTime = data.get("StartTime")
+        EndTime = data.get("EndTime")
+        output = exportxflow(TagClassValue, EnergyClass, StartTime, EndTime)
+        resp = make_response(output.getvalue())
+        resp.headers["Content-Disposition"] = "attachment; filename=testing.xlsx"
+        resp.headers['Content-Type'] = 'application/x-xlsx'
+        return resp
+
+
+def exportxflow(TagClassValue, EnergyClass,  StartTime, EndTime):
+    # 创建数据流
+    output = BytesIO()
+    # 创建excel work book
+    writer = pd.ExcelWriter(output, engine='xlsxwriter')
+    workbook = writer.book
+    # 创建excel sheet
+    worksheet = workbook.add_worksheet('sheet1')
+    # cell 样式
+    cell_format = workbook.add_format({
+        'bold': 1,
+        'border': 1,
+        'align': 'center',
+        'valign': 'vcenter',
+        'fg_color': '#006633'})
+
+    col = 0
+    row = 1
+    tag = db_session.query(TagDetail).filter(TagDetail.TagClassValue == TagClassValue).first()
+
+    # 写入列名
+    columns = ['采集点', '瞬时量', '单位', '区域', '采集时间']
+    for item in columns:
+        worksheet.write(0, col, item, cell_format)
+        col += 1
+    # 写入数据
+    i = 1
+    reclass = flowvaluesql(EnergyClass, ta.TagClassValue, StartTime, EndTime)
+    for oc in reclass:
+        for cum in columns:
+            if cum == '采集点':
+                worksheet.write(i, columns.index(cum), ta.FEFportIP)
+            if cum == '瞬时量':
+                worksheet.write(i, columns.index(cum), round(0 if oc[0]['FlowValue'] is None else float(oc[0]['FlowValue']), 2))
+            if cum == '区域':
+                worksheet.write(i, columns.index(cum), ta.AreaName)
+            if cum == '单位':
+                worksheet.write(i, columns.index(cum), oc[0]['FlowUnit'])
+            if cum == '采集时间':
+                worksheet.write(i, columns.index(cum), oc[0]['CollectionDate'])
+        i = i + 1
+    writer.close()
+    output.seek(0)
+    return output
+
+def flowvaluesql(EnergyClass, TagClassValue, StartTime, EndTime):
+    if EnergyClass == "水":
+        sql = "SELECT t.WaterFlow AS FlowValue,t.FlowWUnit AS FlowUnit,t.CollectionDate AS CollectionDate FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_WaterEnergy) " \
+              "WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "' AND " + "'" + EndTime + "' ORDER BY t.CollectionDate"
+        oclass = db_session.execute(sql).fetchall()
+        db_session.close()
+    elif EnergyClass == "汽":
+        if TagClassValue == "S_AllArea_Value":
+            sql = "SELECT t.FlowValue AS FlowValue,t.FlowUnit AS FlowUnit,t.CollectionDate AS CollectionDate FROM [DB_MICS].[dbo].[SteamTotalMaintain] t with (INDEX =IX_SteamTotalMaintain) " \
+                  "WHERE t.CollectionDate BETWEEN " + "'" + StartTime + "' AND " + "'" + EndTime + "' ORDER BY t.CollectionDate""
+        else:
+            sql = "SELECT t.FlowValue AS FlowValue,t.FlowUnit AS FlowUnit,t.CollectionDate AS CollectionDate FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy) " \
+                  "WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "' AND " + "'" + EndTime + "' ORDER BY t.CollectionDate""
+        oclass = db_session.execute(sql).fetchall()
+        db_session.close()
+    return oclass
