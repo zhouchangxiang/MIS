@@ -144,13 +144,14 @@
         </el-col>
         <el-col :span="24" style="margin-bottom: 15px;">
           <div class="chartHead text-size-large text-color-info" style="margin-bottom:2px;">
-            <div class="chartTile">数据表</div>
+            <div class="chartTile">瞬时数据表</div>
+            <el-button type="primary" size="mini" style="float: right;margin: 9px 0;" @click="exportExcel">导出</el-button>
           </div>
           <div class="platformContainer">
-            <el-table :data="EqTagTableData" size="mini">
+            <el-table :data="EqTagTableData">
+              <el-table-column prop="AreaName" label="区域"></el-table-column>
               <el-table-column prop="TagClassValue" label="设备名"></el-table-column>
               <el-table-column prop="FlowValue" label="瞬时量"></el-table-column>
-              <el-table-column prop="AreaName" label="区域"></el-table-column>
               <el-table-column prop="Unit" label="单位"></el-table-column>
               <el-table-column prop="CollectionDate" label="采集时间"></el-table-column>
             </el-table>
@@ -171,7 +172,7 @@
             <div class="chartTile">实时预警</div>
           </div>
           <div class="platformContainer">
-            <el-table :data="ralTimeWarningTableData" size="mini">
+            <el-table :data="ralTimeWarningTableData">
               <el-table-column prop="area" label="区域"></el-table-column>
               <el-table-column prop="name" label="设备"></el-table-column>
               <el-table-column prop="type" label="状态">
@@ -474,10 +475,8 @@
             offset:this.currentPage - 1
           }
         }).then(res =>{
-          console.log(res.data)
-          var data = JSON.parse(res.data)
-          this.EqTagTableData = data.rows
-          this.total = data.total
+          this.EqTagTableData = res.data.row
+          this.total = res.data.total
         },res =>{
           console.log("请求错误")
         })
@@ -489,6 +488,17 @@
       handleCurrentChange(currentPage) { // 页码切换
         this.currentPage = currentPage
         this.getEqTagTableData()
+      },
+      exportExcel(){
+        var startTime = moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss")
+        var endTime = moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss")
+        var TagClassValue = this.TagClassValue
+        var EnergyClass = this.EnergyClass
+        this.$confirm('确定导出' +startTime+'至'+endTime+'的记录？', '提示', {
+          type: 'warning'
+        }).then(()  => {
+          window.location.href = "/api/flowvalueexcelout?StartTime="+startTime+"&EndTime="+endTime+"&TagClassValue="+TagClassValue+"&EnergyClass="+EnergyClass
+        });
       },
       getSubsectionElectricItem(index){
         this.ElectricItemActive = index;
