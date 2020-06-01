@@ -271,7 +271,7 @@
                         <div class='today-water'>120带干DN32</div>
                         <div class='today-num1'>{{steamTagList.S_Area_ZH_21_2_502.sumValue}}</div>
                         <div class='today-consume-rank'>{{steamTagList.S_Area_ZH_21_2_502.flowValue}}</div>
-                        <div class='today-consume-rank2'>{{steamTagList.S_Area_ZH_21_2_502.SteamWD}}°C</div>
+                        <div class='today-consume-rank2'>{{ steamTagList.S_Area_ZH_21_2_502.SteamWD }}°C</div>
                     </div>
                 </div>
                 <div class="list-banner" v-if="this.currentArea==='综合车间'">
@@ -279,7 +279,7 @@
                         <div class='today-water'>流化床制粒DN50</div>
                         <div class='today-num1'>{{steamTagList.S_Area_ZH_21_1_502.sumValue}}</div>
                         <div class='today-consume-rank'>{{ steamTagList.S_Area_ZH_21_1_502.flowValue}}</div>
-                        <div class='today-consume-rank2'>{{steamTagList.S_Area_ZH_21_1_502.SteamWD}}°C</div>
+                        <div class='today-consume-rank2'>{{ steamTagList.S_Area_ZH_21_1_502.SteamWD }}°C</div>
                     </div>
                 </div>
                 <div class="list-banner" v-if="this.currentArea==='综合车间'">
@@ -287,7 +287,7 @@
                         <div class='today-water'>锅炉流量计DN400</div>
                         <div class='today-num1'>{{steamGlTag.sumValue}}</div>
                         <div class='today-consume-rank'>{{ steamGlTag.flowValue}}</div>
-                        <div class='today-consume-rank2'>{{steamGlTag.SteamWD}}°C</div>
+                        <div class='today-consume-rank2'>{{ steamGlTag.SteamWD }}°C</div>
                     </div>
                 </div>
                 <div class="list-banner" v-if="this.currentArea==='综合车间'">
@@ -295,7 +295,7 @@
                         <div class='today-water'>二次浓缩DN100</div>
                         <div class='today-num1'>{{steamTagList.S_Area_ZH_46_1_502.sumValue}}</div>
                         <div class='today-consume-rank'>{{ steamTagList.S_Area_ZH_46_1_502.flowValue}}</div>
-                        <div class='today-consume-rank2'>{{steamTagList.S_Area_ZH_46_1_502.SteamWD}}°C</div>
+                        <div class='today-consume-rank2'>{{ steamTagList.S_Area_ZH_46_1_502.SteamWD }}°C</div>
                     </div>
                 </div>
                 <div class="list-banner" v-if="this.currentArea==='综合车间'">
@@ -303,7 +303,7 @@
                         <div class='today-water'>醇提+浓缩DN150</div>
                         <div class='today-num1'>{{steamTagList.S_Area_ZH_46_2_502.sumValue}}</div>
                         <div class='today-consume-rank'>{{ steamTagList.S_Area_ZH_46_2_502.flowValue}}</div>
-                        <div class='today-consume-rank2'>{{steamTagList.S_Area_ZH_46_2_502.SteamWD}}°C</div>
+                        <div class='today-consume-rank2'>{{ steamTagList.S_Area_ZH_46_2_502.SteamWD }}°C</div>
                     </div>
                 </div>
                 <div class="list-banner" v-if="this.currentArea==='综合车间'">
@@ -311,7 +311,7 @@
                         <div class='today-water'>双效浓缩/CIP DN200</div>
                         <div class='today-num1'>{{steamTagList.S_Area_ZH_46_3_502.sumValue}}</div>
                         <div class='today-consume-rank'>{{ steamTagList.S_Area_ZH_46_3_502.flowValue}}</div>
-                        <div class='today-consume-rank2'>{{steamTagList.S_Area_ZH_46_3_502.SteamWD}}°C</div>
+                        <div class='today-consume-rank2'>{{ steamTagList.S_Area_ZH_46_3_502.SteamWD }}°C</div>
                     </div>
                 </div>
                  <div class="list-banner" v-if="this.currentArea==='综合车间'">
@@ -319,7 +319,7 @@
                         <div class='today-water'>提取双号DN150</div>
                         <div class='today-num1'>{{steamTagList.S_Area_ZH_22_1_502.sumValue}}</div>
                         <div class='today-consume-rank'>{{steamTagList.S_Area_ZH_22_1_502.flowValue}}</div>
-                        <div class='today-consume-rank2'>{{steamTagList.S_Area_ZH_22_1_502.SteamWD}}°C</div>
+                        <div class='today-consume-rank2'>{{ steamTagList.S_Area_ZH_22_1_502.SteamWD }}°C</div>
                     </div>
                 </div>
                  <div class="list-banner" v-if="this.currentArea==='综合车间'">
@@ -327,7 +327,7 @@
                         <div class='today-water'>提取单号DN150</div>
                         <div class='today-num1'>{{steamTagList.S_Area_ZH_21_3_502.sumValue}}</div>
                         <div class='today-consume-rank'>{{ steamTagList.S_Area_ZH_21_3_502.flowValue}}</div>
-                        <div class='today-consume-rank2'>{{steamTagList.S_Area_ZH_22_3_502.SteamWD}}°C</div>
+                        <div class='today-consume-rank2'>{{ steamTagList.S_Area_ZH_21_3_502.SteamWD }}°C</div>
                     </div>
                 </div>
                 <div class="list-banner" v-if="this.currentArea==='办公楼＼食堂'">
@@ -426,7 +426,7 @@ export default {
     .show-box{
         position:relative;
         width:375px;
-        height:850px;
+        height:1280px;
         box-sizing: border-box;
         background-color: #eee;
         padding: 0 12px 12px 13px;
@@ -479,7 +479,7 @@ export default {
             margin-top:20px;
             margin-left: 20px;
             width: 230px;
-            height: 850px;
+            height: 1100px;
             border-radius: 4px;
             background: #eee; 
         }
