@@ -29,7 +29,7 @@
                 <div class="list-banner" v-if="this.currentArea==='污水站'">
                     <div class="body">
                         <div class='today-water'>灌溉水DN40</div>
-                        <div class='today-num1'>{{waterTagList.W_Area_WSZ_16_2_34.sumValue}}</div>
+                        <div class='today-num1'>{{waterTagList.W_Area_WSZ_16_2_34.sumValue }}</div>
                         <div class='today-consume-rank'>{{ waterTagList.W_Area_WSZ_16_2_34.flowValue }}</div>
                     </div>
                 </div>
@@ -42,14 +42,14 @@
                  <div class="list-banner" v-if="this.currentArea==='提取二车间'">
                     <div class="body">
                         <div class='today-water'>后走廊灌溉水DN40</div>
-                        <div class='today-num1'>{{waterTagList.W_Area_TQR_17_2_8.sumValue}}</div>
+                        <div class='today-num1'>{{waterTagList.W_Area_TQR_17_2_8.sumValue }}</div>
                         <div class='today-consume-rank'>{{ waterTagList.W_Area_TQR_17_2_8.flowValue}}</div>
                     </div>
                 </div>
                 <div class="list-banner" v-if="this.currentArea==='提取二车间'">
                     <div class="body">
                         <div class='today-water'>出料电梯旁饮用水DN100</div>
-                        <div class='today-num1'>{{waterTagList.W_Area_TQR_17_1_9.sumValue}}</div>
+                        <div class='today-num1'>{{waterTagList.W_Area_TQR_17_1_9.sumValue }}</div>
                         <div class='today-consume-rank'>{{ waterTagList.W_Area_TQR_17_1_9.flowValue}}</div>
                     </div>
                 </div>
@@ -325,7 +325,7 @@
                  <div class="list-banner" v-if="this.currentArea==='综合车间'">
                     <div class="body">
                         <div class='today-water'>提取单号DN150</div>
-                        <div class='today-num1'>{{steamTagList.S_Area_ZH_21_3_502.sumValue}}</div>
+                        <div class='today-num1'>{{steamTagList.S_Area_ZH_21_3_502.sumValue }}</div>
                         <div class='today-consume-rank'>{{ steamTagList.S_Area_ZH_21_3_502.flowValue}}</div>
                         <div class='today-consume-rank2'>{{ steamTagList.S_Area_ZH_21_3_502.SteamWD }}°C</div>
                     </div>
@@ -333,7 +333,7 @@
                 <div class="list-banner" v-if="this.currentArea==='办公楼＼食堂'">
                     <div class="body">
                         <div class='today-water'>蒸汽表</div>
-                        <div class='today-num1'>{{steamTagList.S_Area_BGL_35_1_502.sumValue}}</div>
+                        <div class='today-num1'>{{steamTagList.S_Area_BGL_35_1_502.sumValue }}</div>
                         <div class='today-consume-rank'>{{steamTagList.S_Area_BGL_35_1_502.flowValue}}</div>
                         <div class='today-consume-rank2'>{{steamTagList.S_Area_BGL_35_1_502.SteamWD}}°C</div>
                     </div>
@@ -434,13 +434,13 @@ export default {
         .date-box{
             height:18px;
             opacity:1;
-            border-radius:4px;
+            padding-top: 15px;
+            border-radius:5px;
             color:#000;
             font-size: 10px;
             .tips{
                 float: left;
                 margin-right: 20px;
-                background-color:#1E222B;
                 height: 18px;
             }
         }

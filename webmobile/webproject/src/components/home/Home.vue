@@ -223,9 +223,9 @@ export default {
             this.getAllMessage()
             this.getallPreview()
         },
-    getAllMessage(e) {
-    this.loading=true
-       this.AreaName=''
+        getAllMessage(e) {
+        this.loading=true
+        this.AreaName=''
         var nowTime = moment().format('HH:mm').substring(0,4) + "0"
         var nowDate = moment().format('MM-DD') + " " + nowTime
         var thisDate = moment().format('DD')
@@ -271,7 +271,7 @@ export default {
             this.$http.get('api/energyall',{params:{ModelFlag:"在线检测情况"}})
         ]).then((this.$http.spread((water1,water2,water3,electric1,electric2,electric3,steam1,steam2,steam3,dwdc,delc,dste,mwdc,melc,mste,ywdc,yelc,yste,onlin)=>{
          this.onlineAll=(JSON.parse(onlin.data))
-         this.water1=JSON.parse(water1.data)
+          this.water1=JSON.parse(water1.data)
           this.water2=JSON.parse(water2.data)
           this.water3=JSON.parse(water3.data)
           this.electric1=JSON.parse(electric1.data)
@@ -290,6 +290,18 @@ export default {
           this.yelc=yelc.data.value
           this.yste=yste.data.value
           this.loading=false
+          this.valueall1=this.water1.value
+          this.valueall2=this.water2.value
+          this.valueall3=this.water3.value
+          this.todayCon=this.water1.value
+          this.compareDateCon=this.dwdc
+          this.thisMonthCon=this.water2.value
+          this.lastMonthCon=this.mwdc
+          this.thisYearCon = this.water3.value
+          this.lastYearCon = this.ywdc
+          this.unit='t'
+          this.costall=this.water1.cost //水的的能耗成本
+          this.onlineitem=this.onlineAll[1]
         }
         )))
     },
@@ -409,7 +421,7 @@ export default {
                font-size: 22px;
                word-spacing: 20px;
                height:36px;
-               color:rgba(250,192,0,1);
+               color:#333;
                opacity:1;
 
            }
@@ -443,7 +455,7 @@ export default {
                font-size:16px;
                font-weight:400;
                line-height:11px;
-               color:rgba(250,192,0,1);
+               color:#333;
                opacity:1;  
            }
            .sb-l-n{
@@ -532,7 +544,7 @@ export default {
                     width:17px;
                     height:25px;
                     font-size: 23px;
-                    color:#FAC000;
+                    color:#fff;
                     opacity:1;
                 }
                 .dwnh{
@@ -576,9 +588,11 @@ export default {
             border-radius:4px;
             color:#eee;
             font-size: 10px;
+            padding-top:10px;
             .tips{
                 float: left;
                 margin-right: 10px;
+                border-radius: 5px;
                 background-color:#1E222B;
                 height: 18px;
             }

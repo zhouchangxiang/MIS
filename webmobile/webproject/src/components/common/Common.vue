@@ -43,12 +43,12 @@ export default {
     }
     .top{
         position: relative;
-        height:89px;
+        height:70px;
         width:375px;
-        background-color:#07c160;
+        background-color:#082f4c;
         .head-name{
             position: absolute;
-            top:40px;
+            top:30px;
             left:90px;
             height:25px;
             font-size:16px;
@@ -60,9 +60,9 @@ export default {
         }
         span{
            position: absolute;
-           width: 20px;
-           height: 20px;
-           top:48px;
+           width: 16px;
+           height: 16px;
+           top:35px;
            left:318px;
            border: 1px solid #ccc;
            background-image: url('../../assets/png/delete_fill.png');
@@ -75,13 +75,13 @@ export default {
         bottom: 0;
         width:375px;
         height:64px;
-        background:#07c160;
+        background:#082f4c;
         box-shadow:0px -2px 4px rgba(255,255,255,0.16);
         opacity:1;
     }
     .van-tabbar{
         height: 64px;
-        background-color: #07c160;
+        background-color: #082f4c;
         &.van-tabbar--fixed{
             height: 64px;
         }

@@ -3,7 +3,7 @@
       <van-loading size="24px" vertical v-if="loading" color="lightgreen" type="spinner">加载中...</van-loading>
       <van-sticky>
          <div class="tabbar">
-          <van-tabs v-model="active" line-height="0px" line-width="0px" @click="getData($event)" :swipeable=true :border=false title-active-color="#3fb5b0" title-inactive-color="#000">
+          <van-tabs v-model="active" line-height="0px" line-width="0px" @click="getData()" :swipeable=true :border=false title-active-color="#3fb5b0" title-inactive-color="#000">
             <van-tab :title="item" v-for="(item,index) in list" :key="index"></van-tab>
           </van-tabs>
       </div>
@@ -30,7 +30,7 @@
         </div>
       </div>
       <div class="show-banner"  v-if="this.kind==='电'">
-         <div class="header">电的展示</div>
+         <div class="header">电能明细</div>
                 <div class="body">
                     <div class='today-water'>尖时刻</div>
                     <div class='today-water-max'>用量:</div>
@@ -61,7 +61,7 @@
               </div>
       </div>
       <div class="show-banner" v-if="this.kind==='水'">
-         <div class="header">水的展示</div>
+         <div class="header">水能明细</div>
                 <div class="body">
                     <div class='today-water'>灌溉水</div>
                     <div class='today-water-max'>水能耗:</div>
@@ -91,9 +91,6 @@
                     <div class='today-num3'>{{waterCost}}</div>
               </div>
       </div>
-      <div class="piclist">
-           <ve-line :data="kong" :settings="chartSettings" width="350px" height="240px"  :legend-visible="false" :extend="ChartExtend"></ve-line>
-      </div>
        </div>
 </template>
 <script>
@@ -118,7 +115,7 @@ export default {
           minDate: new Date(2020, 0, 1),
           maxDate: new Date(2020, 11, 31),
           active:0,
-          list:[],
+          list:["原提取车间","固体制剂车间","新建综合制剂车间","GMP车间","中试车间","污水站","锅炉房","前处理车间","提取二车间","综合车间","办公楼＼食堂"],
           water:0,
           electric:0,
           steam:0,
@@ -220,12 +217,7 @@ export default {
         }}
     },
     created(){
-      this.initNavbar()
-    },
-    destroyed(){
-      if(this.websoc){
-      this.websoc.close()
-      }
+      this.getData()
     },
     methods:{
       formatDate(date) {
@@ -275,110 +267,35 @@ export default {
               }))
       },
       switchShow1(){
-      if(this.websoc){
-        this.websoc.close()
-        }
       this.kind='电'
       this.bgc1=!this.bgc1
       this.bgc2=this.bgc3=false
       this.kong=this.resetChartData
       if(this.bgc1){
         this.$toast('当前显示电数据')
-         this.kong=this.electricChartData
-       }else{
-         this.kong=this.resetChartData
        }
        this.cost=this.cost1[1]
-       this.initWebSocket()
       },
       switchShow2(){
-        if(this.websoc){
-          this.websoc.close()
-          }
        this.bgc2=!this.bgc2
        this.bgc1=this.bgc3=false
        this.kind='水'
        this.kong=this.resetChartData
        if(this.bgc2){
          this.$toast('当前显示水数据')
-         this.kong=this.waterChartData
-       }else{
-         this.kong=this.resetChartData
        }
        this.cost=this.cost1[0]
-       this.initWebSocket()
       },
       switchShow3(){
-        if(this.websoc){
-          this.websoc.close()
-          }
        this.bgc1=this.bgc2=false
        this.bgc3=!this.bgc3
        this.kind='汽'
        this.kong=this.SteamEqList=this.resetChartData
        if(this.bgc3){
          this.$toast('当前显示汽数据')
-         this.kong=this.steamChartData
-       }else{
-         this.kong=this.resetChartData
        }
        this.cost=this.cost1[2]
-       this.initWebSocket()
       },
-      //websocket 获取数据方法汇总
-      initWebSocket(){
-            this.websoc=new WebSocket('ws://127.0.0.1:5002');
-            this.websoc.onopen=this.webscop
-            this.websoc.onmessage=this.webscom
-            this.websoc.onerror=this.webscoer
-            this.websoc.onclose=this.webscoclos
-        },
-        webscsend(data){
-            this.websoc.send(data)
-        },
-        webscop(){
-         this.webscsend()
-        },
-        webscom(evt){
-          var resdata = JSON.parse(evt.data); //获取到实时返回的数据
-          if(this.kind=== "电"){ 
-            for(var key in resdata[0].electric){ //循环数组里电的tag点
-              if(key === this.electrictag){  //找到想要的匹配变量的tag点
-                this.electricChartData.rows.push({
-                  "日期": moment().format("ss"),
-                  "数值": resdata[0].electric[key].ZGL //拿到这个tag点对象内的数据
-                })
-                this.electricChartData.rows.shift()
-              }
-            }
-          }else if(this.kind==='水'){
-             for(var key in resdata[0].water){
-              if(key === this.watertag){
-                this.waterChartData.rows.push({
-                  "日期": moment().format("ss"),
-                  "数值": resdata[0].water[key].sumValue
-                })
-                this.waterChartData.rows.shift()
-              }
-            }
-          }else{
-             for(var key in resdata[0].steam){
-              if(key=== this.steamtag){
-                this.steamChartData.rows.push({
-                  "日期": moment().format("ss"),
-                  "数值": resdata[0].steam[key].sumValue
-                })
-                this.steamChartData.rows.shift()
-              }
-            }
-          }
-        },
-        webscoer(){
-            console.log('连接websocket失败。。。')
-        },
-        webscoclos(e){
-            console.log('关闭websocket连接')
-        },
         //点击导航栏获取相关能耗数据
         getData(e){
           var nowTime = moment().format('HH:mm').substring(0,4) + "0"
@@ -387,14 +304,9 @@ export default {
           let params1={
             StartTime:todayStartTime,
             EndTime:todayEndTime,
-            AreaName:this.list[e]
+            AreaName:this.list[this.active]
           }
-          this.currentchoice=this.list[e]
           this.$toast('当前数据展示'+this.currentchoice)
-          this.kong=this.resetChartData
-          if(this.websoc){
-            this.websoc.close()
-            }
           this.$http.all([
             this.$http.get('/api/energywater',{params:params1}),
             this.$http.get('/api/energyelectric',{params:params1}),
@@ -403,11 +315,12 @@ export default {
             this.$http.get('/api/electricnergycost',{params:{StartTime:todayStartTime,EndTime:todayEndTime,AreaName:this.currentchoice,TimeClass:'电'}})
             ]).then(this.$http.spread((res4,res5,res6,res7,res8)=>{
                     this.bgc1=this.bgc2=this.bgc3=false
-                    this.kong=this.resetChartData
-                    this.getEq()
+                    this.water=JSON.parse(res4.data).value
                     this.todaywater=JSON.parse(res4.data).value
                     this.todayelectric=JSON.parse(res5.data).value
+                    this.electric=JSON.parse(res5.data).value
                     this.todaysteam=JSON.parse(res6.data).value
+                    this.steam=JSON.parse(res6.data).value
                     var newlist=[]
                     newlist.push(JSON.parse(res4.data).cost)
                     newlist.push(JSON.parse(res5.data).cost)
@@ -429,58 +342,7 @@ export default {
                     this.guvalue=res8.data.periodTimeTypeItem[3].expendEnergy+'kwh'
                     this.gucost=res8.data.periodTimeTypeItem[3].expendPrice+'元'
                   }))
-              },
-        getEq(){
-              this.ElectricEqList = []
-              this.WaterEqList = []
-              this.SteamEqList = []
-              var params = {
-                tableName:"TagDetail",
-                field:"AreaName",
-                fieldvalue:this.currentchoice,
-                limit:100000,
-                offset:0
               }
-              this.$http.get("/api/CUID",{params:params}).then(res =>{
-                var rows = JSON.parse(res.data).rows
-                rows.forEach(item =>{
-                  if(item.EnergyClass === "电"){
-                    this.ElectricEqList.push(item)
-                    if(this.ElectricEqList!=[]){
-                      this.electrictag=this.ElectricEqList[0].TagClassValue
-                    }else{
-                      this.electrictag=""
-                    }
-                  }else if(item.EnergyClass === "水"){
-                    this.WaterEqList.push(item)
-                    if(this.WaterEqList!=[]){
-                      this.watertag=this.WaterEqList[0].TagClassValue
-                    }else{
-                      this.watertag=""
-                    }
-                  }else if(item.EnergyClass === "汽"){
-                    this.SteamEqList.push(item)
-                    if(this.SteamEqList!=[]){
-                      this.steamtag=this.SteamEqList[0].TagClassValue
-                    }else{
-                      this.steamtag=""
-                    }
-                  }
-                })
-              })},
-        //初始化获取navbar数据条
-        initNavbar(){
-        this.loading=true
-        this.$http.get('/api/areatimeenergycount',{params:{
-              EnergyClass:'电',CompareTime:'2020-04-14'
-            }}).then((res3) => {
-              this.loading=false
-              let arr=res3.data.rows
-              for(var i=0;i<arr.length;i++){
-              this.list.push(arr[i]['区域'])
-        }
-      })
-      }
     }
 }
 </script>
@@ -491,20 +353,20 @@ export default {
      .show-box{
         position: relative;
         width: 375px;
-        height:870px;
+        height:600px;
         box-sizing: border-box;
         padding: 0 12px 12px 13px;
         background: @bgcc;
         .tabbar{
           position: relative;
-          height: 20px;
+          padding-top: 10px;
+          height: 25px;
           font-size:14px;
           font-family:PingFang SC;
           font-weight:400;
-          line-height:20px;
+          line-height:25px;
           color:rgba(255,255,255,1);
           opacity:1;
-          background-color: #ccc;
           margin-bottom: 20px;
         }
         .date-choose{
@@ -541,14 +403,14 @@ export default {
           .dw{
             position: absolute;
             left: 51px;
-            top: 53px;
+            top: 58px;
             width: 15px;
             height: 11px;
             font-size:8px;
             font-family:PingFang SC;
             font-weight:400;
             line-height:11px;
-            color:rgba(255,255,255,1);
+            color:rgba(20, 20, 20,1);
             opacity:1;
             &.electric1{
               left:42px;
@@ -560,7 +422,7 @@ export default {
           .number{
             position: absolute;
             left: 4px;
-            top: 73px;
+            top: 85px;
             text-align: center;
             width:97px;
             height:22px;
@@ -572,7 +434,7 @@ export default {
             font-size:16px;
             font-family:PingFang SC;
             font-weight:500;
-            color:rgba(255,255,255,1);
+            color:rgb(20, 20, 20);
             letter-spacing:1px;
             opacity:1;
           }
@@ -621,18 +483,15 @@ export default {
             border-radius:4px;
           }
           .switchbgc{
-            background-color: #FAC000;
+            background-color: #fff;
             .number{
-              background-color:#FAC000;
+              background-color:#fff;
             }
-            .electric{
-              background-image: url('../../assets/png/flashlight_2.png');
-              }
           }
         }
         .show-banner{
           position: relative;
-          height: 250px;
+          height: 260px;
           width: 100%;
           margin-bottom: 17px;
           background: #ccc;
@@ -641,6 +500,7 @@ export default {
               position: relative;
                 width: 100%;
                 height:20px;
+                padding-top: 10px;
                 text-align: center;
                 font-size:16px;
                 font-family:PingFang SC;
@@ -662,7 +522,7 @@ export default {
                 font-family:PingFang SC;
                 font-weight:400;
                 line-height:11px;
-                color:#000;
+                color:#222;
                 opacity:1;
                 }
                 .today-water-max{
@@ -673,10 +533,10 @@ export default {
                 }
                 .today-num1,.today-num2,.today-num3{
                     position:absolute;
-                    top:25px;
+                    top:30px;
                     left:10px;
                     font-size: 10px;
-                    color:#FAC000;
+                    color:#fff;
                 }
                 .today-num2{
                   left: 120px;
@@ -684,11 +544,6 @@ export default {
                 .today-num3{
                   left: 246px;
                 }
-        }
-        .piclist{
-          height:270px;
-          background-color: #ccc;
-          margin: 0 0 17px;
         }
      }
 </style>
