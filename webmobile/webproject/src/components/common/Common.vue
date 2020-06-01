@@ -45,10 +45,10 @@ export default {
         position: relative;
         height:89px;
         width:375px;
-        background-color:#999;
+        background-color:#07c160;
         .head-name{
             position: absolute;
-            top:46px;
+            top:40px;
             left:90px;
             height:25px;
             font-size:16px;
@@ -75,13 +75,13 @@ export default {
         bottom: 0;
         width:375px;
         height:64px;
-        background:#666;
+        background:#07c160;
         box-shadow:0px -2px 4px rgba(255,255,255,0.16);
         opacity:1;
     }
     .van-tabbar{
         height: 64px;
-        background-color: #999;
+        background-color: #07c160;
         &.van-tabbar--fixed{
             height: 64px;
         }

@@ -409,9 +409,10 @@ export default {
         },
         webscom(evt){
           var resdata = JSON.parse(evt.data); //获取到实时返回的数据
-          this.electricTagList = resdata[0].electric
-          this.steamTagList = resdata[0].steam
-          this.waterTagList = resdata[0].water
+          var that=this
+          that.electricTagList = resdata[0].electric
+          that.steamTagList = resdata[0].steam
+          that.waterTagList = resdata[0].water
         },
         webscoer(){
             console.log('连接websocket失败')
