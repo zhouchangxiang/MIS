@@ -469,9 +469,9 @@ export default {
             width: 100px;
             margin-top:20px;
             width: 100px;
-            height: 600px;
+            height: 800px;
             border-radius: 4px;
-            background: #ccc;
+            background: #eee;
         }
         .bigbox{
             float: left;

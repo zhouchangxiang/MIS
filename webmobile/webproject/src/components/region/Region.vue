@@ -563,13 +563,13 @@ export default {
             top: 73px;
             text-align: center;
             width:97px;
-            height:29px;
+            height:22px;
             overflow: hidden;
             text-overflow: hidden;
             background:#ccc;
             box-shadow:0px 0px 6px rgba(255,255,255,0.16);
             border-radius:4px;
-            font-size:18px;
+            font-size:16px;
             font-family:PingFang SC;
             font-weight:500;
             color:rgba(255,255,255,1);

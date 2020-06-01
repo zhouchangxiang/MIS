@@ -144,6 +144,7 @@ export default {
             waterGGcost:0,
             waterYYcost:0,
             waterSJcost:0,
+            onlineAll:[]
         }
     },
     created(){
@@ -267,9 +268,10 @@ export default {
             this.$http.get("/api/souyeselectyear",{params:{StartTime: lastStartYear,EndTime:lastEndYear,EnergyClass:'水'}}),//上一年水能耗
             this.$http.get("/api/souyeselectyear",{params:{StartTime: lastStartYear,EndTime:lastEndYear,EnergyClass:'电'}}),//上一年电能耗
             this.$http.get("/api/souyeselectyear",{params:{StartTime: lastStartYear,EndTime:lastEndYear,EnergyClass:'汽'}}),//上一年汽能耗
-            // this.$http.get('api/energyall',{params:{ModelFlag:"在线检测情况"}})
-        ]).then((this.$http.spread((water1,water2,water3,electric1,electric2,electric3,steam1,steam2,steam3,dwdc,delc,dste,mwdc,melc,mste,ywdc,yelc,yste)=>{
-          this.water1=JSON.parse(water1.data)
+            this.$http.get('api/energyall',{params:{ModelFlag:"在线检测情况"}})
+        ]).then((this.$http.spread((water1,water2,water3,electric1,electric2,electric3,steam1,steam2,steam3,dwdc,delc,dste,mwdc,melc,mste,ywdc,yelc,yste,onlin)=>{
+         this.onlineAll=(JSON.parse(onlin.data))
+         this.water1=JSON.parse(water1.data)
           this.water2=JSON.parse(water2.data)
           this.water3=JSON.parse(water3.data)
           this.electric1=JSON.parse(electric1.data)
@@ -306,6 +308,7 @@ export default {
           this.lastYearCon = this.ywdc
           this.unit='t'
           this.costall=this.water1.cost  //水的的能耗成本
+          this.onlineitem=this.onlineAll[1]
          }else if(this.kind==='电'){
           this.valueall1=this.electric1.value
           this.valueall2=this.electric2.value
@@ -318,6 +321,7 @@ export default {
           this.lastYearCon = this.yelc
           this.unit='KWh'
           this.costall=this.electric1.cost
+          this.onlineitem=this.onlineAll[0]
          }else{
           this.valueall1=this.steam1.value
           this.valueall2=this.steam2.value
@@ -330,6 +334,7 @@ export default {
           this.lastYearCon = this.yste
           this.unit='t'
           this.costall=this.steam1.cost
+          this.onlineitem=this.onlineAll[2]
          }
     }
             }
