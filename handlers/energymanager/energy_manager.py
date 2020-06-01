@@ -550,10 +550,14 @@ def energyselect(data):
                     if mycurrday in dictrecurrdays.keys():
                         dirmonth_list_dict["本月能耗"] = round(float(dictrecurrdays[mycurrday]), 2)
                     else:
-                        if datetime.datetime.strptime(mycurrday, '%Y-%m-%d') > datetime.datetime.now():
+                        reday = getMonthFirstDayAndLastDay(currentyear, currentmonth)
+                        if int(myday) > int(str(reday[1])[8:10]):
                             dirmonth_list_dict["本月能耗"] = ""
                         else:
-                            dirmonth_list_dict["本月能耗"] = 0
+                            if datetime.datetime.strptime(mycurrday, '%Y-%m-%d') > datetime.datetime.now():
+                                dirmonth_list_dict["本月能耗"] = ""
+                            else:
+                                dirmonth_list_dict["本月能耗"] = 0
                     if mycompareday in dictrecomperdays.keys():
                         dirmonth_list_dict["上月能耗"] = round(float(dictrecomperdays[mycompareday]), 2)
                     else:
