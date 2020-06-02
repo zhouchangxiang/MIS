@@ -50,7 +50,7 @@
            </div>
           <div class="show-foot">
                <div class="sf-l">
-                   <div class="hf">耗费成本</div>
+                   <div class="hf">日耗费成本</div>
                    <div class="all-money">{{costall}}<span>元</span></div>
                </div>
                 <div class="sf-r">

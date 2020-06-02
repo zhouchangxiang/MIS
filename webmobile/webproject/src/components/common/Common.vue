@@ -10,7 +10,7 @@
                 <van-tabbar-item icon="wap-home" to="/home">首页</van-tabbar-item>
                 <van-tabbar-item icon="location" to="/region" >区域</van-tabbar-item>
                 <van-tabbar-item icon="graphic" to="/efficiency">能效</van-tabbar-item>
-                <van-tabbar-item icon="ascending" to="/report">报告</van-tabbar-item>
+                <van-tabbar-item icon="ascending" to="/report">实时</van-tabbar-item>
            </van-tabbar>
        </div>
    </div>
