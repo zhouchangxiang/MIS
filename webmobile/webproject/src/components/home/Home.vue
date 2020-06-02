@@ -9,7 +9,7 @@
                     </van-tabs>
                </div>
         </div>
-        <van-loading size="24px" vertical v-if="loading" color="lightgreen" type="spinner">加载中...</van-loading>
+        <van-loading size="24px" vertical v-if="loading" color="rgb(69, 135, 221)" type="spinner">加载中...</van-loading>
         <div class="show-banner">
             <div class="day-tab">
                   <div class="sb-name">厂区{{kind}}日总能耗</div>

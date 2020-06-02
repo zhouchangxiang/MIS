@@ -59,7 +59,7 @@
     z-index: 10;
 }
 .van-loading__text{
-    color: lightgreen;
+    color: rgb(69, 135, 221);
 }
 .singledate .van-tabs__nav--card{
     width:40px;

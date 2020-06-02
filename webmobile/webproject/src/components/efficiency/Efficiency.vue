@@ -338,7 +338,7 @@ export default {
         .ou{
             position: absolute;
             top:14px;
-            left:267px;
+            left:235px;
             height:14px;
             font-size:10px;
             font-family:PingFang SC;

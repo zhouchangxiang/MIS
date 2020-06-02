@@ -481,6 +481,9 @@ export default {
             float: left;
             background:#ccc;
             border-radius:4px;
+            .number{
+              left:6px;
+            }
           }
           .switchbgc{
             background-color: #fff;
