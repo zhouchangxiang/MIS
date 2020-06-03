@@ -253,6 +253,7 @@ export default {
                     this.waterYYcost=res7.data.YYcost+'元'
                     this.waterSJ = res7.data.SJ+'t'
                     this.waterSJcost=res7.data.GGcost+'元'
+                    this.waterCost = (res7.data.GGcost + res7.data.YYcost + res7.data.SJcost).toFixed(2)+'元'
                     this.bovalue=res8.data.periodTimeTypeItem[0].expendEnergy+'kwh'
                     this.bocost=res8.data.periodTimeTypeItem[0].expendPrice+'元'
                     this.fenvalue=res8.data.periodTimeTypeItem[1].expendEnergy+'kwh'
