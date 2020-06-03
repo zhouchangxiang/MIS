@@ -94,10 +94,9 @@
       <div class="show-banner" v-if="this.kind==='汽'">
         <div class="header">汽能明细</div>
         <div class="body">
-                    <div class='today-water'>类型</div>
+                    <div class='today-water'>汽</div>
                     <div class='today-water-max'>汽能耗:</div>
                     <div class='today-water-min'>汽成本:</div>
-                     <div class='today-num1'>{{this.kind}}</div>
                     <div class='today-num2'>{{steam}}</div>
                     <div class='today-num3'>{{steamCost}}</div>
         </div>
