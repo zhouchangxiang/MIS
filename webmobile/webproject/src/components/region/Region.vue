@@ -113,34 +113,16 @@
 var moment=require('moment')
 export default {
     data(){
-      this.chartSettings = {
-        yAxisType: ['KMB'],
-        yAxisName: ['数值']
-      }
         return {
-           ChartExtend: {
-            grid:{
-                    left:'0',
-                    right:'20px',
-                    bottom:'0px',
-                    top:'40px'
-            },
-        },
           comparedate: 'click me!',
           show: false,
           minDate: new Date(2020, 0, 1),
-          maxDate: new Date(2020, 11, 31),
+          maxDate: new Date(2021, 11, 31),
           active:0,
           list:["原提取车间","固体制剂车间","新建综合制剂车间","GMP车间","中试车间","污水站","锅炉房","前处理车间","提取二车间","综合车间","办公楼＼食堂"],
           water:0,
           electric:0,
           steam:0,
-          todaywater:0,
-          todayelectric:0,
-          todaysteaowfootm:0,
-          yesterdaywater:0,
-          yesterdayelectric:0,
-          yesterdaysteam:0,
           cost:'',
           bgc1:false,
           bgc2:false,
@@ -149,13 +131,6 @@ export default {
           websoc:null,
           kind:'电',
           currentchoice:'原提取车间',
-          kong:null,
-          ElectricEqList:[],
-          WaterEqList:[],
-          SteamEqList:[],
-          watertag:'',
-          electrictag:'',
-          steamtag:'',
           steamCost:'0',
           steamUnit:'0',
           ClanderStartTime:'',
@@ -174,62 +149,8 @@ export default {
           pinvalue:0,
           pincost:0,
           guvalue:0,
-          gucost:0,
-          electricChartData:{
-          columns:['日期', '数值'],
-          rows: [
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""}]
-        },
-        resetChartData: {
-          columns: ['日期', '数值'],
-          rows: [
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""}]
-        },
-          waterChartData: {
-          columns: ['日期', '数值'],
-          rows: [
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""}]
-        },
-        steamChartData:{
-          columns: ['日期', '数值'],
-          rows: [
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""},
-            { '日期': '', '数值': ""}]
-        }}
+          gucost:0
+        }
     },
     created(){
       this.getData()
@@ -332,7 +253,6 @@ export default {
                     this.waterYYcost=res7.data.YYcost+'元'
                     this.waterSJ = res7.data.SJ+'t'
                     this.waterSJcost=res7.data.GGcost+'元'
-                    this.waterCost = (res7.data.GGcost + res7.data.YYcost + res7.data.SJcost).toFixed(2)+'元'
                     this.bovalue=res8.data.periodTimeTypeItem[0].expendEnergy+'kwh'
                     this.bocost=res8.data.periodTimeTypeItem[0].expendPrice+'元'
                     this.fenvalue=res8.data.periodTimeTypeItem[1].expendEnergy+'kwh'
@@ -437,18 +357,6 @@ export default {
             font-weight:500;
             color:rgb(20, 20, 20);
             letter-spacing:1px;
-            opacity:1;
-          }
-          .sn{
-            position: absolute;
-            left: 40px;
-            top: 142px;
-            width:60px;
-            height:17px;
-            font-size:12px;
-            font-family:PingFang SC;
-            font-weight:500;
-            line-height:17px;
             opacity:1;
           }
         .maxcolor{
