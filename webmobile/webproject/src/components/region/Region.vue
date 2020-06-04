@@ -97,8 +97,8 @@
                     <div class='today-water'>汽</div>
                     <div class='today-water-max'>汽能耗:</div>
                     <div class='today-water-min'>汽成本:</div>
-                    <div class='today-num2'>{{steam}}</div>
-                    <div class='today-num3'>{{steamCost}}</div>
+                    <div class='today-num2'>{{steam}}t</div>
+                    <div class='today-num3'>{{steamCost}}元</div>
         </div>
         <div class="body2">
                     <div class='today-water-max'>单位:</div>
