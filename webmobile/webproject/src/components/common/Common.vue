@@ -60,13 +60,11 @@ export default {
         }
         span{
            position: absolute;
-           width: 16px;
+           width: 15px;
            height: 16px;
            top:35px;
            left:318px;
-           border: 1px solid #ccc;
            background-image: url('../../assets/png/delete_fill.png');
-           background-color:skyblue;
            background-size: contain;
         }
     }
