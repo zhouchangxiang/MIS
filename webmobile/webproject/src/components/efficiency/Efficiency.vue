@@ -135,6 +135,7 @@ export default {
         methods:{
         ChooseWorkplace(e){
           this.AreaName=this.option1[e].text
+          this.ChooseDate()
         },
         ChooseDate(){
         var dayStartTime = moment(this.formParameters.startDate).format('YYYY-MM-DD') + " 00:00:00"

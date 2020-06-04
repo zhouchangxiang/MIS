@@ -230,38 +230,34 @@ export default {
           var nowTime = moment().format('HH:mm').substring(0,4) + "0"
           var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
           var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
-          var params1={}
-          params1.StartTime=todayStartTime,
-          params1.EndTime=todayEndTime,
-          params1.AreaName=this.currentchoice
           this.$http.all([
-            this.$http.get('/api/energywater',{params:params1}),
-            this.$http.get('/api/energyelectric',{params:params1}),
-            this.$http.get('/api/energysteam',{params:params1}),
-            this.$http.get('/api/watertrendlookboard',{params:params1}),
+            this.$http.get('/api/energywater',{params:{StartTime:todayStartTime,EndTime:todayEndTime,AreaName:this.currentchoice}}),
+            this.$http.get('/api/energyelectric',{params:{StartTime:todayStartTime,EndTime:todayEndTime,AreaName:this.currentchoice}}),
+            this.$http.get('/api/energysteam',{params:{StartTime:todayStartTime,EndTime:todayEndTime,AreaName:this.currentchoice}}),
+            this.$http.get('/api/watertrendlookboard',{params:{StartTime:todayStartTime,EndTime:todayEndTime,AreaName:this.currentchoice}}),
             this.$http.get('/api/electricnergycost',{params:{StartTime:todayStartTime,EndTime:todayEndTime,AreaName:this.currentchoice,TimeClass:'电'}})
-            ]).then(this.$http.spread((res4,res5,res6,res7,res8)=>{
+            ]).then(this.$http.spread((res1,res2,res3,res4,res5)=>{
                     this.bgc1=this.bgc2=this.bgc3=false
-                    this.water=JSON.parse(res4.data).value
-                    this.electric=JSON.parse(res5.data).value
-                    this.steam=JSON.parse(res6.data).value
-                    this.steamCost=JSON.parse(res6.data).cost
-                    this.steamUnit=JSON.parse(res6.data).unit
-                    this.waterGG = res7.data.GG+'t'
-                    this.waterGGcost=res7.data.GGcost+'元'
-                    this.waterYY = res7.data.YY+'t'
-                    this.waterYYcost=res7.data.YYcost+'元'
-                    this.waterSJ = res7.data.SJ+'t'
-                    this.waterSJcost=res7.data.GGcost+'元'
-                    this.waterCost = (res7.data.GGcost + res7.data.YYcost + res7.data.SJcost).toFixed(2)+'元'
-                    this.bovalue=res8.data.periodTimeTypeItem[0].expendEnergy+'kwh'
-                    this.bocost=res8.data.periodTimeTypeItem[0].expendPrice+'元'
-                    this.fenvalue=res8.data.periodTimeTypeItem[1].expendEnergy+'kwh'
-                    this.fencost=res8.data.periodTimeTypeItem[1].expendPrice+'元'
-                    this.pinvalue=res8.data.periodTimeTypeItem[2].expendEnergy+'kwh'
-                    this.pincost=res8.data.periodTimeTypeItem[2].expendPrice+'元'
-                    this.guvalue=res8.data.periodTimeTypeItem[3].expendEnergy+'kwh'
-                    this.gucost=res8.data.periodTimeTypeItem[3].expendPrice+'元'
+                    this.water=JSON.parse(res1.data).value
+                    this.electric=JSON.parse(res2.data).value
+                    this.steam=JSON.parse(res3.data).value
+                    this.steamCost=JSON.parse(res3.data).cost
+                    this.steamUnit=JSON.parse(res3.data).unit
+                    this.waterGG = res4.data.GG+'t'
+                    this.waterGGcost=res4.data.GGcost+'元'
+                    this.waterYY = res4.data.YY+'t'
+                    this.waterYYcost=res4.data.YYcost+'元'
+                    this.waterSJ = res4.data.SJ+'t'
+                    this.waterSJcost=res4.data.SJcost+'元'
+                    this.waterCost = (res4.data.GGcost + res4.data.YYcost + res4.data.SJcost)+'元'
+                    this.bovalue=res5.data.periodTimeTypeItem[0].expendEnergy+'kwh'
+                    this.bocost=res5.data.periodTimeTypeItem[0].expendPrice+'元'
+                    this.fenvalue=res5.data.periodTimeTypeItem[1].expendEnergy+'kwh'
+                    this.fencost=res5.data.periodTimeTypeItem[1].expendPrice+'元'
+                    this.pinvalue=res5.data.periodTimeTypeItem[2].expendEnergy+'kwh'
+                    this.pincost=res5.data.periodTimeTypeItem[2].expendPrice+'元'
+                    this.guvalue=res5.data.periodTimeTypeItem[3].expendEnergy+'kwh'
+                    this.gucost=res5.data.periodTimeTypeItem[3].expendPrice+'元'
                     this.kind='电'
                   }))
               }
