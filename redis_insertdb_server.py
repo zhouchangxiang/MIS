@@ -206,12 +206,11 @@ def run():
                         unitf = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "水瞬时流量单位").first()
                         units = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "水累计量体积单位").first()
                         # equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key.TagClassValue).first()
-                        prices = db_session.query(WaterSteamPrice).filter(WaterSteamPrice.PriceType == "水",
-                                                                          WaterSteamPrice.IsEnabled == "是").all()
+                        price = db_session.query(WaterSteamPrice).filter(WaterSteamPrice.PriceType == key.FEFportIP[0:-1],
+                                                                          WaterSteamPrice.IsEnabled == "是").first()
                         PriceID = 0
-                        for price in prices:
-                            if price.PriceType in key.FEFportIP:
-                                PriceID = price.ID
+                        if price:
+                            PriceID = price.ID
                         wa = WaterEnergy()
                         wa.TagClassValue = key.TagClassValue
                         wa.CollectionYear = valueSSamptime[0:4]
