@@ -391,7 +391,8 @@ export default {
         this.steamGlTag = res.data.S_AllArea_Value
     },
       initWebSocket(){
-            this.websoc=new WebSocket('ws://127.0.0.1:5002');
+            // this.websoc=new WebSocket('ws://127.0.0.1:5002');
+            this.websoc = new WebSocket('ws://' + location.host + '/socket');
             this.websoc.onopen=this.webscop
             this.websoc.onmessage=this.webscom
             this.websoc.onerror=this.webscoer

@@ -17,12 +17,12 @@
                   <span class="num1">{{num1}}</span>
                   <span class="num2">{{num2}}</span>
                   <span class="num3">{{num3}}</span>
-                  </div>
+              </div>
           </div>
           <div class="choice-box">
            <div class="show-top">
                <div class="tips">
-                   <van-tabs type="card" title-active-color="#1E222B" title-inactive-color="#fff" v-model="choosedate" @click="ChooseDate()"> 
+                   <van-tabs type="card" title-active-color="#1E222B" title-inactive-color="#fff" v-model="choosedate" @click="ChooseDate()">
                         <van-tab title="日"></van-tab>
                         <van-tab title="月"></van-tab>
                         <van-tab title="年"></van-tab>
@@ -35,8 +35,11 @@
                 </van-dropdown-menu>
            </div>
            </div>
-          <div class="piclist">
+          <div class="piclist" v-if="this.active===0">
                <ve-histogram :data="chartData" :settings="chartSettings" width="350px" height="250px" :extend="ChartExtend"></ve-histogram>
+          </div>
+          <div class="piclist" v-if="this.active===1">
+               <ve-line :data="chartData" width="350px" height="250px" :legend-visible="true"  :extend="lineChartExtend" :settings="chartSettings"></ve-line>
           </div>
           <div class="compare" v-if="this.active===0">
               <div class="left-box">
@@ -62,11 +65,21 @@ var moment=require('moment')
 export default {
     data(){
         this.chartSettings = {
-         yAxisType: ['KMB'],
          yAxisName: ['数值'],
 
       }
         return {
+            lineChartExtend:{
+            grid:{
+                    left:'10px',
+                    right:'50px',
+                    bottom:'50px',
+                    top:'60px'
+            },
+             series:{
+                    smooth: false
+            }
+            },
             ChartExtend:{
             grid:{
                     left:'10px',
@@ -87,7 +100,7 @@ export default {
                 { text: "前处理车间", value: 7 },
                 { text: "提取二车间", value: 8 },
                 { text: "综合车间", value: 9 },
-                { text: "办公楼＼食堂", value: 10 },
+                { text: "办公楼＼食堂", value: 10 }
             ],
             formParameters:{
                 resourceTime:"日",
@@ -119,7 +132,7 @@ export default {
         created(){
             this.ChooseDate()
         },
-    methods:{
+        methods:{
         ChooseWorkplace(e){
           this.AreaName=this.option1[e].text
         },
@@ -210,13 +223,13 @@ export default {
             this.num3=res.data.PipeDamage
             var arr=res.data.row
             this.chartData.rows=[]
-            this.chartData.columns=['时间','输入总量','输出总量']
+            this.chartData.columns=['时间','实际输入','实际输出']
             for(var i=0;i<arr.length;i++){
             if(arr[i]['输入总量']!==''){
              this.chartData.rows.push({
                '时间':arr[i]['时间'].slice(-2),
-               '输入总量':arr[i]['输入总量'],
-               '输出总量':arr[i]['输出总量']
+               '实际输入':arr[i]['输入总量'],
+               '实际输出':arr[i]['输出总量']
                })
                 }
 
@@ -239,7 +252,6 @@ export default {
       }
     if(this.active===1){
         this.tabbar=1
-        this.tabbar='管损情况'
         this.isrun=false
         this.value1='管损率='
         this.value2='输入汽量(T):'
@@ -523,7 +535,7 @@ export default {
             float: left;
             left: 130px;
             width:120px;
-            height:25px!important;
+            height:20px!important;
             overflow: hidden;
         }
 </style>
