@@ -2,8 +2,18 @@
     <div class="show-box">
       <van-loading size="24px" vertical v-if="loading" color="lightgreen" type="spinner">加载中...</van-loading>
          <div class="tabbar">
-          <van-tabs  line-height="0px" line-width="0px" v-model="active" @click="getData()" :swipeable=true :border=false title-active-color="#3fb5b0" title-inactive-color="#000">
-            <van-tab  v-for="(item,index) in list" :title="item"  :key="index" ></van-tab>
+          <van-tabs  line-height="0px" line-width="0px" v-model="active" @click="getData($event)" :swipeable=true :border=false title-active-color="#3fb5b0" title-inactive-color="#000">
+            <van-tab  title="原提取车间" ></van-tab>
+            <van-tab  title="固体制剂车间" ></van-tab>
+            <van-tab  title="新建综合制剂车间" ></van-tab>
+            <van-tab  title="GMP车间" ></van-tab>
+            <van-tab  title="中试车间" ></van-tab>
+            <van-tab  title="污水站" ></van-tab>
+            <van-tab  title="锅炉房" ></van-tab>
+            <van-tab  title="前处理车间" ></van-tab>
+            <van-tab  title="提取二车间" ></van-tab>
+            <van-tab  title="综合车间" ></van-tab>
+            <van-tab  title="办公楼＼食堂" ></van-tab>
           </van-tabs>
       </div>
       <div class="date-choose">
@@ -222,8 +232,8 @@ export default {
        }
       },
         //点击导航栏获取相关能耗数据
-        getData(){
-          this.currentchoice=this.list[this.active]
+        getData(e){
+          this.currentchoice=this.list[e]
           this.comparedate='click me!'
           var nowTime = moment().format('HH:mm').substring(0,4) + "0"
           var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
@@ -246,7 +256,7 @@ export default {
              this.waterYYcost=res4.data.YYcost+'元'
              this.waterSJ = res4.data.SJ+'t'
              this.waterSJcost=res4.data.GGcost+'元'
-             this.waterCost = (res4.data.GGcost + res4.data.YYcost + res4.data.SJcost)+'元'
+             this.waterCost = (res4.data.GGcost + res4.data.YYcost + res4.data.SJcost).toFixed(2)+'元'
              this.bovalue=res5.data.periodTimeTypeItem[0].expendEnergy+'kwh'
              this.bocost=res5.data.periodTimeTypeItem[0].expendPrice+'元'
              this.fenvalue=res5.data.periodTimeTypeItem[1].expendEnergy+'kwh'
@@ -265,7 +275,7 @@ export default {
                  var nowTime = moment().format('HH:mm').substring(0,4) + "0"
                  var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
                  var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
-                 this.$http.all([
+                this.$http.all([
                  this.$http.get('/api/energywater',{params:{StartTime:todayStartTime,EndTime:todayEndTime,AreaName:this.currentchoice}}),
                  this.$http.get('/api/energyelectric',{params:{StartTime:todayStartTime,EndTime:todayEndTime,AreaName:this.currentchoice}}),
                  this.$http.get('/api/energysteam',{params:{StartTime:todayStartTime,EndTime:todayEndTime,AreaName:this.currentchoice}}),
@@ -283,7 +293,7 @@ export default {
                   this.waterYYcost=res4.data.YYcost+'元'
                   this.waterSJ = res4.data.SJ+'t'
                   this.waterSJcost=res4.data.GGcost+'元'
-                  this.waterCost = (res4.data.GGcost + res4.data.YYcost + res4.data.SJcost)+'元'
+                  this.waterCost = (res4.data.GGcost + res4.data.YYcost + res4.data.SJcost).toFixed(2)+'元'
                   this.bovalue=res5.data.periodTimeTypeItem[0].expendEnergy+'kwh'
                   this.bocost=res5.data.periodTimeTypeItem[0].expendPrice+'元'
                   this.fenvalue=res5.data.periodTimeTypeItem[1].expendEnergy+'kwh'

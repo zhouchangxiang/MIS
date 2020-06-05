@@ -5,7 +5,7 @@
                    <van-tabs type="card" title-active-color="#1E222B"  title-inactive-color="#fff" v-model="choosekind" @click="ChooseKind($event)">
                         <van-tab title="水"></van-tab>
                         <van-tab title="电"></van-tab>
-                        <van-tab title="气"></van-tab>
+                        <van-tab title="汽"></van-tab>
                     </van-tabs>
                </div>
         </div>
