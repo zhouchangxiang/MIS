@@ -1,7 +1,7 @@
 <template>
     <div class="show-box">
           <div class="cir-choose">
-              <van-tabs type="card" title-active-color="#1E222B" title-inactive-color="#fff"  v-model="active"  @click="switchCard($event)"> 
+              <van-tabs type="card" title-active-color="#1E222B" title-inactive-color="#fff"  v-model="active"  @click="switchCard()"> 
                         <van-tab title="运行效率"></van-tab>
                         <!-- <van-tab title="线损情况"></van-tab> -->
                         <van-tab title="管损情况"></van-tab>
@@ -17,12 +17,12 @@
                   <span class="num1">{{num1}}</span>
                   <span class="num2">{{num2}}</span>
                   <span class="num3">{{num3}}</span>
-                  </div>
+              </div>
           </div>
           <div class="choice-box">
            <div class="show-top">
                <div class="tips">
-                   <van-tabs type="card" title-active-color="#1E222B" title-inactive-color="#fff" v-model="choosedate" @click="ChooseDate($event)"> 
+                   <van-tabs type="card" title-active-color="#1E222B" title-inactive-color="#fff" v-model="choosedate" @click="ChooseDate()">
                         <van-tab title="日"></van-tab>
                         <van-tab title="月"></van-tab>
                         <van-tab title="年"></van-tab>
@@ -35,10 +35,13 @@
                 </van-dropdown-menu>
            </div>
            </div>
-          <div class="piclist">
+          <div class="piclist" v-if="this.active===0">
                <ve-histogram :data="chartData" :settings="chartSettings" width="350px" height="250px" :extend="ChartExtend"></ve-histogram>
           </div>
-          <div class="compare">
+          <div class="piclist" v-if="this.active===1">
+               <ve-line :data="chartData" width="350px" height="250px" :legend-visible="true"  :extend="lineChartExtend" :settings="chartSettings"></ve-line>
+          </div>
+          <div class="compare" v-if="this.active===0">
               <div class="left-box">
                   <div class="lt">本{{formParameters.resourceTime}}最高负荷率:</div>
                   <div class="num">{{Maxloadrate}}</div>
@@ -62,11 +65,21 @@ var moment=require('moment')
 export default {
     data(){
         this.chartSettings = {
-         yAxisType: ['KMB'],
          yAxisName: ['数值'],
 
       }
         return {
+            lineChartExtend:{
+            grid:{
+                    left:'10px',
+                    right:'50px',
+                    bottom:'50px',
+                    top:'60px'
+            },
+             series:{
+                    smooth: false
+            }
+            },
             ChartExtend:{
             grid:{
                     left:'10px',
@@ -87,7 +100,7 @@ export default {
                 { text: "前处理车间", value: 7 },
                 { text: "提取二车间", value: 8 },
                 { text: "综合车间", value: 9 },
-                { text: "办公楼＼食堂", value: 10 },
+                { text: "办公楼＼食堂", value: 10 }
             ],
             formParameters:{
                 resourceTime:"日",
@@ -116,11 +129,15 @@ export default {
         }
       }
         },
-    methods:{
+        created(){
+            this.ChooseDate()
+        },
+        methods:{
         ChooseWorkplace(e){
           this.AreaName=this.option1[e].text
+          this.ChooseDate()
         },
-        ChooseDate(e){
+        ChooseDate(){
         var dayStartTime = moment(this.formParameters.startDate).format('YYYY-MM-DD') + " 00:00:00"
         var dayEndTime = moment(this.formParameters.startDate).format('YYYY-MM-DD HH:mm:ss')
         var monthStartTime = moment(this.formParameters.startDate).month(moment(this.formParameters.startDate).month()).startOf('month').format('YYYY-MM-DD HH:mm:ss')
@@ -129,7 +146,7 @@ export default {
         var yearEndTime = moment(this.formParameters.startDate).year(moment(this.formParameters.startDate).year()).endOf('year').format('YYYY-MM-DD HH:mm:ss')
         var params={}
         var params2={}
-       if(e===0){
+       if(this.choosedate===0){
           this.formParameters.resourceTime='日'
           params.StartTime = dayStartTime
           params.EndTime = dayEndTime
@@ -140,7 +157,7 @@ export default {
           params2.EndTime=dayEndTime
           params2.TimeClass=this.formParameters.resourceTime
        }
-       else if(e===1){
+       else if(this.choosedate===1){
           this.formParameters.resourceTime='月'
           params.StartTime = monthStartTime
           params.EndTime = monthEndTime
@@ -207,13 +224,13 @@ export default {
             this.num3=res.data.PipeDamage
             var arr=res.data.row
             this.chartData.rows=[]
-            this.chartData.columns=['时间','输入总量','输出总量']
+            this.chartData.columns=['时间','实际输入','实际输出']
             for(var i=0;i<arr.length;i++){
             if(arr[i]['输入总量']!==''){
              this.chartData.rows.push({
                '时间':arr[i]['时间'].slice(-2),
-               '输入总量':arr[i]['输入总量'],
-               '输出总量':arr[i]['输出总量']
+               '实际输入':arr[i]['输入总量'],
+               '实际输出':arr[i]['输出总量']
                })
                 }
 
@@ -221,8 +238,8 @@ export default {
         })
        }
    },
-    switchCard(e){
-        if(e===0){
+    switchCard(){
+        if(this.active===0){
           this.tabbar=0
           this.isrun=true
           this.value1='运行效率'
@@ -232,19 +249,18 @@ export default {
           this.value5='功率等级&nbsp;优'
           this.num1=this.num2=this.num3=0
           this.chartData.rows=[]
+          this.ChooseDate()
       }
-    if(e===1){
+    if(this.active===1){
         this.tabbar=1
-        this.tabbar='管损情况'
         this.isrun=false
         this.value1='管损率='
         this.value2='输入汽量(T):'
         this.value3='输出汽量(T):'
         this.value4='管损:'
         this.value5='0'
-        this.num1=this.num2=this.num3=0
-        this.Maxloadrate=this.Minloadrate=this.Maxtime=this.Mintime=0
         this.chartData.rows=[]
+        this.ChooseDate()
     }
     }
     }
@@ -260,7 +276,7 @@ export default {
      .show-box{
         position: relative;
         width: 375px;
-        height:680px;
+        height:700px;
         box-sizing: border-box;
         padding: 0 12px 12px 13px;
         background-color: @bgcc;
@@ -268,8 +284,8 @@ export default {
           position: relative;
           left: 78px;
           width:193px;
+          padding-top: 15px;
           height:22px;
-          background:#ccc;
           opacity:1;
           border-radius:4px
             }
@@ -335,7 +351,7 @@ export default {
         .ou{
             position: absolute;
             top:14px;
-            left:267px;
+            left:235px;
             height:14px;
             font-size:10px;
             font-family:PingFang SC;
@@ -352,7 +368,7 @@ export default {
             font-family:PingFang SC;
             font-weight:500;
             line-height:45px;
-            color:#fac000;
+            color:#fff;
             letter-spacing:1px;
             opacity:1;
             height:36px;
@@ -367,7 +383,7 @@ export default {
             .num3{
                 position: absolute;
                 left: 230px;
-                color:rgba(250,192,0,1); 
+                color:#fff; 
             }
             .fh1{
                 position: absolute;
@@ -440,7 +456,7 @@ export default {
                   top:34px;
                   height:36px;
                   font-size: 20px;
-                  color:rgba(250,192,0,1);   
+                  color:#fff;   
               }
               .percent{
                   position: absolute;
@@ -512,7 +528,7 @@ export default {
             font-size: 10px;
             .tips{
                 background-color:#eee;
-                height: 25px;
+                height: 20px;
             }
         }
         .select-workplace{
@@ -520,6 +536,7 @@ export default {
             float: left;
             left: 130px;
             width:120px;
-            height:25px;
+            height:20px!important;
+            overflow: hidden;
         }
 </style>

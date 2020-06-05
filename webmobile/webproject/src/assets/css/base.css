@@ -35,21 +35,21 @@
 }
 .cir-choose .van-tabs__nav--card {
     width: 193px;
-    height: 22px;
+    height: 20px;
     border: 1px solid #3D4048;
 }
 .choice-box .van-tabs--card,.choice-box .van-tabs--card .van-tabs__wrap{
-    height: 22px;
+    height: 20px;
 }
 .choice-box .van-tabs__nav--card{
-    height: 22px;
+    height: 20px;
 }
 
 .cir-choose .van-tabs--card>.van-tabs__wrap {
-    height: 22px;
+    height: 20px;
 }
 .cir-choose .van-tabs__nav--card .van-tab{
-    line-height: 22px;
+    line-height: 20px;
 }
 .van-loading{
     position: fixed;
@@ -59,16 +59,17 @@
     z-index: 10;
 }
 .van-loading__text{
-    color: lightgreen;
+    color: rgb(69, 135, 221);
 }
 .singledate .van-tabs__nav--card{
     width:40px;
   }
   .van-dropdown-menu{
-    height: 25px;
+    height: 20px;
   }
   .van-dropdown-menu__title{
       font-size: 10px;
+      top:-13px;
   }
   .bannertips .van-tabs__nav--card {
     margin-left: 10px;
@@ -82,4 +83,10 @@
 }
 .van-sidebar-item__text{
     font-size: 12px;
+}
+.select-workplace .van-dropdown-menu{
+    height: 20px!important;
+}
+.select-workplace .van-hairline--top-bottom{
+    height: 20px!important;
 }

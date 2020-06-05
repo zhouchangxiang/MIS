@@ -170,17 +170,11 @@ def run():
                         unitf = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽瞬时流量单位").first()
                         units = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "汽累计量体积单位").first()
                         # equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key.TagClassValue).first()
-                        prices = db_session.query(WaterSteamPrice).filter(WaterSteamPrice.PriceType == "汽",
-                                                                          WaterSteamPrice.IsEnabled == "是").all()
+                        price = db_session.query(WaterSteamPrice.ID).filter(WaterSteamPrice.PriceType == "汽",
+                                                                          WaterSteamPrice.IsEnabled == "是").first()
                         PriceID = 0
-                        for price in prices:
-                            nowint = int(time.time())
-                            sttimeArray = time.strptime(price.StartTime, '%Y-%m-%d %H:%M')
-                            endtimeArray = time.strptime(price.EndTime, '%Y-%m-%d %H:%M')
-                            sttime = int(time.mktime(sttimeArray))
-                            endtime = int(time.mktime(endtimeArray))
-                            if sttime < nowint < endtime:
-                                PriceID = price.ID
+                        if price:
+                            PriceID = price[0]
                         sl = SteamEnergy()
                         sl.TagClassValue = key.TagClassValue
                         sl.CollectionYear = valueSSamptime[0:4]
@@ -212,17 +206,11 @@ def run():
                         unitf = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "水瞬时流量单位").first()
                         units = db_session.query(Unit.UnitValue).filter(Unit.UnitName == "水累计量体积单位").first()
                         # equip = db_session.query(TagClassType.EquipmnetID).filter(TagClassType.TagClassValue == key.TagClassValue).first()
-                        prices = db_session.query(WaterSteamPrice).filter(WaterSteamPrice.PriceType == "水",
-                                                                          WaterSteamPrice.IsEnabled == "是").all()
+                        price = db_session.query(WaterSteamPrice).filter(WaterSteamPrice.PriceType == key.FEFportIP[0:-1],
+                                                                          WaterSteamPrice.IsEnabled == "是").first()
                         PriceID = 0
-                        for price in prices:
-                            nowint = int(time.time())
-                            sttimeArray = time.strptime(price.StartTime, '%Y-%m-%d %H:%M')
-                            endtimeArray = time.strptime(price.EndTime, '%Y-%m-%d %H:%M')
-                            sttime = int(time.mktime(sttimeArray))
-                            endtime = int(time.mktime(endtimeArray))
-                            if sttime < nowint < endtime:
-                                PriceID = price.ID
+                        if price:
+                            PriceID = price.ID
                         wa = WaterEnergy()
                         wa.TagClassValue = key.TagClassValue
                         wa.CollectionYear = valueSSamptime[0:4]

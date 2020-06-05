@@ -9,7 +9,7 @@
                     </van-tabs>
                </div>
         </div>
-        <van-loading size="24px" vertical v-if="loading" color="lightgreen" type="spinner">加载中...</van-loading>
+        <van-loading size="24px" vertical v-if="loading" color="rgb(69, 135, 221)" type="spinner">加载中...</van-loading>
         <div class="show-banner">
             <div class="day-tab">
                   <div class="sb-name">厂区{{kind}}日总能耗</div>
@@ -50,12 +50,12 @@
            </div>
           <div class="show-foot">
                <div class="sf-l">
-                   <div class="hf">耗费成本</div>
+                   <div class="hf">日耗费成本</div>
                    <div class="all-money">{{costall}}<span>元</span></div>
                </div>
                 <div class="sf-r">
                    <div class="machine">{{kind}}表在线情况</div>
-                   <div class="tj"><span>{{onlineitem.online}}</span>&nbsp;/&nbsp;<span>{{onlineitem.total}}</span></div>
+                   <div class="tj" v-if="!loading"><span>{{onlineitem.online}}</span>&nbsp;/&nbsp;<span>{{onlineitem.total}}</span></div>
                </div>
         </div>
        </div>
@@ -97,7 +97,7 @@ export default {
             }
         },
             area:['原提取车间','GMP车间','固体制剂车间','中试车间'],
-            loading:false,
+            loading:true,
             vlchartData1: {
                 columns: ['时间', '今日能耗', '对比日能耗'],
                 rows: [
@@ -118,8 +118,6 @@ export default {
             valueall2:0,
             valueall3:0,
             costall:0,
-            todaydaywater:0,
-            todaydayelectric:0,
             CompareDate:Date.now() - 3600 * 1000 * 24, //默认对比日期
             onlineitem:{online:0,total:0},
             myapi:'',
@@ -144,7 +142,16 @@ export default {
             waterGGcost:0,
             waterYYcost:0,
             waterSJcost:0,
-            onlineAll:[]
+            onlineAll:[],
+            dwdc:0,
+            delc:0,
+            dste:0,
+            mwdc:0,
+            melc:0,
+            mste:0,
+            ywdc:0,
+            yelc:0,
+            yste:0,
         }
     },
     created(){
@@ -210,8 +217,8 @@ export default {
                this.vlchartData1.rows=[]
                this.vlchartData2.rows=[]
                for(var i=0;i<arr1.length;i++){
-                    this.vlchartData1.columns=['时间', '今日能耗', '对比日能耗']
-                    this.vlchartData1.rows.push({'时间':arr1[i]['时间'].slice(-2),'今日能耗':arr1[i]['今日能耗'],'对比日能耗':arr1[i]['对比日能耗']})
+                   this.vlchartData1.columns=['时间', '今日能耗', '对比日能耗']
+                   this.vlchartData1.rows.push({'时间':arr1[i]['时间'].slice(-2),'今日能耗':arr1[i]['今日能耗'],'对比日能耗':arr1[i]['对比日能耗']})
                }
                for(var i=0;i<arr2.length;i++){
                    this.vlchartData2.columns=['日期', '本月能耗', '上月能耗']
@@ -223,9 +230,9 @@ export default {
             this.getAllMessage()
             this.getallPreview()
         },
-    getAllMessage(e) {
-    this.loading=true
-       this.AreaName=''
+        getAllMessage() {
+        this.loading=true
+        this.AreaName=''
         var nowTime = moment().format('HH:mm').substring(0,4) + "0"
         var nowDate = moment().format('MM-DD') + " " + nowTime
         var thisDate = moment().format('DD')
@@ -270,8 +277,8 @@ export default {
             this.$http.get("/api/souyeselectyear",{params:{StartTime: lastStartYear,EndTime:lastEndYear,EnergyClass:'汽'}}),//上一年汽能耗
             this.$http.get('api/energyall',{params:{ModelFlag:"在线检测情况"}})
         ]).then((this.$http.spread((water1,water2,water3,electric1,electric2,electric3,steam1,steam2,steam3,dwdc,delc,dste,mwdc,melc,mste,ywdc,yelc,yste,onlin)=>{
-         this.onlineAll=(JSON.parse(onlin.data))
-         this.water1=JSON.parse(water1.data)
+          this.onlineAll=JSON.parse(onlin.data)
+          this.water1=JSON.parse(water1.data)
           this.water2=JSON.parse(water2.data)
           this.water3=JSON.parse(water3.data)
           this.electric1=JSON.parse(electric1.data)
@@ -289,6 +296,18 @@ export default {
           this.ywdc=ywdc.data.value
           this.yelc=yelc.data.value
           this.yste=yste.data.value
+          this.valueall1=this.water1.value
+          this.valueall2=this.water2.value
+          this.valueall3=this.water3.value
+          this.todayCon=this.water1.value
+          this.compareDateCon=this.dwdc
+          this.thisMonthCon=this.water2.value
+          this.lastMonthCon=this.mwdc
+          this.thisYearCon = this.water3.value
+          this.lastYearCon = this.ywdc
+          this.unit='t'
+          this.costall=this.water1.cost //水的的能耗成本
+          this.onlineitem=this.onlineAll[1]
           this.loading=false
         }
         )))
@@ -409,7 +428,7 @@ export default {
                font-size: 22px;
                word-spacing: 20px;
                height:36px;
-               color:rgba(250,192,0,1);
+               color:#333;
                opacity:1;
 
            }
@@ -443,7 +462,7 @@ export default {
                font-size:16px;
                font-weight:400;
                line-height:11px;
-               color:rgba(250,192,0,1);
+               color:#333;
                opacity:1;  
            }
            .sb-l-n{
@@ -532,7 +551,7 @@ export default {
                     width:17px;
                     height:25px;
                     font-size: 23px;
-                    color:#FAC000;
+                    color:#fff;
                     opacity:1;
                 }
                 .dwnh{
@@ -576,9 +595,11 @@ export default {
             border-radius:4px;
             color:#eee;
             font-size: 10px;
+            padding-top:10px;
             .tips{
                 float: left;
                 margin-right: 10px;
+                border-radius: 5px;
                 background-color:#1E222B;
                 height: 18px;
             }

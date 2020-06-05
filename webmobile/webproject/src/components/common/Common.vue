@@ -10,7 +10,7 @@
                 <van-tabbar-item icon="wap-home" to="/home">首页</van-tabbar-item>
                 <van-tabbar-item icon="location" to="/region" >区域</van-tabbar-item>
                 <van-tabbar-item icon="graphic" to="/efficiency">能效</van-tabbar-item>
-                <van-tabbar-item icon="ascending" to="/report">报告</van-tabbar-item>
+                <van-tabbar-item icon="ascending" to="/report">实时</van-tabbar-item>
            </van-tabbar>
        </div>
    </div>
@@ -43,12 +43,12 @@ export default {
     }
     .top{
         position: relative;
-        height:89px;
+        height:70px;
         width:375px;
-        background-color:#07c160;
+        background-color:#082f4c;
         .head-name{
             position: absolute;
-            top:40px;
+            top:30px;
             left:90px;
             height:25px;
             font-size:16px;
@@ -60,13 +60,11 @@ export default {
         }
         span{
            position: absolute;
-           width: 20px;
-           height: 20px;
-           top:48px;
+           width: 16px;
+           height: 16px;
+           top:35px;
            left:318px;
-           border: 1px solid #ccc;
            background-image: url('../../assets/png/delete_fill.png');
-           background-color:skyblue;
            background-size: contain;
         }
     }
@@ -75,13 +73,13 @@ export default {
         bottom: 0;
         width:375px;
         height:64px;
-        background:#07c160;
+        background:#082f4c;
         box-shadow:0px -2px 4px rgba(255,255,255,0.16);
         opacity:1;
     }
     .van-tabbar{
         height: 64px;
-        background-color: #07c160;
+        background-color: #082f4c;
         &.van-tabbar--fixed{
             height: 64px;
         }

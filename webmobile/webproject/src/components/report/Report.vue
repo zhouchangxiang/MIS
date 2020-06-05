@@ -26,31 +26,26 @@
                     </van-sidebar>
                 </div>
                 <div class="bigbox" v-if="this.currentkind==='水'">
+                <div v-if="waterVol">
                 <div class="list-banner" v-if="this.currentArea==='污水站'">
                     <div class="body">
                         <div class='today-water'>灌溉水DN40</div>
-                        <div class='today-num1'>{{waterTagList.W_Area_WSZ_16_2_34.sumValue}}</div>
+                        <div class='today-num1'>{{ waterTagList.W_Area_WSZ_16_2_34.sumValue }}</div>
                         <div class='today-consume-rank'>{{ waterTagList.W_Area_WSZ_16_2_34.flowValue }}</div>
-                    </div>
-                </div>
-                <div class="list-banner" v-if="this.currentArea==='锅炉房'">
-                    <div class="body">
-                        <div class='today-water'>锅炉房</div>
-                        <div class='today-num1'>无详细数据</div>
                     </div>
                 </div>
                  <div class="list-banner" v-if="this.currentArea==='提取二车间'">
                     <div class="body">
                         <div class='today-water'>后走廊灌溉水DN40</div>
-                        <div class='today-num1'>{{waterTagList.W_Area_TQR_17_2_8.sumValue}}</div>
-                        <div class='today-consume-rank'>{{ waterTagList.W_Area_TQR_17_2_8.flowValue}}</div>
+                        <div class='today-num1'>{{ waterTagList.W_Area_TQR_17_2_8.sumValue }}</div>
+                        <div class='today-consume-rank'>{{ waterTagList.W_Area_TQR_17_2_8.flowValue }}</div>
                     </div>
                 </div>
                 <div class="list-banner" v-if="this.currentArea==='提取二车间'">
                     <div class="body">
                         <div class='today-water'>出料电梯旁饮用水DN100</div>
-                        <div class='today-num1'>{{waterTagList.W_Area_TQR_17_1_9.sumValue}}</div>
-                        <div class='today-consume-rank'>{{ waterTagList.W_Area_TQR_17_1_9.flowValue}}</div>
+                        <div class='today-num1'>{{ waterTagList.W_Area_TQR_17_1_9.sumValue }}</div>
+                        <div class='today-consume-rank'>{{ waterTagList.W_Area_TQR_17_1_9.flowValue }}</div>
                     </div>
                 </div>
                 <div class="list-banner" v-if="this.currentArea==='综合车间'">
@@ -144,18 +139,14 @@
                         <div class='today-consume-rank'>{{waterTagList.W_Area_BGL_34_1_22.flowValue}}</div>
                     </div>
                 </div>
+                </div>
             </div>
             <div class="bigbox" v-if="this.currentkind==='电'">
+                <div v-if="elecVol">
                 <div class="list-banner" v-if="this.currentArea==='污水站'">
                     <div class="body">
                         <div class='today-water'>电表</div>
                         <div class='today-num1'>{{electricTagList.E_Area_WSZ_16_2_35.ZGL}}</div>
-                    </div>
-                </div>
-                <div class="list-banner" v-if="this.currentArea==='锅炉房'">
-                    <div class="body">
-                        <div class='today-water'>电表</div>
-                        <div class='today-num1'>暂无数据</div>
                     </div>
                 </div>
                 <div class="list-banner" v-if="this.currentArea==='新建综合制剂车间'">
@@ -200,8 +191,10 @@
                         <div class='today-num1'>{{electricTagList.E_Area_BGL_36_1_26.ZGL}}</div>
                     </div>
                 </div>
+                </div>
              </div>
         <div class="bigbox" v-if="this.currentkind==='汽'">
+            <div v-if="steamVol">
                 <div class="list-banner" v-if="this.currentArea==='中试车间'">
                     <div class="body">
                         <div class='today-water'>蒸汽表</div>
@@ -285,7 +278,7 @@
                 <div class="list-banner" v-if="this.currentArea==='综合车间'">
                     <div class="body">
                         <div class='today-water'>锅炉流量计DN400</div>
-                        <div class='today-num1'>{{steamGlTag.sumValue}}</div>
+                        <div class='today-num1'>{{ steamGlTag.sumValue }}</div>
                         <div class='today-consume-rank'>{{ steamGlTag.flowValue}}</div>
                         <div class='today-consume-rank2'>{{ steamGlTag.SteamWD }}°C</div>
                     </div>
@@ -293,7 +286,7 @@
                 <div class="list-banner" v-if="this.currentArea==='综合车间'">
                     <div class="body">
                         <div class='today-water'>二次浓缩DN100</div>
-                        <div class='today-num1'>{{steamTagList.S_Area_ZH_46_1_502.sumValue}}</div>
+                        <div class='today-num1'>{{ steamTagList.S_Area_ZH_46_1_502.sumValue}}</div>
                         <div class='today-consume-rank'>{{ steamTagList.S_Area_ZH_46_1_502.flowValue}}</div>
                         <div class='today-consume-rank2'>{{ steamTagList.S_Area_ZH_46_1_502.SteamWD }}°C</div>
                     </div>
@@ -301,7 +294,7 @@
                 <div class="list-banner" v-if="this.currentArea==='综合车间'">
                     <div class="body">
                         <div class='today-water'>醇提+浓缩DN150</div>
-                        <div class='today-num1'>{{steamTagList.S_Area_ZH_46_2_502.sumValue}}</div>
+                        <div class='today-num1'>{{ steamTagList.S_Area_ZH_46_2_502.sumValue}}</div>
                         <div class='today-consume-rank'>{{ steamTagList.S_Area_ZH_46_2_502.flowValue}}</div>
                         <div class='today-consume-rank2'>{{ steamTagList.S_Area_ZH_46_2_502.SteamWD }}°C</div>
                     </div>
@@ -309,7 +302,7 @@
                 <div class="list-banner" v-if="this.currentArea==='综合车间'">
                     <div class="body">
                         <div class='today-water'>双效浓缩/CIP DN200</div>
-                        <div class='today-num1'>{{steamTagList.S_Area_ZH_46_3_502.sumValue}}</div>
+                        <div class='today-num1'>{{ steamTagList.S_Area_ZH_46_3_502.sumValue}}</div>
                         <div class='today-consume-rank'>{{ steamTagList.S_Area_ZH_46_3_502.flowValue}}</div>
                         <div class='today-consume-rank2'>{{ steamTagList.S_Area_ZH_46_3_502.SteamWD }}°C</div>
                     </div>
@@ -317,7 +310,7 @@
                  <div class="list-banner" v-if="this.currentArea==='综合车间'">
                     <div class="body">
                         <div class='today-water'>提取双号DN150</div>
-                        <div class='today-num1'>{{steamTagList.S_Area_ZH_22_1_502.sumValue}}</div>
+                        <div class='today-num1'>{{ steamTagList.S_Area_ZH_22_1_502.sumValue}}</div>
                         <div class='today-consume-rank'>{{steamTagList.S_Area_ZH_22_1_502.flowValue}}</div>
                         <div class='today-consume-rank2'>{{ steamTagList.S_Area_ZH_22_1_502.SteamWD }}°C</div>
                     </div>
@@ -325,7 +318,7 @@
                  <div class="list-banner" v-if="this.currentArea==='综合车间'">
                     <div class="body">
                         <div class='today-water'>提取单号DN150</div>
-                        <div class='today-num1'>{{steamTagList.S_Area_ZH_21_3_502.sumValue}}</div>
+                        <div class='today-num1'>{{ steamTagList.S_Area_ZH_21_3_502.sumValue }}</div>
                         <div class='today-consume-rank'>{{ steamTagList.S_Area_ZH_21_3_502.flowValue}}</div>
                         <div class='today-consume-rank2'>{{ steamTagList.S_Area_ZH_21_3_502.SteamWD }}°C</div>
                     </div>
@@ -333,10 +326,11 @@
                 <div class="list-banner" v-if="this.currentArea==='办公楼＼食堂'">
                     <div class="body">
                         <div class='today-water'>蒸汽表</div>
-                        <div class='today-num1'>{{steamTagList.S_Area_BGL_35_1_502.sumValue}}</div>
+                        <div class='today-num1'>{{ steamTagList.S_Area_BGL_35_1_502.sumValue }}</div>
                         <div class='today-consume-rank'>{{steamTagList.S_Area_BGL_35_1_502.flowValue}}</div>
                         <div class='today-consume-rank2'>{{steamTagList.S_Area_BGL_35_1_502.SteamWD}}°C</div>
                     </div>
+                </div>
                 </div>
            </div>
         </div> 
@@ -360,11 +354,15 @@ export default {
         waterTagList:{},
         electricTagList:{},
         steamTagList:{},
-        steamGlTag:{}
+        steamGlTag:{},
+        waterVol:false,
+        elecVol:false,
+        steamVol:false
       }
     },
     created(){
-        this.initOperation();
+        this.initOperation()
+        this.getGlSteamLabel()
     },
      destroyed(){
       if(this.websoc){
@@ -377,25 +375,24 @@ export default {
             if(this.websoc){
             this.websoc.close()
             }
+            this.initWebSocket()
         },
         initOperation(){
            this.initWebSocket()
-           this.getGlSteamLabel()
         },
-      onChange(index){
+        onChange(index){
         this.currentArea=this.Allarea[index]
          if(this.websoc){
             this.websoc.close()
             }
-           this.initWebSocket()
     },
-    getGlSteamLabel(){
-      this.$http.get("/api/steamtotal").then(res =>{
+     async getGlSteamLabel(){
+        let res=await this.$http.get("/api/steamtotal")
         this.steamGlTag = res.data.S_AllArea_Value
-      })
     },
       initWebSocket(){
-            this.websoc=new WebSocket('ws://127.0.0.1:5002');
+            // this.websoc=new WebSocket('ws://127.0.0.1:5002');
+            this.websoc = new WebSocket('ws://' + location.host + '/socket');
             this.websoc.onopen=this.webscop
             this.websoc.onmessage=this.webscom
             this.websoc.onerror=this.webscoer
@@ -409,10 +406,12 @@ export default {
         },
         webscom(evt){
           var resdata = JSON.parse(evt.data); //获取到实时返回的数据
-          var that=this
-          that.electricTagList = resdata[0].electric
-          that.steamTagList = resdata[0].steam
-          that.waterTagList = resdata[0].water
+          this.electricTagList = resdata[0].electric
+          this.steamTagList = resdata[0].steam
+          this.waterTagList = resdata[0].water
+          this.elecVol=true
+          this.waterVol=true
+          this.steamVol=true
         },
         webscoer(){
             console.log('连接websocket失败')
@@ -434,13 +433,13 @@ export default {
         .date-box{
             height:18px;
             opacity:1;
-            border-radius:4px;
+            padding-top: 15px;
+            border-radius:5px;
             color:#000;
             font-size: 10px;
             .tips{
                 float: left;
                 margin-right: 20px;
-                background-color:#1E222B;
                 height: 18px;
             }
         }
@@ -467,7 +466,6 @@ export default {
         .left-box{
             position: relative;
             float: left;
-            width: 100px;
             margin-top:20px;
             width: 100px;
             height: 800px;
@@ -510,6 +508,8 @@ export default {
                 left:10px;
                 width: 80%;
                 height: 18px;
+                padding-left: 10px;
+                letter-spacing: 2px;
                 background-color: #333;
                 font-size:10px;
                 font-family:PingFang SC;
