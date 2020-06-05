@@ -153,7 +153,7 @@
         //获取区分水详细能耗
         this.axios.get("/api/watertrendlookboard",{
           params: {
-            AreaName:"",
+            AreaName:this.areaValue,
             StartTime:moment(this.formParameters.startDate).format("YYYY-MM-DD HH:mm:ss"),
             EndTime:moment(this.formParameters.endDate).format("YYYY-MM-DD HH:mm:ss")
           }
