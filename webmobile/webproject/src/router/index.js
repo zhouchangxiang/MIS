@@ -45,6 +45,9 @@ router.beforeEach((to,from,next)=>{
     }
     next();
   }
+  if (to.matched.length ===0) {
+    next('/')
+    }
 })
 
 export default router
