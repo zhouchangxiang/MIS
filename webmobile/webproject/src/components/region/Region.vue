@@ -312,6 +312,8 @@ export default {
           var nowTime = moment().format('HH:mm').substring(0,4) + "0"
           var todayStartTime = new Date(moment().format('YYYY-MM-DD') + " 00:00")
           var todayEndTime = new Date(moment().format('YYYY-MM-DD') + " " + nowTime)
+          this.currentDateStart= new Date(moment().format('YYYY-MM-DD') + " 00:00"),
+          this.currentDateEnd=new Date(),
           this.onConfirm(todayStartTime,todayEndTime)
               }
     }
