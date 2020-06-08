@@ -148,13 +148,13 @@
               </div>
               <div class="body4">
                      <van-row justify='center'>
-                     <van-col span="8">综合</van-col>
+                     <van-col span="8">总和</van-col>
                       <van-col span="8">总能耗</van-col>
                       <van-col span="8">总成本</van-col>
                     </van-row>
                      <van-row justify='center'>
                      <van-col span="8"></van-col>
-                      <van-col span="8">{{water}}</van-col>
+                      <van-col span="8">{{water}}t</van-col>
                       <van-col span="8">{{waterCost}}</van-col>
                     </van-row>
               </div>
@@ -169,8 +169,8 @@
                   </van-row>
                   <van-row justify='center'>
                      <van-col span="8"></van-col>
-                      <van-col span="8">{{steam}}</van-col>
-                      <van-col span="8">{{steamCost}}</van-col>
+                      <van-col span="8">{{steam}}t</van-col>
+                      <van-col span="8">{{steamCost}}元</van-col>
                   </van-row>
         </div>
         <div class="body2">
@@ -208,7 +208,6 @@ export default {
           bgc2:false,
           bgc3:false,
           loading:false,
-          websoc:null,
           kind:'电',
           currentchoice:'原提取车间',
           steamCost:'0',
@@ -250,7 +249,7 @@ export default {
         }
          this.onConfirm(this.currentDateStart,this.currentDateEnd)
       },
-      onConfirm(Starttime,Endtime) { //日历的点击确定事件
+      onConfirm(Starttime,Endtime) { //时间选择器的点击确定事件
          var compareDateStartTime = moment(Starttime).format('YYYY-MM-DD HH:mm:ss')
          var compareDateEndTime = moment(Endtime).format('YYYY-MM-DD HH:mm:ss')
          this.$http.all([

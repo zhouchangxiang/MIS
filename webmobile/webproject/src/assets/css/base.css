@@ -92,4 +92,5 @@
 }
 .van-col{
     text-align: center;
+    min-height: 20px;
 }
