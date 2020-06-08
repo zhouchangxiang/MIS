@@ -60,79 +60,130 @@
       <div class="show-banner"  v-if="this.kind==='电'">
          <div class="header">电能明细</div>
                 <div class="body">
-                    <div class='today-water'>尖时刻</div>
-                    <div class='today-water-max'>用量:</div>
-                    <div class='today-water-min'>成本:</div>
-                    <div class='today-num2'>{{bovalue}}</div>
-                    <div class='today-num3'>{{bocost}}</div>
+                    <van-row justify='center'>
+                      <van-col span="8">尖时刻</van-col>
+                      <van-col span="8">用量</van-col>
+                      <van-col span="8">成本</van-col>
+                    </van-row>
+                    <van-row justify='center'>
+                      <van-col span="8"></van-col>
+                      <van-col span="8">{{bovalue}}</van-col>
+                      <van-col span="8">{{bocost}}</van-col>
+                    </van-row>
               </div>
               <div class="body2">
-                    <div class='today-water'>峰时刻</div>
-                    <div class='today-water-max'>用量:</div>
-                    <div class='today-water-min'>成本:</div>
-                    <div class='today-num2'>{{fenvalue}}</div>
-                    <div class='today-num3'>{{fencost}}</div>
+                    <van-row justify='center'>
+                     <van-col span="8">峰时刻</van-col>
+                      <van-col span="8">用量</van-col>
+                      <van-col span="8">成本</van-col>
+                    </van-row>
+                    <van-row justify='center'>
+                      <van-col span="8"></van-col>
+                      <van-col span="8">{{fenvalue}}</van-col>
+                      <van-col span="8">{{fencost}}</van-col>
+                    </van-row>
               </div>
               <div class="body3">
-                    <div class='today-water'>平时刻</div>
-                    <div class='today-water-max'>用量:</div>
-                    <div class='today-water-min'>成本:</div>
-                    <div class='today-num2'>{{pinvalue}}</div>
-                    <div class='today-num3'>{{pincost}}</div>
+                    <van-row justify='center'>
+                     <van-col span="8">平时刻</van-col>
+                      <van-col span="8">用量</van-col>
+                      <van-col span="8">成本</van-col>
+                    </van-row>
+                    <van-row justify='center'>
+                      <van-col span="8"></van-col>
+                      <van-col span="8">{{pinvalue}}</van-col>
+                      <van-col span="8">{{pincost}}</van-col>
+                    </van-row>
               </div>
               <div class="body4">
-                    <div class='today-water'>谷时刻</div>
-                    <div class='today-water-max'>用量:</div>
-                    <div class='today-water-min'>成本:</div>
-                    <div class='today-num2'>{{guvalue}}</div>
-                    <div class='today-num3'>{{gucost}}</div>
+                    <van-row justify='center'>
+                     <van-col span="8">谷时刻</van-col>
+                      <van-col span="8">用量</van-col>
+                      <van-col span="8">成本</van-col>
+                    </van-row>
+                    <van-row justify='center'>
+                      <van-col span="8"></van-col>
+                      <van-col span="8">{{guvalue}}</van-col>
+                      <van-col span="8">{{gucost}}</van-col>
+                    </van-row>
               </div>
       </div>
       <div class="show-banner" v-if="this.kind==='水'">
          <div class="header">水能明细</div>
                 <div class="body">
-                    <div class='today-water'>灌溉水</div>
-                    <div class='today-water-max'>水能耗:</div>
-                    <div class='today-water-min'>水成本:</div>
-                    <div class='today-num2'>{{waterGG}}</div>
-                    <div class='today-num3'>{{waterGGcost}}</div>
+                     <van-row justify='center'>
+                     <van-col span="8">灌溉水</van-col>
+                      <van-col span="8">水能耗</van-col>
+                      <van-col span="8">水成本</van-col>
+                    </van-row>
+                     <van-row justify='center'>
+                     <van-col span="8"></van-col>
+                      <van-col span="8">{{waterGG}}</van-col>
+                      <van-col span="8">{{waterGGcost}}</van-col>
+                    </van-row>
               </div>
               <div class="body2">
-                    <div class='today-water'>饮用水</div>
-                    <div class='today-water-max'>水能耗:</div>
-                    <div class='today-water-min'>水成本:</div>
-                    <div class='today-num2'>{{waterYY}}</div>
-                    <div class='today-num3'>{{waterYYcost}}</div>
+                     <van-row justify='center'>
+                     <van-col span="8">饮用水</van-col>
+                      <van-col span="8">水能耗</van-col>
+                      <van-col span="8">水成本</van-col>
+                    </van-row>
+                     <van-row justify='center'>
+                     <van-col span="8"></van-col>
+                      <van-col span="8">{{waterYY}}</van-col>
+                      <van-col span="8">{{waterYYcost}}</van-col>
+                    </van-row>
               </div>
               <div class="body3">
-                    <div class='today-water'>深井水</div>
-                    <div class='today-water-max'>水能耗:</div>
-                    <div class='today-water-min'>水成本:</div>
-                    <div class='today-num2'>{{waterSJ}}</div>
-                    <div class='today-num3'>{{waterSJcost}}</div>
+                     <van-row justify='center'>
+                     <van-col span="8">深井水</van-col>
+                      <van-col span="8">水能耗</van-col>
+                      <van-col span="8">水成本</van-col>
+                    </van-row>
+                     <van-row justify='center'>
+                     <van-col span="8"></van-col>
+                      <van-col span="8">{{waterSJ}}</van-col>
+                      <van-col span="8">{{waterSJcost}}</van-col>
+                    </van-row>
               </div>
               <div class="body4">
-                    <div class='today-water'>综合</div>
-                    <div class='today-water-max'>总能耗:</div>
-                    <div class='today-water-min'>总成本:</div>
-                    <div class='today-num2'>{{water}}t</div>
-                    <div class='today-num3'>{{waterCost}}</div>
+                     <van-row justify='center'>
+                     <van-col span="8">综合</van-col>
+                      <van-col span="8">总能耗</van-col>
+                      <van-col span="8">总成本</van-col>
+                    </van-row>
+                     <van-row justify='center'>
+                     <van-col span="8"></van-col>
+                      <van-col span="8">{{water}}</van-col>
+                      <van-col span="8">{{waterCost}}</van-col>
+                    </van-row>
               </div>
       </div>
-      <div class="show-banner" v-if="this.kind==='汽'">
+      <div class="show-banner1" v-if="this.kind==='汽'">
         <div class="header">汽能明细</div>
         <div class="body">
-                    <div class='today-water'>汽</div>
-                    <div class='today-water-max'>汽能耗:</div>
-                    <div class='today-water-min'>汽成本:</div>
-                    <div class='today-num2'>{{steam}}t</div>
-                    <div class='today-num3'>{{steamCost}}元</div>
+                  <van-row justify='center'>
+                     <van-col span="8">汽</van-col>
+                      <van-col span="8">汽能耗</van-col>
+                      <van-col span="8">汽成本</van-col>
+                  </van-row>
+                  <van-row justify='center'>
+                     <van-col span="8"></van-col>
+                      <van-col span="8">{{steam}}</van-col>
+                      <van-col span="8">{{steamCost}}</van-col>
+                  </van-row>
         </div>
         <div class="body2">
-                    <div class='today-water-max'>单位:</div>
-                    <div class='today-water-min'>类型:</div>
-                    <div class='today-num2'>{{steamUnit}}</div>
-                    <div class='today-num3'>{{kind}}</div>
+                    <van-row justify='center'>
+                      <van-col span="8"></van-col>
+                     <van-col span="8">单位</van-col>
+                      <van-col span="8">类型</van-col>
+                  </van-row>
+                  <van-row justify='center'>
+                     <van-col span="8"></van-col>
+                      <van-col span="8">{{steamUnit}}</van-col>
+                      <van-col span="8">{{kind}}</van-col>
+                  </van-row>
         </div>
       </div>
        </div>
@@ -185,7 +236,7 @@ export default {
     methods:{
       chooseStart(){
         if(new Date(this.currentDateStart).valueOf()>new Date(this.currentDateEnd).valueOf()){
-          this.$toast('开始时间大于结束时间')
+          this.$toast.fail('开始时间大于结束时间')
           this.currentDateStart=new Date(new Date()-24*60*60*1000)
           return;
         }
@@ -193,7 +244,7 @@ export default {
       },
       chooseEnd(){
          if(new Date(this.currentDateStart).valueOf()>new Date(this.currentDateEnd).valueOf()){
-          this.$toast('结束时间小于开始时间')
+          this.$toast.fail('结束时间小于开始时间')
           this.currentDateEnd=new Date()
           return;
         }
@@ -407,11 +458,21 @@ export default {
           margin-bottom: 17px;
           background: #ccc;
           border-radius: 4px;
+        }
+          .show-banner1{
+             position: relative;
+             height: 160px;
+             width: 100%;
+             margin-bottom: 17px;
+             background: #ccc;
+             border-radius: 4px;
+          }
             .header{
               position: relative;
                 width: 100%;
                 height:20px;
                 padding-top: 10px;
+                padding-bottom: 15px;
                 text-align: center;
                 font-size:16px;
                 font-family:PingFang SC;
@@ -424,37 +485,5 @@ export default {
                 position: relative;
                 height: 55px;
             }
-                .today-water,.today-water-max,.today-water-min{
-                position: absolute;
-                top:10px;
-                left:10px;
-                height:11px;
-                font-size:12px;
-                font-family:PingFang SC;
-                font-weight:400;
-                line-height:11px;
-                color:#222;
-                opacity:1;
-                }
-                .today-water-max{
-                    left:120px;
-                }
-                .today-water-min{
-                    left:246px;
-                }
-                .today-num1,.today-num2,.today-num3{
-                    position:absolute;
-                    top:30px;
-                    left:10px;
-                    font-size: 10px;
-                    color:#fff;
-                }
-                .today-num2{
-                  left: 120px;
-                }
-                .today-num3{
-                  left: 246px;
-                }
-        }
      }
 </style>

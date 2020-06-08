@@ -17,10 +17,13 @@ import { Button,
     Picker,
     Loading,
     DropdownMenu, DropdownItem,
-    DatetimePicker ,Sticky
+    DatetimePicker ,Sticky,
+    Col, Row
     } from 'vant'
 
 Vue.use(Toast);
+Vue.use(Col);
+Vue.use(Row);
 Vue.use(Cell);
 Vue.use(CellGroup);
 Vue.use(Button);
