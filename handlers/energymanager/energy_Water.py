@@ -425,3 +425,33 @@ def flowvaluesql(EnergyClass, TagClassValue, StartTime, EndTime, offset, limit):
         oclass = db_session.execute(sql).fetchall()
         db_session.close()
     return oclass
+
+@energyWater.route('/selectdetailbytags', methods=['POST', 'GET'])
+def selectdetailbytags():
+    '''
+    return:
+    '''
+    data = request.values
+    if request.method == 'GET':
+        try:
+            dir = {}
+            EnergyClass = data.get("EnergyClass")
+            if EnergyClass is not None:
+                EnergyClass = EnergyClass[0:1]
+            oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
+            dir_list = []
+            for i in oclass:
+                Tag = i.TagClassValue[0:1]
+                ret = returnb(redis_conn.hget("run_status", i.TagClassValue))
+                if ret == "0":
+                    dir_list.append(i.AreaName + i.FEFportIP)
+            return json.dumps(dir_list, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "selectdetailbytags查询报错Error：" + str(e), current_user.Name)
+def returnb(rod):
+    if rod == None or rod == "" or rod == b'':
+        return ""
+    else:
+        return rod.decode()
