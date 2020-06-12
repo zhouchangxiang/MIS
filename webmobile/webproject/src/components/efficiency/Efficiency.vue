@@ -368,7 +368,7 @@ export default {
             font-family:PingFang SC;
             font-weight:500;
             line-height:45px;
-            color:#fff;
+            color:#222;
             letter-spacing:1px;
             opacity:1;
             height:36px;
@@ -383,7 +383,7 @@ export default {
             .num3{
                 position: absolute;
                 left: 230px;
-                color:#fff; 
+                color:#222; 
             }
             .fh1{
                 position: absolute;
@@ -456,7 +456,7 @@ export default {
                   top:34px;
                   height:36px;
                   font-size: 20px;
-                  color:#fff;   
+                  color:#222;   
               }
               .percent{
                   position: absolute;
@@ -475,7 +475,6 @@ export default {
                   position: absolute;
                   left:14px;
                   top:79px;
-                  width:29px;
                   height:11px;
                   font-size:8px;
                   font-family:PingFang SC;

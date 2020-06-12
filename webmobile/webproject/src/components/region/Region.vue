@@ -2,7 +2,7 @@
     <div class="show-box">
       <van-loading size="24px" vertical v-if="loading" color="lightgreen" type="spinner">加载中...</van-loading>
          <div class="tabbar">
-          <van-tabs  line-height="0px" line-width="0px" v-model="active" @click="getData($event)" :swipeable=true :border=false title-active-color="#3fb5b0" title-inactive-color="#000">
+          <van-tabs  line-height="0px" line-width="0px" v-model="active" @click="getData()" :swipeable=true :border=false title-active-color="#3fb5b0" title-inactive-color="#000">
             <van-tab  title="原提取车间" ></van-tab>
             <van-tab  title="固体制剂车间" ></van-tab>
             <van-tab  title="新建综合制剂车间" ></van-tab>
@@ -17,8 +17,28 @@
           </van-tabs>
       </div>
       <div class="date-choose">
-        <van-cell title="选择时间段" :value="comparedate" @click="show = true" />
-          <van-calendar v-model="show" @confirm="onConfirm" type="range" :min-date="minDate" :max-date="maxDate" color="#07c160"/>
+        <van-datetime-picker
+          v-model="currentDateStart"
+          type="datetime"
+          title="选择开始时间"
+          :min-date="minDate"
+          :max-date="maxDate"
+          visible-item-count='1'
+          cancel-button-text=' '
+          @confirm="chooseStart()"
+        />
+      </div>
+       <div class="date-choose">
+        <van-datetime-picker
+          v-model="currentDateEnd"
+          type="datetime"
+          title="选择结束时间"
+          :min-date="minDate"
+          :max-date="maxDate"
+          visible-item-count='1'
+          cancel-button-text=' '
+          @confirm="chooseEnd()"
+        />
       </div>
       <div class="compare">
         <div class="c1" :class="{switchbgc:bgc1}" @click="switchShow1()">
@@ -40,79 +60,130 @@
       <div class="show-banner"  v-if="this.kind==='电'">
          <div class="header">电能明细</div>
                 <div class="body">
-                    <div class='today-water'>尖时刻</div>
-                    <div class='today-water-max'>用量:</div>
-                    <div class='today-water-min'>成本:</div>
-                    <div class='today-num2'>{{bovalue}}</div>
-                    <div class='today-num3'>{{bocost}}</div>
+                    <van-row justify='center'>
+                      <van-col span="8">尖时刻</van-col>
+                      <van-col span="8">用量</van-col>
+                      <van-col span="8">成本</van-col>
+                    </van-row>
+                    <van-row justify='center'>
+                      <van-col span="8"></van-col>
+                      <van-col span="8">{{bovalue}}</van-col>
+                      <van-col span="8">{{bocost}}</van-col>
+                    </van-row>
               </div>
               <div class="body2">
-                    <div class='today-water'>峰时刻</div>
-                    <div class='today-water-max'>用量:</div>
-                    <div class='today-water-min'>成本:</div>
-                    <div class='today-num2'>{{fenvalue}}</div>
-                    <div class='today-num3'>{{fencost}}</div>
+                    <van-row justify='center'>
+                     <van-col span="8">峰时刻</van-col>
+                      <van-col span="8">用量</van-col>
+                      <van-col span="8">成本</van-col>
+                    </van-row>
+                    <van-row justify='center'>
+                      <van-col span="8"></van-col>
+                      <van-col span="8">{{fenvalue}}</van-col>
+                      <van-col span="8">{{fencost}}</van-col>
+                    </van-row>
               </div>
               <div class="body3">
-                    <div class='today-water'>平时刻</div>
-                    <div class='today-water-max'>用量:</div>
-                    <div class='today-water-min'>成本:</div>
-                    <div class='today-num2'>{{pinvalue}}</div>
-                    <div class='today-num3'>{{pincost}}</div>
+                    <van-row justify='center'>
+                     <van-col span="8">平时刻</van-col>
+                      <van-col span="8">用量</van-col>
+                      <van-col span="8">成本</van-col>
+                    </van-row>
+                    <van-row justify='center'>
+                      <van-col span="8"></van-col>
+                      <van-col span="8">{{pinvalue}}</van-col>
+                      <van-col span="8">{{pincost}}</van-col>
+                    </van-row>
               </div>
               <div class="body4">
-                    <div class='today-water'>谷时刻</div>
-                    <div class='today-water-max'>用量:</div>
-                    <div class='today-water-min'>成本:</div>
-                    <div class='today-num2'>{{guvalue}}</div>
-                    <div class='today-num3'>{{gucost}}</div>
+                    <van-row justify='center'>
+                     <van-col span="8">谷时刻</van-col>
+                      <van-col span="8">用量</van-col>
+                      <van-col span="8">成本</van-col>
+                    </van-row>
+                    <van-row justify='center'>
+                      <van-col span="8"></van-col>
+                      <van-col span="8">{{guvalue}}</van-col>
+                      <van-col span="8">{{gucost}}</van-col>
+                    </van-row>
               </div>
       </div>
       <div class="show-banner" v-if="this.kind==='水'">
          <div class="header">水能明细</div>
                 <div class="body">
-                    <div class='today-water'>灌溉水</div>
-                    <div class='today-water-max'>水能耗:</div>
-                    <div class='today-water-min'>水成本:</div>
-                    <div class='today-num2'>{{waterGG}}</div>
-                    <div class='today-num3'>{{waterGGcost}}</div>
+                     <van-row justify='center'>
+                     <van-col span="8">灌溉水</van-col>
+                      <van-col span="8">水能耗</van-col>
+                      <van-col span="8">水成本</van-col>
+                    </van-row>
+                     <van-row justify='center'>
+                     <van-col span="8"></van-col>
+                      <van-col span="8">{{waterGG}}</van-col>
+                      <van-col span="8">{{waterGGcost}}</van-col>
+                    </van-row>
               </div>
               <div class="body2">
-                    <div class='today-water'>饮用水</div>
-                    <div class='today-water-max'>水能耗:</div>
-                    <div class='today-water-min'>水成本:</div>
-                    <div class='today-num2'>{{waterYY}}</div>
-                    <div class='today-num3'>{{waterYYcost}}</div>
+                     <van-row justify='center'>
+                     <van-col span="8">饮用水</van-col>
+                      <van-col span="8">水能耗</van-col>
+                      <van-col span="8">水成本</van-col>
+                    </van-row>
+                     <van-row justify='center'>
+                     <van-col span="8"></van-col>
+                      <van-col span="8">{{waterYY}}</van-col>
+                      <van-col span="8">{{waterYYcost}}</van-col>
+                    </van-row>
               </div>
               <div class="body3">
-                    <div class='today-water'>深井水</div>
-                    <div class='today-water-max'>水能耗:</div>
-                    <div class='today-water-min'>水成本:</div>
-                    <div class='today-num2'>{{waterSJ}}</div>
-                    <div class='today-num3'>{{waterSJcost}}</div>
+                     <van-row justify='center'>
+                     <van-col span="8">深井水</van-col>
+                      <van-col span="8">水能耗</van-col>
+                      <van-col span="8">水成本</van-col>
+                    </van-row>
+                     <van-row justify='center'>
+                     <van-col span="8"></van-col>
+                      <van-col span="8">{{waterSJ}}</van-col>
+                      <van-col span="8">{{waterSJcost}}</van-col>
+                    </van-row>
               </div>
               <div class="body4">
-                    <div class='today-water'>综合</div>
-                    <div class='today-water-max'>总能耗:</div>
-                    <div class='today-water-min'>总成本:</div>
-                    <div class='today-num2'>{{water}}t</div>
-                    <div class='today-num3'>{{waterCost}}</div>
+                     <van-row justify='center'>
+                     <van-col span="8">总和</van-col>
+                      <van-col span="8">总能耗</van-col>
+                      <van-col span="8">总成本</van-col>
+                    </van-row>
+                     <van-row justify='center'>
+                     <van-col span="8"></van-col>
+                      <van-col span="8">{{water}}t</van-col>
+                      <van-col span="8">{{waterCost}}</van-col>
+                    </van-row>
               </div>
       </div>
-      <div class="show-banner" v-if="this.kind==='汽'">
+      <div class="show-banner1" v-if="this.kind==='汽'">
         <div class="header">汽能明细</div>
         <div class="body">
-                    <div class='today-water'>汽</div>
-                    <div class='today-water-max'>汽能耗:</div>
-                    <div class='today-water-min'>汽成本:</div>
-                    <div class='today-num2'>{{steam}}t</div>
-                    <div class='today-num3'>{{steamCost}}元</div>
+                  <van-row justify='center'>
+                     <van-col span="8">汽</van-col>
+                      <van-col span="8">汽能耗</van-col>
+                      <van-col span="8">汽成本</van-col>
+                  </van-row>
+                  <van-row justify='center'>
+                     <van-col span="8"></van-col>
+                      <van-col span="8">{{steam}}t</van-col>
+                      <van-col span="8">{{steamCost}}元</van-col>
+                  </van-row>
         </div>
         <div class="body2">
-                    <div class='today-water-max'>单位:</div>
-                    <div class='today-water-min'>类型:</div>
-                    <div class='today-num2'>{{steamUnit}}</div>
-                    <div class='today-num3'>{{kind}}</div>
+                    <van-row justify='center'>
+                      <van-col span="8"></van-col>
+                     <van-col span="8">单位</van-col>
+                      <van-col span="8">类型</van-col>
+                  </van-row>
+                  <van-row justify='center'>
+                     <van-col span="8"></van-col>
+                      <van-col span="8">{{steamUnit}}</van-col>
+                      <van-col span="8">{{kind}}</van-col>
+                  </van-row>
         </div>
       </div>
        </div>
@@ -122,10 +193,11 @@ var moment=require('moment')
 export default {
     data(){
         return {
-          comparedate: 'click me!',
+          currentDateStart:new Date(new Date()-24*60*60*1000),
+          currentDateEnd:new Date(),
+          minDate:new Date(2020, 0, 1),
+          maxDate:new Date(2022, 10, 1),
           show: false,
-          minDate: new Date(2020, 0, 1),
-          maxDate: new Date(2021, 11, 31),
           active:0,
           list:["原提取车间","固体制剂车间","新建综合制剂车间","GMP车间","中试车间","污水站","锅炉房","前处理车间","提取二车间","综合车间","办公楼＼食堂"],
           water:0,
@@ -136,13 +208,10 @@ export default {
           bgc2:false,
           bgc3:false,
           loading:false,
-          websoc:null,
           kind:'电',
           currentchoice:'原提取车间',
           steamCost:'0',
           steamUnit:'0',
-          ClanderStartTime:'',
-          ClanderEndTime:'', 
           waterGG:0,
           waterGGcost:0,
           waterYY:0,
@@ -161,24 +230,29 @@ export default {
         }
     },
     created(){
-      this.initMessage()
+      this.getData()
     },
     methods:{
-      formatDate(date) {
-      var month=`${date.getMonth()+1}`.padStart(2, 0)
-      var day=`${date.getDate()}`.padStart(2, 0)
-      return `${date.getFullYear()}-${month}-${day}`;
+      chooseStart(){
+        if(new Date(this.currentDateStart).valueOf()>new Date(this.currentDateEnd).valueOf()){
+          this.$toast.fail('开始时间大于结束时间')
+          this.currentDateStart=new Date(new Date()-24*60*60*1000)
+          return;
+        }
+         this.onConfirm(this.currentDateStart,this.currentDateEnd)
       },
-      onConfirm(date) {
-      this.show = false
-      const [start, end] = date;
-      this.comparedate =`${this.formatDate(start)} - ${this.formatDate(end)}`;
-      this.ClanderStartTime=`${this.formatDate(start)}`
-      this.ClanderEndTime=`${this.formatDate(end)}`
-      var nowTime = '23:59'
-      var compareDateStartTime = moment(this.ClanderStartTime).day(moment(this.ClanderStartTime).day()).startOf('day').format('YYYY-MM-DD HH:mm')
-      var compareDateEndTime = moment(this.ClanderEndTime).format('YYYY-MM-DD') + " " + nowTime
-      this.$http.all([
+      chooseEnd(){
+         if(new Date(this.currentDateStart).valueOf()>new Date(this.currentDateEnd).valueOf()){
+          this.$toast.fail('结束时间小于开始时间')
+          this.currentDateEnd=new Date()
+          return;
+        }
+         this.onConfirm(this.currentDateStart,this.currentDateEnd)
+      },
+      onConfirm(Starttime,Endtime) { //时间选择器的点击确定事件
+         var compareDateStartTime = moment(Starttime).format('YYYY-MM-DD HH:mm:ss')
+         var compareDateEndTime = moment(Endtime).format('YYYY-MM-DD HH:mm:ss')
+         this.$http.all([
             this.$http.get('/api/energywater',{params:{StartTime:compareDateStartTime,EndTime:compareDateEndTime,AreaName:this.currentchoice}}),
             this.$http.get('/api/energyelectric',{params:{StartTime:compareDateStartTime,EndTime:compareDateEndTime,AreaName:this.currentchoice}}),
             this.$http.get('/api/energysteam',{params:{StartTime:compareDateStartTime,EndTime:compareDateEndTime,AreaName:this.currentchoice}}),
@@ -232,79 +306,14 @@ export default {
        }
       },
         //点击导航栏获取相关能耗数据
-        getData(e){
-          this.currentchoice=this.list[e]
-          this.comparedate='click me!'
+        getData(){
+          this.currentchoice=this.list[this.active]
           var nowTime = moment().format('HH:mm').substring(0,4) + "0"
-          var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
-          var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
-          this.$http.all([
-            this.$http.get('/api/energywater',{params:{StartTime:todayStartTime,EndTime:todayEndTime,AreaName:this.currentchoice}}),
-            this.$http.get('/api/energyelectric',{params:{StartTime:todayStartTime,EndTime:todayEndTime,AreaName:this.currentchoice}}),
-            this.$http.get('/api/energysteam',{params:{StartTime:todayStartTime,EndTime:todayEndTime,AreaName:this.currentchoice}}),
-            this.$http.get('/api/watertrendlookboard',{params:{StartTime:todayStartTime,EndTime:todayEndTime,AreaName:this.currentchoice}}),
-            this.$http.get('/api/electricnergycost',{params:{StartTime:todayStartTime,EndTime:todayEndTime,AreaName:this.currentchoice,TimeClass:'电'}})
-            ]).then(this.$http.spread((res1,res2,res3,res4,res5)=>{
-             this.water=JSON.parse(res1.data).value
-             this.electric=JSON.parse(res2.data).value
-             this.steam=JSON.parse(res3.data).value
-             this.steamCost=JSON.parse(res3.data).cost
-             this.steamUnit=JSON.parse(res3.data).unit
-             this.waterGG = res4.data.GG+'t'
-             this.waterGGcost=res4.data.GGcost+'元'
-             this.waterYY = res4.data.YY+'t'
-             this.waterYYcost=res4.data.YYcost+'元'
-             this.waterSJ = res4.data.SJ+'t'
-             this.waterSJcost=res4.data.GGcost+'元'
-             this.waterCost = (res4.data.GGcost + res4.data.YYcost + res4.data.SJcost).toFixed(2)+'元'
-             this.bovalue=res5.data.periodTimeTypeItem[0].expendEnergy+'kwh'
-             this.bocost=res5.data.periodTimeTypeItem[0].expendPrice+'元'
-             this.fenvalue=res5.data.periodTimeTypeItem[1].expendEnergy+'kwh'
-             this.fencost=res5.data.periodTimeTypeItem[1].expendPrice+'元'
-             this.pinvalue=res5.data.periodTimeTypeItem[2].expendEnergy+'kwh'
-             this.pincost=res5.data.periodTimeTypeItem[2].expendPrice+'元'
-             this.guvalue=res5.data.periodTimeTypeItem[3].expendEnergy+'kwh'
-             this.gucost=res5.data.periodTimeTypeItem[3].expendPrice+'元'
-             this.bgc1=this.bgc2=this.bgc3=false
-             this.kind='电'
-                  }))
-              },
-        initMessage(){
-                 this.currentchoice=this.list[this.active]
-                 this.comparedate='click me!'
-                 var nowTime = moment().format('HH:mm').substring(0,4) + "0"
-                 var todayStartTime = moment().format('YYYY-MM-DD') + " 00:00"
-                 var todayEndTime = moment().format('YYYY-MM-DD') + " " + nowTime
-                this.$http.all([
-                 this.$http.get('/api/energywater',{params:{StartTime:todayStartTime,EndTime:todayEndTime,AreaName:this.currentchoice}}),
-                 this.$http.get('/api/energyelectric',{params:{StartTime:todayStartTime,EndTime:todayEndTime,AreaName:this.currentchoice}}),
-                 this.$http.get('/api/energysteam',{params:{StartTime:todayStartTime,EndTime:todayEndTime,AreaName:this.currentchoice}}),
-                 this.$http.get('/api/watertrendlookboard',{params:{StartTime:todayStartTime,EndTime:todayEndTime,AreaName:this.currentchoice}}),
-                 this.$http.get('/api/electricnergycost',{params:{StartTime:todayStartTime,EndTime:todayEndTime,AreaName:this.currentchoice,TimeClass:'电'}})
-                 ]).then(this.$http.spread((res1,res2,res3,res4,res5)=>{
-                  this.water=JSON.parse(res1.data).value
-                  this.electric=JSON.parse(res2.data).value
-                  this.steam=JSON.parse(res3.data).value
-                  this.steamCost=JSON.parse(res3.data).cost
-                  this.steamUnit=JSON.parse(res3.data).unit
-                  this.waterGG = res4.data.GG+'t'
-                  this.waterGGcost=res4.data.GGcost+'元'
-                  this.waterYY = res4.data.YY+'t'
-                  this.waterYYcost=res4.data.YYcost+'元'
-                  this.waterSJ = res4.data.SJ+'t'
-                  this.waterSJcost=res4.data.GGcost+'元'
-                  this.waterCost = (res4.data.GGcost + res4.data.YYcost + res4.data.SJcost).toFixed(2)+'元'
-                  this.bovalue=res5.data.periodTimeTypeItem[0].expendEnergy+'kwh'
-                  this.bocost=res5.data.periodTimeTypeItem[0].expendPrice+'元'
-                  this.fenvalue=res5.data.periodTimeTypeItem[1].expendEnergy+'kwh'
-                  this.fencost=res5.data.periodTimeTypeItem[1].expendPrice+'元'
-                  this.pinvalue=res5.data.periodTimeTypeItem[2].expendEnergy+'kwh'
-                  this.pincost=res5.data.periodTimeTypeItem[2].expendPrice+'元'
-                  this.guvalue=res5.data.periodTimeTypeItem[3].expendEnergy+'kwh'
-                  this.gucost=res5.data.periodTimeTypeItem[3].expendPrice+'元'
-                  this.bgc1=this.bgc2=this.bgc3=false
-                  this.kind='电'
-                  }))
+          var todayStartTime = new Date(moment().format('YYYY-MM-DD') + " 00:00")
+          var todayEndTime = new Date(moment().format('YYYY-MM-DD') + " " + nowTime)
+          this.currentDateStart= new Date(moment().format('YYYY-MM-DD') + " 00:00"),
+          this.currentDateEnd=new Date(),
+          this.onConfirm(todayStartTime,todayEndTime)
               }
     }
 }
@@ -316,7 +325,7 @@ export default {
      .show-box{
         position: relative;
         width: 375px;
-        height:600px;
+        height:800px;
         box-sizing: border-box;
         padding: 0 12px 12px 13px;
         background: @bgcc;
@@ -333,7 +342,7 @@ export default {
           margin-bottom: 20px;
         }
         .date-choose{
-          height: 55px;
+          height: 120px;
           width: 100%;
         }
         .compare{
@@ -450,11 +459,21 @@ export default {
           margin-bottom: 17px;
           background: #ccc;
           border-radius: 4px;
+        }
+          .show-banner1{
+             position: relative;
+             height: 160px;
+             width: 100%;
+             margin-bottom: 17px;
+             background: #ccc;
+             border-radius: 4px;
+          }
             .header{
               position: relative;
                 width: 100%;
                 height:20px;
                 padding-top: 10px;
+                padding-bottom: 15px;
                 text-align: center;
                 font-size:16px;
                 font-family:PingFang SC;
@@ -467,37 +486,5 @@ export default {
                 position: relative;
                 height: 55px;
             }
-                .today-water,.today-water-max,.today-water-min{
-                position: absolute;
-                top:10px;
-                left:10px;
-                height:11px;
-                font-size:12px;
-                font-family:PingFang SC;
-                font-weight:400;
-                line-height:11px;
-                color:#222;
-                opacity:1;
-                }
-                .today-water-max{
-                    left:120px;
-                }
-                .today-water-min{
-                    left:246px;
-                }
-                .today-num1,.today-num2,.today-num3{
-                    position:absolute;
-                    top:30px;
-                    left:10px;
-                    font-size: 10px;
-                    color:#fff;
-                }
-                .today-num2{
-                  left: 120px;
-                }
-                .today-num3{
-                  left: 246px;
-                }
-        }
      }
 </style>
