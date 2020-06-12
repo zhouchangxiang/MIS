@@ -111,7 +111,7 @@
             </div>
             <div class="home-card-body" style="height:280px;">
               <ul>
-                <li v-for="item in onlineEquipmentOption" class="itemMarginBottom">
+                <li v-for="item in onlineEquipmentOption" class="itemMarginBottom" @click="seeTag(item.name)">
                   <p class="text-size-normol text-color-info" style="margin-bottom: 5px;">{{ item.name }}</p>
                   <p class="text-size-mini text-color-info-shallow" style="margin-bottom: 5px;"><span>上线数/总数</span><span style="float: right;">{{ item.online }}/{{ item.total }}</span></p>
                   <el-progress :text-inside="true" :stroke-width="16" strokeLinecap="square" :color="item.rate == 100?'#15CC48':'#FB8A06'" :percentage="item.rate"></el-progress>
@@ -764,6 +764,26 @@
         })
         this.axios.get("/api/systemwebsocket").then(res => {
          this.systemCheckupList[3].item = res.data
+        })
+      },
+      seeTag(EnergyClass){
+        this.axios.get("/api/selectdetailbytags",{params:{EnergyClass:EnergyClass}}).then(res =>{
+          if(res.data.length === 0){
+            this.$alert("暂无异常设备", '未采集设备', {
+              dangerouslyUseHTMLString: true
+            });
+          }else{
+            var html = ""
+            res.data.forEach(item =>{
+              html += item + "，"
+            })
+            if (html.length > 0) {
+              html = html.substr(0, html.length - 1);
+            }
+            this.$alert(html, '未采集设备', {
+              dangerouslyUseHTMLString: true
+            });
+          }
         })
       }
     }
