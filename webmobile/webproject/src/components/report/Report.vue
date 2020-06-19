@@ -96,6 +96,8 @@
                         <div class='today-num1'>{{waterTagList.W_Area_YTQ_39_2_30.sumValue}}</div>
                         <div class='today-consume-rank'>{{waterTagList.W_Area_YTQ_39_2_30.flowValue}}</div>
                     </div>
+                    </div>
+                    <div class="list-bannerw" v-if="this.currentArea==='原提取车间'">
                     <div class="body">
                         <div class='today-water'>消防水DN50</div>
                         <div class='today-num1'>{{waterTagList.W_Area_YTQ_39_1_30.sumValue}}</div>
@@ -108,6 +110,8 @@
                         <div class='today-num1'>{{waterTagList.W_Area_QCL_33_1_20.sumValue}}</div>
                         <div class='today-consume-rank'>{{waterTagList.W_Area_QCL_33_1_20.flowValue}}</div>
                     </div>
+                    </div>
+                <div class="list-bannerw" v-if="this.currentArea==='前处理车间'">
                      <div class="body">
                         <div class='today-water'>饮用水DN25</div>
                         <div class='today-num1'>{{waterTagList.W_Area_QCL_33_2_20.sumValue}}</div>
