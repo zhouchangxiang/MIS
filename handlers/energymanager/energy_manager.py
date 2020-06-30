@@ -698,7 +698,7 @@ def areaTimeEnergy():
                 else:
                     value_dirc["AreaName"] = AreaName[0]
                     value_dirc["valuelist"] = []
-                    value_dirc["backgroundColor"] = "-webkit-linear-gradient(left," + wu + ")"
+                    value_dirc["backgroundColor"] = "-webkit-linear-gradient(left," + wu +","+ wu + ")"
                     araeY_list.append(value_dirc)
             return json.dumps(araeY_list, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
