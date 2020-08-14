@@ -50,6 +50,13 @@
               </el-tooltip>
             </li>
             <li>
+              <el-tooltip class="head-menu-item" effect="dark" content="锅炉房蒸汽总量采集状态" placement="bottom">
+                <el-badge>
+                  <i class="eq_stuIcon text-size-18 el-icon-bell" @click="getStu_Equ"></i>
+                </el-badge>
+              </el-tooltip>
+            </li>
+            <li>
               <el-tooltip class="head-menu-item" effect="dark" content="全屏" placement="bottom">
                 <i :class="isFullScreen?'el-icon-aim':'el-icon-full-screen'" @click="getFullCreeen"></i>
               </el-tooltip>
@@ -616,6 +623,7 @@ export default {
       waterTagList:{},
       steamGlTag:"",
       websock:null,
+      glfEqStuInfo:"", //锅炉房采集状态
     }
   },
   //依赖注入传值
@@ -657,11 +665,24 @@ export default {
       this.$router.push("/login");
     }
     this.getWeather()
+    this.getStu_Equ()
   },
   destroyed() {
     if(this.websock){
       this.websock.close() //离开路由之后断开websocket连接
     }
+  },
+  watch:{
+    glfEqStuInfo(newval,oldval){
+      console.log(newval)
+      if(newval === "NO"){
+        $(".eq_stuIcon").addClass("blink")
+        $(".eq_stuIcon").addClass("text-color-warning").removeClass("text-color-success")
+      }else if(newval === "OK"){
+        $(".eq_stuIcon").removeClass("blink")
+        $(".eq_stuIcon").removeClass("text-color-warning").addClass("text-color-success")
+      }
+    },
   },
   methods:{
     getMenuHeight(){
@@ -733,6 +754,17 @@ export default {
           this.isFullScreen = true
         }
       }
+    },
+    getStu_Equ(){  //获取锅炉房采集状态
+      let _this = this
+      this.timer = setInterval(() =>{
+        this.axios.get("/api/selectSteamTotalReminder").then(res =>{
+          console.log(res.data)
+          _this.glfEqStuInfo = res.data
+        },res =>{
+          console.log("获取锅炉房采集状态时请求错误")
+        })
+      },5000);
     },
     getWeather(){
       this.axios.get("http://wthrcdn.etouch.cn/weather_mini",{
@@ -1059,4 +1091,18 @@ export default {
     margin-top: 3px;
     white-space: nowrap;
   }
+  .blink{
+    -webkit-animation: twinkling 1s infinite ease-in-out;
+  }
+  @-webkit-keyframes twinkling{    /*透明度由0到1*/
+    0%{
+      opacity:1; /*透明度为0*/
+    }
+    50%{
+      opacity:0; /*透明度为1*/
+    }
+    100%{
+      opacity:1; /*透明度为1*/
+    }
+   }
 </style>
