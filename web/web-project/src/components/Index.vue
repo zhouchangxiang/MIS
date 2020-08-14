@@ -764,7 +764,7 @@ export default {
         },res =>{
           console.log("获取锅炉房采集状态时请求错误")
         })
-      },5000);
+      },1000*60*10);
     },
     getWeather(){
       this.axios.get("http://wthrcdn.etouch.cn/weather_mini",{
