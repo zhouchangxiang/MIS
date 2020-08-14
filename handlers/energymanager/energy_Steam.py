@@ -484,3 +484,22 @@ def steamtotal():
             print(e)
             logger.error(e)
             insertSyslog("error", "SteamTotalMaintain查询报错Error：" + str(e), current_user.Name)
+
+@energySteam.route('/selectSteamTotalReminder', methods=['POST', 'GET'])
+def selectSteamTotalReminder():
+    '''
+    查询锅炉房蒸汽总量是否断开
+    '''
+    if request.method == 'GET':
+        try:
+            oclass = db_session.query(SteamTotalMaintain).filter().order_by(desc("ID")).first()
+            if oclass:
+                collectionDate = datetime.datetime.strptime(oclass.CollectionDate, "%Y-%m-%d %H:%M:%S")
+                nowtime = datetime.datetime.now() + datetime.timedelta(minutes=-10)
+                if collectionDate < nowtime:
+                    return json.dumps("NO", cls=AlchemyEncoder, ensure_ascii=False)
+            return json.dumps("OK", cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "查询锅炉房蒸汽总量是否断开报错Error：" + str(e), current_user.Name)
