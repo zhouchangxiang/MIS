@@ -757,9 +757,13 @@ export default {
     },
     getStu_Equ(){  //获取锅炉房采集状态
       let _this = this
+      this.axios.get("/api/selectSteamTotalReminder").then(res =>{
+        _this.glfEqStuInfo = res.data
+      },res =>{
+        console.log("获取锅炉房采集状态时请求错误")
+      })
       this.timer = setInterval(() =>{
         this.axios.get("/api/selectSteamTotalReminder").then(res =>{
-          console.log(res.data)
           _this.glfEqStuInfo = res.data
         },res =>{
           console.log("获取锅炉房采集状态时请求错误")
