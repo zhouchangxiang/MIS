@@ -503,3 +503,42 @@ def selectSteamTotalReminder():
             print(e)
             logger.error(e)
             insertSyslog("error", "查询锅炉房蒸汽总量是否断开报错Error：" + str(e), current_user.Name)
+
+
+@energySteam.route('/selectTagByAreamName', methods=['POST', 'GET'])
+def selectTagByAreamName():
+    '''
+    查询tag根据区域
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            AreaName = data.get("AreaName")
+            EnergyClass = data.get("EnergyClass")
+            oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaName, TagDetail.EnergyClass == EnergyClass).order_by(desc("ID")).all()
+            return json.dumps(oclass, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "查询tag根据区域报错Error：" + str(e), current_user.Name)
+
+@energySteam.route('/selectIncrementStreamTableByTag', methods=['POST', 'GET'])
+def selectIncrementStreamTableByTag():
+    '''
+    查询蒸汽增量根据Tag
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            StartTime = data.get("StartTime")
+            EndTime = data.get("EndTime")
+            TagClassValue = data.get("TagClassValue")
+            EnergyClass = data.get("EnergyClass")
+            if EnergyClass == "汽":
+                oclass = db_session.query(IncrementStreamTable).filter(IncrementStreamTable.TagClassValue == TagClassValue, IncrementStreamTable.CollectionDate.between(StartTime,EndTime)).order_by(("CollectionDate")).all()
+            return json.dumps(oclass, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "查询tag根据区域报错Error：" + str(e), current_user.Name)
+
