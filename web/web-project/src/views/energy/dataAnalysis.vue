@@ -67,8 +67,8 @@ var moment = require('moment');
           label:this.$route.query.areaName,
           children: []
         }],
-        valuedatetime1:moment('2020-04-27').format('YYYY-MM-DD 00:00:00'),
-        valuedatetime2:moment('2020-04-28').format('YYYY-MM-DD 06:00:00'),
+        valuedatetime1:moment().format('YYYY-MM-DD 00:00:00'),
+        valuedatetime2:moment().format('YYYY-MM-DD 06:00:00'),
         radio1:'汽',
         loading:false,
         dateset:[],
