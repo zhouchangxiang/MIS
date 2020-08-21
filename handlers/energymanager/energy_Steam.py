@@ -515,7 +515,7 @@ def selectTagByAreamName():
         try:
             AreaName = data.get("AreaName")
             EnergyClass = data.get("EnergyClass")
-            if AreaName == None:
+            if AreaName == "整厂区":
                 oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).order_by(desc("ID")).all()
             else:
                 oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaName, TagDetail.EnergyClass == EnergyClass).order_by(desc("ID")).all()
