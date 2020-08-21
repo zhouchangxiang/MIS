@@ -515,7 +515,10 @@ def selectTagByAreamName():
         try:
             AreaName = data.get("AreaName")
             EnergyClass = data.get("EnergyClass")
-            oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaName, TagDetail.EnergyClass == EnergyClass).order_by(desc("ID")).all()
+            if AreaName == None:
+                oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).order_by(desc("ID")).all()
+            else:
+                oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaName, TagDetail.EnergyClass == EnergyClass).order_by(desc("ID")).all()
             return json.dumps(oclass, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
@@ -535,7 +538,8 @@ def selectIncrementStreamTableByTag():
             TagClassValue = data.get("TagClassValue")
             EnergyClass = data.get("EnergyClass")
             if EnergyClass == "汽":
-                oclass = db_session.query(IncrementStreamTable).filter(IncrementStreamTable.TagClassValue == TagClassValue, IncrementStreamTable.CollectionDate.between(StartTime,EndTime)).order_by(("CollectionDate")).all()
+                oclass = db_session.query(IncrementStreamTable).filter(IncrementStreamTable.TagClassValue == TagClassValue,
+                                                                       IncrementStreamTable.CollectionDate.between(StartTime,EndTime)).order_by(("CollectionDate")).all()
             return json.dumps(oclass, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:
             print(e)
