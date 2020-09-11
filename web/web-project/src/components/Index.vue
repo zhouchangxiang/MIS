@@ -709,7 +709,6 @@ export default {
   },
   watch:{
     glfEqStuInfo(newval,oldval){
-      console.log(newval)
       if(newval === "NO"){
         $(".eq_stuIcon").addClass("blink")
         $(".eq_stuIcon").addClass("text-color-warning").removeClass("text-color-success")
