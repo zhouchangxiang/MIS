@@ -246,21 +246,32 @@
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === '新建综合制剂车间'">
             <div class="waterTagData" style="position: relative">电表（2楼配电室）<p>{{ electricTagList.E_Area_XJZ_11_2_7.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">电表（2楼配电室）<p>{{ electricTagList.E_Area_XJZ_11_2_7_1.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">电表（2楼配电室）<p>{{ electricTagList.E_Area_XJZ_11_2_7_3.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">电表（1楼空调室）<p>{{ electricTagList.E_Area_XJZ_11_2_7_4.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">电表（1楼配电室）<p>{{ electricTagList.E_Area_XJZ_11_1_6_5.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">电表（1楼冷水室）<p>{{ electricTagList.E_Area_XJZ_11_1_6_6.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === '中试车间'">
             <div class="waterTagData" style="position: relative">电表（化验室）<p>{{ electricTagList.E_Area_YF_26_1_14.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">电表（化验室）<p>{{ electricTagList.E_Area_YF_26_1_14_2.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === '原提取车间'">
             <div class="waterTagData" style="position: relative">电表（老醇提）<p>{{ electricTagList.E_Area_YTQ_38_1_28.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === '前处理车间'">
-            <div class="waterTagData" style="position: relative">电表（前处理）<p>{{ electricTagList.E_Area_YTQ_38_2_29.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">电表（前处理1楼）<p>{{ electricTagList.E_Area_YTQ_38_2_29.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">电表（前处理1楼）<p>{{ electricTagList.E_Area_YTQ_38_2_29_3.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === 'GMP车间'">
-            <div class="waterTagData" style="position: relative">电表（一楼）<p>{{ electricTagList.E_Area_JK_28_2_17.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">电表（1楼）<p>{{ electricTagList.E_Area_JK_28_2_17.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">电表（2楼）<p>{{ electricTagList.E_Area_JK_28_1_16.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === '固体制剂车间'">
-            <div class="waterTagData" style="position: relative">电表<p>{{ electricTagList.E_Area_GT_30_1_19.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">电表（1楼配电室）<p>{{ electricTagList.E_Area_GT_30_2_19.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">电表（1楼配电室）<p>{{ electricTagList.E_Area_GT_30_2_19_1.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">电表（1楼配电室）<p>{{ electricTagList.E_Area_GT_30_2_19_2.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">电表（1楼配电室）<p>{{ electricTagList.E_Area_GT_30_2_19_3.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === '办公楼＼食堂'">
             <div class="waterTagData" style="position: relative">电表<p>{{ electricTagList.E_Area_BGL_36_1_26.ZGL }}</p></div>
