@@ -84,28 +84,14 @@
               <div style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;background: #228AD5;margin-left: 10px;"></div> 水
               <div style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;background: #15CC48;margin-left: 10px;"></div> 汽
             </div>
-            <div class="mapContent"  v-if="JSON.stringify(steamTagList) != '{}'">
-              <div class="mapContentTop">
-                <div style="position: relative;height: 100%;">
-                  <div v-for="(item,index) in drawerTopAreaOption" class="mapContentItem"
-                       :style="{width:item.width, height: item.height,top: item.top,left: item.left}" :key="index">
-                    <div :style="{marginLeft: item.marginLeft}">
-                      <div class="mapItemPoint ElectricPoint" v-if="item.hasElectric" @click="showAreaElectric(item.title)"></div>
-                      <div class="mapItemPoint WaterPoint" v-if="item.hasWater" @click="showAreaWater(item.title)"></div>
-                      <div class="mapItemPoint SteamPoint" v-if="item.hasSteam" @click="showAreaSteam(item.title,item.img,item.img2)"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="mapContentBottom">
-                <div style="position: relative;height: 100%;">
-                  <div v-for="(item,index) in drawerBottomAreaOption" class="mapContentItem"
-                       :style="{width:item.width, height: item.height,top: item.top,left: item.left}" :key="index">
-                    <div :style="{marginLeft: item.marginLeft}">
-                      <div class="mapItemPoint ElectricPoint" v-if="item.hasElectric" @click="showAreaElectric(item.title)"></div>
-                      <div class="mapItemPoint WaterPoint" v-if="item.hasWater" @click="showAreaWater(item.title)"></div>
-                      <div class="mapItemPoint SteamPoint" v-if="item.hasSteam" @click="showAreaSteam(item.title,item.img,item.img2)"></div>
-                    </div>
+            <div class="mapContent" v-if="JSON.stringify(steamTagList) != '{}'">
+              <div style="position: relative;height: 100%;">
+                <div v-for="(item,index) in drawerAreaOption" class="mapContentItem"
+                     :style="{top: item.top,left: item.left}" :key="index">
+                  <div>
+                    <div class="mapItemPoint ElectricPoint" v-if="item.hasElectric" @click="showAreaElectric(item.title)"></div>
+                    <div class="mapItemPoint WaterPoint" v-if="item.hasWater" @click="showAreaWater(item.title)"></div>
+                    <div class="mapItemPoint SteamPoint" v-if="item.hasSteam" @click="showAreaSteam(item.title,item.img,item.img2)"></div>
                   </div>
                 </div>
               </div>
@@ -242,39 +228,77 @@
         <!-- 电表分布图 -->
         <el-dialog :title="areaOverallDialogTitle" :visible.sync="electricAreaTagDialog" width="40%" v-if="electricAreaTagDialog">
           <el-card shadow="never" v-if="areaOverallDialogTitle === '污水站'">
-            <div class="waterTagData" style="position: relative">电表<p>{{ electricTagList.E_Area_WSZ_16_2_35.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">电表<p></p><p class="TagDataVal">{{ electricTagList.E_Area_WSZ_16_2_35.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === '新建综合制剂车间'">
-            <div class="waterTagData" style="position: relative">电表（2楼配电室）<p>{{ electricTagList.E_Area_XJZ_11_2_7.ZGL }}</p></div>
-            <div class="waterTagData" style="position: relative">电表（2楼配电室）<p>{{ electricTagList.E_Area_XJZ_11_2_7_1.ZGL }}</p></div>
-            <div class="waterTagData" style="position: relative">电表（2楼配电室）<p>{{ electricTagList.E_Area_XJZ_11_2_7_3.ZGL }}</p></div>
-            <div class="waterTagData" style="position: relative">电表（1楼空调室）<p>{{ electricTagList.E_Area_XJZ_11_2_7_4.ZGL }}</p></div>
-            <div class="waterTagData" style="position: relative">电表（1楼配电室）<p>{{ electricTagList.E_Area_XJZ_11_1_6_5.ZGL }}</p></div>
-            <div class="waterTagData" style="position: relative">电表（1楼冷水室）<p>{{ electricTagList.E_Area_XJZ_11_1_6_6.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">2楼配电室<p>空压机、循环水、机器人</p><p class="TagDataVal">{{ electricTagList.E_Area_XJZ_11_2_7.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">2楼配电室<p>干法、颗粒</p><p class="TagDataVal">{{ electricTagList.E_Area_XJZ_11_2_7_1.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">2楼配电室<p>电梯、压片、胶囊、泡罩、粉碎</p><p class="TagDataVal">{{ electricTagList.E_Area_XJZ_11_2_7_3.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">1楼空调室<p>2L空调</p><p class="TagDataVal">{{ electricTagList.E_Area_XJZ_11_2_7_4.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">1楼配电室<p>洗衣机、照明、卷帘门、风机</p><p class="TagDataVal">{{ electricTagList.E_Area_XJZ_11_1_6_5.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">1楼冷水室<p>冷水机组2</p><p class="TagDataVal">{{ electricTagList.E_Area_XJZ_11_1_6_6.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === '中试车间'">
-            <div class="waterTagData" style="position: relative">电表（化验室）<p>{{ electricTagList.E_Area_YF_26_1_14.ZGL }}</p></div>
-            <div class="waterTagData" style="position: relative">电表（化验室）<p>{{ electricTagList.E_Area_YF_26_1_14_2.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">化验室<p>电器</p><p class="TagDataVal">{{ electricTagList.E_Area_YF_26_1_14.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">化验室<p>老醇提水泵、车床、台钻、砂轮</p><p class="TagDataVal">{{ electricTagList.E_Area_YF_26_1_14_2.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === '原提取车间'">
-            <div class="waterTagData" style="position: relative">电表（老醇提）<p>{{ electricTagList.E_Area_YTQ_38_1_28.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">老醇提<p>办公、新700粉碎机、机修、设备库房</p><p class="TagDataVal">{{ electricTagList.E_Area_YTQ_38_1_28.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === '前处理车间'">
-            <div class="waterTagData" style="position: relative">电表（前处理1楼）<p>{{ electricTagList.E_Area_YTQ_38_2_29.ZGL }}</p></div>
-            <div class="waterTagData" style="position: relative">电表（前处理1楼）<p>{{ electricTagList.E_Area_YTQ_38_2_29_3.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">前处理1楼<p>办公、新700粉碎机、机修、设备库房</p><p class="TagDataVal">{{ electricTagList.E_Area_YTQ_38_2_29.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">前处理1楼<p>洗药机、切药机</p><p class="TagDataVal">{{ electricTagList.E_Area_YTQ_38_2_29_3.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === 'GMP车间'">
-            <div class="waterTagData" style="position: relative">电表（1楼）<p>{{ electricTagList.E_Area_JK_28_2_17.ZGL }}</p></div>
-            <div class="waterTagData" style="position: relative">电表（2楼）<p>{{ electricTagList.E_Area_JK_28_1_16.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">电表（1楼）<p></p><p class="TagDataVal">{{ electricTagList.E_Area_JK_28_2_17.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">电表（2楼）<p></p><p class="TagDataVal">{{ electricTagList.E_Area_JK_28_1_16.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === '固体制剂车间'">
-            <div class="waterTagData" style="position: relative">电表（1楼配电室）<p>{{ electricTagList.E_Area_GT_30_2_19.ZGL }}</p></div>
-            <div class="waterTagData" style="position: relative">电表（1楼配电室）<p>{{ electricTagList.E_Area_GT_30_2_19_1.ZGL }}</p></div>
-            <div class="waterTagData" style="position: relative">电表（1楼配电室）<p>{{ electricTagList.E_Area_GT_30_2_19_2.ZGL }}</p></div>
-            <div class="waterTagData" style="position: relative">电表（1楼配电室）<p>{{ electricTagList.E_Area_GT_30_2_19_3.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">1楼配电室<p>除尘系统、空调系统</p><p class="TagDataVal">{{ electricTagList.E_Area_GT_30_2_19.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">1楼配电室<p>机修办公室、压片、胶囊、混合、挂衣、颗粒、瓶线</p><p class="TagDataVal">{{ electricTagList.E_Area_GT_30_2_19_1.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">1楼配电室<p>风冷冷水机、除湿机、空压机</p><p class="TagDataVal">{{ electricTagList.E_Area_GT_30_2_19_2.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">1楼配电室<p>照明</p><p class="TagDataVal">{{ electricTagList.E_Area_GT_30_2_19_3.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === '办公楼＼食堂'">
-            <div class="waterTagData" style="position: relative">电表<p>{{ electricTagList.E_Area_BGL_36_1_26.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">老屋角<p></p><p class="TagDataVal">{{ electricTagList.E_Area_BGL_36_1_26.ZGL }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '提取二车间'">
+            <div class="waterTagData" style="position: relative">2L空调室二<p>冷水机组</p><p class="TagDataVal">{{ electricTagList.E_Area_TQR_18_2_36_1.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">2L空调室二<p>空调机组</p><p class="TagDataVal">{{ electricTagList.E_Area_TQR_18_2_36_2.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">2L电控室<p>冷水机组</p><p class="TagDataVal">{{ electricTagList.E_Area_TQR_18_2_36_3.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">2L电控室<p>制粒</p><p class="TagDataVal">{{ electricTagList.E_Area_TQR_18_2_36_4.ZGL }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '锅炉房'">
+            <div class="waterTagData" style="position: relative">锅炉房电柜<p>锅炉</p><p>{{ electricTagList.E_Area_GLF_42_1_33_1.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">锅炉房电柜<p>供暖</p><p>{{ electricTagList.E_Area_GLF_42_1_33_2.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">锅炉房旁边屋子<p>脱硫</p><p>{{ electricTagList.E_Area_GLF_42_1_33_3.ZGL }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '智能库'">
+            <div class="waterTagData" style="position: relative">智能库1L<p></p><p class="TagDataVal">{{ electricTagList.E_Area_ZNK_24_1_10_1.ZGL }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '综合车间'">
+            <div class="waterTagData" style="position: relative">MVR<p></p><p class="TagDataVal">{{ electricTagList.E_Area_ZH_1.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">MVR<p></p><p class="TagDataVal">{{ electricTagList.E_Area_ZH_2.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">2L配电室<p>总表、制粒、带干、粉糖、输液泵</p><p class="TagDataVal">{{ electricTagList.E_Area_ZH_50_1_41_1.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">2L配电室<p>制粒</p><p class="TagDataVal">{{ electricTagList.E_Area_ZH_50_1_41_2.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">2L配电室<p>带干</p><p class="TagDataVal">{{ electricTagList.E_Area_ZH_50_1_41_3.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">2L配电室<p>浓缩罐、自控系统、电梯、洗衣房、真空泵</p><p class="TagDataVal">{{ electricTagList.E_Area_ZH_50_1_41_4.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">2L配电室<p>排风</p><p class="TagDataVal">{{ electricTagList.E_Area_ZH_50_1_41_5.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">2L配电室<p>照明</p><p class="TagDataVal">{{ electricTagList.E_Area_ZH_50_1_41_6.ZGL }}</p></div>
+          </el-card>
+          <el-card shadow="never" v-if="areaOverallDialogTitle === '变电所'">
+            <div class="waterTagData" style="position: relative">变电所<p>40喷干</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_1.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">变电所<p>50喷干</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_2.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">变电所<p>新提取循环水泵</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_3.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">变电所<p>消防水泵+新大库</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_4.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">变电所<p>GMP</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_5.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">变电所<p>前处理</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_6.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">变电所<p>仓储中心</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_7.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">变电所<p>提取二照明</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_8.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">变电所<p>40粉碎、提取二空调</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_9.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">变电所<p>60带干、风机、制粒、办公</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_10.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">变电所<p>提取、自控</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_11.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">变电所<p>提取二车间新空调</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_12.ZGL }}</p></div>
           </el-card>
           <div slot="footer" class="dialog-footer">
             <el-button @click="electricAreaTagDialog = false">关 闭</el-button>
@@ -605,21 +629,21 @@ export default {
       },
       UserInfo:{},
       drawer: false,
-      drawerTopAreaOption:[
-        {title:"污水站",width: "120px",height:"30%",top:"31%",left:"8%",marginLeft:"20px",hasElectric:true,hasWater:true,hasSteam:false},
-        {title:"锅炉房",width: "220px",height:"20%",top:"30%",left:"15%",marginLeft:"100px",img:require("@/assets/imgs/guolu.jpg"),hasElectric:false,hasWater:false,hasSteam:true},
-        {title:"提取二车间",width: "220px",height:"15%",top:"44%",left:"15%",marginLeft:"30px",img:require("@/assets/imgs/tiquer.jpg"),img2:require("@/assets/imgs/tiquer2.jpg"),hasElectric:false,hasWater:true,hasSteam:true},
-        {title:"综合车间",width: "250px",height:"28%",top:"60%",left:"10%",marginLeft:"100px",img:require("@/assets/imgs/zonghe.jpg"),hasElectric:false,hasWater:true,hasSteam:true},
-        {title:"新建综合制剂车间",width: "100px",height:"45%",top:"18%",left:"34%",marginLeft:"20px",img:require("@/assets/imgs/xinzhiji.jpg"),hasElectric:true,hasWater:true,hasSteam:true},
-        {title:"中试车间",width: "40px",height:"43%",top:"20%",left:"47%",marginLeft:"0",hasElectric:true,hasWater:true,hasSteam:true},
-        {title:"原提取车间",width: "90px",height:"15%",top:"33%",left:"50%",marginLeft:"10px",hasElectric:true,hasWater:true,hasSteam:true},
-        {title:"前处理车间",width: "120px",height:"17%",top:"43%",left:"55%",marginLeft:"50px",hasElectric:true,hasWater:true,hasSteam:true},
-        {title:"GMP车间",width: "220px",height:"17%",top:"55%",left:"46%",marginLeft:"80px",hasElectric:true,hasWater:true,hasSteam:true},
-        {title:"固体制剂车间",width: "280px",height:"28%",top:"74%",left:"48%",marginLeft:"100px",img:require("@/assets/imgs/gutizhiji.jpg"),hasElectric:true,hasWater:true,hasSteam:true},
-      ],
-      drawerBottomAreaOption:[
-        {title:"展览室",width: "150px",height:"45%",top:"17%",left:"15%",marginLeft:"70px"},
-        {title:"办公楼＼食堂",width: "360px",height:"48%",top:"5%",left:"25%",marginLeft:"20px",hasElectric:true,hasWater:true,hasSteam:true},
+      drawerAreaOption:[
+        {title:"污水站",top:"32%",left:"25%",hasElectric:true,hasWater:true,hasSteam:false},
+        {title:"锅炉房",top:"31%",left:"35%",img:require("@/assets/imgs/guolu.jpg"),hasElectric:true,hasWater:false,hasSteam:true},
+        {title:"提取二车间",top:"34%",left:"35%",img:require("@/assets/imgs/tiquer.jpg"),img2:require("@/assets/imgs/tiquer2.jpg"),hasElectric:true,hasWater:true,hasSteam:true},
+        {title:"综合车间",top:"40%",left:"35%",img:require("@/assets/imgs/zonghe.jpg"),hasElectric:true,hasWater:true,hasSteam:true},
+        {title:"新建综合制剂车间",top:"32%",left:"47%",img:require("@/assets/imgs/xinzhiji.jpg"),hasElectric:true,hasWater:true,hasSteam:true},
+        {title:"变电所",top:"40%",left:"48%",hasElectric:true,hasWater:false,hasSteam:false},
+        {title:"中试车间",top:"30%",left:"56%",hasElectric:true,hasWater:true,hasSteam:true},
+        {title:"智能库",top:"27%",left:"52%",hasElectric:true,hasWater:false,hasSteam:false},
+        {title:"原提取车间",top:"31%",left:"62%",hasElectric:true,hasWater:true,hasSteam:true},
+        {title:"前处理车间",top:"34%",left:"68%",hasElectric:true,hasWater:true,hasSteam:true},
+        {title:"GMP车间",top:"38%",left:"61%",hasElectric:true,hasWater:true,hasSteam:true},
+        {title:"固体制剂车间",top:"43%",left:"61%",img:require("@/assets/imgs/gutizhiji.jpg"),hasElectric:true,hasWater:true,hasSteam:true},
+        {title:"展览室",top:"60%",left:"17%"},
+        {title:"办公楼＼食堂",top:"57%",left:"28%",hasElectric:true,hasWater:true,hasSteam:true},
       ],
       waterAreaDialog:false,
       waterAreaTagDialog:false,
@@ -987,12 +1011,11 @@ export default {
   .drawerContent{
     position: relative;
     width: 100%;
-    height: 100%;
+    min-height: 1000px;
     background: url("../assets/imgs/loginBg.jpg") no-repeat;
-    background-size: cover;
-    -webkit-background-size: cover;
-    -o-background-size: cover;
-    background-position: left ;
+    background-size: 100% 100%;
+    -webkit-background-size: 100% 100%;
+    -o-background-size: 100% 100%;
     display: flex;
     align-items:center;
   }
@@ -1011,24 +1034,17 @@ export default {
     cursor: pointer;
   }
   .mapContent{
-    position: relative;
-    height: 60%;
+    position: absolute;
+    height: 100%;
     width: 100%;
-  }
-  .mapContentTop{
-    position: relative;
-    padding-left: 340px;
-    height:50%;
-  }
-  .mapContentBottom{
-    position: relative;
-    height:50%;
   }
   .mapContentItem{
     position: absolute;
     border: none;
     display: flex;
     align-items:center;
+    width: 80px;
+    height: 30px;
   }
   .mapItemPoint{
     display: inline-block;
@@ -1099,7 +1115,7 @@ export default {
     border:1px solid #e1e1e1;
     background: #ffffff;
   }
-  .waterTagData p{
+  .waterTagData .TagDataVal{
     background: #333333;
     padding: 0 5px;
     color: #15CC48;
