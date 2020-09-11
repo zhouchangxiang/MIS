@@ -291,14 +291,14 @@
             <div class="waterTagData" style="position: relative">变电所<p>50喷干</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_2.ZGL }}</p></div>
             <div class="waterTagData" style="position: relative">变电所<p>新提取循环水泵</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_3.ZGL }}</p></div>
             <div class="waterTagData" style="position: relative">变电所<p>消防水泵+新大库</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_4.ZGL }}</p></div>
-            <div class="waterTagData" style="position: relative">变电所<p>GMP</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_5.ZGL }}</p></div>
-            <div class="waterTagData" style="position: relative">变电所<p>前处理</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_6.ZGL }}</p></div>
-            <div class="waterTagData" style="position: relative">变电所<p>仓储中心</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_7.ZGL }}</p></div>
-            <div class="waterTagData" style="position: relative">变电所<p>提取二照明</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_8.ZGL }}</p></div>
-            <div class="waterTagData" style="position: relative">变电所<p>40粉碎、提取二空调</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_9.ZGL }}</p></div>
-            <div class="waterTagData" style="position: relative">变电所<p>60带干、风机、制粒、办公</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_10.ZGL }}</p></div>
-            <div class="waterTagData" style="position: relative">变电所<p>提取、自控</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_11.ZGL }}</p></div>
-            <div class="waterTagData" style="position: relative">变电所<p>提取二车间新空调</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_12.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">变电所<p>GMP</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_2_40_5.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">变电所<p>前处理</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_2_40_6.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">变电所<p>仓储中心</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_2_40_7.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">变电所<p>提取二照明</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_2_40_8.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">变电所<p>40粉碎、提取二空调</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_2_40_9.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">变电所<p>60带干、风机、制粒、办公</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_2_40_10.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">变电所<p>提取、自控</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_2_40_11.ZGL }}</p></div>
+            <div class="waterTagData" style="position: relative">变电所<p>提取二车间新空调</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_2_40_12.ZGL }}</p></div>
           </el-card>
           <div slot="footer" class="dialog-footer">
             <el-button @click="electricAreaTagDialog = false">关 闭</el-button>
