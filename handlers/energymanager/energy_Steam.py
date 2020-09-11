@@ -164,7 +164,8 @@ def get_steam():
         pagesize = int(request.values.get('limit'))
         area_name = request.values.get('area_name')
         if area_name:
-            rows = 'select top ' + str(pagesize) + ' CalculationID,TagClassValue,AreaName,IncremenValue,CollectionDate ' + \
+            rows = 'select top ' + str(
+                pagesize) + ' CalculationID,TagClassValue,AreaName,IncremenValue,CollectionDate ' + \
                    'from [DB_MICS].[dbo].[IncrementStreamTable] where ID not in ' + '(select top ' + str(
                 (current_page - 1) * pagesize) + \
                    ' ID from [DB_MICS].[dbo].[IncrementStreamTable] where cast(IncremenValue as float) != 0.0 ' + \
@@ -183,7 +184,8 @@ def get_steam():
             data = []
             for item in result3:
                 query_steam = db_session.query(SteamEnergy).filter(SteamEnergy.ID == item.CalculationID).first()
-                query_tagdetai = db_session.query(TagDetail).filter(TagDetail.TagClassValue == item.TagClassValue).first()
+                query_tagdetai = db_session.query(TagDetail).filter(
+                    TagDetail.TagClassValue == item.TagClassValue).first()
                 tag_area = query_tagdetai.FEFportIP
                 dict1 = {'ID': query_steam.ID, 'SumValue': query_steam.SumValue, 'WD': query_steam.WD,
                          'Volume': query_steam.Volume,
@@ -193,17 +195,19 @@ def get_steam():
             if tag_point:
                 price_sql = "select sum(t1.price)*0.0001*1.2 total_price from (select TagClassValue,sum(cast(IncremenValue" \
                             " as float)) as price from [DB_MICS].[dbo].[IncrementStreamTable] where cast(IncremenValue as" \
-                            " float) != 0.0 and TagClassValue in " + (str(tag_point).replace('[', '(')).replace(']', ')') + \
+                            " float) != 0.0 and TagClassValue in " + (str(tag_point).replace('[', '(')).replace(']',
+                                                                                                                ')') + \
                             " and CollectionDate between " + "'" + start_time + "'" + " and " + "'" + end_time + "'" + \
                             " group by TagClassValue) t1"
                 total_price = db_session.execute(price_sql).fetchall()
                 price = 0 if total_price[0]['total_price'] is None else str(round(total_price[0]['total_price'], 2))
-                return json.dumps({'rows': data, 'total_column': result2[0]['total'], 'price': price}, cls=AlchemyEncoder,
+                return json.dumps({'rows': data, 'total_column': result2[0]['total'], 'price': price},
+                                  cls=AlchemyEncoder,
                                   ensure_ascii=False)
             else:
                 price_sql = "select sum(t1.price)*0.0001*1.2 total_price from (select TagClassValue,sum(cast(IncremenValue" \
                             " as float)) as price from [DB_MICS].[dbo].[IncrementStreamTable] where cast(IncremenValue as" \
-                            " float) != 0.0 and AreaName=" + "'" + area_name + "'" + " and CollectionDate between " +\
+                            " float) != 0.0 and AreaName=" + "'" + area_name + "'" + " and CollectionDate between " + \
                             "'" + start_time + "'" + " and " + "'" + end_time + "'" + "group by TagClassValue) t1"
                 total_price = db_session.execute(price_sql).fetchall()
                 price = 0 if total_price[0]['total_price'] is None else str(round(total_price[0]['total_price'], 2))
@@ -216,12 +220,14 @@ def get_steam():
                         "'" + "group by TagClassValue) t1"
             total_price = db_session.execute(price_sql).fetchall()
             price = 0 if total_price[0]['total_price'] is None else str(round(total_price[0]['total_price'], 2))
-            rows = 'select top ' + str(pagesize) + ' CalculationID,TagClassValue,AreaName,IncremenValue,CollectionDate ' + \
+            rows = 'select top ' + str(
+                pagesize) + ' CalculationID,TagClassValue,AreaName,IncremenValue,CollectionDate ' + \
                    'from [DB_MICS].[dbo].[IncrementStreamTable] where ID not in ' + '(select top ' + str(
-                (current_page - 1) * pagesize) + ' ID from [DB_MICS].[dbo].[IncrementStreamTable] where cast(IncremenValue' \
-                ' as float) != 0.0 and CollectionDate between ' + "'" + start_time + "'" + " and " + "'" + end_time + "'" + \
-                ' order by CollectionDate asc, ID asc)' + 'and cast(IncremenValue as float) != 0.0 and CollectionDate' \
-                ' between ' + "'" + start_time + "'" + " and " + "'" + end_time + "'" + ' order by CollectionDate asc, ID asc'
+                (
+                        current_page - 1) * pagesize) + ' ID from [DB_MICS].[dbo].[IncrementStreamTable] where cast(IncremenValue' \
+                                                        ' as float) != 0.0 and CollectionDate between ' + "'" + start_time + "'" + " and " + "'" + end_time + "'" + \
+                   ' order by CollectionDate asc, ID asc)' + 'and cast(IncremenValue as float) != 0.0 and CollectionDate' \
+                                                             ' between ' + "'" + start_time + "'" + " and " + "'" + end_time + "'" + ' order by CollectionDate asc, ID asc'
 
             result3 = db_session.execute(rows).fetchall()
             total = 'select count(ID) as total from [DB_MICS].[dbo].[IncrementStreamTable] where cast(IncremenValue as' \
@@ -246,6 +252,7 @@ def get_steam():
         insertSyslog("error", "能耗查询报错Error：" + str(e), current_user.Name)
         return json.dumps([{"status": "Error：" + str(e)}], cls=AlchemyEncoder, ensure_ascii=False)
 
+
 def energydetailStatistics(oc_list, StartTime, EndTime, energy):
     '''
     :param oc_list: tag点的List
@@ -255,20 +262,22 @@ def energydetailStatistics(oc_list, StartTime, EndTime, energy):
     :return:获取水电汽增量值以TagClassValue分组
     '''
     if energy == "水":
-        sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.TagClassValue FROM [DB_MICS].[dbo].[IncrementWaterTable] t with (INDEX =IX_IncrementWaterTable)  WHERE t.TagClassValue in (" + str(
+        sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '" + energy + "'),t.TagClassValue FROM [DB_MICS].[dbo].[IncrementWaterTable] t with (INDEX =IX_IncrementWaterTable)  WHERE t.TagClassValue in (" + str(
             oc_list)[
-                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.TagClassValue"
+                                                                                                                                                                                                                                                                                                                    1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.TagClassValue"
     elif energy == "电":
-        sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.TagClassValue  FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(
+        sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '" + energy + "'),t.TagClassValue  FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(
             oc_list)[
-                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.TagClassValue"
+                                                                                                                                                                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.TagClassValue"
     elif energy == "汽":
-        sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.TagClassValue  FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable)  WHERE t.TagClassValue in (" + str(
+        sql = "SELECT SUM(Cast(t.IncremenValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '" + energy + "'),t.TagClassValue  FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable)  WHERE t.TagClassValue in (" + str(
             oc_list)[
-                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.TagClassValue"
+                                                                                                                                                                                                                                                                                                                       1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.TagClassValue"
     re = db_session.execute(sql).fetchall()
     db_session.close()
     return re
+
+
 def energydetailStatisticsbytag(TagClassValue, StartTime, EndTime, energy):
     '''
     :param oc_list: tag点的List
@@ -278,14 +287,16 @@ def energydetailStatisticsbytag(TagClassValue, StartTime, EndTime, energy):
     :return:获取水电汽增量值以TagClassValue分组
     '''
     if energy == "水":
-        sql = "SELECT (Cast(t.WaterSum as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionDate FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_WaterEnergy)  WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionDate,t.WaterSum order by t.CollectionDate"
+        sql = "SELECT (Cast(t.WaterSum as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '" + energy + "'),t.CollectionDate FROM [DB_MICS].[dbo].[WaterEnergy] t with (INDEX =IX_WaterEnergy)  WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionDate,t.WaterSum order by t.CollectionDate"
     elif energy == "电":
-        sql = "SELECT (Cast(t.ZGL as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionDate  FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricEnergy)  WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionDate,t.ZGL order by t.CollectionDate"
+        sql = "SELECT (Cast(t.ZGL as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '" + energy + "'),t.CollectionDate  FROM [DB_MICS].[dbo].[ElectricEnergy] t with (INDEX =IX_ElectricEnergy)  WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionDate,t.ZGL order by t.CollectionDate"
     elif energy == "汽":
-        sql = "SELECT (Cast(t.SumValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+energy+"'),t.CollectionDate  FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy)  WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionDate,t.SumValue order by t.CollectionDate"
+        sql = "SELECT (Cast(t.SumValue as float))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '" + energy + "'),t.CollectionDate  FROM [DB_MICS].[dbo].[SteamEnergy] t with (INDEX =IX_SteamEnergy)  WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t.CollectionDate,t.SumValue order by t.CollectionDate"
     re = db_session.execute(sql).fetchall()
     db_session.close()
     return re
+
+
 @energySteam.route('/energydetail', methods=['POST', 'GET'])
 def energydetail():
     '''
@@ -312,7 +323,8 @@ def energydetail():
             else:
                 if AreaName == "" or AreaName == None:
                     energy_areas = energyStatisticsbyarea(StartTime, EndTime, EnergyClass)
-                    dict_energy_areas = {letter: score for score, letters in energy_areas for letter in letters.split(",")}
+                    dict_energy_areas = {letter: score for score, letters in energy_areas for letter in
+                                         letters.split(",")}
                     areas = db_session.query(AreaTable).filter().all()
                     for area in areas:
                         dic_lisct_i = {}
@@ -341,6 +353,7 @@ def energydetail():
             print(e)
             logger.error(e)
             insertSyslog("error", "能耗明细查询报错Error：" + str(e), current_user.Name)
+
 
 def roundtwo(rod):
     if rod == None or rod == "" or rod == b'':
@@ -380,7 +393,7 @@ def steamlossanalysis():
             if reto > 0:
                 losst = totalm - reto
                 if losst > 0:
-                    lossr = str(round((losst/totalm)*100, 2)) + "%"
+                    lossr = str(round((losst / totalm) * 100, 2)) + "%"
                 else:
                     lossr = "100%"
             else:
@@ -402,7 +415,7 @@ def steamlossanalysis():
                     stem = 0
                     if timehou in dictcurr.keys():
                         stem = round(float(dictcurr[timehou]), 2)
-                    ste_total_hour = energyStatisticsteamtotal(timehou+":00:00", timehou+":59:59")
+                    ste_total_hour = energyStatisticsteamtotal(timehou + ":00:00", timehou + ":59:59")
                     sttimeArray = time.strptime(timehou, '%Y-%m-%d %H')
                     sttime = int(time.mktime(sttimeArray))
                     nowtime = int(round(time.time()))
@@ -423,7 +436,7 @@ def steamlossanalysis():
                     stemy = 0
                     if timeday in dictcurry.keys():
                         stemy = round(float(dictcurry[timeday]), 2)
-                    ste_total_day = energyStatisticsteamtotal(timeday+" 00:00:00", timeday+" 23:59:59")
+                    ste_total_day = energyStatisticsteamtotal(timeday + " 00:00:00", timeday + " 23:59:59")
                     returnmonthfirstend = getMonthFirstDayAndLastDay(StartTime[0:4], StartTime[5:7])
                     if int(myday) <= int(str(returnmonthfirstend[1])[8:10]):
                         sttimeArray = time.strptime(timeday, '%Y-%m-%d')
@@ -447,7 +460,8 @@ def steamlossanalysis():
                     if timemonth in dictcurrm.keys():
                         stemm = round(float(dictcurrm[timemonth]), 2)
                     returnmonthfirstend = getMonthFirstDayAndLastDay(timemonth[0:4], timemonth[5:7])
-                    ste_total_month = energyStatisticsteamtotal(timemonth+"-01 00:00:00", str(returnmonthfirstend[1])+" 23:59:59")
+                    ste_total_month = energyStatisticsteamtotal(timemonth + "-01 00:00:00",
+                                                                str(returnmonthfirstend[1]) + " 23:59:59")
                     sttimeArray = time.strptime(timemonth, '%Y-%m')
                     sttime = int(time.mktime(sttimeArray))
                     nowtime = int(round(time.time()))
@@ -465,6 +479,7 @@ def steamlossanalysis():
             logger.error(e)
             insertSyslog("error", "管损分析查询报错Error：" + str(e), current_user.Name)
 
+
 @energySteam.route('/steamtotal', methods=['POST', 'GET'])
 def steamtotal():
     '''
@@ -473,7 +488,10 @@ def steamtotal():
     if request.method == 'GET':
         try:
             dir = {}
-            oclass = db_session.query(SteamTotalMaintain).filter(SteamTotalMaintain.SumValue != "",SteamTotalMaintain.SumValue != None, SteamTotalMaintain.SumValue != '0.0').order_by(desc("ID")).first()
+            oclass = db_session.query(SteamTotalMaintain).filter(SteamTotalMaintain.SumValue != "",
+                                                                 SteamTotalMaintain.SumValue != None,
+                                                                 SteamTotalMaintain.SumValue != '0.0').order_by(
+                desc("ID")).first()
             dir_oc = {}
             dir_oc["flowValue"] = roundtwo(oclass.FlowValue)
             dir_oc["sumValue"] = roundtwo(oclass.SumValue)
@@ -484,6 +502,67 @@ def steamtotal():
             print(e)
             logger.error(e)
             insertSyslog("error", "SteamTotalMaintain查询报错Error：" + str(e), current_user.Name)
+
+
+@energySteam.route('/selectSteamTotalReminder', methods=['POST', 'GET'])
+def selectSteamTotalReminder():
+    '''
+    查询锅炉房蒸汽总量是否断开
+    '''
+    if request.method == 'GET':
+        try:
+            oclass = db_session.query(SteamTotalMaintain).filter().order_by(desc("ID")).first()
+            if oclass:
+                collectionDate = datetime.datetime.strptime(oclass.CollectionDate, "%Y-%m-%d %H:%M:%S")
+                nowtime = datetime.datetime.now() + datetime.timedelta(minutes=-10)
+                if collectionDate < nowtime:
+                    return json.dumps("NO", cls=AlchemyEncoder, ensure_ascii=False)
+            return json.dumps("OK", cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "查询锅炉房蒸汽总量是否断开报错Error：" + str(e), current_user.Name)
+
+@energySteam.route('/selectTagByAreamName', methods=['POST', 'GET'])
+def selectTagByAreamName():
+    '''
+    查询tag根据区域
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            AreaName = data.get("AreaName")
+            EnergyClass = data.get("EnergyClass")
+            if AreaName == "整厂区":
+                oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).order_by(desc("ID")).all()
+            else:
+                oclass = db_session.query(TagDetail).filter(TagDetail.AreaName == AreaName, TagDetail.EnergyClass == EnergyClass).order_by(desc("ID")).all()
+            return json.dumps(oclass, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "查询tag根据区域报错Error：" + str(e), current_user.Name)
+
+@energySteam.route('/selectIncrementStreamTableByTag', methods=['POST', 'GET'])
+def selectIncrementStreamTableByTag():
+    '''
+    查询蒸汽增量根据Tag
+    '''
+    if request.method == 'GET':
+        data = request.values
+        try:
+            StartTime = data.get("StartTime")
+            EndTime = data.get("EndTime")
+            TagClassValue = data.get("TagClassValue")
+            EnergyClass = data.get("EnergyClass")
+            if EnergyClass == "汽":
+                oclass = db_session.query(IncrementStreamTable).filter(IncrementStreamTable.TagClassValue == TagClassValue,
+                                                                       IncrementStreamTable.CollectionDate.between(StartTime,EndTime)).order_by(("CollectionDate")).all()
+            return json.dumps(oclass, cls=AlchemyEncoder, ensure_ascii=False)
+        except Exception as e:
+            print(e)
+            logger.error(e)
+            insertSyslog("error", "查询tag根据区域报错Error：" + str(e), current_user.Name)
 
 @energySteam.route('/selectSteamTotalReminder', methods=['POST', 'GET'])
 def selectSteamTotalReminder():

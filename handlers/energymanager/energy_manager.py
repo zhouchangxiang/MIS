@@ -11,7 +11,7 @@ from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, 
     AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
     AreaTimeEnergyColour, ElectricProportion, PUIDMaintain, ElectricPrice, ElectricVolumeMaintain, WaterSteamPrice, \
-    SteamTotalMaintain
+    SteamTotalMaintain, ElectricSiteURL
 from tools.common import insert, delete, update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger, insertSyslog
@@ -209,9 +209,18 @@ def energyStatistics(oc_list, StartTime, EndTime, energy):
             oc_list)[
                                                                                                                                                                            1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
     elif energy == "电":
-        sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(
-            oc_list)[
-                                                                                                                                                                           1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+        total = 0
+        for tag in oc_list:
+            ratios = db_session.query(ElectricSiteURL).filter(ElectricSiteURL.TagClassValue == tag).first()
+            value = ratios.Value
+            sql = "SELECT SUM(Cast(t.IncremenValue as float))*" + value + " FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable) WHERE t.TagClassValue=" + "'" + tag + "'" + "AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+            # sql = "SELECT SUM(Cast(t.IncremenValue as float))*" + value + " as count  FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(
+            #     oc_list)[1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
+            re = db_session.execute(sql).fetchall()
+            db_session.close()
+            zgl = 0 if re[0][0] is None else re[0][0]
+            total += zgl
+        return round(total, 2)
     elif energy == "汽":
         sql = "SELECT SUM(Cast(t.IncremenValue as float)) as count  FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable)  WHERE t.TagClassValue in (" + str(
             oc_list)[
@@ -935,6 +944,17 @@ def exportx(Area, EnergyClass,  StartTime, EndTime):
     output.seek(0)
     return output
 
+
+# def count_ratio(tag):
+#     """
+#     根据tag点的比例计算实际总功率
+#     :param tag: 采集点
+#     :return: 实际总功率
+#     """
+#     ratios = db_session.query(ElectricSiteURL).filter(ElectricSiteURL.TagClassValue == tag).first()
+#
+
+
 def tongjibaobiaosql(EnergyClass, TagClassValue, StartTime, EndTime):
     if EnergyClass == "水":
         sql = "SELECT (SUM(Cast(t.IncremenValue as float)))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+EnergyClass+"') AS IncremenValue FROM [DB_MICS].[dbo].[IncrementWaterTable] t with (INDEX =IX_IncrementWaterTable) " \
@@ -942,9 +962,13 @@ def tongjibaobiaosql(EnergyClass, TagClassValue, StartTime, EndTime):
         oclass = db_session.execute(sql).fetchall()
         db_session.close()
     elif EnergyClass == "电":
-        sql = "SELECT (SUM(Cast(t.IncremenValue as float)))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+EnergyClass+"') AS IncremenValue FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable) " \
-              "WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "' AND " + "'" + EndTime + "'"
-        oclass = db_session.execute(sql).fetchall()
+        ratios = db_session.query(ElectricSiteURL).filter(ElectricSiteURL.TagClassValue == TagClassValue).first()
+        value = ratios.Value
+        s = "SELECT SUM(Cast(t.IncremenValue as float))*" + value + " AS IncremenValue FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable) WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "' AND " + "'" + EndTime + "'"
+        oclass = db_session.execute(s).fetchall()
+        # sql = "SELECT (SUM(Cast(t.IncremenValue as float)))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+EnergyClass+"') AS IncremenValue FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable) " \
+        #       "WHERE t.TagClassValue = '" + TagClassValue + "' AND t.CollectionDate BETWEEN " + "'" + StartTime + "' AND " + "'" + EndTime + "'"
+        # oclass = db_session.execute(sql).fetchall()
         db_session.close()
     else:
         sql = "SELECT (SUM(Cast(t.IncremenValue as float)))*(select Cast([Proportion] as float) from [DB_MICS].[dbo].[ElectricProportion] where [ProportionType] = '"+EnergyClass+"') AS IncremenValue FROM [DB_MICS].[dbo].[IncrementStreamTable] t with (INDEX =IX_IncrementStreamTable) " \
@@ -990,6 +1014,7 @@ def tongjibaobiao():
                 dict_data = {"TagClassValue": tag.FEFportIP, "IncremenValue": round(0 if reclass[0]['IncremenValue'] is None else float(reclass[0]['IncremenValue']), 2), "AreaName": tag.AreaName, "Unit": unit, "StartTime": StartTime, "EndTime": EndTime}
                 data_list.append(dict_data)
             dir["row"] = data_list
+            print(dir)
             dir["total"] = len(oclass)
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)
         except Exception as e:

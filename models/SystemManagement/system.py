@@ -719,11 +719,11 @@ class ElectricSiteURL(Base):
     # 采集点:
     TagClassValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 区域名称:
-    AreaName = Column(Unicode(65), primary_key=False, autoincrement=False, nullable=True)
+    # 比例
+    Ratio = Column(Unicode(65), primary_key=False, autoincrement=False, nullable=True)
 
-    # 备注:
-    Description = Column(Unicode(150), primary_key=False, autoincrement=False, nullable=True)
+    # 比例值
+    Value = Column(Unicode(150), primary_key=False, autoincrement=False, nullable=True)
 
 
 # 服务运行情况表

@@ -105,7 +105,11 @@ def run():
                     proSumValue = proSumValue[0]
                 else:
                     proSumValue = 0
-                sumvalue = abs(round(float(key.SumValue) - float(proSumValue), 2))
+                sumvalue = round(float(key.SumValue) - float(proSumValue), 2)
+
+                if sumvalue < 0:
+                    continue
+
                 if proSumValue == 0:
                     ss = (sumvalue, "汽", key.ID,
                           key.PriceID, key.SumUnit, key.EquipmnetID,
@@ -114,7 +118,7 @@ def run():
                     steam_value.append(ss)
                 else:
                     if float(key.SumValue) < float(proSumValue):#去除清零情况，统计累计值减小就认为是脏数据
-                        if sumvalue/float(proSumValue) > 0.2:
+                        if sumvalue/float(proSumValue) > 0.04:
                             ss = (sumvalue, "汽", key.ID,
                                   key.PriceID, key.SumUnit, key.EquipmnetID,
                                   key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
@@ -156,58 +160,9 @@ def run():
                 except Exception as e:
                     conn.rollback()
                     print(e)
-            # # 汽能体积插入-----------------------------------------------------------------增量库
-            # steamV_value = list()
-            # steVkeys = db_session.query(SteamEnergy).filter(SteamEnergy.insertVolumeFlag == "0",
-            #                                                SteamEnergy.Volume != "0.0", SteamEnergy.Volume != None).order_by(
-            #     desc("ID")).all()
-            # for key in steVkeys:
-            #     proVolValue = db_session.query(SteamEnergy.Volume).filter(
-            #         SteamEnergy.ID == key.PrevID, SteamEnergy.Volume != None).first()
-            #     if proVolValue != None:
-            #         proVolValue = proVolValue[0]
-            #     else:
-            #         proVolValue = 0
-            #     volvalue = abs(round(float(key.Volume) - float(proVolValue), 2))
-            #     ss = (volvalue, "汽", key.ID,
-            #           key.PriceID, key.SumUnit, key.EquipmnetID,
-            #           key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
-            #           key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName, "0")
-            #     steamV_value.append(ss)
-            # try:
-            #     cursor = conn.cursor()
-            #     cursor.executemany(
-            #         "INSERT INTO IncrementStreamVolume VALUES (%s,%s,%d,%d,%s,%d,%s,%s,%s,%s,%s,%s,%s,%s)",
-            #         steamV_value)
-            #     conn.commit()
-            # except Exception as e:
-            #     conn.rollback()
-            #     print(e)
-            # # 更新增量库原始数据库
-            # steamV_IDS = list()
-            # steamVInitial = list()
-            # upsteVkeys = db_session.query(IncrementStreamVolume).filter(
-            #     IncrementStreamVolume.insertFlag == "0").order_by(desc("CollectionDate")).all()
-            # for upskey in upsteVkeys:
-            #     stV = ("1", upskey.ID)
-            #     stinV = ("1", upskey.CalculationID)
-            #     steamV_IDS.append(stV)
-            #     steamVInitial.append(stinV)
-            # if len(steamV_IDS) > 0:
-            #     try:
-            #         cursor = conn.cursor()
-            #         cursor.executemany(
-            #             "update IncrementStreamVolume SET insertFlag=(%s) where id=(%d)", steamV_IDS)
-            #         cursor.executemany(
-            #             "update SteamEnergy SET insertVolumeFlag=(%s) where id=(%d)", steamVInitial)
-            #         conn.commit()
-            #     except Exception as e:
-            #         conn.rollback()
-            #         print(e)
             #电能----------------------------------------------------------------------------------KU
             electric_value = list()
-            elekeys = db_session.query(ElectricEnergy).filter(ElectricEnergy.IncrementFlag == "0",
-                                                              ElectricEnergy.ZGL != "0.0").order_by(desc("CollectionDate")).all()
+            elekeys = db_session.query(ElectricEnergy).filter(ElectricEnergy.IncrementFlag == "0", ElectricEnergy.ZGL != "0.0").order_by(desc("CollectionDate")).all()
             for key in elekeys:
                 proZGLmValue = db_session.query(ElectricEnergy.ZGL).filter(ElectricEnergy.ID == key.PrevID).first()
                 if proZGLmValue != None:
