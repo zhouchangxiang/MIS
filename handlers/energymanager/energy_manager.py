@@ -217,8 +217,6 @@ def energyStatistics(oc_list, StartTime, EndTime, energy):
             ratios = db_session.query(ElectricSiteURL).filter(ElectricSiteURL.TagClassValue == tag).first()
             value = ratios.Value
             sql = "SELECT SUM(Cast(t.IncremenValue as float))*" + value + " FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable) WHERE t.TagClassValue=" + "'" + tag + "'" + "AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
-            # sql = "SELECT SUM(Cast(t.IncremenValue as float))*" + value + " as count  FROM [DB_MICS].[dbo].[IncrementElectricTable] t with (INDEX =IX_IncrementElectricTable)  WHERE t.TagClassValue in (" + str(
-            #     oc_list)[1:-1] + ") AND t.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "'"
             re = db_session.execute(sql).fetchall()
             db_session.close()
             zgl = 0 if re[0][0] is None else re[0][0]
@@ -250,6 +248,7 @@ def energyStatisticsCost(oc_list, StartTime, EndTime, energy):
     '''
     propor = db_session.query(ElectricProportion).filter(ElectricProportion.ProportionType == energy).first()
     pro = float(propor.Proportion)
+    sql = ''
     if energy == "水":
         sql = "select SUM(Cast(t1.IncremenValue as float)) * Cast(t2.PriceValue as float) FROM [DB_MICS].[dbo].[IncrementWaterTable] t1 with (INDEX =IX_IncrementWaterTable) INNER JOIN [DB_MICS].[dbo].[WaterSteamPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
             oc_list)[

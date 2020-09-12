@@ -12,7 +12,7 @@ from handlers.energymanager.energy_manager import energyStatistics, energyStatis
 from models.SystemManagement.core import RedisKey, ElectricEnergy, WaterEnergy, SteamEnergy, LimitTable, Equipment, \
     AreaTable, Unit, TagClassType, TagDetail, BatchMaintain
 from models.SystemManagement.system import EarlyWarning, EarlyWarningLimitMaintain, WaterSteamBatchMaintain, \
-    AreaTimeEnergyColour, ElectricProportion, IncrementElectricTable, ElectricPrice, RatedPowerMaintain
+    AreaTimeEnergyColour, ElectricProportion, IncrementElectricTable, ElectricPrice, RatedPowerMaintain, ElectricSiteURL
 from tools.common import insert, delete, update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger, insertSyslog
@@ -128,11 +128,10 @@ def energyElectricSelect(data):
                 oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == energy).all()
             oc_list = []
             for oc in oclass:
-                oc_list.append(oc.TagClassValue)
-            oc_list.remove('E_Area_ZH_50_1_41_3')
-            oc_list.remove('E_Area_YTQ_38_2_29_3')
-            oc_list.remove('E_Area_GT_30_2_19_2')
-            oc_list.remove('E_Area_TQR_18_2_36_4')
+                if oc.TagClassValue not in ['E_Area_ZH_50_1_41_3', 'E_Area_YTQ_38_2_29_3', 'E_Area_GT_30_2_19_2', 'E_Area_TQR_18_2_36_4']:
+                    oc_list.append(oc.TagClassValue)
+                else:
+                    pass
             if len(oc_list) > 0:
                 elecount = energyStatistics(oc_list, StartTime, EndTime, energy)
             else:
@@ -327,7 +326,8 @@ def electricnergycost():
                         dir_list.append(dir_list_i)
                         dir_list2.append(dir_list_i_price)
                 elif TimeClass == "月":
-                    for i in range(int(StartTime[8:10]), int(EndTime[8:10]) + 1):
+                    # for i in range(int(StartTime[8:10]), int(EndTime[8:10]) + 1):
+                    for i in range(10, int(EndTime[8:10]) + 1):
                         staeM = StartTime[0:8]+addzero(i) + " 00:00:00"
                         endeM = StartTime[0:8]+addzero(i) + " 23:59:59"
                         dir_list_i = {}
@@ -478,21 +478,55 @@ def electricnergycost():
 
 
 def timeelectricprice(oc_list, StartTime, EndTime, energy):
-    sql = "select t2.PriceName,SUM(Cast(t1.IncremenValue as float)) * Cast(t2.PriceValue as float) FROM [DB_MICS].[dbo].[IncrementElectricTable] t1 with (INDEX =IX_IncrementElectricTable) INNER JOIN [DB_MICS].[dbo].[ElectricPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
-        oc_list)[
-                                                                                                                                                                                                                                                                                                1:-1] + ") and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue, t2.PriceName"
-    re = db_session.execute(sql).fetchall()
-    db_session.close()
-    return re
+    total = 0.0
+    price_name = ''
+    for tag in oc_list:
+        ratios = db_session.query(ElectricSiteURL).filter(ElectricSiteURL.TagClassValue == tag).first()
+        value = ratios.Value
+        sql = "select t2.PriceName,SUM(Cast(t1.IncremenValue as float))*" + value + "* Cast(t2.PriceValue as float) FROM [DB_MICS].[dbo].[IncrementElectricTable] t1 with (INDEX =IX_IncrementElectricTable) INNER JOIN [DB_MICS].[dbo].[ElectricPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue='" + tag + "' and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue, t2.PriceName"
+        re = db_session.execute(sql).fetchall()
+        if len(re) > 0:
+            price_name = re[0][0]
+            zgl = re[0][1] if re[0][1] is not None else 0.0
+            total += zgl
+        db_session.close()
+    return [(price_name, total)]
+    # sql = "select t2.PriceName,SUM(Cast(t1.IncremenValue as float)) * Cast(t2.PriceValue as float) FROM [DB_MICS].[dbo].[IncrementElectricTable] t1 with (INDEX =IX_IncrementElectricTable) INNER JOIN [DB_MICS].[dbo].[ElectricPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
+    #     oc_list)[
+    #                                                                                                                                                                                                                                                                                             1:-1] + ") and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue, t2.PriceName"
+    # re = db_session.execute(sql).fetchall()
+    # db_session.close()
+    # return re
 
 
 def timeelectric(oc_list, StartTime, EndTime, energy):
-    sql = "select t2.PriceName,SUM(Cast(t1.IncremenValue as float)) FROM [DB_MICS].[dbo].[IncrementElectricTable] t1 with (INDEX =IX_IncrementElectricTable) INNER JOIN [DB_MICS].[dbo].[ElectricPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
-        oc_list)[
-                                                                                                                                                                                                                                                                 1:-1] + ") and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue, t2.PriceName"
-    re = db_session.execute(sql).fetchall()
-    db_session.close()
-    return re
+    total = 0.0
+    price_name = ''
+    for tag in oc_list:
+        ratios = db_session.query(ElectricSiteURL).filter(ElectricSiteURL.TagClassValue == tag).first()
+        value = ratios.Value
+        sql = "select t2.PriceName,SUM(Cast(t1.IncremenValue as float))*" + value +" FROM [DB_MICS].[dbo].[IncrementElectricTable] t1 with (INDEX =IX_IncrementElectricTable) INNER JOIN [DB_MICS].[dbo].[ElectricPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue='" + tag +"' and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue, t2.PriceName"
+        re = db_session.execute(sql).fetchall()
+        if len(re) > 0:
+            price_name = re[0][0]
+            zgl = re[0][1] if re[0][1] is not None else 0.0
+            total += zgl
+        else:
+            pass
+        # db_session.close()
+        # print('单个tag点总功率:', tag, total)
+    # print('hello1')
+    # print('hello2:', price_name)
+    # print('hello3:', total)
+    return [(price_name, total)]
+    # sql = "select t2.PriceName,SUM(Cast(t1.IncremenValue as float)) FROM [DB_MICS].[dbo].[IncrementElectricTable] t1 with (INDEX =IX_IncrementElectricTable) INNER JOIN [DB_MICS].[dbo].[ElectricPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
+    #     oc_list)[
+    #                                                                                                                                                                                                                                                              1:-1] + ") and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue, t2.PriceName"
+    #
+    # re = db_session.execute(sql).fetchall()
+    # db_session.close()
+    # return re
+
 
 
 @energyElectric.route('/runefficiency', methods=['POST', 'GET'])
