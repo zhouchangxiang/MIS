@@ -326,8 +326,7 @@ def electricnergycost():
                         dir_list.append(dir_list_i)
                         dir_list2.append(dir_list_i_price)
                 elif TimeClass == "月":
-                    # for i in range(int(StartTime[8:10]), int(EndTime[8:10]) + 1):
-                    for i in range(10, int(EndTime[8:10]) + 1):
+                    for i in range(int(StartTime[8:10]), int(EndTime[8:10]) + 1):
                         staeM = StartTime[0:8]+addzero(i) + " 00:00:00"
                         endeM = StartTime[0:8]+addzero(i) + " 23:59:59"
                         dir_list_i = {}
