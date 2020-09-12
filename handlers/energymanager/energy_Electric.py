@@ -129,6 +129,10 @@ def energyElectricSelect(data):
             oc_list = []
             for oc in oclass:
                 oc_list.append(oc.TagClassValue)
+            oc_list.remove('E_Area_ZH_50_1_41_3')
+            oc_list.remove('E_Area_YTQ_38_2_29_3')
+            oc_list.remove('E_Area_GT_30_2_19_2')
+            oc_list.remove('E_Area_TQR_18_2_36_4')
             if len(oc_list) > 0:
                 elecount = energyStatistics(oc_list, StartTime, EndTime, energy)
             else:
