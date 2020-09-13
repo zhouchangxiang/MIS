@@ -236,7 +236,40 @@ def energyStatistics(oc_list, StartTime, EndTime, energy):
     else:
         return 0.0
 
-
+def timeelectricprice(oc_list, StartTime, EndTime, energy):
+    re_list = []
+    jtotal = 0.0
+    ftotal = 0.0
+    ptotal = 0.0
+    gtotal = 0.0
+    for tag in oc_list:
+        ratios = db_session.query(ElectricSiteURL).filter(ElectricSiteURL.TagClassValue == tag).first()
+        value = ratios.Value
+        sql = "select t2.PriceName,SUM(Cast(t1.IncremenValue as float))*" + value + "* Cast(t2.PriceValue as float) FROM [DB_MICS].[dbo].[IncrementElectricTable] t1 with (INDEX =IX_IncrementElectricTable) INNER JOIN [DB_MICS].[dbo].[ElectricPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue='" + tag + "' and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue, t2.PriceName"
+        res = db_session.execute(sql).fetchall()
+        for re in res:
+            if re[0] == "尖时刻":
+                j = re[1] if re[1] is not None else 0.0
+                jtotal = jtotal + j
+            elif re[0] == "峰时刻":
+                f = re[1] if re[1] is not None else 0.0
+                ftotal = ftotal + f
+            elif re[0] == "平时刻":
+                p = re[1] if re[1] is not None else 0.0
+                ptotal = ptotal + p
+            elif re[0] == "谷时刻":
+                g = re[1] if re[1] is not None else 0.0
+                gtotal = gtotal + g
+        # if len(re) > 0:
+        #     price_name = re[0][0]
+        #     zgl = re[0][1] if re[0][1] is not None else 0.0
+        #     total += zgl
+        db_session.close()
+    re_list.append(("尖时刻",jtotal))
+    re_list.append(("峰时刻",ftotal))
+    re_list.append(("平时刻",ptotal))
+    re_list.append(("谷时刻",gtotal))
+    return re_list
 def energyStatisticsCost(oc_list, StartTime, EndTime, energy):
     '''
     获取某段时间水电汽的成本
@@ -254,9 +287,14 @@ def energyStatisticsCost(oc_list, StartTime, EndTime, energy):
             oc_list)[
                                                                                                                                                                                                                                                                                    1:-1] + ") and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue"
     elif energy == "电":
-        sql = "select SUM(Cast(t1.IncremenValue as float)) * Cast(t2.PriceValue as float) FROM [DB_MICS].[dbo].[IncrementElectricTable] t1 with (INDEX =IX_IncrementElectricTable) INNER JOIN [DB_MICS].[dbo].[ElectricPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
-            oc_list)[
-                                                                                                                                                                                                                                                                                       1:-1] + ") and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue"
+        res = timeelectricprice(oc_list, StartTime, EndTime, energy)
+        count = 0.0
+        for re in res:
+            count = count + float(re[1])
+        return round(count, 2)
+        # sql = "select SUM(Cast(t1.IncremenValue as float)) * Cast(t2.PriceValue as float) FROM [DB_MICS].[dbo].[IncrementElectricTable] t1 with (INDEX =IX_IncrementElectricTable) INNER JOIN [DB_MICS].[dbo].[ElectricPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
+        #     oc_list)[
+        #                                                                                                                                                                                                                                                                                1:-1] + ") and t1.CollectionDate BETWEEN " + "'" + StartTime + "'" + " AND " + "'" + EndTime + "' group by t1.PriceID, t2.PriceValue"
     elif energy == "汽":
         sql = "select SUM(Cast(t1.IncremenValue as float)) * Cast(t2.PriceValue as float) FROM [DB_MICS].[dbo].[IncrementStreamTable] t1 with (INDEX =IX_IncrementStreamTable) INNER JOIN [DB_MICS].[dbo].[WaterSteamPrice] t2 ON t1.PriceID = t2.ID where  t1.TagClassValue in (" + str(
             oc_list)[
