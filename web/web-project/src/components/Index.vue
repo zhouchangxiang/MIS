@@ -97,6 +97,7 @@
               </div>
             </div>
             <el-button type="primary" @click="lookWaterMap" style="position: absolute;left: 0;" v-if="JSON.stringify(waterTagList) != '{}'">水表采集图</el-button>
+            <el-button type="primary" @click="lookElectricMap" style="position: absolute;left: 0;">电表采集图</el-button>
           </div>
         </el-drawer>
         <!-- 水表分布图 -->
@@ -871,6 +872,9 @@ export default {
     },
     lookWaterMap(){
       this.waterAreaDialog = true
+    },
+    lookElectricMap(){
+
     },
     initWebSocket(){ //初始化weosocket
       this.websock = new WebSocket('ws://' + location.host + '/socket');
