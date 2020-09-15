@@ -96,8 +96,10 @@
                 </div>
               </div>
             </div>
-            <el-button type="primary" @click="lookWaterMap" style="position: absolute;left: 0;" v-if="JSON.stringify(waterTagList) != '{}'">水表采集图</el-button>
-            <el-button type="primary" @click="lookElectricMap" style="position: absolute;left: 0;">电表采集图</el-button>
+            <div style="position: absolute;left: 0;">
+              <el-button type="primary" @click="lookWaterMap" style="" v-if="JSON.stringify(waterTagList) != '{}'">水表采集图</el-button>
+              <el-button type="primary" @click="lookElectricMap" style="" v-if="JSON.stringify(electricTagList) != '{}'">电表采集图</el-button>
+            </div>
           </div>
         </el-drawer>
         <!-- 水表分布图 -->
@@ -181,6 +183,55 @@
           </el-row>
           <div slot="footer" class="dialog-footer">
             <el-button @click="waterAreaDialog = false">关闭</el-button>
+          </div>
+        </el-dialog>
+        <!-- 电表采集分布图 -->
+        <el-dialog title="电表采集分布" :visible.sync="electricAreaDialog" width="75%" v-if="electricAreaDialog">
+          <el-col :span="24">
+            <ul class="areaTotalTagUl">
+              <li>
+                <div class="cardformContainer">污水站</div>
+              </li>
+              <li>
+                <div class="cardformContainer">锅炉房</div>
+              </li>
+              <li>
+                <div class="cardformContainer">提取二车间</div>
+              </li>
+              <li>
+                <div class="cardformContainer">综合车间</div>
+              </li>
+              <li>
+                <div class="cardformContainer">新建综合制剂车间</div>
+              </li>
+              <li>
+                <div class="cardformContainer">变电所</div>
+              </li>
+              <li>
+                <div class="cardformContainer">中试车间</div>
+              </li>
+              <li>
+                <div class="cardformContainer">智能库</div>
+              </li>
+              <li>
+                <div class="cardformContainer">原提取车间</div>
+              </li>
+              <li>
+                <div class="cardformContainer">前处理车间</div>
+              </li>
+              <li>
+                <div class="cardformContainer">GMP车间</div>
+              </li>
+              <li>
+                <div class="cardformContainer">固体制剂车间</div>
+              </li>
+              <li>
+                <div class="cardformContainer">办公楼＼食堂</div>
+              </li>
+            </ul>
+          </el-col>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="electricAreaDialog = false">关闭</el-button>
           </div>
         </el-dialog>
         <!-- 水表分布图 -->
@@ -650,6 +701,7 @@ export default {
       waterAreaTagDialog:false,
       electricAreaTagDialog:false,
       steamAreaTagDialog:false,
+      electricAreaDialog:false,
       areaOverallDialog:false,
       areaOverallDialogTitle:"",
       areaOverallDialogSrc:"",
@@ -874,11 +926,11 @@ export default {
       this.waterAreaDialog = true
     },
     lookElectricMap(){
-
+      this.electricAreaDialog = true
     },
     initWebSocket(){ //初始化weosocket
-      this.websock = new WebSocket('ws://' + location.host + '/socket');
-      // this.websock = new WebSocket('ws://127.0.0.1:5002');
+      // this.websock = new WebSocket('ws://' + location.host + '/socket');
+      this.websock = new WebSocket('ws://127.0.0.1:5002');
       this.websock.onmessage = this.websocketonmessage;
       this.websock.onopen = this.websocketonopen;
       this.websock.onerror = this.websocketonerror;
@@ -1139,4 +1191,11 @@ export default {
       opacity:1; /*透明度为1*/
     }
    }
+  .areaTotalTagUl{
+
+  }
+  .areaTotalTagUl li{
+    display: inline-block;
+    margin-right: 15px;
+  }
 </style>
