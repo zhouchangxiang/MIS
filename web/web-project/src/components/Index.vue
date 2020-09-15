@@ -97,8 +97,9 @@
               </div>
             </div>
             <div style="position: absolute;left: 0;">
-              <el-button type="primary" @click="lookWaterMap" style="" v-if="JSON.stringify(waterTagList) != '{}'">水表采集图</el-button>
-              <el-button type="primary" @click="lookElectricMap" style="" v-if="JSON.stringify(electricTagList) != '{}'">电表采集图</el-button>
+              <el-button type="primary" @click="lookWaterMap" v-if="JSON.stringify(waterTagList) != '{}'">水表采集图</el-button>
+              <!--<el-button type="primary" @click="lookElectricMap" v-if="JSON.stringify(electricTagList) != '{}'">电表采集图</el-button>-->
+              <el-button type="primary" @click="lookElectricMap">电表采集图</el-button>
             </div>
           </div>
         </el-drawer>
@@ -186,47 +187,176 @@
           </div>
         </el-dialog>
         <!-- 电表采集分布图 -->
-        <el-dialog title="电表采集分布" :visible.sync="electricAreaDialog" width="75%" v-if="electricAreaDialog">
+        <el-dialog title="电表采集分布" :visible.sync="electricAreaDialog" width="90%" top="0" v-if="electricAreaDialog">
           <el-col :span="24">
+            <div></div>
             <ul class="areaTotalTagUl">
               <li>
-                <div class="cardformContainer">污水站</div>
+                <div class="cardformContainer text-center">污水站</div>
+                <div class="TagLine"></div>
+                <div class="cardformContainer itemMarginBottom-s">
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_WSZ_16_2_35.ZGL }}</p></div>
+                  <p>电表</p>
+                </div>
               </li>
               <li>
-                <div class="cardformContainer">锅炉房</div>
+                <div class="cardformContainer text-center">锅炉房</div>
+                <div class="TagLine"></div>
+                <div class="cardformContainer itemMarginBottom-s">
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_GLF_42_1_33_1.ZGL }}</p></div>
+                  <p>锅炉</p>
+                </div>
+                <div class="cardformContainer itemMarginBottom-s">
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_GLF_42_1_33_2.ZGL }}</p></div>
+                  <p>供暖</p>
+                </div>
+                <div class="cardformContainer itemMarginBottom-s">
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_GLF_42_1_33_3.ZGL }}</p></div>
+                  <p>脱硫</p>
+                </div>
               </li>
               <li>
-                <div class="cardformContainer">提取二车间</div>
+                <div class="cardformContainer text-center">提取二车间</div>
+                <div class="TagLine"></div>
+                <div class="cardformContainer itemMarginBottom-s">
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_TQR_18_2_36_1.ZGL }}</p></div>
+                  <p>2L空调室二冷水机组</p>
+                </div>
+                <div class="cardformContainer itemMarginBottom-s">
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_TQR_18_2_36_2.ZGL }}</p></div>
+                  <p>2L空调室二空调机组</p>
+                </div>
+                <div class="cardformContainer itemMarginBottom-s">
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_TQR_18_2_36_3.ZGL }}</p></div>
+                  <p>2L电控室冷水机组</p>
+                </div>
+                <div class="cardformContainer itemMarginBottom-s">
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_TQR_18_2_36_4.ZGL }}</p></div>
+                  <p>2L电控室制粒</p>
+                </div>
               </li>
               <li>
-                <div class="cardformContainer">综合车间</div>
+                <div class="cardformContainer text-center">综合车间</div>
+                <div class="TagLine"></div>
+                <div class="cardformContainer itemMarginBottom-s">
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_ZH_1.ZGL }}</p></div>
+                  <p>MVR</p>
+                </div>
+                <div class="cardformContainer itemMarginBottom-s">
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_ZH_2.ZGL }}</p></div>
+                  <p>MVR</p>
+                </div>
+                <div class="cardformContainer itemMarginBottom-s">
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_ZH_50_1_41_1.ZGL }}</p></div>
+                  <p>总表、制粒、带干、粉糖、输液泵</p>
+                </div>
+                <div class="cardformContainer itemMarginBottom-s">
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_ZH_50_1_41_2.ZGL }}</p></div>
+                  <p>制粒</p>
+                </div>
+                <div class="cardformContainer itemMarginBottom-s">
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_ZH_50_1_41_3.ZGL }}</p></div>
+                  <p>带干</p>
+                </div>
+                <div class="cardformContainer itemMarginBottom-s">
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_ZH_50_1_41_4.ZGL }}</p></div>
+                  <p>浓缩罐、自控系统、电梯、洗衣房、真空泵</p>
+                </div>
+                <div class="cardformContainer itemMarginBottom-s">
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_ZH_50_1_41_5.ZGL }}</p></div>
+                  <p>排风</p>
+                </div>
+                <div class="cardformContainer itemMarginBottom-s">
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_ZH_50_1_41_6.ZGL }}</p></div>
+                  <p>照明</p>
+                </div>
               </li>
               <li>
-                <div class="cardformContainer">新建综合制剂车间</div>
+                <div class="cardformContainer text-center">新建综合制剂车间</div>
+                <div class="TagLine"></div>
+                <div class="cardformContainer itemMarginBottom-s">
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_XJZ_11_2_7.ZGL }}</p></div>
+                  <p>2L空压机、循环水、机器人</p>
+                </div>
+                <div class="cardformContainer itemMarginBottom-s">
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_XJZ_11_2_7_1.ZGL }}</p></div>
+                  <p>2L干法、颗粒</p>
+                </div>
+                <div class="cardformContainer itemMarginBottom-s">
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_XJZ_11_2_7_3.ZGL }}</p></div>
+                  <p>2L电梯、压片、胶囊、泡罩、粉碎</p>
+                </div>
+                <div class="cardformContainer itemMarginBottom-s">
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_XJZ_11_2_7_4.ZGL }}</p></div>
+                  <p>2L空调</p>
+                </div>
+                <div class="cardformContainer itemMarginBottom-s">
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_XJZ_11_1_6_5.ZGL }}</p></div>
+                  <p>1L洗衣机、照明、卷帘门、风机</p>
+                </div>
+                <div class="cardformContainer itemMarginBottom-s">
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_XJZ_11_1_6_6.ZGL }}</p></div>
+                  <p>1L冷水机组2</p>
+                </div>
               </li>
               <li>
-                <div class="cardformContainer">变电所</div>
+                <div class="cardformContainer text-center">变电所</div>
+                <div class="TagLine"></div>
+                <div class="cardformContainer itemMarginBottom-s">
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_BDS_49_1_39_1.ZGL }}</p></div><p>40喷干</p>
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_BDS_49_1_39_2.ZGL }}</p></div><p>50喷干</p>
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_BDS_49_1_39_3.ZGL }}</p></div><p>新提取循环水泵</p>
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_BDS_49_1_39_4.ZGL }}</p></div><p>消防水泵+新大库</p>
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_BDS_49_2_40_5.ZGL }}</p></div><p>GMP</p>
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_BDS_49_2_40_6.ZGL }}</p></div><p>前处理</p>
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_BDS_49_2_40_7.ZGL }}</p></div><p>仓储中心</p>
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_BDS_49_2_40_8.ZGL }}</p></div><p>提取二照明</p>
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_BDS_49_2_40_9.ZGL }}</p></div><p>40粉碎、提取二空调</p>
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_BDS_49_2_40_10.ZGL }}</p></div><p>60带干、风机、制粒、办公</p>
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_BDS_49_2_40_11.ZGL }}</p></div><p>提取、自控</p>
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_BDS_49_2_40_12.ZGL }}</p></div><p>提取二车间新空调</p>
+                </div>
               </li>
               <li>
-                <div class="cardformContainer">中试车间</div>
+                <div class="cardformContainer text-center">中试车间</div>
+                <div class="TagLine"></div>
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_YF_26_1_14.ZGL }}</p></div><p>电器</p>
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_YF_26_1_14_2.ZGL }}</p></div><p>老醇提水泵、车床、台钻、砂轮</p>
               </li>
               <li>
-                <div class="cardformContainer">智能库</div>
+                <div class="cardformContainer text-center">智能库</div>
+                <div class="TagLine"></div>
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_ZNK_24_1_10_1.ZGL }}</p></div><p>1L</p>
               </li>
               <li>
-                <div class="cardformContainer">原提取车间</div>
+                <div class="cardformContainer text-center">原提取车间</div>
+                <div class="TagLine"></div>
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_YTQ_38_1_28.ZGL }}</p></div><p>办公、新700粉碎机、机修、设备库房</p>
               </li>
               <li>
-                <div class="cardformContainer">前处理车间</div>
+                <div class="cardformContainer text-center">前处理车间</div>
+                <div class="TagLine"></div>
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_YTQ_38_2_29.ZGL }}</p></div><p>办公、新700粉碎机、机修、设备库房</p>
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_YTQ_38_2_29_3.ZGL }}</p></div><p>洗药机、切药机</p>
               </li>
               <li>
-                <div class="cardformContainer">GMP车间</div>
+                <div class="cardformContainer text-center">GMP车间</div>
+                <div class="TagLine"></div>
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_JK_28_2_17.ZGL }}</p></div><p>1L</p>
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_JK_28_1_16.ZGL }}</p></div><p>2L</p>
               </li>
               <li>
-                <div class="cardformContainer">固体制剂车间</div>
+                <div class="cardformContainer text-center">固体制剂车间</div>
+                <div class="TagLine"></div>
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_GT_30_2_19.ZGL }}</p></div><p>除尘系统、空调系统</p>
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_GT_30_2_19_1.ZGL }}</p></div><p>机修办公室、压片、胶囊、混合、挂衣、颗粒、瓶线</p>
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_GT_30_2_19_2.ZGL }}</p></div><p>风冷冷水机、除湿机、空压机</p>
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_GT_30_2_19_3.ZGL }}</p></div><p>照明</p>
               </li>
               <li>
-                <div class="cardformContainer">办公楼＼食堂</div>
+                <div class="cardformContainer text-center">办公楼＼食堂</div>
+                <div class="TagLine"></div>
+                  <div class="electricTagData"><p>{{ electricTagList.E_Area_BGL_36_1_26.ZGL }}</p></div><p>老屋角</p>
               </li>
             </ul>
           </el-col>
@@ -929,8 +1059,8 @@ export default {
       this.electricAreaDialog = true
     },
     initWebSocket(){ //初始化weosocket
-      // this.websock = new WebSocket('ws://' + location.host + '/socket');
-      this.websock = new WebSocket('ws://127.0.0.1:5002');
+      this.websock = new WebSocket('ws://' + location.host + '/socket');
+      // this.websock = new WebSocket('ws://127.0.0.1:5002');
       this.websock.onmessage = this.websocketonmessage;
       this.websock.onopen = this.websocketonopen;
       this.websock.onerror = this.websocketonerror;
@@ -1147,15 +1277,13 @@ export default {
     padding-right: 15px;
     line-height: 64px;
   }
-  .steamTagValue{
-    float: right;
-  }
   .steamTagValue p{
     background: #333333;
     padding: 0 5px;
     color: #15CC48;
     margin-bottom: 3px;
     white-space: nowrap;
+    float: right;
   }
   .useAreaCard{
     position: relative;
@@ -1192,10 +1320,31 @@ export default {
     }
    }
   .areaTotalTagUl{
-
+    overflow: hidden;
+    overflow-x: auto;
+    white-space: nowrap;
   }
   .areaTotalTagUl li{
+    position: relative;
+    width: 150px;
     display: inline-block;
-    margin-right: 15px;
+    margin-right: 20px;
+    vertical-align: top;
+  }
+  .areaTotalTagUl li p{
+    white-space: nowrap;
+  }
+  .areaTotalTagUl .TagLine{
+    width: 1px;
+    height: 30px;
+    margin: 0 auto;
+    background: #e1e1e1;
+  }
+  .electricTagData{
+    background: #333333;
+    padding: 0 5px;
+    color: #15CC48;
+    margin-bottom: 3px;
+    white-space: nowrap;
   }
 </style>

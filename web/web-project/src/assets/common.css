@@ -36,6 +36,9 @@
 .float-right{
   float: right;
 }
+.text-center{
+  text-align: center;
+}
 .bg-dead{
   background-color: #ECF1F4;
 }
@@ -151,12 +154,18 @@
 .cardformContainer{
   background: #fff;
   color: #131414;
-  padding: 10px;
+  padding: 6px 10px;
   font-size: 16px;
   border-radius:4px;
-  border: 1px solid #f7f7f7;
+  border: 1px solid #e1e1e1;
   clear: both;
   overflow: hidden;
+}
+.itemMarginBottom{
+  margin-bottom: 15px;
+}
+.itemMarginBottom-s{
+  margin-bottom: 5px;
 }
 .itemMarginBottom{
   margin-bottom: 15px;
