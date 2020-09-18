@@ -3,7 +3,7 @@
     <el-col :span="24">
       <el-row>
           <el-col :span="6">
-                <div class="platformContainer blackComponents asidetree" style="height:850px;">
+                <div class="platformContainer asidetree" style="height:850px;">
                     <el-tree 
                       :data="treedata"
                       show-checkbox
@@ -15,7 +15,7 @@
                 </div>
               </el-col>
               <el-col :span="18">
-                 <div class="Timepick blackComponents" style="height:66px;">
+                 <div class="Timepick" style="height:66px;">
                    <el-form>
                    <el-form-item label="开始时间">
                       <el-date-picker
@@ -41,8 +41,8 @@
                       <el-button type="primary" icon="el-icon-search" @click='searchData'>点击查询数据</el-button>
                   </el-tooltip>
               </div>
-              <div class="platformContainer blackComponents mainechart" style="position:relative;">
-                   <div id="main" style="width:100%; height:750px; backgroundColor:#3D4048;" v-loading="loading">数据图表</div>
+              <div class="platformContainer mainechart" style="position:relative;">
+                   <div id="main" style="width:100%; height:750px;" v-loading="loading">数据图表</div>
               </div>
             </el-col>
 
@@ -85,7 +85,6 @@ var moment = require('moment');
         date2:moment().format('YYYY-MM-DD'),
         time1:'00:00:00',
         time2:moment().format('HH:mm:ss'),
-        loading:false,
         averagevalue1:0,
         dataIndex:0,
         comparetime:'00:00:04',
@@ -164,8 +163,6 @@ var moment = require('moment');
         }
         this.myChart= echarts.init(document.getElementById('main'));
         var option = {
-              backgroundColor: '#3D4048',
-              color:['#4472C5'], 
               legend: {
                   data:dateset,
                   inactiveColor: '#777',
@@ -283,7 +280,6 @@ var moment = require('moment');
   padding-left: 12px;
   padding-top: 12px;
   border-radius: 4px;
-  background-color: #3D4048;
 }
 .asidetree{
   overflow: auto;

@@ -23,6 +23,7 @@
         <el-table :data="tableData" border tooltip-effect="dark" v-loading="loading">
           <el-table-column prop="AreaName" label="区域"></el-table-column>
           <el-table-column prop="TagClassValue" label="采集点"></el-table-column>
+          <el-table-column prop="Equipment" label="用电设备"></el-table-column>
           <el-table-column prop="IncremenValue" label="增量值"></el-table-column>
           <el-table-column prop="Unit" label="单位"></el-table-column>
           <el-table-column prop="StartTime" label="开始时间" width="200"></el-table-column>

@@ -113,16 +113,16 @@ def handler_accept(sock):
 
 def handler_msg(conn):
     with conn as c:
-        data_recv = c.recv(1024)
+        # data_recv = c.recv(1024)
         runcount = 0
         failcount = 0
         while True:
             try:
                 TagClassValue = ""
                 time.sleep(2)
-                if data_recv[0:1] == b"\x81":
-                    data_parse = parse_payload(data_recv)
-                    TagClassValue = str(data_parse)
+                # if data_recv[0:1] == b"\x81":
+                #     data_parse = parse_payload(data_recv)
+                #     TagClassValue = str(data_parse)
                 area_list = []
                 oclass = ast.literal_eval(returnb(redis_conn.hget(constant.REDIS_TABLENAME, "all_steam_tags")))
                 oc_dict_i_tag = {}
@@ -148,11 +148,14 @@ def handler_msg(conn):
                         redis_conn.hget(constant.REDIS_TABLENAME, oc + "S")))
                     oc_dict_i_water_tag[oc] = oc_water_dict_i
                 electric_oclass = ast.literal_eval(returnb(redis_conn.hget(constant.REDIS_TABLENAME, "all_electric_tags")))
+                ratios_lists = eval(
+                    returnb(redis_conn.hget(constant.REDIS_TABLENAME, "ratios_list")))
                 oc_dict_i_electric_tag = {}
                 for oc in electric_oclass:
                     oc_electric_dict_i = {}
-                    oc_electric_dict_i["ZGL"] = strtofloat(
-                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "_ZGL"))
+                    ratio = ratios_lists.get(oc)
+                    oc_electric_dict_i["ZGL"] = strtofloat(strtofloat(
+                        redis_conn.hget(constant.REDIS_TABLENAME, oc + "_ZGL")) * strtofloat(ratio))
                     oc_electric_dict_i["AU"] = strtofloat(
                         redis_conn.hget(constant.REDIS_TABLENAME, oc + "_AU"))
                     oc_electric_dict_i["AI"] = strtofloat(
@@ -213,6 +216,7 @@ def server_socket():
         tag_steam_list = []
         tag_water_list = []
         tag_electric_list = []
+        ratios_list = {}
         for tag in Tags:
             EnergyClass = str(tag.TagClassValue)[0:1]
             if EnergyClass == "S":
@@ -220,10 +224,14 @@ def server_socket():
             elif EnergyClass == "W":
                 tag_water_list.append(tag.TagClassValue)
             elif EnergyClass == "E":
+                ratios = db_session.query(ElectricSiteURL).filter(ElectricSiteURL.TagClassValue == tag.TagClassValue).first()
+                value = ratios.Value
+                ratios_list[tag.TagClassValue] = value
                 tag_electric_list.append(tag.TagClassValue)
         redis_conn.hset(constant.REDIS_TABLENAME, "all_steam_tags", str(tag_steam_list))
         redis_conn.hset(constant.REDIS_TABLENAME, "all_water_tags", str(tag_water_list))
         redis_conn.hset(constant.REDIS_TABLENAME, "all_electric_tags", str(tag_electric_list))
+        redis_conn.hset(constant.REDIS_TABLENAME, "ratios_list", str(ratios_list))
         areas = db_session.query(AreaTable).all()
         for area in areas:
             tagareas = db_session.query(TagDetail).filter(TagDetail.AreaName == area.AreaName).all()
@@ -242,4 +250,10 @@ def server_socket():
 
 
 if __name__ == "__main__":
-    server_socket()
+    try:
+        server_socket()
+    except Exception as e:
+        print(e)
+    finally:
+        server_socket()
+

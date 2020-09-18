@@ -17,7 +17,7 @@ from models.SystemManagement.core import RedisKey, TagClassType, ElectricEnergy,
     WaterEnergy, TagDetail, Equipment
 from models.SystemManagement.system import EarlyWarningLimitMaintain, EarlyWarning, EarlyWarningPercentMaintain, \
     ElectricPrice, WaterSteamPrice, IncrementElectricTable, IncrementWaterTable, IncrementStreamTable, \
-    IncrementStreamVolume
+    IncrementStreamVolume, ElectricSiteURL
 from tools.common import insert, delete, update
 from dbset.database import constant
 from dbset.log.BK2TLogger import logger, insertSyslog
@@ -43,7 +43,11 @@ def run():
                     proWsumValue = proWsumValue[0]
                 else:
                     proWsumValue = 0
-                wsumvalue = abs(round(float(key.WaterSum) - float(proWsumValue), 2))
+                wsumvalue = round(float(key.WaterSum) - float(proWsumValue), 2)
+
+                if wsumvalue < 0:
+                    continue
+
                 if proWsumValue == 0:
                     wt = (wsumvalue, "水", key.ID,
                           key.PriceID, key.SumWUnit, key.EquipmnetID,
@@ -169,7 +173,14 @@ def run():
                     proZGLmValue = proZGLmValue[0]
                 else:
                     proZGLmValue = 0
-                ZGLvalue = abs(round(float(key.ZGL) - float(proZGLmValue), 2))
+                ratios = db_session.query(ElectricSiteURL).filter(
+                    ElectricSiteURL.TagClassValue == key.TagClassValue).first()
+                value = float(ratios.Value)
+                ZGLvalue = abs(round((float(key.ZGL) - float(proZGLmValue)) * value, 2))
+
+                if ZGLvalue < 0:
+                    continue
+
                 if proZGLmValue == 0:
                     el = (ZGLvalue, "电", key.ID,
                           key.PriceID, key.Unit, key.EquipmnetID,

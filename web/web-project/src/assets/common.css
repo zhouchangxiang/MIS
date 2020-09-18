@@ -157,7 +157,7 @@
   padding: 6px 10px;
   font-size: 16px;
   border-radius:4px;
-  border: 1px solid #e1e1e1;
+  border: 1px solid #a1a1a1;
   clear: both;
   overflow: hidden;
 }
@@ -165,7 +165,7 @@
   margin-bottom: 15px;
 }
 .itemMarginBottom-s{
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 .itemMarginBottom{
   margin-bottom: 15px;
@@ -317,9 +317,6 @@
   margin-right: 0px;
   margin-bottom: 0px;
 }
-.Timepick .el-form-item .el-form-item__label{
- color:#fff;
-}
 .Timepick .el-form-item__content{
   width:210px;
   float: left;
@@ -339,8 +336,4 @@
 }
 .Timepick .el-button{
   padding: 12px 13px;
-}
-.Timepick .el-input-number__decrease,.Timepick .el-input-number__increase{
-  background-color:#409EFF;
-  color: #fff;
 }
