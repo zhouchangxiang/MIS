@@ -806,6 +806,9 @@ class TagDetail(Base):
     # Tag点:
     TagClassValue = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
+    # 用电设备
+    Equipment = Column(Unicode(128), primary_key=False, autoincrement=False, nullable=True)
+
 
 # TagDetail_END:
 

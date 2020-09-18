@@ -1071,7 +1071,7 @@ def tongjibaobiao():
             for oc in oclass:
                 reclass = tongjibaobiaosql(EnergyClass, oc.TagClassValue, StartTime, EndTime)
                 tag = db_session.query(TagDetail).filter(TagDetail.TagClassValue == oc.TagClassValue).first()
-                dict_data = {"TagClassValue": tag.FEFportIP, "IncremenValue": round(
+                dict_data = {"TagClassValue": tag.FEFportIP, "Equipment": tag.Equipment, "IncremenValue": round(
                     0 if reclass[0]['IncremenValue'] is None else float(reclass[0]['IncremenValue']), 2),
                              "AreaName": tag.AreaName, "Unit": unit, "StartTime": StartTime, "EndTime": EndTime}
                 data_list.append(dict_data)
