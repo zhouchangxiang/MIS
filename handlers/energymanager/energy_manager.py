@@ -849,6 +849,8 @@ def exportxstatistic(StartTime, EndTime, EnergyClass):
     row = 1
     # 写入列名
     columns = ['区域', '能耗表', '能耗值', '单位', '统计开始时间', '统计截止时间']
+    if EnergyClass == "电":
+        columns = ['区域', '能耗表', '用电设备', '能耗值', '单位', '统计开始时间', '统计截止时间']
     for item in columns:
         worksheet.write(0, col, item, cell_format)
         col += 1
@@ -881,6 +883,8 @@ def exportxstatistic(StartTime, EndTime, EnergyClass):
                 worksheet.write(i + 1, columns.index(cum), StartTime + "0:00")
             if cum == '统计截止时间':
                 worksheet.write(i + 1, columns.index(cum), EndTime + "0:00")
+            if cum == '用电设备':
+                worksheet.write(i + 1, columns.index(cum), oc.Equipment)
         i = i + 1
     writer.close()
     output.seek(0)
@@ -931,6 +935,8 @@ def exportx(Area, EnergyClass, StartTime, EndTime):
 
     # 写入列名
     columns = ['区域', '采集点', '增量值', '单位', '开始时间', '结束时间']
+    if EnergyClass == "电":
+        columns = ['区域', '采集点', '用电设备', '增量值', '单位', '开始时间', '结束时间']
     for item in columns:
         worksheet.write(0, col, item, cell_format)
         col += 1
@@ -976,6 +982,8 @@ def exportx(Area, EnergyClass, StartTime, EndTime):
                 worksheet.write(i, columns.index(cum), StartTime)
             if cum == '结束时间':
                 worksheet.write(i, columns.index(cum), EndTime)
+            if cum == '用电设备':
+                worksheet.write(i, columns.index(cum), ta.Equipment)
         i = i + 1
     writer.close()
     output.seek(0)

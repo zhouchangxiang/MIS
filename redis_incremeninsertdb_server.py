@@ -189,19 +189,17 @@ def run():
                     electric_value.append(el)
                 else:
                     if float(key.ZGL) < float(proZGLmValue):#去除清零情况，统计累计值减小就认为是脏数据
-                        if ZGLvalue/float(proZGLmValue) > 0.2:
-                            el = (ZGLvalue, "电", key.ID,
-                                  key.PriceID, key.Unit, key.EquipmnetID,
-                                  key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
-                                  key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName, "0")
-                            electric_value.append(el)
+                        el = (ZGLvalue, "电", key.ID,
+                              key.PriceID, key.Unit, key.EquipmnetID,
+                              key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
+                              key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName, "0")
+                        electric_value.append(el)
                     else:
-                        if ZGLvalue/float(proZGLmValue) < 0.8:
-                            el = (ZGLvalue, "电", key.ID,
-                                  key.PriceID, key.Unit, key.EquipmnetID,
-                                  key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
-                                  key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName, "0")
-                            electric_value.append(el)
+                        el = (ZGLvalue, "电", key.ID,
+                              key.PriceID, key.Unit, key.EquipmnetID,
+                              key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
+                              key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName, "0")
+                        electric_value.append(el)
             try:
                 cursor = conn.cursor()
                 cursor.executemany(
