@@ -18,6 +18,7 @@
         TableData:{
           tableName:"RatedPowerMaintain",
           column:[
+            {prop:"AreaName",label:"区域"},
             {prop:"RatedPowerValue",label:"额定功率值"},
             {prop:"RatedPowerTime",label:"时间"},
             {prop:"CreateDate",label:"创建日期"},
@@ -43,6 +44,7 @@
           ],
           handleForm:[
             {label:"ID",prop:"ID",type:"input",value:"",disabled:true},
+            {label:"区域",prop:"AreaName",type:"input",value:""},
             {label:"额定功率值",prop:"RatedPowerValue",type:"input",value:""},
             {label:"时间",prop:"RatedPowerTime",type:"input",value:""}
           ],

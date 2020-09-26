@@ -575,12 +575,12 @@ def runefficiency():
                 tags = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass,
                                                           TagDetail.AreaName == AreaName).all()
                 rpms = \
-                    db_session.query(RatedPowerMaintain).filter(RatedPowerMaintain.TagClassValue == AreaName).all()
+                    db_session.query(RatedPowerMaintain).filter(RatedPowerMaintain.AreaName == AreaName).all()
             for tag in tags:
                 oc_list.append(tag.TagClassValue)
             dict_rpms = {}
             for rpm in rpms:
-                dict_rpms[rpm.TagClassValue] = rpm.RatedPowerValue
+                dict_rpms[rpm.AreaName] = rpm.RatedPowerValue
             if oc_list:
                 runes = loadRateTotal(oc_list, CurrentTime[0:10]+" 00:00:00", CurrentTime[0:10]+" 23:59:59", EnergyClass)
                 runes = round(0 if runes[0]['Rate'] is None else float(runes[0]['Rate']), 2)

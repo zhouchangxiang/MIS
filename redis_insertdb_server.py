@@ -258,4 +258,5 @@ def returnb(rod):
     else:
         return rod.decode()
 if __name__ == '__main__':
+    time.sleep(60)
     run()

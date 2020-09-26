@@ -299,9 +299,8 @@
           }
           this.chartsLoading = true
           var that = this
-          var nowTime = moment().format('HH:mm').substring(0,4) + "0"
-          var dayStartTime = moment(this.formParameters.date).format('YYYY-MM-DD') + " 00:00"
-          var dayEndTime = moment(this.formParameters.date).format('YYYY-MM-DD') + " " + nowTime
+          var dayStartTime = moment(this.formParameters.date).day(moment(this.formParameters.date).day()).startOf('day').format('YYYY-MM-DD HH:mm')
+          var dayEndTime = moment(this.formParameters.date).day(moment(this.formParameters.date).day()).endOf('day').format('YYYY-MM-DD HH:mm')
           var weekStartTime = moment(this.formParameters.date).week(moment(this.formParameters.date).week()).startOf('week').format('YYYY-MM-DD HH:mm')
           var weekEndTime = moment(this.formParameters.date).week(moment(this.formParameters.date).week()).endOf('week').format('YYYY-MM-DD HH:mm')
           var monthStartTime = moment(this.formParameters.date).month(moment(this.formParameters.date).month()).startOf('month').format('YYYY-MM-DD HH:mm')

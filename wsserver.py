@@ -250,6 +250,7 @@ def server_socket():
 
 
 if __name__ == "__main__":
+    time.sleep(60)
     try:
         server_socket()
     except Exception as e:

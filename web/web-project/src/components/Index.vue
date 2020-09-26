@@ -99,84 +99,214 @@
           </div>
         </el-drawer>
         <!-- 水表全局采集分布图 -->
-        <el-dialog title="水表全局采集分布" :visible.sync="waterAreaDialog" width="75%" v-if="waterAreaDialog">
-          <el-row :gutter="20">
-            <el-col :span="24" style="margin-bottom: 20px;">
-              <el-col :span="4">
-                <el-card shadow="hover" class="useAreaCard">
-                  <p>污水站</p><div class="waterTagData" style="bottom: 3px;left: 3px;">灌溉水DN40
-                  <p class="TagDataVal">{{ waterTagList.W_Area_WSZ_16_2_34.sumValue }}</p><p class="TagDataVal">{{ waterTagList.W_Area_WSZ_16_2_34.flowValue }}</p>
+        <el-dialog title="水表全局采集分布（可鼠标拖动横向滚动进行查看）" :visible.sync="waterAreaDialog" width="75%" top="50px" :fullscreen="waterdialogfullscreen" v-if="waterAreaDialog">
+          <el-col :span="24" style="margin-top:-30px;">
+            <div style="position: absolute;right: 60px;top: 15px;">
+              <span :class="waterdialogfullscreen?'el-icon-aim':'el-icon-full-screen'" class="text-size-big" style="float: right;margin-right: 20px" title="全屏" @click="waterdialogfullscreen?waterdialogfullscreen=false:waterdialogfullscreen=true"></span>
+              <span :class="waterImgCollapse?'el-icon-arrow-up':'el-icon-arrow-down'" class="text-size-big" style="float: right;margin-right: 20px" title="折叠" @click="waterImgCollapse?waterImgCollapse=false:waterImgCollapse=true"></span>
+            </div>
+            <transition name="el-zoom-in-center">
+              <div v-show="!waterImgCollapse">
+                <div style="width: 100%;text-align: center">
+                  <div style="display: inline-block;">
+                    <el-image style="width:100px;" :src="printerImg" fit="scale-down"></el-image><p>打印机</p>
+                  </div>
+                  <div style="display:inline-block;position:relative;top: -50px;width: 100px;height: 1px;background: #a1a1a1;"></div>
+                  <div style="display: inline-block;">
+                    <el-image style="width:120px;" :src="computerImg" fit="scale-down"></el-image><p>电脑主机</p>
+                  </div>
+                  <div style="display:inline-block;position:relative;top: -50px;width: 100px;height: 1px;background: #a1a1a1;"></div>
+                  <div style="display: inline-block;">
+                    <el-image style="width:90px;" :src="UPSImg" fit="scale-down"></el-image><p>UPS电源</p>
+                  </div>
+                  <div class="TagLine"></div>
                 </div>
-                </el-card>
-              </el-col>
-              <el-col :span="8">
-                <el-card shadow="hover" class="useAreaCard itemMarginBottom">
-                  <p>锅炉房</p><div class="waterTagData">灌溉水DN100</div>
-                </el-card>
-                <el-card shadow="hover" class="useAreaCard itemMarginBottom">
-                  <p>提取二车间</p>
-                  <div class="waterTagData" style="right: 3px;top: 3px;">后走廊灌溉水DN40<p class="TagDataVal">{{ waterTagList.W_Area_TQR_17_2_8.sumValue }}</p><p class="TagDataVal">{{ waterTagList.W_Area_TQR_17_2_8.flowValue }}</p></div>
-                  <div class="waterTagData" style="bottom: 3px;left:3px;">出料电梯旁饮用水DN100<p class="TagDataVal">{{ waterTagList.W_Area_TQR_17_1_9.sumValue }}</p><p class="TagDataVal">{{ waterTagList.W_Area_TQR_17_1_9.flowValue }}</p></div>
-                </el-card>
-                <el-card shadow="hover" class="useAreaCard" style="height: 140px;">
-                  <p>综合车间</p>
-                  <div class="waterTagData" style="right: 3px;top: 3px;">带干辅机灌溉水DN40<p class="TagDataVal">{{ waterTagList.W_Area_ZH_23_2_13.sumValue }}</p><p class="TagDataVal">{{ waterTagList.W_Area_ZH_23_2_13.flowValue }}</p></div>
-                  <div class="waterTagData" style="right: 3px;bottom: 3px;">2楼会议室饮用水DN150<p class="TagDataVal">{{ waterTagList.W_Area_ZH_23_1_12.sumValue }}</p><p class="TagDataVal">{{ waterTagList.W_Area_ZH_23_1_12.flowValue }}</p></div>
-                </el-card>
-              </el-col>
-              <el-col :span="4">
-                <el-card shadow="hover" style="height: 250px;margin-bottom: 20px;" class="useAreaCard">
-                  <p>新综合制剂车间</p>
-                  <div class="waterTagData" style="left: 3px;top: 60px;width: 80px;">包材库灌溉水DN50<p class="TagDataVal">{{ waterTagList.W_Area_XJZ_12_1_3.sumValue }}</p><p class="TagDataVal">{{ waterTagList.W_Area_XJZ_12_1_3.flowValue }}</p></div>
-                  <div class="waterTagData" style="right: 3px;bottom: 3px;">接待室饮用水DN100<p class="TagDataVal">{{ waterTagList.W_Area_XJZ_12_2_5.sumValue }}</p><p class="TagDataVal">{{ waterTagList.W_Area_XJZ_12_2_5.flowValue }}</p></div>
-                </el-card>
-              </el-col>
-              <el-col :span="8">
-                <el-col :span="8">
-                  <el-card shadow="hover" class="useAreaCard" style="height: 240px;">
-                    <p>化验室/中试车间</p><div class="waterTagData" style="left: 3px;bottom: 3px;">消防水DN100<p class="TagDataVal">{{ waterTagList.W_Area_YF_26_1_15.sumValue }}</p><p class="TagDataVal">{{ waterTagList.W_Area_YF_26_1_15.flowValue }}</p></div>
-                  </el-card>
-                </el-col>
-                <el-col :span="8">
-                  <el-card shadow="hover" class="useAreaCard" style="height: 180px;">
-                    <p>原提取</p>
-                    <div class="waterTagData" style="left: 3px;top: 40px;">消防水DN50<p class="TagDataVal">{{ waterTagList.W_Area_YTQ_39_1_30.sumValue }}</p><p class="TagDataVal">{{ waterTagList.W_Area_YTQ_39_1_30.flowValue }}</p></div>
-                    <div class="waterTagData" style="left: 3px;bottom: 3px;">灌溉水DN40<p class="TagDataVal">{{ waterTagList.W_Area_YTQ_39_2_30.sumValue }}</p><p class="TagDataVal">{{ waterTagList.W_Area_YTQ_39_2_30.flowValue }}</p></div>
-                  </el-card>
-                </el-col>
-                <el-col :span="8">
-                  <el-card shadow="hover" class="useAreaCard" style="height: 240px;">
+                <div style="width: 100%;text-align: center">
+                  <div style="display: inline-block;">
+                    <el-image style="width:120px;" :src="interchangerImg" fit="scale-down"></el-image><p>总交换机</p>
+                    <p>水表数量：17</p>
+                    <p class="itemMarginBottom">水表总量：{{
+                      (waterTagList.W_Area_WSZ_16_2_34.sumValue+
+                      waterTagList.W_Area_TQR_17_2_8.sumValue+
+                      waterTagList.W_Area_TQR_17_1_9.sumValue+
+                      waterTagList.W_Area_ZH_23_2_13.sumValue+
+                      waterTagList.W_Area_ZH_23_1_12.sumValue+
+                      waterTagList.W_Area_XJZ_12_1_3.sumValue+
+                      waterTagList.W_Area_XJZ_12_2_5.sumValue+
+                      waterTagList.W_Area_YF_26_1_15.sumValue+
+                      waterTagList.W_Area_YTQ_39_1_30.sumValue+
+                      waterTagList.W_Area_YTQ_39_2_30.sumValue+
+                      waterTagList.W_Area_QCL_33_1_20.sumValue+
+                      waterTagList.W_Area_QCL_33_2_20.sumValue+
+                      waterTagList.W_Area_QCL_33_1_20.sumValue+
+                      waterTagList.W_Area_QCL_33_2_20.sumValue+
+                      waterTagList.W_Area_GT_30_2_18.sumValue+
+                      waterTagList.W_Area_GT_30_1_19.sumValue+
+                      waterTagList.W_Area_BGL_34_1_22.sumValue).toFixed(2)
+                      }}
+                    </p>
+                  </div>
+                  <div class="TagLine"></div>
+                </div>
+              </div>
+            </transition>
+            <div style="width: 100%;height:1px;background:#a1a1a1;"></div>
+            <el-col :span="24" style="overflow: hidden;position: relative;height: 2000px;">
+              <ul class="areaTotalTagUl" @mousedown="move" data-move>
+                <li>
+                  <div class="TagLine"></div>
+                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image>
+                    <p>污水站</p>
+                    <p>水表数量：1</p>
+                    <p class="itemMarginBottom">水表总量：{{
+                      (waterTagList.W_Area_WSZ_16_2_34.sumValue).toFixed(2)
+                      }}
+                    </p>
+                  </div>
+                  <div class="TagLine"></div>
+                  <div class="electricTagData"><span>灌溉水DN40</span><p>{{ waterTagList.W_Area_WSZ_16_2_34.sumValue }}</p><p>{{ waterTagList.W_Area_WSZ_16_2_34.flowValue }}°C</p></div>
+                </li>
+                <li>
+                  <div class="TagLine"></div>
+                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image>
+                    <p>提取二车间</p>
+                    <p>水表数量：2</p>
+                    <p class="itemMarginBottom">水表总量：{{
+                      (waterTagList.W_Area_TQR_17_2_8.sumValue +
+                      waterTagList.W_Area_TQR_17_1_9.sumValue).toFixed(2)
+                      }}
+                    </p>
+                  </div>
+                  <div class="TagLine"></div>
+                  <div class="electricTagData"><span>后走廊灌溉水DN40</span><p>{{ waterTagList.W_Area_TQR_17_2_8.sumValue }}</p><p>{{ waterTagList.W_Area_TQR_17_2_8.flowValue }}°C</p></div>
+                  <div class="TagLine"></div>
+                  <div class="electricTagData"><span>出料电梯旁饮用水DN100</span><p>{{ waterTagList.W_Area_TQR_17_1_9.sumValue }}</p><p>{{ waterTagList.W_Area_TQR_17_1_9.flowValue }}°C</p></div>
+                </li>
+                <li>
+                  <div class="TagLine"></div>
+                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image>
+                    <p>综合车间</p>
+                    <p>水表数量：2</p>
+                    <p class="itemMarginBottom">水表总量：{{
+                      (waterTagList.W_Area_ZH_23_2_13.sumValue +
+                      waterTagList.W_Area_ZH_23_1_12.sumValue).toFixed(2)
+                      }}
+                    </p>
+                  </div>
+                  <div class="TagLine"></div>
+                  <div class="electricTagData"><span>带干辅机灌溉水DN40</span><p>{{ waterTagList.W_Area_ZH_23_2_13.sumValue }}</p><p>{{ waterTagList.W_Area_ZH_23_2_13.flowValue }}°C</p></div>
+                  <div class="TagLine"></div>
+                  <div class="electricTagData"><span>2楼会议室饮用水DN150</span><p>{{ waterTagList.W_Area_ZH_23_1_12.sumValue }}</p><p>{{ waterTagList.W_Area_ZH_23_1_12.flowValue }}°C</p></div>
+                </li>
+                <li>
+                  <div class="TagLine"></div>
+                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image>
+                    <p>新综合制剂车间</p>
+                    <p>水表数量：2</p>
+                    <p class="itemMarginBottom">水表总量：{{
+                      (waterTagList.W_Area_XJZ_12_1_3.sumValue +
+                      waterTagList.W_Area_XJZ_12_2_5.sumValue).toFixed(2)
+                      }}
+                    </p>
+                  </div>
+                  <div class="TagLine"></div>
+                  <div class="electricTagData"><span>包材库灌溉水DN50</span><p>{{ waterTagList.W_Area_XJZ_12_1_3.sumValue }}</p><p>{{ waterTagList.W_Area_XJZ_12_1_3.flowValue }}°C</p></div>
+                  <div class="TagLine"></div>
+                  <div class="electricTagData"><span>接待室饮用水DN100</span><p>{{ waterTagList.W_Area_XJZ_12_2_5.sumValue }}</p><p>{{ waterTagList.W_Area_XJZ_12_2_5.flowValue }}°C</p></div>
+                </li>
+                <li>
+                  <div class="TagLine"></div>
+                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image>
+                    <p>化验室/中试车间</p>
+                    <p>水表数量：1</p>
+                    <p class="itemMarginBottom">水表总量：{{
+                      (waterTagList.W_Area_YF_26_1_15.sumValue).toFixed(2)
+                      }}
+                    </p>
+                  </div>
+                  <div class="TagLine"></div>
+                  <div class="electricTagData"><span>消防水DN100</span><p>{{ waterTagList.W_Area_YF_26_1_15.sumValue }}</p><p>{{ waterTagList.W_Area_YF_26_1_15.flowValue }}°C</p></div>
+                </li>
+                <li>
+                  <div class="TagLine"></div>
+                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image>
+                    <p>原提取车间</p>
+                    <p>水表数量：2</p>
+                    <p class="itemMarginBottom">水表总量：{{
+                      (waterTagList.W_Area_YTQ_39_1_30.sumValue+
+                      waterTagList.W_Area_YTQ_39_2_30.sumValue).toFixed(2)
+                      }}
+                    </p>
+                  </div>
+                  <div class="TagLine"></div>
+                  <div class="electricTagData"><span>消防水DN50</span><p>{{ waterTagList.W_Area_YTQ_39_1_30.sumValue }}</p><p>{{ waterTagList.W_Area_YTQ_39_1_30.flowValue }}°C</p></div>
+                  <div class="TagLine"></div>
+                  <div class="electricTagData"><span>灌溉水DN40</span><p>{{ waterTagList.W_Area_YTQ_39_2_30.sumValue }}</p><p>{{ waterTagList.W_Area_YTQ_39_2_30.flowValue }}°C</p></div>
+                </li>
+                <li>
+                  <div class="TagLine"></div>
+                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image>
                     <p>前处理车间</p>
-                    <div class="waterTagData" style="left: 3px;top: 40px;">洗药室灌溉水DN25<p class="TagDataVal">{{ waterTagList.W_Area_QCL_33_1_20.sumValue }}</p><p class="TagDataVal">{{ waterTagList.W_Area_QCL_33_1_20.flowValue }}</p></div>
-                    <div class="waterTagData" style="left: 3px;top: 120px;">饮用水DN25<p class="TagDataVal">{{ waterTagList.W_Area_QCL_33_2_20.sumValue }}</p><p class="TagDataVal">{{ waterTagList.W_Area_QCL_33_2_20.flowValue }}</p></div>
-                    <div class="waterTagData" style="right: 3px;bottom: 3px;">生产部 灌消防水</div>
-                  </el-card>
-                </el-col>
-                <el-col :span="24" style="margin-top: 20px;">
-                  <el-card shadow="hover" class="useAreaCard" style="height: 140px;">
-                    <p>健康科技车间</p>
-                    <div class="waterTagData" style="right: 3px;top: 3px;">消防水DN50<p class="TagDataVal">{{ waterTagList.W_Area_JK_28_1_16.sumValue }}</p><p class="TagDataVal">{{ waterTagList.W_Area_JK_28_1_16.flowValue }}</p></div>
-                    <div class="waterTagData" style="right: 3px;bottom: 3px;">消防水DN50<p class="TagDataVal">{{ waterTagList.W_Area_JK_28_2_16.sumValue }}</p><p class="TagDataVal">{{ waterTagList.W_Area_JK_28_2_16.flowValue }}</p></div>
-                  </el-card>
-                </el-col>
-                <el-col :span="24" style="margin-top: 20px;">
-                  <el-card shadow="hover" class="useAreaCard" style="height: 140px;">
+                    <p>水表数量：2</p>
+                    <p class="itemMarginBottom">水表总量：{{
+                      (waterTagList.W_Area_QCL_33_1_20.sumValue+
+                      waterTagList.W_Area_QCL_33_2_20.sumValue).toFixed(2)
+                      }}
+                    </p>
+                  </div>
+                  <div class="TagLine"></div>
+                  <div class="electricTagData"><span>洗药室灌溉水DN25</span><p>{{ waterTagList.W_Area_QCL_33_1_20.sumValue }}</p><p>{{ waterTagList.W_Area_QCL_33_1_20.flowValue }}°C</p></div>
+                  <div class="TagLine"></div>
+                  <div class="electricTagData"><span>饮用水DN25</span><p>{{ waterTagList.W_Area_QCL_33_2_20.sumValue }}</p><p>{{ waterTagList.W_Area_QCL_33_2_20.flowValue }}°C</p></div>
+                </li>
+                <li>
+                  <div class="TagLine"></div>
+                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image>
+                    <p>GMP车间</p>
+                    <p>水表数量：2</p>
+                    <p class="itemMarginBottom">水表总量：{{
+                      (waterTagList.W_Area_QCL_33_1_20.sumValue+
+                      waterTagList.W_Area_QCL_33_2_20.sumValue).toFixed(2)
+                      }}
+                    </p>
+                  </div>
+                  <div class="TagLine"></div>
+                  <div class="electricTagData"><span>消防水DN50</span><p>{{ waterTagList.W_Area_JK_28_1_16.sumValue }}</p><p>{{ waterTagList.W_Area_JK_28_1_16.flowValue }}°C</p></div>
+                  <div class="TagLine"></div>
+                  <div class="electricTagData"><span>消防水DN50</span><p>{{ waterTagList.W_Area_JK_28_2_16.sumValue }}</p><p>{{ waterTagList.W_Area_JK_28_2_16.flowValue }}°C</p></div>
+                </li>
+                <li>
+                  <div class="TagLine"></div>
+                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image>
                     <p>固体制剂车间</p>
-                    <div class="waterTagData" style="right: 3px;top: 3px;">男卫生间灌溉水DN40<p class="TagDataVal">{{ waterTagList.W_Area_GT_30_2_18.sumValue }}</p><p class="TagDataVal">{{ waterTagList.W_Area_GT_30_2_18.flowValue }}</p></div>
-                    <div class="waterTagData" style="right: 3px;bottom: 3px;">纯化水站饮用水DN100<p class="TagDataVal">{{ waterTagList.W_Area_GT_30_1_19.sumValue }}</p><p class="TagDataVal">{{ waterTagList.W_Area_GT_30_1_19.flowValue }}</p></div>
-                  </el-card>
-                </el-col>
-              </el-col>
+                    <p>水表数量：2</p>
+                    <p class="itemMarginBottom">水表总量：{{
+                      (waterTagList.W_Area_GT_30_2_18.sumValue+
+                      waterTagList.W_Area_GT_30_1_19.sumValue).toFixed(2)
+                      }}
+                    </p>
+                  </div>
+                  <div class="TagLine"></div>
+                  <div class="electricTagData"><span>男卫生间灌溉水DN40</span><p>{{ waterTagList.W_Area_GT_30_2_18.sumValue }}</p><p>{{ waterTagList.W_Area_GT_30_2_18.flowValue }}°C</p></div>
+                  <div class="TagLine"></div>
+                  <div class="electricTagData"><span>纯化水站饮用水DN100</span><p>{{ waterTagList.W_Area_GT_30_1_19.sumValue }}</p><p>{{ waterTagList.W_Area_GT_30_1_19.flowValue }}°C</p></div>
+                </li>
+                <li>
+                  <div class="TagLine"></div>
+                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image>
+                    <p>办公楼\食堂</p>
+                    <p>水表数量：1</p>
+                    <p class="itemMarginBottom">水表总量：{{
+                      (waterTagList.W_Area_BGL_34_1_22.sumValue).toFixed(2)
+                      }}
+                    </p>
+                  </div>
+                  <div class="TagLine"></div>
+                  <div class="electricTagData"><span>1楼卫生间深井水DN65</span><p>{{ waterTagList.W_Area_BGL_34_1_22.sumValue }}</p><p>{{ waterTagList.W_Area_BGL_34_1_22.flowValue }}°C</p></div>
+                </li>
+              </ul>
             </el-col>
-            <el-col :span="24">
-              <el-col :span="8" :offset="5">
-                <el-card shadow="hover" class="useAreaCard">
-                  <p>办公楼\食堂</p>
-                  <div class="waterTagData" style="left: 100px;bottom: 10px;">1楼卫生间深井水DN65<p class="TagDataVal">{{ waterTagList.W_Area_BGL_34_1_22.sumValue }}</p><p class="TagDataVal">{{ waterTagList.W_Area_BGL_34_1_22.flowValue }}</p></div>
-                </el-card>
-              </el-col>
-            </el-col>
-          </el-row>
+          </el-col>
           <div slot="footer" class="dialog-footer">
             <el-button @click="waterAreaDialog = false">关闭</el-button>
           </div>
@@ -373,7 +503,7 @@
                   <div class="TagLine"></div>
                   <div class="electricTagData"><span>综合制剂1楼配电室5</span><p>{{ electricTagList.E_Area_XJZ_11_1_6_5.ZGL }}</p><span>1楼洗衣机、照明、卷帘门、风机</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>1综合制剂1楼冷水室6</span><p>{{ electricTagList.E_Area_XJZ_11_1_6_6.ZGL }}</p><span>1楼冷水机组2</span></div>
+                  <div class="electricTagData"><span>综合制剂1楼冷水室6</span><p>{{ electricTagList.E_Area_XJZ_11_1_6_6.ZGL }}</p><span>1楼冷水机组2</span></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -485,9 +615,9 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>好护士健康科技车间一楼1</span><p>{{ electricTagList.E_Area_JK_28_2_17.ZGL }}</p><span>1楼</span></div>
+                  <div class="electricTagData"><span>健康科技车间一楼1</span><p>{{ electricTagList.E_Area_JK_28_2_17.ZGL }}</p><span>1楼</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>好护士健康科技车间二楼2</span><p>{{ electricTagList.E_Area_JK_28_1_16.ZGL }}</p><span>2楼</span></div>
+                  <div class="electricTagData"><span>健康科技车间二楼2</span><p>{{ electricTagList.E_Area_JK_28_1_16.ZGL }}</p><span>2楼</span></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -555,34 +685,9 @@
                 <div style="width: 100%;text-align: center">
                   <div style="display: inline-block;">
                     <el-image style="width:120px;" :src="interchangerImg" fit="scale-down"></el-image><p>总交换机</p>
-                    <p>汽表数量：26</p>
-                    <p class="itemMarginBottom">蒸汽总量：{{
-                      (steamTagList.S_Area_YTQ_40_2_502.sumValue +
-                      steamTagList.S_Area_JK_27_1_502.sumValue+
-                      steamTagList.S_Area_YTQ_40_1_502.sumValue+
-                      steamTagList.S_Area_YF_25_1_502.sumValue+
-                      steamTagList.S_Area_GLF_45_3_502.sumValue+
-                      steamTagList.S_Area_BGL_35_1_502.sumValue+
-                      steamTagList.S_Area_TQR_20_1_502.sumValue +
-                      steamTagList.S_Area_TQR_19_3_502.sumValue+
-                      steamTagList.S_Area_TQR_20_2_502.sumValue+
-                      steamTagList.S_Area_TQR_19_1_502.sumValue+
-                      steamTagList.S_Area_TQR_19_2_502.sumValue+
-                      steamTagList.S_Area_TQR_20_3_502.sumValue+
-                      steamTagList.S_Area_ZH_21_2_502.sumValue +
-                      steamTagList.S_Area_ZH_21_1_502.sumValue+
-                      steamTagList.S_Area_ZH_46_1_502.sumValue+
-                      steamTagList.S_Area_ZH_46_2_502.sumValue+
-                      steamTagList.S_Area_ZH_46_3_502.sumValue+
-                      steamTagList.S_Area_ZH_22_1_502.sumValue+
-                      steamTagList.S_Area_ZH_21_3_502.sumValue+
-                      steamTagList.S_Area_XJZ_13_1_7_502.sumValue+
-                      steamTagList.S_Area_GT_31_1_502.sumValue+
-                      steamTagList.S_Area_YF_25_1_502.sumValue+
-                      steamTagList.S_Area_YTQ_40_1_502.sumValue+
-                      steamTagList.S_Area_YTQ_40_2_502.sumValue+
-                      steamTagList.S_Area_JK_27_1_502.sumValue+
-                      steamTagList.S_Area_BGL_35_1_502.sumValue  ).toFixed(2)
+                    <p>汽表数量：22</p>
+                    <p class="itemMarginBottom">锅炉蒸汽总量：{{
+                      (steamGlTag.sumValue).toFixed(2) +"t"
                       }}
                     </p>
                   </div>
@@ -597,29 +702,14 @@
                   <div class="TagLine"></div>
                   <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image>
                     <p>锅炉房</p>
-                    <p>汽表数量：6</p>
+                    <p>汽表数量：1</p>
                     <p class="itemMarginBottom">蒸汽总量：{{
-                      (steamTagList.S_Area_YTQ_40_2_502.sumValue +
-                      steamTagList.S_Area_JK_27_1_502.sumValue+
-                      steamTagList.S_Area_YTQ_40_1_502.sumValue+
-                      steamTagList.S_Area_YF_25_1_502.sumValue+
-                      steamTagList.S_Area_GLF_45_3_502.sumValue+
-                      steamTagList.S_Area_BGL_35_1_502.sumValue).toFixed(2)
+                      (steamTagList.S_Area_GLF_45_3_502.sumValue).toFixed(2)
                       }}
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>老醇提/前处理DN100</span><p>{{ steamTagList.S_Area_YTQ_40_2_502.sumValue }}</p><p>{{ steamTagList.S_Area_YTQ_40_2_502.SteamWD }}°C</p></div>
-                  <div class="TagLine"></div>
-                  <div class="electricTagData"><span>GMP/生物科技DN80</span><p>{{ steamTagList.S_Area_JK_27_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_JK_27_1_502.SteamWD }}°C</p></div>
-                  <div class="TagLine"></div>
-                  <div class="electricTagData"><span>老水提/原提取DN100</span><p>{{ steamTagList.S_Area_YTQ_40_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_YTQ_40_1_502.SteamWD }}°C</p></div>
-                  <div class="TagLine"></div>
-                  <div class="electricTagData"><span>化验室/中试DN100</span><p>{{ steamTagList.S_Area_YF_25_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_YF_25_1_502.SteamWD }}°C</p></div>
-                  <div class="TagLine"></div>
                   <div class="electricTagData"><span>供暖DN150</span><p>{{ steamTagList.S_Area_GLF_45_3_502.sumValue }}</p><p>{{ steamTagList.S_Area_GLF_45_3_502.SteamWD }}°C</p></div>
-                  <div class="TagLine"></div>
-                  <div class="electricTagData"><span>食堂DN25</span><p>{{ steamTagList.S_Area_BGL_35_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_BGL_35_1_502.SteamWD }}°C</p></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -824,77 +914,77 @@
         <!-- 电表分布图 -->
         <el-dialog :title="areaOverallDialogTitle" :visible.sync="electricAreaTagDialog" width="40%" v-if="electricAreaTagDialog">
           <el-card shadow="never" v-if="areaOverallDialogTitle === '污水站'">
-            <div class="waterTagData">电表<p></p><p class="TagDataVal">{{ electricTagList.E_Area_WSZ_16_2_35.ZGL }}</p></div>
+            <div class="waterTagData">污水站1<p></p><p class="TagDataVal">{{ electricTagList.E_Area_WSZ_16_2_35.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === '新建综合制剂车间'">
-            <div class="waterTagData">2楼配电室<p>空压机、循环水、机器人</p><p class="TagDataVal">{{ electricTagList.E_Area_XJZ_11_2_7.ZGL }}</p></div>
-            <div class="waterTagData">2楼配电室<p>干法、颗粒</p><p class="TagDataVal">{{ electricTagList.E_Area_XJZ_11_2_7_1.ZGL }}</p></div>
-            <div class="waterTagData">2楼配电室<p>电梯、压片、胶囊、泡罩、粉碎</p><p class="TagDataVal">{{ electricTagList.E_Area_XJZ_11_2_7_3.ZGL }}</p></div>
-            <div class="waterTagData">1楼空调室<p>2L空调</p><p class="TagDataVal">{{ electricTagList.E_Area_XJZ_11_2_7_4.ZGL }}</p></div>
-            <div class="waterTagData">1楼配电室<p>洗衣机、照明、卷帘门、风机</p><p class="TagDataVal">{{ electricTagList.E_Area_XJZ_11_1_6_5.ZGL }}</p></div>
-            <div class="waterTagData">1楼冷水室<p>冷水机组2</p><p class="TagDataVal">{{ electricTagList.E_Area_XJZ_11_1_6_6.ZGL }}</p></div>
+            <div class="waterTagData">综合制剂2楼配电室2<p>空压机、循环水、机器人</p><p class="TagDataVal">{{ electricTagList.E_Area_XJZ_11_2_7.ZGL }}</p></div>
+            <div class="waterTagData">综合制剂2楼配电室1<p>干法、颗粒</p><p class="TagDataVal">{{ electricTagList.E_Area_XJZ_11_2_7_1.ZGL }}</p></div>
+            <div class="waterTagData">综合制剂2楼配电室3<p>电梯、压片、胶囊、泡罩、粉碎</p><p class="TagDataVal">{{ electricTagList.E_Area_XJZ_11_2_7_3.ZGL }}</p></div>
+            <div class="waterTagData">综合制剂2楼空调室4<p>2L空调</p><p class="TagDataVal">{{ electricTagList.E_Area_XJZ_11_2_7_4.ZGL }}</p></div>
+            <div class="waterTagData">综合制剂1楼配电室5<p>洗衣机、照明、卷帘门、风机</p><p class="TagDataVal">{{ electricTagList.E_Area_XJZ_11_1_6_5.ZGL }}</p></div>
+            <div class="waterTagData">综合制剂1楼冷水室6<p>冷水机组2</p><p class="TagDataVal">{{ electricTagList.E_Area_XJZ_11_1_6_6.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === '中试车间'">
-            <div class="waterTagData">化验室<p>电器</p><p class="TagDataVal">{{ electricTagList.E_Area_YF_26_1_14.ZGL }}</p></div>
-            <div class="waterTagData">化验室<p>老醇提水泵、车床、台钻、砂轮</p><p class="TagDataVal">{{ electricTagList.E_Area_YF_26_1_14_2.ZGL }}</p></div>
+            <div class="waterTagData">化验室1<p>电器</p><p class="TagDataVal">{{ electricTagList.E_Area_YF_26_1_14.ZGL }}</p></div>
+            <div class="waterTagData">化验室2<p>老醇提水泵、车床、台钻、砂轮</p><p class="TagDataVal">{{ electricTagList.E_Area_YF_26_1_14_2.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === '原提取车间'">
-            <div class="waterTagData">老醇提<p>办公、新700粉碎机、机修、设备库房</p><p class="TagDataVal">{{ electricTagList.E_Area_YTQ_38_1_28.ZGL }}</p></div>
+            <div class="waterTagData">老醇提1<p>办公、新700粉碎机、机修、设备库房</p><p class="TagDataVal">{{ electricTagList.E_Area_YTQ_38_1_28.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === '前处理车间'">
-            <div class="waterTagData">前处理1楼<p>办公、新700粉碎机、机修、设备库房</p><p class="TagDataVal">{{ electricTagList.E_Area_YTQ_38_2_29.ZGL }}</p></div>
-            <div class="waterTagData">前处理1楼<p>洗药机、切药机</p><p class="TagDataVal">{{ electricTagList.E_Area_YTQ_38_2_29_3.ZGL }}</p></div>
+            <div class="waterTagData">原提取1<p>办公、新700粉碎机、机修、设备库房</p><p class="TagDataVal">{{ electricTagList.E_Area_YTQ_38_2_29.ZGL }}</p></div>
+            <div class="waterTagData">原提取2<p>洗药机、切药机</p><p class="TagDataVal">{{ electricTagList.E_Area_YTQ_38_2_29_3.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === 'GMP车间'">
-            <div class="waterTagData">电表（1楼）<p></p><p class="TagDataVal">{{ electricTagList.E_Area_JK_28_2_17.ZGL }}</p></div>
-            <div class="waterTagData">电表（2楼）<p></p><p class="TagDataVal">{{ electricTagList.E_Area_JK_28_1_16.ZGL }}</p></div>
+            <div class="waterTagData">健康科技车间一楼1<p></p><p class="TagDataVal">{{ electricTagList.E_Area_JK_28_2_17.ZGL }}</p></div>
+            <div class="waterTagData">健康科技车间一楼2<p></p><p class="TagDataVal">{{ electricTagList.E_Area_JK_28_1_16.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === '固体制剂车间'">
-            <div class="waterTagData">1楼配电室<p>除尘系统、空调系统</p><p class="TagDataVal">{{ electricTagList.E_Area_GT_30_2_19.ZGL }}</p></div>
-            <div class="waterTagData">1楼配电室<p>机修办公室、压片、胶囊、混合、挂衣、颗粒、瓶线</p><p class="TagDataVal">{{ electricTagList.E_Area_GT_30_2_19_1.ZGL }}</p></div>
-            <div class="waterTagData">1楼配电室<p>风冷冷水机、除湿机、空压机</p><p class="TagDataVal">{{ electricTagList.E_Area_GT_30_2_19_2.ZGL }}</p></div>
-            <div class="waterTagData">1楼配电室<p>照明</p><p class="TagDataVal">{{ electricTagList.E_Area_GT_30_2_19_3.ZGL }}</p></div>
+            <div class="waterTagData">固体制剂4<p>除尘系统、空调系统</p><p class="TagDataVal">{{ electricTagList.E_Area_GT_30_2_19.ZGL }}</p></div>
+            <div class="waterTagData">固体制剂1<p>机修办公室、压片、胶囊、混合、挂衣、颗粒、瓶线</p><p class="TagDataVal">{{ electricTagList.E_Area_GT_30_2_19_1.ZGL }}</p></div>
+            <div class="waterTagData">固体制剂2<p>风冷冷水机、除湿机、空压机</p><p class="TagDataVal">{{ electricTagList.E_Area_GT_30_2_19_2.ZGL }}</p></div>
+            <div class="waterTagData">固体制剂3<p>照明</p><p class="TagDataVal">{{ electricTagList.E_Area_GT_30_2_19_3.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === '办公楼＼食堂'">
-            <div class="waterTagData">老屋角<p></p><p class="TagDataVal">{{ electricTagList.E_Area_BGL_36_1_26.ZGL }}</p></div>
+            <div class="waterTagData">展馆旁1<p></p><p class="TagDataVal">{{ electricTagList.E_Area_BGL_36_1_26.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === '提取二车间'">
-            <div class="waterTagData">2L空调室二<p>冷水机组</p><p class="TagDataVal">{{ electricTagList.E_Area_TQR_18_2_36_1.ZGL }}</p></div>
-            <div class="waterTagData">2L空调室二<p>空调机组</p><p class="TagDataVal">{{ electricTagList.E_Area_TQR_18_2_36_2.ZGL }}</p></div>
-            <div class="waterTagData">2L电控室<p>冷水机组</p><p class="TagDataVal">{{ electricTagList.E_Area_TQR_18_2_36_3.ZGL }}</p></div>
-            <div class="waterTagData">2L电控室<p>制粒</p><p class="TagDataVal">{{ electricTagList.E_Area_TQR_18_2_36_4.ZGL }}</p></div>
+            <div class="waterTagData">提取二2楼空调室二1<p>冷水机组</p><p class="TagDataVal">{{ electricTagList.E_Area_TQR_18_2_36_1.ZGL }}</p></div>
+            <div class="waterTagData">提取二2楼空调室二2<p>空调机组</p><p class="TagDataVal">{{ electricTagList.E_Area_TQR_18_2_36_2.ZGL }}</p></div>
+            <div class="waterTagData">提取二2楼电控室1<p>冷水机组</p><p class="TagDataVal">{{ electricTagList.E_Area_TQR_18_2_36_3.ZGL }}</p></div>
+            <div class="waterTagData">提取二2楼电控室2<p>制粒</p><p class="TagDataVal">{{ electricTagList.E_Area_TQR_18_2_36_4.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === '锅炉房'">
-            <div class="waterTagData">锅炉房电柜<p>锅炉</p><p>{{ electricTagList.E_Area_GLF_42_1_33_1.ZGL }}</p></div>
-            <div class="waterTagData">锅炉房电柜<p>供暖</p><p>{{ electricTagList.E_Area_GLF_42_1_33_2.ZGL }}</p></div>
-            <div class="waterTagData">锅炉房旁边屋子<p>脱硫</p><p>{{ electricTagList.E_Area_GLF_42_1_33_3.ZGL }}</p></div>
+            <div class="waterTagData">锅炉房电柜1<p>锅炉</p><p class="TagDataVal">{{ electricTagList.E_Area_GLF_42_1_33_1.ZGL }}</p></div>
+            <div class="waterTagData">锅炉房电柜2<p>供暖</p><p class="TagDataVal">{{ electricTagList.E_Area_GLF_42_1_33_2.ZGL }}</p></div>
+            <div class="waterTagData">锅炉房旁边屋子3<p>脱硫</p><p class="TagDataVal">{{ electricTagList.E_Area_GLF_42_1_33_3.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === '智能库'">
-            <div class="waterTagData">智能库1L<p></p><p class="TagDataVal">{{ electricTagList.E_Area_ZNK_24_1_10_1.ZGL }}</p></div>
+            <div class="waterTagData">智能库1楼1<p></p><p class="TagDataVal">{{ electricTagList.E_Area_ZNK_24_1_10_1.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === '综合车间'">
-            <div class="waterTagData">MVR<p></p><p class="TagDataVal">{{ electricTagList.E_Area_ZH_1.ZGL }}</p></div>
-            <div class="waterTagData">MVR<p></p><p class="TagDataVal">{{ electricTagList.E_Area_ZH_2.ZGL }}</p></div>
-            <div class="waterTagData">2L配电室<p>总表、制粒、带干、粉糖、输液泵</p><p class="TagDataVal">{{ electricTagList.E_Area_ZH_50_1_41_1.ZGL }}</p></div>
-            <div class="waterTagData">2L配电室<p>制粒</p><p class="TagDataVal">{{ electricTagList.E_Area_ZH_50_1_41_2.ZGL }}</p></div>
-            <div class="waterTagData">2L配电室<p>带干</p><p class="TagDataVal">{{ electricTagList.E_Area_ZH_50_1_41_3.ZGL }}</p></div>
-            <div class="waterTagData">2L配电室<p>浓缩罐、自控系统、电梯、洗衣房、真空泵</p><p class="TagDataVal">{{ electricTagList.E_Area_ZH_50_1_41_4.ZGL }}</p></div>
-            <div class="waterTagData">2L配电室<p>排风</p><p class="TagDataVal">{{ electricTagList.E_Area_ZH_50_1_41_5.ZGL }}</p></div>
-            <div class="waterTagData">2L配电室<p>照明</p><p class="TagDataVal">{{ electricTagList.E_Area_ZH_50_1_41_6.ZGL }}</p></div>
+            <div class="waterTagData">综合2楼MVR1<p></p><p class="TagDataVal">{{ electricTagList.E_Area_ZH_1.ZGL }}</p></div>
+            <div class="waterTagData">综合2楼MVR2<p></p><p class="TagDataVal">{{ electricTagList.E_Area_ZH_2.ZGL }}</p></div>
+            <div class="waterTagData">2楼配电室1<p>总表、制粒、带干、粉糖、输液泵</p><p class="TagDataVal">{{ electricTagList.E_Area_ZH_50_1_41_1.ZGL }}</p></div>
+            <div class="waterTagData">2楼配电室2<p>制粒</p><p class="TagDataVal">{{ electricTagList.E_Area_ZH_50_1_41_2.ZGL }}</p></div>
+            <div class="waterTagData">2楼配电室3<p>带干</p><p class="TagDataVal">{{ electricTagList.E_Area_ZH_50_1_41_3.ZGL }}</p></div>
+            <div class="waterTagData">2楼配电室4<p>浓缩罐、自控系统、电梯、洗衣房、真空泵</p><p class="TagDataVal">{{ electricTagList.E_Area_ZH_50_1_41_4.ZGL }}</p></div>
+            <div class="waterTagData">2楼配电室5<p>排风</p><p class="TagDataVal">{{ electricTagList.E_Area_ZH_50_1_41_5.ZGL }}</p></div>
+            <div class="waterTagData">2楼配电室6<p>照明</p><p class="TagDataVal">{{ electricTagList.E_Area_ZH_50_1_41_6.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === '变电所'">
-            <div class="waterTagData">变电所<p>40喷干</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_1.ZGL }}</p></div>
-            <div class="waterTagData">变电所<p>50喷干</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_2.ZGL }}</p></div>
-            <div class="waterTagData">变电所<p>新提取循环水泵</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_3.ZGL }}</p></div>
-            <div class="waterTagData">变电所<p>消防水泵+新大库</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_4.ZGL }}</p></div>
-            <div class="waterTagData">变电所<p>GMP</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_2_40_5.ZGL }}</p></div>
-            <div class="waterTagData">变电所<p>前处理</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_2_40_6.ZGL }}</p></div>
-            <div class="waterTagData">变电所<p>仓储中心</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_2_40_7.ZGL }}</p></div>
-            <div class="waterTagData">变电所<p>提取二照明</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_2_40_8.ZGL }}</p></div>
-            <div class="waterTagData">变电所<p>40粉碎、提取二空调</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_2_40_9.ZGL }}</p></div>
-            <div class="waterTagData">变电所<p>60带干、风机、制粒、办公</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_2_40_10.ZGL }}</p></div>
-            <div class="waterTagData">变电所<p>提取、自控</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_2_40_11.ZGL }}</p></div>
-            <div class="waterTagData">变电所<p>提取二车间新空调</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_2_40_12.ZGL }}</p></div>
+            <div class="waterTagData">变电所1<p>40喷干</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_1.ZGL }}</p></div>
+            <div class="waterTagData">变电所2<p>50喷干</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_2.ZGL }}</p></div>
+            <div class="waterTagData">变电所3<p>新提取循环水泵</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_3.ZGL }}</p></div>
+            <div class="waterTagData">变电所4<p>消防水泵+新大库</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_1_39_4.ZGL }}</p></div>
+            <div class="waterTagData">变电所5<p>GMP</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_2_40_5.ZGL }}</p></div>
+            <div class="waterTagData">变电所6<p>前处理</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_2_40_6.ZGL }}</p></div>
+            <div class="waterTagData">变电所7<p>仓储中心</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_2_40_7.ZGL }}</p></div>
+            <div class="waterTagData">变电所8<p>提取二照明</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_2_40_8.ZGL }}</p></div>
+            <div class="waterTagData">变电所9<p>40粉碎、提取二空调</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_2_40_9.ZGL }}</p></div>
+            <div class="waterTagData">变电所10<p>60带干、风机、制粒、办公</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_2_40_10.ZGL }}</p></div>
+            <div class="waterTagData">变电所11<p>提取、自控</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_2_40_11.ZGL }}</p></div>
+            <div class="waterTagData">变电所12<p>提取二车间新空调</p><p class="TagDataVal">{{ electricTagList.E_Area_BDS_49_2_40_12.ZGL }}</p></div>
           </el-card>
           <div slot="footer" class="dialog-footer">
             <el-button @click="electricAreaTagDialog = false">关 闭</el-button>
@@ -1247,6 +1337,8 @@ export default {
       UPSImg:require("@/assets/imgs/UPS.jpg"),
       waterAreaDialog:false,
       waterAreaTagDialog:false,
+      waterdialogfullscreen:false,
+      waterImgCollapse:false,
       electricAreaTagDialog:false,
       electricdialogfullscreen:false,
       electricImgCollapse:false,
@@ -1711,8 +1803,11 @@ export default {
   }
   .steamTagTitle{
     float: left;
-    padding-right: 15px;
     line-height: 64px;
+  }
+  .steamTagValue{
+    display: inline-grid;
+    float: right;
   }
   .steamTagValue p{
     background: #333333;
@@ -1720,6 +1815,7 @@ export default {
     color: #15CC48;
     margin-bottom: 3px;
     white-space: nowrap;
+    min-width:70px;
     float: right;
   }
   .useAreaCard{

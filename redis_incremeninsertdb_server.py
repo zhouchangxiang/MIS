@@ -188,18 +188,13 @@ def run():
                           key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName, "0")
                     electric_value.append(el)
                 else:
-                    if float(key.ZGL) < float(proZGLmValue):#去除清零情况，统计累计值减小就认为是脏数据
-                        el = (ZGLvalue, "电", key.ID,
-                              key.PriceID, key.Unit, key.EquipmnetID,
-                              key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
-                              key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName, "0")
-                        electric_value.append(el)
-                    else:
-                        el = (ZGLvalue, "电", key.ID,
-                              key.PriceID, key.Unit, key.EquipmnetID,
-                              key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
-                              key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName, "0")
-                        electric_value.append(el)
+                    if float(key.ZGL) >= float(proZGLmValue):#去除清零情况，统计累计值减小就认为是脏数据
+                        if ZGLvalue / (float(proZGLmValue) * value) < 0.8:
+                            el = (ZGLvalue, "电", key.ID,
+                                  key.PriceID, key.Unit, key.EquipmnetID,
+                                  key.TagClassValue, key.CollectionDate, key.CollectionYear, key.CollectionMonth,
+                                  key.CollectionDay, str(key.CollectionDate)[0:13], key.AreaName, "0")
+                            electric_value.append(el)
             try:
                 cursor = conn.cursor()
                 cursor.executemany(
@@ -247,5 +242,7 @@ def run():
         redis_conn.hset(constant.REDIS_TABLENAME, "redis_incremeninsertdb_server_failcount", str(failcount))
         redis_conn.hset(constant.REDIS_TABLENAME, "redis_incremeninsertdb_server_status", "执行成功")
 
+
 if __name__ == '__main__':
+    time.sleep(60)
     run()
