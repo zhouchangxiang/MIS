@@ -143,7 +143,7 @@ def strlastMonth(currmonth):
     curr = currmonth.split("-")
     str0 = curr[0]
     str1 = curr[1]
-    if "0" in str1:
+    if "0" in str1 and str1 != "10":
         str00 = str1[1]
     else:
         str00 = str1

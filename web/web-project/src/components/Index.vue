@@ -164,7 +164,7 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>灌溉水DN40</span><p>{{ waterTagList.W_Area_WSZ_16_2_34.sumValue }}</p><p>{{ waterTagList.W_Area_WSZ_16_2_34.flowValue }}°C</p></div>
+                  <div class="electricTagData"><span>灌溉水DN40</span><p>{{ waterTagList.W_Area_WSZ_16_2_34.sumValue }}</p><p>{{ waterTagList.W_Area_WSZ_16_2_34.flowValue }}</p></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -178,9 +178,9 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>后走廊灌溉水DN40</span><p>{{ waterTagList.W_Area_TQR_17_2_8.sumValue }}</p><p>{{ waterTagList.W_Area_TQR_17_2_8.flowValue }}°C</p></div>
+                  <div class="electricTagData"><span>后走廊灌溉水DN40</span><p>{{ waterTagList.W_Area_TQR_17_2_8.sumValue }}</p><p>{{ waterTagList.W_Area_TQR_17_2_8.flowValue }}</p></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>出料电梯旁饮用水DN100</span><p>{{ waterTagList.W_Area_TQR_17_1_9.sumValue }}</p><p>{{ waterTagList.W_Area_TQR_17_1_9.flowValue }}°C</p></div>
+                  <div class="electricTagData"><span>出料电梯旁饮用水DN100</span><p>{{ waterTagList.W_Area_TQR_17_1_9.sumValue }}</p><p>{{ waterTagList.W_Area_TQR_17_1_9.flowValue }}</p></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -194,9 +194,9 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>带干辅机灌溉水DN40</span><p>{{ waterTagList.W_Area_ZH_23_2_13.sumValue }}</p><p>{{ waterTagList.W_Area_ZH_23_2_13.flowValue }}°C</p></div>
+                  <div class="electricTagData"><span>带干辅机灌溉水DN40</span><p>{{ waterTagList.W_Area_ZH_23_2_13.sumValue }}</p><p>{{ waterTagList.W_Area_ZH_23_2_13.flowValue }}</p></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>2楼会议室饮用水DN150</span><p>{{ waterTagList.W_Area_ZH_23_1_12.sumValue }}</p><p>{{ waterTagList.W_Area_ZH_23_1_12.flowValue }}°C</p></div>
+                  <div class="electricTagData"><span>2楼会议室饮用水DN150</span><p>{{ waterTagList.W_Area_ZH_23_1_12.sumValue }}</p><p>{{ waterTagList.W_Area_ZH_23_1_12.flowValue }}</p></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -210,9 +210,9 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>包材库灌溉水DN50</span><p>{{ waterTagList.W_Area_XJZ_12_1_3.sumValue }}</p><p>{{ waterTagList.W_Area_XJZ_12_1_3.flowValue }}°C</p></div>
+                  <div class="electricTagData"><span>包材库灌溉水DN50</span><p>{{ waterTagList.W_Area_XJZ_12_1_3.sumValue }}</p><p>{{ waterTagList.W_Area_XJZ_12_1_3.flowValue }}</p></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>接待室饮用水DN100</span><p>{{ waterTagList.W_Area_XJZ_12_2_5.sumValue }}</p><p>{{ waterTagList.W_Area_XJZ_12_2_5.flowValue }}°C</p></div>
+                  <div class="electricTagData"><span>接待室饮用水DN100</span><p>{{ waterTagList.W_Area_XJZ_12_2_5.sumValue }}</p><p>{{ waterTagList.W_Area_XJZ_12_2_5.flowValue }}</p></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -225,7 +225,7 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>消防水DN100</span><p>{{ waterTagList.W_Area_YF_26_1_15.sumValue }}</p><p>{{ waterTagList.W_Area_YF_26_1_15.flowValue }}°C</p></div>
+                  <div class="electricTagData"><span>消防水DN100</span><p>{{ waterTagList.W_Area_YF_26_1_15.sumValue }}</p><p>{{ waterTagList.W_Area_YF_26_1_15.flowValue }}</p></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -239,9 +239,9 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>消防水DN50</span><p>{{ waterTagList.W_Area_YTQ_39_1_30.sumValue }}</p><p>{{ waterTagList.W_Area_YTQ_39_1_30.flowValue }}°C</p></div>
+                  <div class="electricTagData"><span>消防水DN50</span><p>{{ waterTagList.W_Area_YTQ_39_1_30.sumValue }}</p><p>{{ waterTagList.W_Area_YTQ_39_1_30.flowValue }}</p></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>灌溉水DN40</span><p>{{ waterTagList.W_Area_YTQ_39_2_30.sumValue }}</p><p>{{ waterTagList.W_Area_YTQ_39_2_30.flowValue }}°C</p></div>
+                  <div class="electricTagData"><span>灌溉水DN40</span><p>{{ waterTagList.W_Area_YTQ_39_2_30.sumValue }}</p><p>{{ waterTagList.W_Area_YTQ_39_2_30.flowValue }}</p></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -255,9 +255,9 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>洗药室灌溉水DN25</span><p>{{ waterTagList.W_Area_QCL_33_1_20.sumValue }}</p><p>{{ waterTagList.W_Area_QCL_33_1_20.flowValue }}°C</p></div>
+                  <div class="electricTagData"><span>洗药室灌溉水DN25</span><p>{{ waterTagList.W_Area_QCL_33_1_20.sumValue }}</p><p>{{ waterTagList.W_Area_QCL_33_1_20.flowValue }}</p></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>饮用水DN25</span><p>{{ waterTagList.W_Area_QCL_33_2_20.sumValue }}</p><p>{{ waterTagList.W_Area_QCL_33_2_20.flowValue }}°C</p></div>
+                  <div class="electricTagData"><span>饮用水DN25</span><p>{{ waterTagList.W_Area_QCL_33_2_20.sumValue }}</p><p>{{ waterTagList.W_Area_QCL_33_2_20.flowValue }}</p></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -271,9 +271,9 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>消防水DN50</span><p>{{ waterTagList.W_Area_JK_28_1_16.sumValue }}</p><p>{{ waterTagList.W_Area_JK_28_1_16.flowValue }}°C</p></div>
+                  <div class="electricTagData"><span>消防水DN50</span><p>{{ waterTagList.W_Area_JK_28_1_16.sumValue }}</p><p>{{ waterTagList.W_Area_JK_28_1_16.flowValue }}</p></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>消防水DN50</span><p>{{ waterTagList.W_Area_JK_28_2_16.sumValue }}</p><p>{{ waterTagList.W_Area_JK_28_2_16.flowValue }}°C</p></div>
+                  <div class="electricTagData"><span>消防水DN50</span><p>{{ waterTagList.W_Area_JK_28_2_16.sumValue }}</p><p>{{ waterTagList.W_Area_JK_28_2_16.flowValue }}</p></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -287,9 +287,9 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>男卫生间灌溉水DN40</span><p>{{ waterTagList.W_Area_GT_30_2_18.sumValue }}</p><p>{{ waterTagList.W_Area_GT_30_2_18.flowValue }}°C</p></div>
+                  <div class="electricTagData"><span>男卫生间灌溉水DN40</span><p>{{ waterTagList.W_Area_GT_30_2_18.sumValue }}</p><p>{{ waterTagList.W_Area_GT_30_2_18.flowValue }}</p></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>纯化水站饮用水DN100</span><p>{{ waterTagList.W_Area_GT_30_1_19.sumValue }}</p><p>{{ waterTagList.W_Area_GT_30_1_19.flowValue }}°C</p></div>
+                  <div class="electricTagData"><span>纯化水站饮用水DN100</span><p>{{ waterTagList.W_Area_GT_30_1_19.sumValue }}</p><p>{{ waterTagList.W_Area_GT_30_1_19.flowValue }}</p></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -302,7 +302,7 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>1楼卫生间深井水DN65</span><p>{{ waterTagList.W_Area_BGL_34_1_22.sumValue }}</p><p>{{ waterTagList.W_Area_BGL_34_1_22.flowValue }}°C</p></div>
+                  <div class="electricTagData"><span>1楼卫生间深井水DN65</span><p>{{ waterTagList.W_Area_BGL_34_1_22.sumValue }}</p><p>{{ waterTagList.W_Area_BGL_34_1_22.flowValue }}</p></div>
                 </li>
               </ul>
             </el-col>
