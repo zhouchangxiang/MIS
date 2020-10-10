@@ -15,6 +15,7 @@
       <EnergyLimit v-if="navOptionsCurrent === 'EnergyLimit'"></EnergyLimit>
       <EarlyWarningLimit v-if="navOptionsCurrent === 'EarlyWarningLimit'"></EarlyWarningLimit>
       <electricityBalance v-if="navOptionsCurrent === 'electricityBalance'"></electricityBalance>
+      <TagDetail v-if="navOptionsCurrent === 'TagDetail'"></TagDetail>
     </el-col>
   </el-row>
 </template>
@@ -30,10 +31,12 @@
   import EnergyLimit from '@/views/MaintainedTable/EnergyLimit'
   import EarlyWarningLimit from '@/views/MaintainedTable/EarlyWarningLimit'
   import electricityBalance from '@/views/MaintainedTable/electricityBalance'
+  import TagDetail from '@/views/MaintainedTable/TagDetail'
+
   export default {
     name: "MaintainedBoard",
     components:{
-      Area,AreaTimeRange,PowerLoadRateRange,EnergyPrices,UnitConversion,UnitTable,EnergyLimit,EarlyWarningLimit,electricityBalance
+      Area,AreaTimeRange,PowerLoadRateRange,EnergyPrices,UnitConversion,UnitTable,EnergyLimit,EarlyWarningLimit,electricityBalance,TagDetail
     },
     data(){
       return {
@@ -48,6 +51,7 @@
           {name:"能耗限度",value:"EnergyLimit"},
           {name:"温度预警限度",value:"EarlyWarningLimit"},
           {name:"三项电流不平衡",value:"electricityBalance"},
+          {name:"报表导出配置",value:"TagDetail"},
         ],
       }
     },
