@@ -929,7 +929,7 @@ def exportx(Area, EnergyClass, StartTime, EndTime):
     col = 0
     row = 1
     if Area != "" and Area != None:
-        tas = db_session.query(TagDetail).filter(TagDetail.AreaName == Area, TagDetail.EnergyClass == EnergyClass).all()
+        tas = db_session.query(TagDetail).filter(TagDetail.AreaName == Area, TagDetail.EnergyClass == EnergyClass, TagDetail.IsExport == "是").all()
     else:
         tas = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
 

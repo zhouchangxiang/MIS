@@ -791,7 +791,7 @@ class TagDetail(Base):
     # 虚拟分配COM号:
     COMNum = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
-    # 485站点地址:
+    # 采集点名称:
     FEFportIP = Column(Unicode(65), primary_key=False, autoincrement=False, nullable=True)
 
     # 位置:
@@ -811,6 +811,9 @@ class TagDetail(Base):
 
     # 用电设备
     Equipment = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+
+    # 是否导出
+    IsExport = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
 
 
 # TagDetail_END:
