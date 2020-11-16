@@ -128,10 +128,11 @@ def energyElectricSelect(data):
                 oclass = db_session.query(TagDetail).filter(TagDetail.EnergyClass == energy).all()
             oc_list = []
             for oc in oclass:
-                if oc.TagClassValue not in ['E_Area_ZH_50_1_41_3', 'E_Area_YTQ_38_2_29_3', 'E_Area_GT_30_2_19_2', 'E_Area_TQR_18_2_36_4']:
-                    oc_list.append(oc.TagClassValue)
-                else:
-                    pass
+                # if oc.TagClassValue not in ['E_Area_ZH_50_1_41_3', 'E_Area_YTQ_38_2_29_3', 'E_Area_GT_30_2_19_2', 'E_Area_TQR_18_2_36_4']:
+                #     oc_list.append(oc.TagClassValue)
+                # else:
+                #     pass
+                oc_list.append(oc.TagClassValue)
             if len(oc_list) > 0:
                 elecount = energyStatistics(oc_list, StartTime, EndTime, energy)
             else:
