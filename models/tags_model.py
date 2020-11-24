@@ -35,7 +35,7 @@ class Tags(Base):
     # 上级tag点
     ChildrenTag = Column(Unicode(100), nullable=True)
     # 父节点
-    ParenTag = Column(Unicode(100), nullable=True)
+    ParentTag = Column(Unicode(100), nullable=True)
 
 
 Base.metadata.create_all(engine)

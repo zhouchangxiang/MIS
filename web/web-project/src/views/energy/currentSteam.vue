@@ -77,6 +77,9 @@ var moment = require('moment');
     created(){
       this.initTree()
     },
+    mounted(){
+      this.firstRenderDesk()
+    },
     destroyed(){
     if(this.myChart){
       this.myChart.dispose()
@@ -90,7 +93,7 @@ var moment = require('moment');
           })
       },
       searchData(){
-        var arr=this.$refs.tree.getCheckedNodes()
+        var arr=this.$refs.tree.getCheckedNodes(true)
         if(arr.length===0){
           this.$message({
               message: '请先选择要实时展示的tag点',
@@ -104,23 +107,42 @@ var moment = require('moment');
           });
           return;
         }else{
+          this.TagCode=arr[0].id
         var params={
           start_time:moment(this.valuedatetime1).format('YYYY-MM-DD HH:mm:ss'),
           end_time:moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss'),
           tag:this.TagCode
         }
         this.axios.post('/api/flow',this.qs.stringify(params)).then((res) => {
-         this.dates = res.data.map(function (item) {
+         this.dates = res.data.data.map(function (item) {
                 return item.time.slice(11, 19)
               })
-        this.dataline1 = res.data.map(function (item) {
+        this.dataline1 = res.data.data.map(function (item) {
                   return +item.value;
                });
-        this.yvaluemax=(Math.max.apply(Math, this.dataline1).toFixed(0))+10//初始y轴坐标值
+        this.yvaluemax=Math.max.apply(Math, this.dataline1).toFixed(0)//初始y轴坐标值
         this.yvaluemin=Math.min.apply(Math, this.dataline1).toFixed(0)//初始y轴坐标值
         this.drawLine(this.dataline1,this.dateset,this.yvaluemax,this.yvaluemin);
         })
         }
+      },
+      firstRenderDesk(){
+        var params={
+          start_time:moment(this.valuedatetime1).format('YYYY-MM-DD HH:mm:ss'),
+          end_time:moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss'),
+          tag:this.TagCode
+        }
+        this.axios.post('/api/flow',this.qs.stringify(params)).then((res) => {
+         this.dates = res.data.data.map(function (item) {
+                return item.time.slice(11, 19)
+              })
+        this.dataline1 = res.data.data.map(function (item) {
+                  return +item.value;
+               });
+        this.yvaluemax=Math.max.apply(Math, this.dataline1).toFixed(0)//初始y轴坐标值
+        this.yvaluemin=Math.min.apply(Math, this.dataline1).toFixed(0)//初始y轴坐标值
+        this.drawLine(this.dataline1,this.dateset,this.yvaluemax,this.yvaluemin);
+        })
       },
     drawLine(dataline1,dateset,yvaluemax,yvaluemin){
         if(this.myChart){

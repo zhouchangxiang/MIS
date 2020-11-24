@@ -18,6 +18,7 @@ from flask_bootstrap import Bootstrap
 from handlers.batchmanager.batch_manager import batch
 from tools.common import insert, delete, update, select, accurateSelect
 from handlers.energymanager.energy_manager import energy, energyselect
+from handlers.flow import foo
 from flask_login import current_user
 import datetime
 
@@ -26,6 +27,7 @@ bootstrap = Bootstrap(app)
 app.config['SECRET_KEY'] = 'qeqhdasdqiqd131'
 account_auth.login_manager.init_app(app)
 
+app.register_blueprint(foo)
 # 将后台函数传到前端
 app.add_template_global(auth_lib.isIn, 'isIn')
 
