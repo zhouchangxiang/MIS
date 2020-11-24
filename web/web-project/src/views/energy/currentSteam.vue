@@ -78,8 +78,10 @@ var moment = require('moment');
       this.initTree()
     },
     destroyed(){
+    if(this.myChart){
       this.myChart.dispose()
       this.myChart.clear()
+    }
     },
     methods:{
       initTree(){
