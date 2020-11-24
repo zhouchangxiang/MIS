@@ -19,9 +19,9 @@
           tableName:"TagDetail",
           column:[
             {prop:"EnergyClass",label:"类型"},
-            {prop:"IsExport",label:"是否导出"},
             {prop:"AreaName",label:"区域名称"},
             {prop:"FEFportIP",label:"采集点名称"},
+            {prop:"IsExport",label:"是否导出"},
           ],
           data:[],
           limit:5,
@@ -39,9 +39,7 @@
           dialogVisible: false,
           dialogTitle:'',
           handleType:[
-            {type:"primary",label:"添加"},
             {type:"warning",label:"修改"},
-            {type:"danger",label:"删除"},
           ],
           handleForm:[
             {label:"ID",prop:"ID",type:"input",value:"",disabled:true},

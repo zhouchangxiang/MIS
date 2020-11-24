@@ -814,6 +814,8 @@ class TagDetail(Base):
 
     # 是否导出
     IsExport = Column(Unicode(32), primary_key=False, autoincrement=False, nullable=True)
+    # 电量约束
+    ConstrainValue = Column(Unicode(32), nullable=True)
 
 
 # TagDetail_END:
