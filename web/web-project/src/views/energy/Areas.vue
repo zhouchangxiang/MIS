@@ -12,7 +12,8 @@
       <AreaBatch v-else-if="navOptionsCurrent == 4"></AreaBatch>
       <AreaEqDetails v-else-if="navOptionsCurrent == 5"></AreaEqDetails>
       <CostCenter v-else-if="navOptionsCurrent == 6"></CostCenter>
-      <dataAnalysis v-else-if="navOptionsCurrent == 7"></dataAnalysis>
+      <DataAnalysis v-else-if="navOptionsCurrent == 7"></DataAnalysis>
+      <CurrentSteam v-else-if="navOptionsCurrent == 8"></CurrentSteam>
     </el-col>
   </el-row>
 </template>
@@ -24,12 +25,13 @@
   import AreaEqDetails from '@/views/energy/AreaEqDetails'
   import AreaBasicData from '@/views/energy/AreaBasicData'
   import CostCenter from '@/views/energy/CostCenter'
-  import dataAnalysis from '@/views/energy/dataAnalysis'
+  import DataAnalysis from '@/views/energy/dataAnalysis'
+  import CurrentSteam from '@/views/energy/currentSteam'
   var moment = require('moment');
   export default {
     name: "Areas",
     components:{
-      AreasHome,AreaBatch,AreaPeriodTime,AreaEqDetails,AreaBasicData,CostCenter,dataAnalysis
+      AreasHome,AreaBatch,AreaPeriodTime,AreaEqDetails,AreaBasicData,CostCenter,DataAnalysis,CurrentSteam
     },
     inject:['newAreaName'],
     mounted(){
@@ -46,6 +48,7 @@
           {name:"设备详情",value:5},
           {name:"成本中心",value:6},
           {name:"增量数据分析",value:7},
+          {name:"瞬时汽流量数据分析",value:8},
         ],
       }
     },
