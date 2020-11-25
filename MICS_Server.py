@@ -28,6 +28,7 @@ app.config['SECRET_KEY'] = 'qeqhdasdqiqd131'
 account_auth.login_manager.init_app(app)
 
 app.register_blueprint(foo)
+# app.register_blueprint(t)
 # 将后台函数传到前端
 app.add_template_global(auth_lib.isIn, 'isIn')
 

@@ -1,4 +1,9 @@
 import json
+from io import BytesIO
+import pandas as pd
+from flask import make_response, Blueprint, request
+
+import xlwt
 
 from flask import Blueprint, request
 
@@ -157,3 +162,104 @@ def count():
     for result in results:
         data.append({'time': result[0], 'value': result[1]})
     return json.dumps({'code': '200', 'msg': '操作成功', 'data': data}, cls=AlchemyEncoder, ensure_ascii=False)
+
+
+@foo.route('/exports')
+def excelout():
+    '''
+    导出原始数据
+    :return:
+    '''
+    data = request.values
+    if request.method == 'GET':
+        tag = "'" + request.values.get('tag') + "'"
+        start_time = "'" + request.values.get('start_time') + "'"
+        end_time = "'" + request.values.get('end_time') + "'"
+        output = exportx(tag,start_time,end_time)
+        resp = make_response(output.getvalue())
+        resp.headers["Content-Disposition"] = "attachment; filename=testing.xlsx"
+        resp.headers['Content-Type'] = 'application/x-xlsx'
+        return resp
+
+
+def exportx(tag, start_time, end_time):
+    # 创建数据流
+    output = BytesIO()
+    # 创建excel work book
+    writer = pd.ExcelWriter(output, engine='xlsxwriter')
+    workbook = writer.book
+    # 创建excel sheet
+    worksheet = workbook.add_worksheet('sheet1')
+    # cell 样式
+    cell_format = workbook.add_format({
+        'bold': 1,
+        'border': 1,
+        'align': 'center',
+        'valign': 'vcenter',
+        'fg_color': '#006633'})
+
+    col = 0
+    row = 1
+
+    columns = ['区域', '采集时间', '瞬时流量', '瞬时流量单位', '温度', '累计值', '累计值单位', '体积']
+    # if Area != "" and Area != None:
+    #     tas = db_session.query(TagDetail).filter(TagDetail.AreaName == Area, TagDetail.EnergyClass == EnergyClass, TagDetail.IsExport == "是").all()
+    # else:
+    #     tas = db_session.query(TagDetail).filter(TagDetail.EnergyClass == EnergyClass).all()
+
+    # 写入列名
+    # columns = ['区域', '采集点', '增量值', '单位', '开始时间', '结束时间']
+    # if EnergyClass == "电":
+    #     columns = ['区域', '采集点', '用电设备', '增量值', '单位', '开始时间', '结束时间']
+    for item in columns:
+        worksheet.write(0, col, item, cell_format)
+        col += 1
+    # UnitValue = db_session.query(Unit.UnitValue).filter(Unit.UnitName == EnergyClass).first()
+    # if UnitValue:
+    #     unit = UnitValue[0]
+    # else:
+    #     unit = ""
+    # if EnergyClass == "汽":
+    #     # totaltag = db_session.query(TagDetail).filter(TagDetail.TagClassValue == "S_AllArea_Value").first()
+    #     totalm = energyStatisticsteamtotal(StartTime, EndTime)
+    #     for cum in columns:
+    #         if cum == '采集点':
+    #             worksheet.write(1, columns.index(cum), totaltag.FEFportIP)
+    #         if cum == '增量值':
+    #             worksheet.write(1, columns.index(cum), totalm)
+    #         if cum == '区域':
+    #             worksheet.write(1, columns.index(cum), totaltag.AreaName)
+    #         if cum == '单位':
+    #             worksheet.write(1, columns.index(cum), unit)
+    #         if cum == '开始时间':
+    #             worksheet.write(1, columns.index(cum), StartTime)
+    #         if cum == '结束时间':
+    #             worksheet.write(1, columns.index(cum), EndTime)
+    # 写入数据
+    sql = "select AreaName, CollectionDate, FlowValue, FlowUnit, WD, SumValue, SumUnit, Volume from [DB_MICS].[dbo].[SteamEnergy] where TagClassValue=" + tag + " and CollectionDate between " + start_time + " and " + end_time + " order by CollectionDate"
+    # sql = "select AreaName, CollectionDate, FlowValue, FlowUnit, WD, SumValue, SumUnit, Volume from [DB_MICS].[dbo].[SteamEnergy] where CollectionDate between '2020-11-24 07:00:00' and '2020-11-24 18:00:00'"
+    all_data = db_session.execute(sql).fetchall()
+    i = 1
+    for ta in all_data:
+        # reclass = tongjibaobiaosql(EnergyClass, ta.TagClassValue, StartTime, EndTime)
+        for cum in columns:
+            if cum == '区域':
+                worksheet.write(i, columns.index(cum), ta[0])
+            if cum == '采集时间':
+                worksheet.write(i, columns.index(cum), ta[1])
+            if cum == '瞬时流量':
+                worksheet.write(i, columns.index(cum), ta[2])
+            if cum == '瞬时流量单位':
+                worksheet.write(i, columns.index(cum), ta[3])
+            if cum == '温度':
+                worksheet.write(i, columns.index(cum), ta[4])
+            if cum == '累计值':
+                worksheet.write(i, columns.index(cum), ta[5])
+            if cum == '累计值单位':
+                worksheet.write(i, columns.index(cum), ta[6])
+            if cum == '体积':
+                worksheet.write(i, columns.index(cum), ta[7])
+        i += 1
+    writer.close()
+    output.seek(0)
+    return output
