@@ -81,6 +81,9 @@ var moment = require('moment');
     created(){
       this.initTree()
     },
+    mounted(){
+      this.firstRender()
+    },
     methods:{
       initTree(){
         var params={
@@ -106,7 +109,7 @@ var moment = require('moment');
         var arr=this.$refs.tree.getCheckedNodes()
         if(arr.length===0){
           this.$message({
-              message: '请先选择要实时展示的tag点',
+              message: '左侧先选择要实时展示的tag点',
               type: 'warning'
         });
           return;
@@ -127,6 +130,25 @@ var moment = require('moment');
                 this.dateset.push(arr[i].label)
               }
           }}
+        var params={
+          StartTime:moment(this.valuedatetime1).format('YYYY-MM-DD HH:mm:ss'),
+          EndTime:moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss'),
+          TagClassValue:this.TagCode,
+          EnergyClass:'汽'
+        }
+        this.axios.get('/api/selectIncrementStreamTableByTag',{params:params}).then((res) => {
+         this.dates = res.data.map(function (item) {
+                return item.CollectionDate.slice(11, 19)
+              })
+        this.dataline1 = res.data.map(function (item) {
+                  return +item.IncremenValue;
+               });
+        this.yvaluemax=Math.max.apply(Math, this.dataline1).toFixed(0)//初始y轴坐标值
+        this.yvaluemin=Math.min.apply(Math, this.dataline1).toFixed(0)//初始y轴坐标值
+        this.drawLine(this.dataline1,this.dateset,this.yvaluemax,this.yvaluemin);
+        })
+      },
+      firstRender(){
         var params={
           StartTime:moment(this.valuedatetime1).format('YYYY-MM-DD HH:mm:ss'),
           EndTime:moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss'),

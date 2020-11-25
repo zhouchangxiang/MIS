@@ -40,6 +40,9 @@
                    <el-tooltip  effect="dark" content="数据查询" placement="top-start">
                       <el-button type="primary" icon="el-icon-search" @click='searchData'>点击查询数据</el-button>
                   </el-tooltip>
+                   <el-tooltip  effect="dark" content="数据导出" placement="top-start">
+                      <el-button type="primary" icon="el-icon-position" @click='outExcel'>数据导出</el-button>
+                  </el-tooltip>
               </div>
               <div class="platformContainer mainechart" style="position:relative;">
                    <div id="main" style="width:100%; height:750px;" v-loading="loading">数据图表</div>
@@ -87,6 +90,14 @@ var moment = require('moment');
     }
     },
     methods:{
+      outExcel(){
+
+          var start_time=moment(this.valuedatetime1).format('YYYY-MM-DD HH:mm:ss')
+          var end_time=moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss')
+          var tag=this.TagCode
+
+        window.location.href = "/api/exports?start_time="+start_time+"&end_time="+end_time+"&tag="+tag
+      },
       initTree(){
           this.axios.get('/api/tags').then((res) => {
            this.treedata=res.data.data

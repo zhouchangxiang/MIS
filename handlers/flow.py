@@ -201,7 +201,7 @@ def exportx(tag, start_time, end_time):
     col = 0
     row = 1
 
-    columns = ['区域', '采集时间', '瞬时流量', '瞬时流量单位', '温度', '累计值', '累计值单位', '体积']
+    columns = ['区域', '蒸汽表', '采集时间', '瞬时流量', '瞬时流量单位', '温度', '累计值', '累计值单位', '体积']
     # if Area != "" and Area != None:
     #     tas = db_session.query(TagDetail).filter(TagDetail.AreaName == Area, TagDetail.EnergyClass == EnergyClass, TagDetail.IsExport == "是").all()
     # else:
@@ -236,15 +236,19 @@ def exportx(tag, start_time, end_time):
     #         if cum == '结束时间':
     #             worksheet.write(1, columns.index(cum), EndTime)
     # 写入数据
-    sql = "select AreaName, CollectionDate, FlowValue, FlowUnit, WD, SumValue, SumUnit, Volume from [DB_MICS].[dbo].[SteamEnergy] where TagClassValue=" + tag + " and CollectionDate between " + start_time + " and " + end_time + " order by CollectionDate"
+    sql = "select AreaName, CollectionDate, FlowValue, FlowUnit, WD, SumValue, SumUnit, Volume, TagClassValue from [DB_MICS].[dbo].[SteamEnergy] where TagClassValue=" + tag + " and CollectionDate between " + start_time + " and " + end_time + " order by CollectionDate"
     # sql = "select AreaName, CollectionDate, FlowValue, FlowUnit, WD, SumValue, SumUnit, Volume from [DB_MICS].[dbo].[SteamEnergy] where CollectionDate between '2020-11-24 07:00:00' and '2020-11-24 18:00:00'"
     all_data = db_session.execute(sql).fetchall()
+
     i = 1
     for ta in all_data:
+        tag_name = db_session.query(TagDetail).filter(TagDetail.TagClassValue == ta[8]).first()
         # reclass = tongjibaobiaosql(EnergyClass, ta.TagClassValue, StartTime, EndTime)
         for cum in columns:
             if cum == '区域':
                 worksheet.write(i, columns.index(cum), ta[0])
+            if cum == '蒸汽表':
+                worksheet.write(i, columns.index(cum), tag_name.FEFportIP)
             if cum == '采集时间':
                 worksheet.write(i, columns.index(cum), ta[1])
             if cum == '瞬时流量':
