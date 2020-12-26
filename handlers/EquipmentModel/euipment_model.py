@@ -196,7 +196,7 @@ def powerquality():
                 dir["WarningType"] = ""
                 dir["WarningDate"] = ""
             dir_list = []
-            oclass = db_session.query(ElectricEnergy).filter(ElectricEnergy.CollectionDate.between(StartTime,EndTime)).all()
+            oclass = db_session.query(ElectricEnergy).filter(ElectricEnergy.TagClassValue == TagClassValue, ElectricEnergy.CollectionDate.between(StartTime,EndTime)).all()
             for oc in oclass:
                 oc_dict = {}
                 oc_dict["时间"] = oc.CollectionDate
@@ -206,6 +206,8 @@ def powerquality():
                 oc_dict["B项电压"] = oc.BU
                 oc_dict["C项电流"] = oc.CI
                 oc_dict["C项电压"] = oc.CU
+                if oc.CU == "0":
+                    print(oc.ID)
                 dir_list.append(oc_dict)
             dir["dir_list"] = dir_list
             return json.dumps(dir, cls=AlchemyEncoder, ensure_ascii=False)

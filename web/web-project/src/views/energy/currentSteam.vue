@@ -40,6 +40,9 @@
                    <el-tooltip  effect="dark" content="数据查询" placement="top-start">
                       <el-button type="primary" icon="el-icon-search" @click='searchData'>点击查询数据</el-button>
                   </el-tooltip>
+                   <el-tooltip  effect="dark" content="数据导出" placement="top-start">
+                      <el-button type="primary" icon="el-icon-position" @click='outExcel'>数据导出</el-button>
+                  </el-tooltip>
               </div>
               <div class="platformContainer mainechart" style="position:relative;">
                    <div id="main" style="width:100%; height:750px;" v-loading="loading">数据图表</div>
@@ -55,18 +58,14 @@
 import echarts from '@/assets/js/echarts.js'
 var moment = require('moment');
   export default {
-    name: "dataAnalysis",
+    name: "currentSteam",
     data(){
       return {
         defaultProps: {
           children: 'children',
           label: 'label'
         },
-        treedata:[{
-          id: 1,
-          label:this.$route.query.areaName,
-          children: []
-        }],
+        treedata:[],
         valuedatetime1:moment().format('YYYY-MM-DD 00:00:00'),
         valuedatetime2:moment().format('YYYY-MM-DD 06:00:00'),
         radio1:'汽',
@@ -82,85 +81,74 @@ var moment = require('moment');
       this.initTree()
     },
     mounted(){
-      this.firstRender()
+      this.firstRenderDesk()
+    },
+    destroyed(){
+    if(this.myChart){
+      this.myChart.dispose()
+      this.myChart.clear()
+    }
     },
     methods:{
+      outExcel(){
+
+          var start_time=moment(this.valuedatetime1).format('YYYY-MM-DD HH:mm:ss')
+          var end_time=moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss')
+          var tag=this.TagCode
+
+        window.location.href = "/api/exports?start_time="+start_time+"&end_time="+end_time+"&tag="+tag
+      },
       initTree(){
-        var params={
-          AreaName:this.$route.query.areaName,
-          EnergyClass:'汽'
-        }
-          this.axios.get('/api/selectTagByAreamName',{params:params}).then((res) => {
-            var arr=res.data
-            if(this.$route.query.areaName!=='整厂区'){
-              this.treedata[0].children=arr.map((value, index) => {
-                return {id:value.TagClassValue,label:value.FEFportIP,ParentTagCode:value.DeviceNum}
-            })
-            }else{
-              this.treedata=arr.map((value, index) => {
-                return {id:value.ID,label:value.AreaName,children:[{
-                 id:value.TagClassValue,label:value.FEFportIP,ParentTagCode:value.DeviceNum
-                }]}
-            })
-            }
+          this.axios.get('/api/tags').then((res) => {
+           this.treedata=res.data.data
           })
       },
       searchData(){
-        var arr=this.$refs.tree.getCheckedNodes()
+        var arr=this.$refs.tree.getCheckedNodes(true)
         if(arr.length===0){
           this.$message({
-              message: '左侧先选择要实时展示的tag点',
+              message: '请先选择要实时展示的tag点',
               type: 'warning'
         });
           return;
-        }
-        var j=0
-        for(var i=0;i<arr.length;i++){
-           if(arr[i].hasOwnProperty('ParentTagCode')){  //判断子节点
-              j++
-              if(j>1){
-                this.$message({
-                  message: '请选择单个tag点',
-                  type: 'error'
-              });
-              return;
-              }else{
-                this.TagCode=arr[i].id
-                this.dateset=[]
-                this.dateset.push(arr[i].label)
-              }
-          }}
+        }else if(arr.length>1){
+          this.$message({
+              message: '只能选择一个tag点',
+              type: 'warning'
+          });
+          return;
+        }else{
+          this.TagCode=arr[0].id
         var params={
-          StartTime:moment(this.valuedatetime1).format('YYYY-MM-DD HH:mm:ss'),
-          EndTime:moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss'),
-          TagClassValue:this.TagCode,
-          EnergyClass:'汽'
+          start_time:moment(this.valuedatetime1).format('YYYY-MM-DD HH:mm:ss'),
+          end_time:moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss'),
+          tag:this.TagCode
         }
-        this.axios.get('/api/selectIncrementStreamTableByTag',{params:params}).then((res) => {
-         this.dates = res.data.map(function (item) {
-                return item.CollectionDate.slice(11, 19)
+        this.axios.post('/api/flow',this.qs.stringify(params)).then((res) => {
+         this.dates = res.data.data.map(function (item) {
+                return item.time.slice(11, 19)
               })
-        this.dataline1 = res.data.map(function (item) {
-                  return +item.IncremenValue;
+        this.dataline1 = res.data.data.map(function (item) {
+                  return +item.value;
                });
         this.yvaluemax=Math.max.apply(Math, this.dataline1).toFixed(0)//初始y轴坐标值
         this.yvaluemin=Math.min.apply(Math, this.dataline1).toFixed(0)//初始y轴坐标值
         this.drawLine(this.dataline1,this.dateset,this.yvaluemax,this.yvaluemin);
         })
-      },
-      firstRender(){
-        var params={
-          StartTime:moment(this.valuedatetime1).format('YYYY-MM-DD HH:mm:ss'),
-          EndTime:moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss'),
-          TagClassValue:this.TagCode,
-          EnergyClass:'汽'
         }
-        this.axios.get('/api/selectIncrementStreamTableByTag',{params:params}).then((res) => {
-         this.dates = res.data.map(function (item) {
-                return item.CollectionDate.slice(11, 19)
+      },
+      firstRenderDesk(){
+        var params={
+          start_time:moment(this.valuedatetime1).format('YYYY-MM-DD HH:mm:ss'),
+          end_time:moment(this.valuedatetime2).format('YYYY-MM-DD HH:mm:ss'),
+          tag:this.TagCode
+        }
+        this.axios.post('/api/flow',this.qs.stringify(params)).then((res) => {
+         this.dates = res.data.data.map(function (item) {
+                return item.time.slice(11, 19)
               })
-        this.dataline1 = res.data.map(function (item) {
-                  return +item.IncremenValue;
+        this.dataline1 = res.data.data.map(function (item) {
+                  return +item.value;
                });
         this.yvaluemax=Math.max.apply(Math, this.dataline1).toFixed(0)//初始y轴坐标值
         this.yvaluemin=Math.min.apply(Math, this.dataline1).toFixed(0)//初始y轴坐标值
@@ -170,6 +158,7 @@ var moment = require('moment');
     drawLine(dataline1,dateset,yvaluemax,yvaluemin){
         if(this.myChart){
           this.myChart.dispose()
+          this.myChart.clear()
         }
         this.myChart= echarts.init(document.getElementById('main'));
         var option = {
@@ -256,7 +245,7 @@ var moment = require('moment');
                   }
               },
               {
-	          name: '平行于y轴的对比线',
+	        name: '平行于y轴的对比线',
             type: 'line',
             markLine: {
                 name: 'cc',
