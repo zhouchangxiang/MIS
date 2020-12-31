@@ -124,7 +124,7 @@
                 <div style="width: 100%;text-align: center">
                   <div style="display: inline-block;">
                     <el-image style="width:120px;" :src="interchangerImg" fit="scale-down"></el-image><p>总交换机</p>
-                    <p>水表数量：17</p>
+                    <p>水表数量：16</p>
                     <p class="itemMarginBottom">水表总量：{{
                       (waterTagList.W_Area_WSZ_16_2_34.sumValue+
                       waterTagList.W_Area_TQR_17_2_8.sumValue+
@@ -133,7 +133,7 @@
                       waterTagList.W_Area_ZH_23_1_12.sumValue+
                       waterTagList.W_Area_XJZ_12_1_3.sumValue+
                       waterTagList.W_Area_XJZ_12_2_5.sumValue+
-                      waterTagList.W_Area_YF_26_1_15.sumValue+
+                      // waterTagList.W_Area_YF_26_1_15.sumValue+
                       waterTagList.W_Area_YTQ_39_1_30.sumValue+
                       waterTagList.W_Area_YTQ_39_2_30.sumValue+
                       waterTagList.W_Area_QCL_33_1_20.sumValue+
@@ -218,14 +218,14 @@
                   <div class="TagLine"></div>
                   <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image>
                     <p>化验室/中试车间</p>
-                    <p>水表数量：1</p>
-                    <p class="itemMarginBottom">水表总量：{{
-                      (waterTagList.W_Area_YF_26_1_15.sumValue).toFixed(2)
-                      }}
-                    </p>
+                    <p>水表数量：0</p>
+                    <!--<p class="itemMarginBottom">水表总量：{{-->
+                      <!--(waterTagList.W_Area_YF_26_1_15.sumValue).toFixed(2)-->
+                      <!--}}-->
+                    <!--</p>-->
                   </div>
-                  <div class="TagLine"></div>
-                  <div class="electricTagData"><span>消防水DN100</span><p>{{ waterTagList.W_Area_YF_26_1_15.sumValue }}</p><p>{{ waterTagList.W_Area_YF_26_1_15.flowValue }}</p></div>
+                  <!--<div class="TagLine"></div>-->
+                  <!--<div class="electricTagData"><span>消防水DN100</span><p>{{ waterTagList.W_Area_YF_26_1_15.sumValue }}</p><p>{{ waterTagList.W_Area_YF_26_1_15.flowValue }}</p></div>-->
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -885,9 +885,9 @@
             <div class="waterTagData" style="position: relative">包材库灌溉水DN50<p class="TagDataVal">{{ waterTagList.W_Area_XJZ_12_1_3.sumValue }}</p><p class="TagDataVal">{{ waterTagList.W_Area_XJZ_12_1_3.flowValue }}</p></div>
             <div class="waterTagData" style="position: relative">接待室饮用水DN100<p class="TagDataVal">{{ waterTagList.W_Area_XJZ_12_2_5.sumValue }}</p><p class="TagDataVal">{{ waterTagList.W_Area_XJZ_12_2_5.flowValue }}</p></div>
           </el-card>
-          <el-card shadow="never" v-if="areaOverallDialogTitle === '中试车间'">
-            <div class="waterTagData" style="position: relative">消防水DN100<p class="TagDataVal">{{ waterTagList.W_Area_YF_26_1_15.sumValue }}</p><p class="TagDataVal">{{ waterTagList.W_Area_YF_26_1_15.flowValue }}</p></div>
-          </el-card>
+          <!--<el-card shadow="never" v-if="areaOverallDialogTitle === '中试车间'">-->
+            <!--<div class="waterTagData" style="position: relative">消防水DN100<p class="TagDataVal">{{ waterTagList.W_Area_YF_26_1_15.sumValue }}</p><p class="TagDataVal">{{ waterTagList.W_Area_YF_26_1_15.flowValue }}</p></div>-->
+          <!--</el-card>-->
           <el-card shadow="never" v-if="areaOverallDialogTitle === '原提取车间'">
             <div class="waterTagData" style="position: relative">消防水DN50<p class="TagDataVal">{{ waterTagList.W_Area_YTQ_39_1_30.sumValue }}</p><p class="TagDataVal">{{ waterTagList.W_Area_YTQ_39_1_30.flowValue }}</p></div>
             <div class="waterTagData" style="position: relative">灌溉水DN40<p class="TagDataVal">{{ waterTagList.W_Area_YTQ_39_2_30.sumValue }}</p><p class="TagDataVal">{{ waterTagList.W_Area_YTQ_39_2_30.flowValue }}</p></div>
