@@ -337,7 +337,7 @@
                 <div style="width: 100%;text-align: center">
                   <div style="display: inline-block;">
                     <el-image style="width:120px;" :src="interchangerImg" fit="scale-down"></el-image><p>总交换机</p>
-                    <p>电表数量：47</p>
+                    <p>电表数量：48</p>
                     <p class="itemMarginBottom">总功率：{{
                       (electricTagList.E_Area_WSZ_16_2_35.ZGL +
                       electricTagList.E_Area_GLF_42_1_33_1.ZGL +
@@ -379,6 +379,7 @@
                       electricTagList.E_Area_YTQ_38_1_28.ZGL +
                       electricTagList.E_Area_YTQ_38_2_29.ZGL +
                       electricTagList.E_Area_YTQ_38_2_29_3.ZGL +
+                      electricTagList.E_Area_YTQ_38_2_29_4.ZGL +
                       electricTagList.E_Area_JK_28_2_17.ZGL +
                       electricTagList.E_Area_JK_28_1_16.ZGL +
                       electricTagList.E_Area_GT_30_2_19.ZGL +
@@ -595,7 +596,8 @@
                     <p>电表数量：3</p>
                     <p class="itemMarginBottom">总功率：{{
                       (electricTagList.E_Area_YTQ_38_2_29.ZGL +
-                      electricTagList.E_Area_YTQ_38_2_29_3.ZGL).toFixed(2)
+                      electricTagList.E_Area_YTQ_38_2_29_3.ZGL +
+                      electricTagList.E_Area_YTQ_38_2_29_4.ZGL).toFixed(2)
                       }}
                     </p>
                   </div>
@@ -604,7 +606,7 @@
                   <div class="TagLine"></div>
                   <div class="electricTagData"><span>前处理车间2号表</span><p>{{ electricTagList.E_Area_YTQ_38_2_29_3.ZGL }}</p><span>洗药机、切药机</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>前处理车间3号表</span><p>{{  }}</p><span>粉碎机</span></div>
+                  <div class="electricTagData"><span>前处理车间3号表</span><p>{{ electricTagList.E_Area_YTQ_38_2_29_4.ZGL }}</p><span>粉碎机</span></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
