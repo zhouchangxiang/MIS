@@ -404,7 +404,7 @@
                     <p class="itemMarginBottom">总功率：{{ (electricTagList.E_Area_WSZ_16_2_35.ZGL).toFixed(2) }}</p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>污水站1</span><p>{{ electricTagList.E_Area_WSZ_16_2_35.ZGL }}</p><span>电表</span></div>
+                  <div class="electricTagData"><span>污水站1</span><p>{{ electricTagList.E_Area_WSZ_16_2_35.ZGL }}</p><span>罗茨风机 电解格栅机 排泥泵 污水泵  配药装置</span></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -418,15 +418,15 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>锅炉房电柜1</span><p>{{ electricTagList.E_Area_GLF_42_1_33_1.ZGL }}</p><span>锅炉</span></div>
+                  <div class="electricTagData"><span>锅炉房1号表</span><p>{{ electricTagList.E_Area_GLF_42_1_33_1.ZGL }}</p><span>锅炉</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>锅炉房电柜2</span><p>{{ electricTagList.E_Area_GLF_42_1_33_2.ZGL }}</p><span>供暖</span></div>
+                  <div class="electricTagData"><span>锅炉房2号表</span><p>{{ electricTagList.E_Area_GLF_42_1_33_2.ZGL }}</p><span>供暖系统</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>锅炉房旁边屋子3</span><p>{{ electricTagList.E_Area_GLF_42_1_33_3.ZGL }}</p><span>脱硫</span></div>
+                  <div class="electricTagData"><span>锅炉房3号表</span><p>{{ electricTagList.E_Area_GLF_42_1_33_3.ZGL }}</p><span>脱硫环保系统</span></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
-                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image><p>提取二车间</p>
+                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image><p>提取一车间</p>
                     <p>电表数量：4</p>
                     <p class="itemMarginBottom">总功率：{{
                       (electricTagList.E_Area_TQR_18_2_36_1.ZGL +
@@ -437,17 +437,17 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>提取二2楼空调室二1</span><p>{{ electricTagList.E_Area_TQR_18_2_36_1.ZGL }}</p><span>2楼空调室二冷水机组</span></div>
+                  <div class="electricTagData"><span>提取一车间空调室1号表</span><p>{{ electricTagList.E_Area_TQR_18_2_36_1.ZGL }}</p><span>室外冷水机组</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>提取二2楼空调室二2</span><p>{{ electricTagList.E_Area_TQR_18_2_36_2.ZGL }}</p><span>2楼空调室二空调机组</span></div>
+                  <div class="electricTagData"><span>提取一车间空调室2号表</span><p>{{ electricTagList.E_Area_TQR_18_2_36_2.ZGL }}</p><span>新空调机组</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>提取二2楼电控室1</span><p>{{ electricTagList.E_Area_TQR_18_2_36_3.ZGL }}</p><span>2楼电控室冷水机组</span></div>
+                  <div class="electricTagData"><span>提取一车间电控室1号表</span><p>{{ electricTagList.E_Area_TQR_18_2_36_3.ZGL }}</p><span>一楼冷水机组</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>提取二2楼电控室2</span><p>{{ electricTagList.E_Area_TQR_18_2_36_4.ZGL }}</p><span>2楼电控室制粒</span></div>
+                  <div class="electricTagData"><span>提取一车间电控室2号表</span><p>{{ electricTagList.E_Area_TQR_18_2_36_4.ZGL }}</p><span>流化床制粒机*3</span></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
-                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image><p>综合车间</p>
+                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image><p>提取二车间</p>
                     <p>电表数量：8</p>
                     <p class="itemMarginBottom">总功率：{{
                       (electricTagList.E_Area_ZH_1.ZGL +
@@ -462,25 +462,25 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>综合2楼MVR1</span><p>{{ electricTagList.E_Area_ZH_1.ZGL }}</p><span>MVR</span></div>
+                  <div class="electricTagData"><span>提取二车间</span><p>{{ electricTagList.E_Area_ZH_1.ZGL }}</p><span>MVR1号表</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>综合2楼MVR2</span><p>{{ electricTagList.E_Area_ZH_2.ZGL }}</p><span>MVR</span></div>
+                  <div class="electricTagData"><span>提取二车间</span><p>{{ electricTagList.E_Area_ZH_2.ZGL }}</p><span>MVR2号表</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>2楼配电室1</span><p>{{ electricTagList.E_Area_ZH_50_1_41_1.ZGL }}</p><span>总表、制粒、带干、粉糖、输液泵</span></div>
+                  <div class="electricTagData"><span>提取二车间一号表</span><p>{{ electricTagList.E_Area_ZH_50_1_41_1.ZGL }}</p><span>输液泵*10 粉糖机*2</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>2楼配电室2</span><p>{{ electricTagList.E_Area_ZH_50_1_41_2.ZGL }}</p><span>制粒</span></div>
+                  <div class="electricTagData"><span>提取二车间二号表</span><p>{{ electricTagList.E_Area_ZH_50_1_41_2.ZGL }}</p><span>流化床制粒机*3</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>2楼配电室3</span><p>{{ electricTagList.E_Area_ZH_50_1_41_3.ZGL }}</p><span>带干</span></div>
+                  <div class="electricTagData"><span>提取二车间三号表</span><p>{{ electricTagList.E_Area_ZH_50_1_41_3.ZGL }}</p><span>120带干</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>2楼配电室4</span><p>{{ electricTagList.E_Area_ZH_50_1_41_4.ZGL }}</p><span>浓缩罐、自控系统、电梯、洗衣房、真空泵</span></div>
+                  <div class="electricTagData"><span>提取二车间4号表</span><p>{{ electricTagList.E_Area_ZH_50_1_41_4.ZGL }}</p><span>真空泵*7  浓缩罐*5  洗衣房 混合机 提取自控系统  办公室</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>2楼配电室5</span><p>{{ electricTagList.E_Area_ZH_50_1_41_5.ZGL }}</p><span>排风</span></div>
+                  <div class="electricTagData"><span>提取二车间5号表</span><p>{{ electricTagList.E_Area_ZH_50_1_41_5.ZGL }}</p><span>排风系统  空调</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>2楼配电室6</span><p>{{ electricTagList.E_Area_ZH_50_1_41_6.ZGL }}</p><span>照明</span></div>
+                  <div class="electricTagData"><span>提取二车间6号表</span><p>{{ electricTagList.E_Area_ZH_50_1_41_6.ZGL }}</p><span>照明</span></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
-                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image><p>新建综合制剂车间</p>
+                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image><p>制剂二车间</p>
                     <p>电表数量：6</p>
                     <p class="itemMarginBottom">总功率：{{
                       (electricTagList.E_Area_XJZ_11_2_7.ZGL +
@@ -493,17 +493,17 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>综合制剂2楼配电室2</span><p>{{ electricTagList.E_Area_XJZ_11_2_7.ZGL }}</p><span>空压机、循环水、机器人</span></div>
+                  <div class="electricTagData"><span>制剂二车间二楼配电室</span><p>{{ electricTagList.E_Area_XJZ_11_2_7.ZGL }}</p><span>空压机 纯化水 空调 包衣机*3 除湿机 AK1 AK2 ESTUN</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>综合制剂2楼配电室1</span><p>{{ electricTagList.E_Area_XJZ_11_2_7_1.ZGL }}</p><span>2楼干法、颗粒</span></div>
+                  <div class="electricTagData"><span>制剂二车间二楼配电室</span><p>{{ electricTagList.E_Area_XJZ_11_2_7_1.ZGL }}</p><span>干法制粒*4 配方颗粒包装 AP23 混合机 照明 墙插</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>综合制剂2楼配电室3</span><p>{{ electricTagList.E_Area_XJZ_11_2_7_3.ZGL }}</p><span>2楼电梯、压片、胶囊、泡罩、粉碎</span></div>
+                  <div class="electricTagData"><span>制剂二车间二楼配电室</span><p>{{ electricTagList.E_Area_XJZ_11_2_7_3.ZGL }}</p><span>电梯 混合机 压片机*2 胶囊机*2 泡罩机*2 粉碎机 清洗机 转料提升机 流化床制粒机 照明</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>综合制剂2楼空调室4</span><p>{{ electricTagList.E_Area_XJZ_11_2_7_4.ZGL }}</p><span>2楼空调</span></div>
+                  <div class="electricTagData"><span>制剂二车间二楼配电室</span><p>{{ electricTagList.E_Area_XJZ_11_2_7_4.ZGL }}</p><span>二楼空调</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>综合制剂1楼配电室5</span><p>{{ electricTagList.E_Area_XJZ_11_1_6_5.ZGL }}</p><span>1楼洗衣机、照明、卷帘门、风机</span></div>
+                  <div class="electricTagData"><span>制剂二车间一楼配电室1号表</span><p>{{ electricTagList.E_Area_XJZ_11_1_6_5.ZGL }}</p><span>冷水机组1号 洗衣房 照明 排风系统 </span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>综合制剂1楼冷水室6</span><p>{{ electricTagList.E_Area_XJZ_11_1_6_6.ZGL }}</p><span>1楼冷水机组2</span></div>
+                  <div class="electricTagData"><span>制剂二车间一楼配电室2号表</span><p>{{ electricTagList.E_Area_XJZ_11_1_6_6.ZGL }}</p><span>冷水机组2号</span></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -526,33 +526,33 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>变电所1</span><p>{{ electricTagList.E_Area_BDS_49_1_39_1.ZGL }}</p><span>40喷干</span></div>
+                  <div class="electricTagData"><span>变电所1号表</span><p>{{ electricTagList.E_Area_BDS_49_1_39_1.ZGL }}</p><span>40喷干</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>变电所2</span><p>{{ electricTagList.E_Area_BDS_49_1_39_2.ZGL }}</p><span>50喷干</span></div>
+                  <div class="electricTagData"><span>变电所2号表</span><p>{{ electricTagList.E_Area_BDS_49_1_39_2.ZGL }}</p><span>50喷干</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>变电所3</span><p>{{ electricTagList.E_Area_BDS_49_1_39_3.ZGL }}</p><span>新提取循环水泵</span></div>
+                  <div class="electricTagData"><span>变电所3号表</span><p>{{ electricTagList.E_Area_BDS_49_1_39_3.ZGL }}</p><span>循环水泵</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>变电所4</span><p>{{ electricTagList.E_Area_BDS_49_1_39_4.ZGL }}</p><span>消防水泵+新大库</span></div>
+                  <div class="electricTagData"><span>变电所4号表</span><p>{{ electricTagList.E_Area_BDS_49_1_39_4.ZGL }}</p><span>消防水泵 新大库</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>变电所5</span><p>{{ electricTagList.E_Area_BDS_49_2_40_5.ZGL }}</p><span>GMP</span></div>
+                  <div class="electricTagData"><span>变电所5号表</span><p>{{ electricTagList.E_Area_BDS_49_2_40_5.ZGL }}</p><span>制剂3车间</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>变电所6</span><p>{{ electricTagList.E_Area_BDS_49_2_40_6.ZGL }}</p><span>前处理</span></div>
+                  <div class="electricTagData"><span>变电所6号表</span><p>{{ electricTagList.E_Area_BDS_49_2_40_6.ZGL }}</p><span>前处理车间 老700粉碎机 生产部</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>变电所7</span><p>{{ electricTagList.E_Area_BDS_49_2_40_7.ZGL }}</p><span>仓储中心</span></div>
+                  <div class="electricTagData"><span>变电所7号表</span><p>{{ electricTagList.E_Area_BDS_49_2_40_7.ZGL }}</p><span>仓储中心</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>变电所8</span><p>{{ electricTagList.E_Area_BDS_49_2_40_8.ZGL }}</p><span>提取二照明</span></div>
+                  <div class="electricTagData"><span>变电所8号表</span><p>{{ electricTagList.E_Area_BDS_49_2_40_8.ZGL }}</p><span>提取一车间照明</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>变电所9</span><p>{{ electricTagList.E_Area_BDS_49_2_40_9.ZGL }}</p><span>40粉碎、提取二空调</span></div>
+                  <div class="electricTagData"><span>变电所9号表</span><p>{{ electricTagList.E_Area_BDS_49_2_40_9.ZGL }}</p><span>提取一车间空调 40粉碎机</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>变电所10</span><p>{{ electricTagList.E_Area_BDS_49_2_40_10.ZGL }}</p><span>60带干、风机、制粒、办公</span></div>
+                  <div class="electricTagData"><span>变电所10号表</span><p>{{ electricTagList.E_Area_BDS_49_2_40_10.ZGL }}</p><span>60带干 风机 提取一车间办公室</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>变电所11</span><p>{{ electricTagList.E_Area_BDS_49_2_40_11.ZGL }}</p><span>提取、自控</span></div>
+                  <div class="electricTagData"><span>变电所11号表</span><p>{{ electricTagList.E_Area_BDS_49_2_40_11.ZGL }}</p><span>提取一车间自控系统</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>变电所12</span><p>{{ electricTagList.E_Area_BDS_49_2_40_12.ZGL }}</p><span>提取二车间新空调</span></div>
+                  <div class="electricTagData"><span>变电所12号表</span><p>{{ electricTagList.E_Area_BDS_49_2_40_12.ZGL }}</p><span>超微粉碎 灭菌柜*2</span></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
-                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image><p>中试车间</p>
+                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image><p>检验中心</p>
                     <p>电表数量：2</p>
                     <p class="itemMarginBottom">总功率：{{
                       (electricTagList.E_Area_YF_26_1_14.ZGL +
@@ -561,13 +561,13 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>化验室1</span><p>{{ electricTagList.E_Area_YF_26_1_14.ZGL }}</p><span>电器</span></div>
+                  <div class="electricTagData"><span>检验中心配电室1号表</span><p>{{ electricTagList.E_Area_YF_26_1_14.ZGL }}</p><span>检验中心所有电器设备</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>化验室2</span><p>{{ electricTagList.E_Area_YF_26_1_14_2.ZGL }}</p><span>老醇提水泵、车床、台钻、砂轮</span></div>
+                  <div class="electricTagData"><span>检验中心配电室2号表</span><p>{{ electricTagList.E_Area_YF_26_1_14_2.ZGL }}</p><span>老醇提水泵 大机修</span></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
-                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image><p>智能库</p>
+                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image><p>智能库房</p>
                     <p>电表数量：1</p>
                     <p class="itemMarginBottom">总功率：{{
                       (electricTagList.E_Area_ZNK_24_1_10_1.ZGL).toFixed(2)
@@ -575,11 +575,11 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>智能库1楼1</span><p>{{ electricTagList.E_Area_ZNK_24_1_10_1.ZGL }}</p><span>1L</span></div>
+                  <div class="electricTagData"><span>智能库房</span><p>{{ electricTagList.E_Area_ZNK_24_1_10_1.ZGL }}</p><span>智能库房所有用电设备</span></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
-                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image><p>原提取车间</p>
+                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image><p>提取三车间</p>
                     <p>电表数量：1</p>
                     <p class="itemMarginBottom">总功率：{{
                       (electricTagList.E_Area_YTQ_38_1_28.ZGL).toFixed(2)
@@ -587,12 +587,12 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>老醇提1</span><p>{{ electricTagList.E_Area_YTQ_38_1_28.ZGL }}</p><span>办公、新700粉碎机、机修、设备库房</span></div>
+                  <div class="electricTagData"><span>提取三车间</span><p>{{ electricTagList.E_Area_YTQ_38_1_28.ZGL }}</p><span>提取三车间电器设备</span></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
                   <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image><p>前处理车间</p>
-                    <p>电表数量：2</p>
+                    <p>电表数量：3</p>
                     <p class="itemMarginBottom">总功率：{{
                       (electricTagList.E_Area_YTQ_38_2_29.ZGL +
                       electricTagList.E_Area_YTQ_38_2_29_3.ZGL).toFixed(2)
@@ -600,13 +600,15 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>原提取1</span><p>{{ electricTagList.E_Area_YTQ_38_2_29.ZGL }}</p><span>办公、新700粉碎机、机修、设备库房</span></div>
+                  <div class="electricTagData"><span>前处理车间1号表</span><p>{{ electricTagList.E_Area_YTQ_38_2_29.ZGL }}</p><span>机电车间办公室 新700 机修 备件库</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>原提取2</span><p>{{ electricTagList.E_Area_YTQ_38_2_29_3.ZGL }}</p><span>洗药机、切药机</span></div>
+                  <div class="electricTagData"><span>前处理车间2号表</span><p>{{ electricTagList.E_Area_YTQ_38_2_29_3.ZGL }}</p><span>洗药机、切药机</span></div>
+                  <div class="TagLine"></div>
+                  <div class="electricTagData"><span>前处理车间3号表</span><p>{{  }}</p><span>粉碎机</span></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
-                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image><p>GMP车间</p>
+                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image><p>制剂三车间</p>
                     <p>电表数量：2</p>
                     <p class="itemMarginBottom">总功率：{{
                       (electricTagList.E_Area_JK_28_2_17.ZGL +
@@ -615,13 +617,13 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>健康科技车间一楼1</span><p>{{ electricTagList.E_Area_JK_28_2_17.ZGL }}</p><span>1楼</span></div>
+                  <div class="electricTagData"><span>制剂三车间1号表</span><p>{{ electricTagList.E_Area_JK_28_2_17.ZGL }}</p><span>1楼</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>健康科技车间二楼2</span><p>{{ electricTagList.E_Area_JK_28_1_16.ZGL }}</p><span>2楼</span></div>
+                  <div class="electricTagData"><span>制剂三车间2号表</span><p>{{ electricTagList.E_Area_JK_28_1_16.ZGL }}</p><span>2楼</span></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
-                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image><p>固体制剂车间</p>
+                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image><p>制剂一车间</p>
                     <p>电表数量：4</p>
                     <p class="itemMarginBottom">总功率：{{
                       (electricTagList.E_Area_GT_30_2_19.ZGL +
@@ -632,17 +634,17 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>固体制剂4</span><p>{{ electricTagList.E_Area_GT_30_2_19.ZGL }}</p><span>除尘系统、空调系统</span></div>
+                  <div class="electricTagData"><span>制剂一车间1号表</span><p>{{ electricTagList.E_Area_GT_30_2_19.ZGL }}</p><span>除尘系统 空调系统 水泵*4</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>固体制剂1</span><p>{{ electricTagList.E_Area_GT_30_2_19_1.ZGL }}</p><span>机修办公室、压片、胶囊、混合、挂衣、颗粒、瓶线</span></div>
+                  <div class="electricTagData"><span>制剂一车间2号表</span><p>{{ electricTagList.E_Area_GT_30_2_19_1.ZGL }}</p><span>办公室 保全班 压片机*4  胶囊机*2  混合机*2  包衣机*6  颗粒自动包装线  塑瓶包装线</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>固体制剂2</span><p>{{ electricTagList.E_Area_GT_30_2_19_2.ZGL }}</p><span>风冷冷水机、除湿机、空压机</span></div>
+                  <div class="electricTagData"><span>制剂一车间3号表</span><p>{{ electricTagList.E_Area_GT_30_2_19_2.ZGL }}</p><span>冷水机组 除湿机*2 空压机</span></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>固体制剂3</span><p>{{ electricTagList.E_Area_GT_30_2_19_3.ZGL }}</p><span>照明</span></div>
+                  <div class="electricTagData"><span>制剂一车间4号表</span><p>{{ electricTagList.E_Area_GT_30_2_19_3.ZGL }}</p><span>照明</span></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
-                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image><p>办公楼＼食堂</p>
+                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image><p>行政办公楼</p>
                     <p>电表数量：1</p>
                     <p class="itemMarginBottom">总功率：{{
                       (electricTagList.E_Area_BGL_36_1_26.ZGL).toFixed(2)
@@ -650,7 +652,7 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>展馆旁1</span><p>{{ electricTagList.E_Area_BGL_36_1_26.ZGL }}</p></div><span>老屋角</span>
+                  <div class="electricTagData"><span>展馆旁配电柜</span><p>{{ electricTagList.E_Area_BGL_36_1_26.ZGL }}</p></div><span>行政办公楼 食堂 宿舍 展馆 警卫室 冷库 库房</span>
                 </li>
               </ul>
             </el-col>
