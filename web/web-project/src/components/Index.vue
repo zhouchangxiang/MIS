@@ -265,19 +265,6 @@
                 <li>
                   <div class="TagLine"></div>
                   <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image>
-                    <p>检验中心</p>
-                    <p>水表数量：0</p>
-                    <!--<p class="itemMarginBottom">水表总量：{{-->
-                      <!--(waterTagList.W_Area_YF_26_1_15.sumValue).toFixed(2)-->
-                      <!--}}-->
-                    <!--</p>-->
-                  </div>
-                  <!--<div class="TagLine"></div>-->
-                  <!--<div class="electricTagData"><span>消防水DN100</span><p>{{ waterTagList.W_Area_YF_26_1_15.sumValue }}</p><p>{{ waterTagList.W_Area_YF_26_1_15.flowValue }}</p></div>-->
-                </li>
-                <li>
-                  <div class="TagLine"></div>
-                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image>
                     <p>前处理车间</p>
                     <p>水表数量：2</p>
                     <p class="itemMarginBottom">水表总量：{{
@@ -303,6 +290,19 @@
                   </div>
                   <div class="TagLine"></div>
                   <div class="electricTagData"><span>1楼卫生间深井水DN65</span><p>{{ waterTagList.W_Area_BGL_34_1_22.sumValue }}</p><p>{{ waterTagList.W_Area_BGL_34_1_22.flowValue }}</p></div>
+                </li>
+                <li>
+                  <div class="TagLine"></div>
+                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image>
+                    <p>检验中心</p>
+                    <p>水表数量：0</p>
+                    <!--<p class="itemMarginBottom">水表总量：{{-->
+                      <!--(waterTagList.W_Area_YF_26_1_15.sumValue).toFixed(2)-->
+                      <!--}}-->
+                    <!--</p>-->
+                  </div>
+                  <!--<div class="TagLine"></div>-->
+                  <!--<div class="electricTagData"><span>消防水DN100</span><p>{{ waterTagList.W_Area_YF_26_1_15.sumValue }}</p><p>{{ waterTagList.W_Area_YF_26_1_15.flowValue }}</p></div>-->
                 </li>
               </ul>
             </el-col>
@@ -798,7 +798,7 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>固体分汽缸流量计DN100</span><p>{{ steamTagList.S_Area_GT_31_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_GT_31_1_502.SteamWD }}°C</p></div>
+                  <div class="electricTagData"><span>制剂一车间</span><p>{{ steamTagList.S_Area_GT_31_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_GT_31_1_502.SteamWD }}°C</p></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -811,7 +811,7 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>新制剂分汽缸DN200</span><p>{{ steamTagList.S_Area_XJZ_13_1_7_502.sumValue }}</p><p>{{ steamTagList.S_Area_XJZ_13_1_7_502.SteamWD }}°C</p></div>
+                  <div class="electricTagData"><span>制剂二车间</span><p>{{ steamTagList.S_Area_XJZ_13_1_7_502.sumValue }}</p><p>{{ steamTagList.S_Area_XJZ_13_1_7_502.SteamWD }}°C</p></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -824,7 +824,7 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>GMP车间流量计</span><p>{{ steamTagList.S_Area_JK_27_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_JK_27_1_502.SteamWD }}°C</p></div>
+                  <div class="electricTagData"><span>制剂三车间</span><p>{{ steamTagList.S_Area_JK_27_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_JK_27_1_502.SteamWD }}°C</p></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -850,7 +850,15 @@
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>行政办公楼流量计</span><p>{{ steamTagList.S_Area_BGL_35_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_BGL_35_1_502.SteamWD }}°C</p></div>
+                  <div class="electricTagData"><span>食堂热水罐</span><p>{{ steamTagList.S_Area_BGL_35_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_BGL_35_1_502.SteamWD }}°C</p></div>
+                </li>
+                <li>
+                  <div class="TagLine"></div>
+                  <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image>
+                    <p>检验中心</p>
+                    <p>汽表数量：0</p>
+                    <p class="itemMarginBottom">蒸汽总量：0</p>
+                  </div>
                 </li>
               </ul>
             </el-col>
@@ -1838,6 +1846,7 @@ export default {
     overflow: hidden;
     overflow-y: auto;
     white-space: nowrap;
+    height:100%;
   }
   .areaTotalTagUl li{
     position: relative;
