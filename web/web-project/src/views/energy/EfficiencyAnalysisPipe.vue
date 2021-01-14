@@ -138,13 +138,14 @@
           that.PipeDamageRate = res.data.PipeDamageRate
           that.inputSteam = res.data.inputSteam + res.data.Unit
           that.outputSteam = res.data.outputSteam + res.data.Unit
-		  that.runEfficiencyChartData.rows = []
-		  res.data.row.forEach(item =>{
-			that.runEfficiencyChartData.rows.push({
-				"产汽总量":item['输入总量'],
-				"使用总量":item['输出总量']
-			})
-		  })
+          that.runEfficiencyChartData.rows = []
+          res.data.row.forEach(item =>{
+          that.runEfficiencyChartData.rows.push({
+            "时间":item['时间'],
+            "产汽总量":item['输入总量'],
+            "使用总量":item['输出总量']
+          })
+          })
         })
       }
     }
