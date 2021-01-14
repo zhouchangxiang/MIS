@@ -99,7 +99,7 @@
           }
         },
         runEfficiencyChartData:{
-          columns: ['时间', '输入总量', '输出总量'],
+          columns: ['时间', '产汽总量', '使用总量'],
           rows: []
         },
         chartsLoading:false
@@ -138,7 +138,13 @@
           that.PipeDamageRate = res.data.PipeDamageRate
           that.inputSteam = res.data.inputSteam + res.data.Unit
           that.outputSteam = res.data.outputSteam + res.data.Unit
-          that.runEfficiencyChartData.rows = res.data.row
+		  that.runEfficiencyChartData.rows = []
+		  res.data.row.forEach(item =>{
+			that.runEfficiencyChartData.rows.push({
+				"产汽总量":item['输入总量'],
+				"使用总量":item['输出总量']
+			})
+		  })
         })
       }
     }
