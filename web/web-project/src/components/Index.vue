@@ -933,6 +933,7 @@
           <el-card shadow="never" v-if="areaOverallDialogTitle === '前处理车间'">
             <div class="waterTagData">原提取1<p>办公、新700粉碎机、机修、设备库房</p><p class="TagDataVal">{{ electricTagList.E_Area_YTQ_38_2_29.ZGL }}</p></div>
             <div class="waterTagData">原提取2<p>洗药机、切药机</p><p class="TagDataVal">{{ electricTagList.E_Area_YTQ_38_2_29_3.ZGL }}</p></div>
+            <div class="waterTagData">原提取3<p>粉碎机</p><p class="TagDataVal">{{ electricTagList.E_Area_YTQ_38_2_29_4.ZGL }}</p></div>
           </el-card>
           <el-card shadow="never" v-if="areaOverallDialogTitle === '制剂三车间'">
             <div class="waterTagData">健康科技车间一楼1<p></p><p class="TagDataVal">{{ electricTagList.E_Area_JK_28_2_17.ZGL }}</p></div>
