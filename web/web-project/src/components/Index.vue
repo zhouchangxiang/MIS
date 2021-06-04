@@ -124,7 +124,7 @@
                 <div style="width: 100%;text-align: center">
                   <div style="display: inline-block;">
                     <el-image style="width:120px;" :src="interchangerImg" fit="scale-down"></el-image><p>总交换机</p>
-                    <p>水表数量：16</p>
+                    <p>水表数量：17</p>
                     <p class="itemMarginBottom">水表总量：{{
                       (waterTagList.W_Area_WSZ_16_2_34.sumValue+
                       waterTagList.W_Area_TQR_17_2_8.sumValue+
@@ -142,7 +142,8 @@
                       waterTagList.W_Area_QCL_33_2_20.sumValue+
                       waterTagList.W_Area_GT_30_2_18.sumValue+
                       waterTagList.W_Area_GT_30_1_19.sumValue+
-                      waterTagList.W_Area_BGL_34_1_22.sumValue).toFixed(2)
+                      waterTagList.W_Area_BGL_34_1_22.sumValue+
+                      waterTagList.W_Area_YF_26_1_15.sumValue).toFixed(2)
                       }}
                     </p>
                   </div>
@@ -295,11 +296,11 @@
                   <div class="TagLine"></div>
                   <div class="text-center"><el-image :src="interchangerImg" fit="scale-down"></el-image>
                     <p>检验中心</p>
-                    <p>水表数量：0</p>
-                    <!--<p class="itemMarginBottom">水表总量：{{-->
-                      <!--(waterTagList.W_Area_YF_26_1_15.sumValue).toFixed(2)-->
-                      <!--}}-->
-                    <!--</p>-->
+                    <p>水表数量：1</p>
+                    <p class="itemMarginBottom">水表总量：{{
+                      (waterTagList.W_Area_YF_26_1_15.sumValue).toFixed(2)
+                      }}
+                    </p>
                   </div>
                   <!--<div class="TagLine"></div>-->
                   <!--<div class="electricTagData"><span>消防水DN100</span><p>{{ waterTagList.W_Area_YF_26_1_15.sumValue }}</p><p>{{ waterTagList.W_Area_YF_26_1_15.flowValue }}</p></div>-->
@@ -709,11 +710,11 @@
                     <p>汽表数量：1</p>
                     <p class="itemMarginBottom">蒸汽总量：{{
                       (steamTagList.S_Area_GLF_45_3_502.sumValue).toFixed(2)
-                      }}
+                      }}kg
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>供暖DN150</span><p>{{ steamTagList.S_Area_GLF_45_3_502.sumValue }}</p><p>{{ steamTagList.S_Area_GLF_45_3_502.SteamWD }}°C</p></div>
+                  <div class="electricTagData"><span>供暖DN150</span><p>{{ steamTagList.S_Area_GLF_45_3_502.sumValue }}kg</p><p>{{ steamTagList.S_Area_GLF_45_3_502.SteamWD }}°C</p></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -727,21 +728,21 @@
                       steamTagList.S_Area_TQR_19_1_502.sumValue+
                       steamTagList.S_Area_TQR_19_2_502.sumValue+
                       steamTagList.S_Area_TQR_20_3_502.sumValue).toFixed(2)
-                      }}
+                      }}kg
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>一楼灭菌柜DN80</span><p>{{ steamTagList.S_Area_TQR_20_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_TQR_20_1_502.SteamWD }}°C</p></div>
+                  <div class="electricTagData"><span>一楼灭菌柜DN80</span><p>{{ steamTagList.S_Area_TQR_20_1_502.sumValue }}kg</p><p>{{ steamTagList.S_Area_TQR_20_1_502.SteamWD }}°C</p></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>单效/双效浓缩DN20</span><p>{{ steamTagList.S_Area_TQR_19_3_502.sumValue }}</p><p>{{ steamTagList.S_Area_TQR_19_3_502.SteamWD }}°C</p></div>
+                  <div class="electricTagData"><span>单效/双效浓缩DN20</span><p>{{ steamTagList.S_Area_TQR_19_3_502.sumValue }}kg</p><p>{{ steamTagList.S_Area_TQR_19_3_502.SteamWD }}°C</p></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>喷干两台/CIP DN20</span><p>{{ steamTagList.S_Area_TQR_20_2_502.sumValue }}</p><p>{{ steamTagList.S_Area_TQR_20_2_502.SteamWD }}°C</p></div>
+                  <div class="electricTagData"><span>喷干两台/CIP DN20</span><p>{{ steamTagList.S_Area_TQR_20_2_502.sumValue }}kg</p><p>{{ steamTagList.S_Area_TQR_20_2_502.SteamWD }}°C</p></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>提取单号DN150</span><p>{{ steamTagList.S_Area_TQR_19_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_TQR_19_1_502.SteamWD }}°C</p></div>
+                  <div class="electricTagData"><span>提取单号DN150</span><p>{{ steamTagList.S_Area_TQR_19_1_502.sumValue }}kg</p><p>{{ steamTagList.S_Area_TQR_19_1_502.SteamWD }}°C</p></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>提取双号DN150</span><p>{{ steamTagList.S_Area_TQR_19_2_502.sumValue }}</p><p>{{ steamTagList.S_Area_TQR_19_2_502.SteamWD }}°C</p></div>
+                  <div class="electricTagData"><span>提取双号DN150</span><p>{{ steamTagList.S_Area_TQR_19_2_502.sumValue }}kg</p><p>{{ steamTagList.S_Area_TQR_19_2_502.SteamWD }}°C</p></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>管式灭菌DN80</span><p>{{ steamTagList.S_Area_TQR_20_3_502.sumValue }}</p><p>{{ steamTagList.S_Area_TQR_20_3_502.SteamWD }}°C</p></div>
+                  <div class="electricTagData"><span>管式灭菌DN80</span><p>{{ steamTagList.S_Area_TQR_20_3_502.sumValue }}kg</p><p>{{ steamTagList.S_Area_TQR_20_3_502.SteamWD }}°C</p></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -756,23 +757,23 @@
                       steamTagList.S_Area_ZH_46_3_502.sumValue+
                       steamTagList.S_Area_ZH_22_1_502.sumValue+
                       steamTagList.S_Area_ZH_21_3_502.sumValue).toFixed(2)
-                      }}
+                      }}kg
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>120带干DN32</span><p>{{ steamTagList.S_Area_ZH_21_2_502.sumValue }}</p><p>{{ steamTagList.S_Area_ZH_21_2_502.SteamWD }}°C</p></div>
+                  <div class="electricTagData"><span>120带干DN32</span><p>{{ steamTagList.S_Area_ZH_21_2_502.sumValue }}kg</p><p>{{ steamTagList.S_Area_ZH_21_2_502.SteamWD }}°C</p></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>流化床制粒DN50</span><p>{{ steamTagList.S_Area_ZH_21_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_ZH_21_1_502.SteamWD }}°C</p></div>
+                  <div class="electricTagData"><span>流化床制粒DN50</span><p>{{ steamTagList.S_Area_ZH_21_1_502.sumValue }}kg</p><p>{{ steamTagList.S_Area_ZH_21_1_502.SteamWD }}°C</p></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>二次浓缩DN100</span><p>{{ steamTagList.S_Area_ZH_46_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_ZH_46_1_502.SteamWD }}°C</p></div>
+                  <div class="electricTagData"><span>二次浓缩DN100</span><p>{{ steamTagList.S_Area_ZH_46_1_502.sumValue }}kg</p><p>{{ steamTagList.S_Area_ZH_46_1_502.SteamWD }}°C</p></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>醇提+浓缩DN150</span><p>{{ steamTagList.S_Area_ZH_46_2_502.sumValue }}</p><p>{{ steamTagList.S_Area_ZH_46_2_502.SteamWD }}°C</p></div>
+                  <div class="electricTagData"><span>醇提+浓缩DN150</span><p>{{ steamTagList.S_Area_ZH_46_2_502.sumValue }}kg</p><p>{{ steamTagList.S_Area_ZH_46_2_502.SteamWD }}°C</p></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>双效浓缩/CIP DN200</span><p>{{ steamTagList.S_Area_ZH_46_3_502.sumValue }}</p><p>{{ steamTagList.S_Area_ZH_46_3_502.SteamWD }}°C</p></div>
+                  <div class="electricTagData"><span>双效浓缩/CIP DN200</span><p>{{ steamTagList.S_Area_ZH_46_3_502.sumValue }}kg</p><p>{{ steamTagList.S_Area_ZH_46_3_502.SteamWD }}°C</p></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>提取双号DN150</span><p>{{ steamTagList.S_Area_ZH_22_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_ZH_22_1_502.SteamWD }}°C</p></div>
+                  <div class="electricTagData"><span>提取双号DN150</span><p>{{ steamTagList.S_Area_ZH_22_1_502.sumValue }}kg</p><p>{{ steamTagList.S_Area_ZH_22_1_502.SteamWD }}°C</p></div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>提取单号DN150</span><p>{{ steamTagList.S_Area_ZH_21_3_502.sumValue }}</p><p>{{ steamTagList.S_Area_ZH_21_3_502.SteamWD }}°C</p></div>
+                  <div class="electricTagData"><span>提取单号DN150</span><p>{{ steamTagList.S_Area_ZH_21_3_502.sumValue }}kg</p><p>{{ steamTagList.S_Area_ZH_21_3_502.SteamWD }}°C</p></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -781,11 +782,11 @@
                     <p>汽表数量：1</p>
                     <p class="itemMarginBottom">蒸汽总量：{{
                       (steamTagList.S_Area_YTQ_40_1_502.sumValue ).toFixed(2)
-                      }}
+                      }}kg
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>提取三车间流量计</span><p>{{ steamTagList.S_Area_YTQ_40_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_YTQ_40_1_502.SteamWD }}°C</p></div>
+                  <div class="electricTagData"><span>提取三车间流量计</span><p>{{ steamTagList.S_Area_YTQ_40_1_502.sumValue }}kg</p><p>{{ steamTagList.S_Area_YTQ_40_1_502.SteamWD }}°C</p></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -794,11 +795,11 @@
                     <p>汽表数量：1</p>
                     <p class="itemMarginBottom">蒸汽总量：{{
                       (steamTagList.S_Area_GT_31_1_502.sumValue ).toFixed(2)
-                      }}
+                      }}kg
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>制剂一车间</span><p>{{ steamTagList.S_Area_GT_31_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_GT_31_1_502.SteamWD }}°C</p></div>
+                  <div class="electricTagData"><span>制剂一车间</span><p>{{ steamTagList.S_Area_GT_31_1_502.sumValue }}kg</p><p>{{ steamTagList.S_Area_GT_31_1_502.SteamWD }}°C</p></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -807,11 +808,11 @@
                     <p>汽表数量：1</p>
                     <p class="itemMarginBottom">蒸汽总量：{{
                       (steamTagList.S_Area_XJZ_13_1_7_502.sumValue ).toFixed(2)
-                      }}
+                      }}kg
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>制剂二车间</span><p>{{ steamTagList.S_Area_XJZ_13_1_7_502.sumValue }}</p><p>{{ steamTagList.S_Area_XJZ_13_1_7_502.SteamWD }}°C</p></div>
+                  <div class="electricTagData"><span>制剂二车间</span><p>{{ steamTagList.S_Area_XJZ_13_1_7_502.sumValue }}kg</p><p>{{ steamTagList.S_Area_XJZ_13_1_7_502.SteamWD }}°C</p></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -820,11 +821,11 @@
                     <p>汽表数量：1</p>
                     <p class="itemMarginBottom">蒸汽总量：{{
                       (steamTagList.S_Area_JK_27_1_502.sumValue ).toFixed(2)
-                      }}
+                      }}kg
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>制剂三车间</span><p>{{ steamTagList.S_Area_JK_27_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_JK_27_1_502.SteamWD }}°C</p></div>
+                  <div class="electricTagData"><span>制剂三车间</span><p>{{ steamTagList.S_Area_JK_27_1_502.sumValue }}kg</p><p>{{ steamTagList.S_Area_JK_27_1_502.SteamWD }}°C</p></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -833,11 +834,11 @@
                     <p>汽表数量：1</p>
                     <p class="itemMarginBottom">蒸汽总量：{{
                       (steamTagList.S_Area_YTQ_40_2_502.sumValue ).toFixed(2)
-                      }}
+                      }}kg
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>前处理车间流量计</span><p>{{ steamTagList.S_Area_YTQ_40_2_502.sumValue }}</p><p>{{ steamTagList.S_Area_YTQ_40_2_502.SteamWD }}°C</p></div>
+                  <div class="electricTagData"><span>前处理车间流量计</span><p>{{ steamTagList.S_Area_YTQ_40_2_502.sumValue }}kg</p><p>{{ steamTagList.S_Area_YTQ_40_2_502.SteamWD }}°C</p></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
@@ -846,11 +847,11 @@
                     <p>汽表数量：1</p>
                     <p class="itemMarginBottom">蒸汽总量：{{
                       (steamTagList.S_Area_BGL_35_1_502.sumValue ).toFixed(2)
-                      }}
+                      }}kg
                     </p>
                   </div>
                   <div class="TagLine"></div>
-                  <div class="electricTagData"><span>食堂热水罐</span><p>{{ steamTagList.S_Area_BGL_35_1_502.sumValue }}</p><p>{{ steamTagList.S_Area_BGL_35_1_502.SteamWD }}°C</p></div>
+                  <div class="electricTagData"><span>食堂热水罐</span><p>{{ steamTagList.S_Area_BGL_35_1_502.sumValue }}kg</p><p>{{ steamTagList.S_Area_BGL_35_1_502.SteamWD }}°C</p></div>
                 </li>
                 <li>
                   <div class="TagLine"></div>
